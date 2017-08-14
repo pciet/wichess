@@ -9,7 +9,6 @@ import (
 
 const (
 	app_index_template = "web/html/index.html"
-	login_template     = "web/html/login.html"
 )
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
@@ -21,5 +20,5 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		executeWebTemplate(w, app_index_template, nil)
 		return
 	}
-	executeWebTemplate(w, login_template, nil)
+	http.Redirect(w, r, "/login", http.StatusFound)
 }

@@ -5,6 +5,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"text/template"
 )
@@ -20,4 +21,13 @@ func executeWebTemplate(w http.ResponseWriter, file string, data interface{}) {
 		panicExit(fmt.Sprintf("failed to execute template %v: %v", file, err.Error()))
 		return
 	}
+}
+
+func webError(w http.ResponseWriter, r *http.Request, message string, the error) {
+	if the != nil {
+		log.Printf("%v (%v)", message, the.Error())
+	} else {
+		log.Println(message)
+	}
+	http.NotFound(w, r)
 }
