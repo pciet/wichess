@@ -8,6 +8,8 @@ import (
 )
 
 func main() {
+	initializeDatabaseConnection()
+
 	http.HandleFunc("/", indexHandler)
 	http.HandleFunc("/login", loginHandler)
 

@@ -31,6 +31,10 @@ func login(name, crypt, remoteAddr string) string {
 }
 
 func createAndLogin(name, crypt, remoteAddr string) string {
+	exists, _ := playerFromDatabase(name)
+	if exists {
+		return ""
+	}
 	newPlayerInDatabase(name, crypt)
 	return login(name, crypt, remoteAddr)
 }

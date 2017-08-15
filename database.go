@@ -5,14 +5,15 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 
 	_ "github.com/lib/pq"
 )
 
 const (
-	database_user = "test"
-	database_name = "test"
+	database_config_file = "dbconfig.json"
 
 	database_player_table = "players"
 
@@ -22,11 +23,31 @@ const (
 
 var database *sql.DB
 
-func init() {
-	var err error
-	database, err = sql.Open("postgres", fmt.Sprintf("user=%v dbname=%v sslmode=disable", database_user, database_name))
+type databaseConfiguration struct {
+	Database string
+	User     string
+	Password string
+	Host     string
+	Port     string
+	SslMode  string
+}
+
+func initializeDatabaseConnection() {
+	file, err := ioutil.ReadFile(database_config_file)
 	if err != nil {
-		panic(err.Error())
+		panicExit(err.Error())
+		return
+	}
+	var config databaseConfiguration
+	err = json.Unmarshal(file, &config)
+	if err != nil {
+		panicExit(err.Error())
+		return
+	}
+	database, err = sql.Open("postgres", fmt.Sprintf("dbname=%v user=%v password=%v host=%v port=%v sslmode=%v", config.Database, config.User, config.Password, config.Host, config.Port, config.SslMode))
+	if err != nil {
+		panicExit(err.Error())
+		return
 	}
 }
 
