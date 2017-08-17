@@ -17,11 +17,11 @@ func loginOrCreate(name, crypt, remoteAddr string) string {
 }
 
 func login(name, crypt, remoteAddr string) string {
-	has, encrypt := playerFromDatabase(name)
+	has, encrypt := playerCryptFromDatabase(name)
 	if has == false {
 		return ""
 	}
-	comparison := strings.Compare(crypt, encrypt)
+	comparison := strings.Compare(strings.TrimSpace(crypt), strings.TrimSpace(encrypt))
 	if comparison != 0 {
 		return ""
 	}
@@ -31,7 +31,7 @@ func login(name, crypt, remoteAddr string) string {
 }
 
 func createAndLogin(name, crypt, remoteAddr string) string {
-	exists, _ := playerFromDatabase(name)
+	exists, _ := playerCryptFromDatabase(name)
 	if exists {
 		return ""
 	}

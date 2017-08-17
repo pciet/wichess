@@ -3,9 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <title>wichess index</title>
+    <style>
+        div {
+            text-align: center;
+            margin: auto;
+            width: 100%;
+        }
+        .inline {
+            display: inline;
+        }
+        #games {
+            table-layout: fixed;
+            width: 512px;
+        }
+        #games tr {
+            height: 64px;
+        }
+        .point {
+            border: solid black 0.5px;
+            width: 64px;
+        }
+    </style>
+    <script type="text/javascript" src="/js/jquery-2.2.0.min.js"></script>
+    <script type="text/javascript">
+        var board = '';
+        board += '<table id="grid">';
+        for (var yrr = 7; yrr >= 0; yrr--) {
+            board += '<tr>';
+            for (var xcf = 0; xcf < 8; xcf++) {
+                board += '<td id="point'+(xcf+(yrr*8))+'" class="point"></td>';
+            }
+            board += '</tr>';
+        }
+        $('#games').html(board);
+    </script>
 </head>
 
 <body>
-
+    <div>
+        <div class="inline">{{.Wins}} Wins / {{.Losses}} Losses</div>
+        <div class="inline">Best Piece<br>{{.BestPieceName}}<br>{{.BestPieceTakes}} Takes</div>
+        <div id="games"></div>
+        <div>{{.Name}}</div>
 </body>
 </html>

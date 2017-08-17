@@ -29,7 +29,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func loginAttempt(w http.ResponseWriter, r *http.Request) {
-	if validSession(r) {
+	if validSession(r) != "" {
 		http.Redirect(w, r, "/", http.StatusFound)
 	}
 	err := r.ParseForm()

@@ -21,27 +21,41 @@ var (
 	sessions map[string]string
 	// map[name]key
 	keys map[string]string
+	// map[key]name
+	names map[string]string
 )
 
 func init() {
 	keys = make(map[string]string)
 	sessions = make(map[string]string)
+	names = make(map[string]string)
 }
 
-func validSession(r *http.Request) bool {
+func validSession(r *http.Request) string {
 	keyCookie, err := r.Cookie(key_cookie)
 	if err != nil {
-		return false
+		return ""
 	}
-	addr, has := sessions[keyCookie.Value]
+	key := keyCookie.Value
+	addr, has := sessions[key]
 	if has == false {
-		return false
+		return ""
 	}
 	if r.RemoteAddr != addr {
 		delete(sessions, keyCookie.Value)
-		return false
+		return ""
 	}
-	return true
+	return key
+}
+
+func clearClientSession(w http.ResponseWriter) {
+	http.SetCookie(w, &http.Cookie{
+		Name:     key_cookie, // from web_login.go
+		Value:    "",
+		Path:     "/",
+		HttpOnly: true,
+		Secure:   false, // TODO: set true after TLS certification
+	})
 }
 
 func newSession(name, key, address string) {
@@ -51,6 +65,7 @@ func newSession(name, key, address string) {
 	sessions[key] = address
 	// set new key for name
 	keys[name] = key
+	names[key] = name
 }
 
 func newSessionKey() string {
@@ -65,4 +80,8 @@ func newSessionKey() string {
 		return ""
 	}
 	return base64.StdEncoding.EncodeToString(key)
+}
+
+func nameFromSessionKey(key string) string {
+	return names[key]
 }

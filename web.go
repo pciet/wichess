@@ -5,9 +5,9 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
-	"text/template"
 )
 
 func executeWebTemplate(w http.ResponseWriter, file string, data interface{}) {
