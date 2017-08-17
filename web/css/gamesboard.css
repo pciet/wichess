@@ -1,0 +1,17 @@
+#grid {
+    table-layout: fixed;
+    width: 512px;
+}
+
+#grid tr {
+    height: 64px;
+}
+
+.point {
+    border: solid black 0.5px;
+    width: 64px;
+}
+
+.selected {
+    border: solid black 2px;
+}

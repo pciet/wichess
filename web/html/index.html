@@ -3,29 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <title>wichess index</title>
+    <link rel="stylesheet" type="text/css" href="/css/gamesboard.css">
     <style>
         div {
             text-align: center;
             margin: auto;
-            width: 100%;
+            width: 80%;
         }
         .inline {
             display: inline;
+            border: solid black 1px;
+            padding: 10px;
         }
-        #games {
-            table-layout: fixed;
-            width: 512px;
-        }
-        #games tr {
-            height: 64px;
-        }
-        .point {
-            border: solid black 0.5px;
-            width: 64px;
+        .spacer {
+            height: 20px;
         }
     </style>
     <script type="text/javascript" src="/js/jquery-2.2.0.min.js"></script>
     <script type="text/javascript">
+    var pointselected = null;
+    $(document).ready(function() {
         var board = '';
         board += '<table id="grid">';
         for (var yrr = 7; yrr >= 0; yrr--) {
@@ -35,15 +32,43 @@
             }
             board += '</tr>';
         }
+        board += '</table>';
         $('#games').html(board);
+
+        for (var i = 0; i < 64; i++) {
+            $('#point'+i).click({pointIndex: i}, function(eventData) {
+                var newpointselected = $('#point'+eventData.data.pointIndex);
+                if (newpointselected.is(pointselected)) {
+                    $('#navigation').html('');
+                    pointselected.toggleClass('selected');
+                    pointselected = null;
+                    return;
+                }
+                if (pointselected != null) {
+                    pointselected.toggleClass('selected');
+                }
+                pointselected = newpointselected;
+                $('#navigation').html('<input type="button" onclick="location.href='+eventData.data.pointIndex+'" value="Go To Board" class="travelbutton"/>');
+                pointselected.toggleClass('selected');
+            });
+        }
+    });
     </script>
 </head>
 
 <body>
+    <div class="spacer"></div>
     <div>
         <div class="inline">{{.Wins}} Wins / {{.Losses}} Losses</div>
-        <div class="inline">Best Piece<br>{{.BestPieceName}}<br>{{.BestPieceTakes}} Takes</div>
+        <div class="inline">Best Piece ({{.BestPieceName}}) has {{.BestPieceTakes}} Takes</div>
+    </div>
+    <div class="spacer"></div>
+    <div>
         <div id="games"></div>
-        <div>{{.Name}}</div>
+    </div>
+    <div class="spacer"></div>
+    <div id="navigation"></div>
+    <div class="spacer"></div>
+    <div>{{.Name}}</div>
 </body>
 </html>
