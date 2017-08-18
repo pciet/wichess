@@ -14,7 +14,7 @@
         }
         table {
             table-layout: fixed;
-            width: 100%;
+            width: 80%;
         }
         #slots tr {
             height: 64px;
@@ -23,17 +23,130 @@
             border: solid black 0.5px;
             width: 64px;
         }
+        .selected {
+            border: solid black 2px;
+        }
     </style>
     <script type="text/javascript" src="/js/jquery-2.2.0.min.js"></script>
     <script type="text/javascript">
-        $.get("pieces").done(function(data) {
-            var length = data.length;
-            var table = '<tr><td>Kind</td><td>Takes</td></tr>';
-            for (var i = 0; i < length; i++) {
-                table += '<tr><td>'+data[i].Kind+'</td><td>'+data[i].Takes+'</td></tr>';
+        var pieceType = {
+            ROOK: 1,
+            KNIGHT: 2,
+            BISHOP: 3,
+        };
+        var k = {
+            SWAP: 7,
+            LOCK: 8,
+            RECON: 9,
+            DETONATE: 10,
+            GHOST: 11,
+            STEAL: 12,
+            GUARD: 13,
+            RALLY: 14,
+            FORTIFY: 15,
+        };
+        function stringForKind(kind) {
+            switch(kind) {
+                case k.SWAP:
+                    return 'Swap';
+                case k.LOCK:
+                    return 'Lock';
+                case k.RECON:
+                    return 'Recon';
+                case k.DETONATE:
+                    return 'Detonate';
+                case k.GHOST:
+                    return 'Ghost';
+                case k.STEAL:
+                    return 'Steal';
+                case k.GUARD:
+                    return 'Guard';
+                case k.RALLY:
+                    return 'Rally';
+                case k.FORTIFY:
+                    return 'Fortify';
             }
-            $('#pieces').html(table);
+        }
+        var pieceCount = 0;
+        var pieces = null;
+        var pointselected = null;
+
+        $(document).ready(function() {
+            $.get("pieces").done(function(data) {
+                pieces = data;
+                pieceCount = data.length;
+                for (var i = 0; i < pieceCount; i++) {
+                    switch (pieces[i].Kind) {
+                        case k.SWAP:
+                        case k.LOCK:
+                        case k.RECON:
+                            pieces[i].PieceType = pieceType.KNIGHT;
+                            break;
+                        case k.DETONATE:
+                        case k.GHOST:
+                        case k.STEAL:
+                            pieces[i].PieceType = pieceType.BISHOP;
+                            break;
+                        case k.GUARD:
+                        case k.RALLY:
+                        case k.FORTIFY:
+                            pieces[i].PieceType = pieceType.ROOK;
+                            break;
+                    }
+                }
+                $('.point').click(function() {
+                    var newpointselected = $(this);
+                    if (newpointselected.hasClass('noselect')) {
+                        return;
+                    }
+                    if (newpointselected.is(pointselected)) {
+                        pointselected.toggleClass('selected');
+                        pointselected = null;
+                        $('#pieces').html('');
+                        return;
+                    }
+                    if (pointselected != null) {
+                        pointselected.toggleClass('selected');
+                    }
+                    pointselected = newpointselected;
+                    pointselected.toggleClass('selected');
+                    var kind;
+                    switch (pointselected.attr('id')) {
+                        case 'leftrook':
+                        case 'rightrook':
+                            kind = pieceType.ROOK;
+                            break;
+                        case 'leftknight':
+                        case 'rightknight':
+                            kind = pieceType.KNIGHT;
+                            break;
+                        case 'leftbishop':
+                        case 'rightbishop':
+                            kind = pieceType.BISHOP;
+                            break;
+                    }
+                    $('#pieces').html('');
+                    var table = '<tr><td></td><td>Kind</td><td>Takes</td></tr>';
+                    var has = false;
+                    for (var i = 0; i < pieceCount; i++) {
+                        if (pieces[i].PieceType != kind) {
+                            continue;
+                        }
+                        has = true;
+                        table += '<tr id="'+'p'+i+'"><td><input id="'+pieces[i].Identifier+'" type="button" value="Assign" onclick="assignPiece($(this));"/></td><td>'+stringForKind(pieces[i].Kind)+'</td><td>'+pieces[i].Takes+'</td></tr>';
+                    }
+                    if (has) $('#pieces').html(table);
+                    for (var i = 0; i < pieceCount; i++) {
+                        $('#p'+i).click(function() {
+                            $(this).toggleClass('selected');
+                        });
+                    }
+                });
+            });
         });
+        function assignPiece(element) {
+            console.log(element);
+        }
     </script>
 </head>
 
