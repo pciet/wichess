@@ -3,11 +3,17 @@
 
 package wichessing
 
-import ()
+import (
+	"crypto/rand"
+	"math"
+	"math/big"
+	prand "math/rand"
+)
 
 type Piece struct {
 	Kind
-	Takes int
+	Takes      int
+	Identifier int
 }
 
 func CopyFromPiece(from Piece, to *Piece) {
@@ -16,6 +22,8 @@ func CopyFromPiece(from Piece, to *Piece) {
 }
 
 type Kind int
+
+const kinds = 6
 
 const (
 	King Kind = iota + 1
@@ -42,4 +50,24 @@ func NameForKind(piece Kind) string {
 		return "Pawn"
 	}
 	return ""
+}
+
+var random *prand.Rand
+
+func init() {
+	seed, err := rand.Int(rand.Reader, big.NewInt(math.MaxInt64))
+	if err != nil {
+		panic(err.Error())
+	}
+	random = prand.New(prand.NewSource(seed.Int64()))
+}
+
+func randomKind() Kind {
+	return Kind(random.Int63n(kinds) + 1)
+}
+
+func RandomPiece() Piece {
+	return Piece{
+		Kind: randomKind(),
+	}
 }

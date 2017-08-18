@@ -13,7 +13,7 @@ CREATE TABLE Boards (
 );
 
 CREATE TABLE Games (
-    game_id INTEGER PRIMARY KEY,
+    game_id SERIAL PRIMARY KEY,
     white VARCHAR(64) NOT NULL,
     black VARCHAR(64) NOT NULL,
     s0 INTEGER, s1 INTEGER, s2 INTEGER, s3 INTEGER,
@@ -35,8 +35,9 @@ CREATE TABLE Games (
 );
 
 CREATE TABLE Pieces (
-    id INTEGER PRIMARY KEY,
+    piece_id SERIAL PRIMARY KEY,
     kind INTEGER,
     owner VARCHAR(64),
-    takes INTEGER
+    takes INTEGER,
+    ingame BOOLEAN
 );

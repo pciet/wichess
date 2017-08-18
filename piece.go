@@ -4,7 +4,9 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"net/http"
 
 	"github.com/pciet/wichess/wichessing"
 )
@@ -12,13 +14,69 @@ import (
 const (
 	database_piece_table = "pieces"
 
-	database_piece_table_kind_key  = "kind"
-	database_piece_table_owner_key = "owner"
-	database_piece_table_takes_key = "takes"
+	database_piece_table_id_key     = "piece_id"
+	database_piece_table_kind_key   = "kind"
+	database_piece_table_owner_key  = "owner"
+	database_piece_table_takes_key  = "takes"
+	database_piece_table_ingame_key = "ingame"
+
+	free_piece_slice_hint = 8
 )
 
+func freePiecesHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "GET" {
+		http.NotFound(w, r)
+		return
+	}
+	key := validSession(r)
+	if key == "" {
+		http.Redirect(w, r, "/login", http.StatusFound)
+		return
+	}
+	name := nameFromSessionKey(key)
+	if name == "" {
+		clearClientSession(w)
+		http.Redirect(w, r, "/login", http.StatusFound)
+		return
+	}
+	free := freePiecesForPlayerFromDatabase(name)
+	json, err := json.Marshal(free)
+	if err != nil {
+		panicExit(err.Error())
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(json)
+}
+
+func freePiecesForPlayerFromDatabase(name string) []wichessing.Piece {
+	rows, err := database.Query(fmt.Sprintf("SELECT %v, %v, %v FROM %v WHERE %v=$1 AND %v=$2", database_piece_table_id_key, database_piece_table_kind_key, database_piece_table_takes_key, database_piece_table, database_piece_table_owner_key, database_piece_table_ingame_key), name, false)
+	if err != nil {
+		panicExit(err.Error())
+		return nil
+	}
+	defer rows.Close()
+	pieces := make([]wichessing.Piece, 0, free_piece_slice_hint)
+	i := 0
+	for rows.Next() {
+		pieces = append(pieces, wichessing.Piece{})
+		err = rows.Scan(&pieces[i].Identifier, &pieces[i].Kind, &pieces[i].Takes)
+		if err != nil {
+			panicExit(err.Error())
+			return nil
+		}
+		i++
+	}
+	err = rows.Err()
+	if err != nil {
+		panicExit(err.Error())
+		return nil
+	}
+	return pieces
+}
+
 func bestPieceForPlayerFromDatabase(name string) wichessing.Piece {
-	rows, err := database.Query(fmt.Sprintf(" SELECT %v, %v FROM %v WHERE %v=$1", database_piece_table_kind_key, database_piece_table_takes_key, database_piece_table, database_piece_table_owner_key), name)
+	rows, err := database.Query(fmt.Sprintf("SELECT %v, %v FROM %v WHERE %v=$1", database_piece_table_kind_key, database_piece_table_takes_key, database_piece_table, database_piece_table_owner_key), name)
 	if err != nil {
 		panicExit(err.Error())
 		return wichessing.Piece{}
@@ -42,4 +100,13 @@ func bestPieceForPlayerFromDatabase(name string) wichessing.Piece {
 		return wichessing.Piece{}
 	}
 	return p
+}
+
+func newPlayerPiecesIntoDatabase(name string) {
+	piece := wichessing.RandomPiece()
+	_, err := database.Exec(fmt.Sprintf("INSERT INTO %v (%v, %v, %v, %v) VALUES ($1, $2, $3, $4)", database_piece_table, database_piece_table_kind_key, database_piece_table_owner_key, database_piece_table_takes_key, database_piece_table_ingame_key), piece.Kind, name, 0, false)
+	if err != nil {
+		panicExit(err.Error())
+		return
+	}
 }

@@ -47,6 +47,7 @@ func newPlayerInDatabase(name, crypt string) {
 		panicExit(err.Error())
 		return
 	}
+	newPlayerPiecesIntoDatabase(name)
 	return
 }
 

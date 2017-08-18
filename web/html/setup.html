@@ -3,9 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <title>wichess setup</title>
+    <style>
+        div {
+            text-align: center;
+            margin: auto;
+            width: 100%;
+        }
+        .spacer {
+            height: 20px;
+        }
+        table {
+            table-layout: fixed;
+            width: 100%;
+        }
+        #slots tr {
+            height: 64px;
+        }
+        .point {
+            border: solid black 0.5px;
+            width: 64px;
+        }
+    </style>
+    <script type="text/javascript" src="/js/jquery-2.2.0.min.js"></script>
+    <script type="text/javascript">
+        $.get("pieces").done(function(data) {
+            var length = data.length;
+            var table = '<tr><td>Kind</td><td>Takes</td></tr>';
+            for (var i = 0; i < length; i++) {
+                table += '<tr><td>'+data[i].Kind+'</td><td>'+data[i].Takes+'</td></tr>';
+            }
+            $('#pieces').html(table);
+        });
+    </script>
 </head>
 
 <body>
-
+<div class="spacer"></div>
+<div>
+    <table id="slots">
+        <tr>
+            <td id="leftrook" class="point"></td>
+            <td id="leftknight" class="point"></td>
+            <td id="leftbishop" class="point"></td>
+            <td class="point noselect"></td>
+            <td class="point noselect"></td>
+            <td id="rightbishop" class="point"></td>
+            <td id="rightknight" class="point"></td>
+            <td id="rightrook" class="point"></td>
+        </tr>
+    </table>
+</div>
+<div class="spacer"></div>
+<div>
+    <table id="pieces"></table>
+</div>
 </body>
 </html>
