@@ -17,8 +17,6 @@ const (
 )
 
 var (
-	// map[key]remoteAddr
-	sessions map[string]string
 	// map[name]key
 	keys map[string]string
 	// map[key]name
@@ -27,7 +25,6 @@ var (
 
 func init() {
 	keys = make(map[string]string)
-	sessions = make(map[string]string)
 	names = make(map[string]string)
 }
 
@@ -36,16 +33,11 @@ func validSession(r *http.Request) string {
 	if err != nil {
 		return ""
 	}
-	key := keyCookie.Value
-	addr, has := sessions[key]
-	if has == false {
-		return ""
+	_, has := names[keyCookie.Value]
+	if has {
+		return keyCookie.Value
 	}
-	if r.RemoteAddr != addr {
-		delete(sessions, keyCookie.Value)
-		return ""
-	}
-	return key
+	return ""
 }
 
 func clearClientSession(w http.ResponseWriter) {
@@ -58,12 +50,11 @@ func clearClientSession(w http.ResponseWriter) {
 	})
 }
 
-func newSession(name, key, address string) {
-	// invalidate previous key for name
-	delete(sessions, keys[name])
-	// add new session
-	sessions[key] = address
-	// set new key for name
+func newSession(name, key string) {
+	oldkey, has := keys[name]
+	if has {
+		delete(names, oldkey)
+	}
 	keys[name] = key
 	names[key] = name
 }

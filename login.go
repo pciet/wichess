@@ -26,7 +26,7 @@ func login(name, crypt, remoteAddr string) string {
 		return ""
 	}
 	sessionKey := newSessionKey()
-	newSession(name, sessionKey, remoteAddr)
+	newSession(name, sessionKey)
 	return sessionKey
 }
 

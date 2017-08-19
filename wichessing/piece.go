@@ -92,12 +92,12 @@ func init() {
 	random = prand.New(prand.NewSource(seed.Int64()))
 }
 
-func randomKind() Kind {
-	return Kind(random.Int63n(kinds)-6) + 1 + 6
+func randomHeroKind() Kind {
+	return Kind(random.Int63n(kinds-6)) + 1 + 6
 }
 
 func RandomPiece() Piece {
 	return Piece{
-		Kind: randomKind(),
+		Kind: randomHeroKind(),
 	}
 }
