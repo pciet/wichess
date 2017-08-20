@@ -101,12 +101,3 @@ func bestPieceForPlayerFromDatabase(name string) wichessing.Piece {
 	}
 	return p
 }
-
-func newPlayerPiecesIntoDatabase(name string) {
-	piece := wichessing.RandomPiece()
-	_, err := database.Exec(fmt.Sprintf("INSERT INTO %v (%v, %v, %v, %v) VALUES ($1, $2, $3, $4)", database_piece_table, database_piece_table_kind_key, database_piece_table_owner_key, database_piece_table_takes_key, database_piece_table_ingame_key), piece.Kind, name, 0, false)
-	if err != nil {
-		panicExit(err.Error())
-		return
-	}
-}
