@@ -15,8 +15,7 @@ const (
 	request_right_bishop = "rbishop"
 	request_right_knight = "rknight"
 	request_right_rook   = "rrook"
-
-	request_point = "point"
+	request_point        = "point"
 )
 
 func requestMatchHandler(w http.ResponseWriter, r *http.Request) {
@@ -35,7 +34,7 @@ func requestMatchHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/login", http.StatusFound)
 		return
 	}
-	var lr, lk, lb, rb, rk, rr int
+	var lr, lk, lb, rb, rk, rr, slot int
 	var err error
 	if r.FormValue(request_left_rook) != "" {
 		lr, err = strconv.Atoi(r.FormValue(request_left_rook))
@@ -79,5 +78,20 @@ func requestMatchHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	requestMatch(name, lr, lk, lb, rb, rk, rr)
+	if r.FormValue(request_point) != "" {
+		slot, err = strconv.Atoi(r.FormValue(request_point))
+		if err != nil {
+			http.NotFound(w, r)
+			return
+		}
+	}
+	requestMatch(name, gameSetup{
+		slot:          slot,
+		leftRookID:    lr,
+		leftKnightID:  lk,
+		leftBishopID:  lb,
+		rightBishopID: rb,
+		rightKnightID: rk,
+		rightRookID:   rr,
+	})
 }

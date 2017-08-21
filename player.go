@@ -5,8 +5,6 @@ package main
 
 import (
 	"fmt"
-
-	"github.com/pciet/wichess/wichessing"
 )
 
 const (
@@ -85,16 +83,5 @@ func playerRecordFromDatabase(name string) record {
 	return record{
 		wins:   wins,
 		losses: losses,
-	}
-}
-
-func newPlayerPiecesIntoDatabase(name string) {
-	for i := 0; i < initial_piece_count; i++ {
-		piece := wichessing.RandomPiece()
-		_, err := database.Exec(fmt.Sprintf("INSERT INTO %v (%v, %v, %v, %v) VALUES ($1, $2, $3, $4)", database_piece_table, database_piece_table_kind_key, database_piece_table_owner_key, database_piece_table_takes_key, database_piece_table_ingame_key), piece.Kind, name, 0, false)
-		if err != nil {
-			panicExit(err.Error())
-			return
-		}
 	}
 }

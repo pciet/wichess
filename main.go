@@ -11,8 +11,12 @@ func main() {
 	initializeDatabaseConnection()
 
 	http.HandleFunc("/", indexHandler)
+	http.HandleFunc("/indexs", indexWebsocketHandler)
+
 	http.HandleFunc("/login", loginHandler)
+
 	http.HandleFunc("/pieces", freePiecesHandler)
+
 	http.HandleFunc("/request", requestMatchHandler)
 
 	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("web/js"))))

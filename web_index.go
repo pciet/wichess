@@ -81,3 +81,24 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		GameID: gameID,
 	})
 }
+
+// Serves updates to pending and active games.
+func indexWebsocketHandler(w http.ResponseWriter, r *http.Request) {
+	key := validSession(r)
+	if key == "" {
+		http.Redirect(w, r, "/login", http.StatusFound)
+		return
+	}
+	name := nameFromSessionKey(key)
+	if name == "" {
+		clearClientSession(w)
+		http.Redirect(w, r, "/login", http.StatusFound)
+		return
+	}
+	conn, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+	listeningForMatchChanges(name, conn)
+}

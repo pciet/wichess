@@ -21,9 +21,42 @@
         table {
             border-collapse: collapse;
         }
+        .pendingGame {
+            background-color: yellow;
+        }
+        .activeGame {
+            background-color: green;
+        }
     </style>
     <script type="text/javascript" src="/js/jquery-2.2.0.min.js"></script>
     <script type="text/javascript">
+    var waitingForMatch = false;
+    var ws = new WebSocket("ws://localhost:8080/indexs");
+    ws.onopen = function(event) {
+        ws.send(JSON.stringify({ States: null }));
+    }
+    ws.onmessage = function(event) {
+        var m = JSON.parse(event.data);
+        if (Array.isArray(m)) {
+            for (var i = 0; i < m.length; i++) {
+                setGameSlot(m[i]);
+                if (m[i].GameID == 0) {
+                    waitingForMatch = true;
+                }
+            }
+        } else {
+            setGameSlot(m);
+        }
+    }
+    function setGameSlot(gameInfoObject) {
+        var point = $('#point'+gameInfoObject.Slot);
+        if (gameInfoObject.GameID == 0) {
+            point.toggleClass('pendingGame').html('Waiting');
+        } else {
+            point.toggleClass('activeGame').html('Opponent ' + gameInfoObject.Opponent);;
+        }
+
+    }
     var pointselected = null;
     $(document).ready(function() {
         var board = '';
@@ -41,6 +74,12 @@
         for (var i = 0; i < 64; i++) {
             $('#point'+i).click({pointIndex: i}, function(eventData) {
                 var newpointselected = $('#point'+eventData.data.pointIndex);
+                if (newpointselected.hasClass('pendingGame')) {
+                    return;
+                }
+                if ((newpointselected.hasClass('activeGame') == false) && waitingForMatch) {
+                    return;
+                }
                 if (newpointselected.is(pointselected)) {
                     $('#navigation').html('');
                     pointselected.toggleClass('selected');
