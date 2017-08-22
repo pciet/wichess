@@ -29,22 +29,18 @@ func initializeDatabaseConnection() {
 	file, err := ioutil.ReadFile(database_config_file)
 	if err != nil {
 		panicExit(err.Error())
-		return
 	}
 	var config databaseConfiguration
 	err = json.Unmarshal(file, &config)
 	if err != nil {
 		panicExit(err.Error())
-		return
 	}
 	database, err = sql.Open("postgres", fmt.Sprintf("dbname=%v user=%v password=%v host=%v port=%v sslmode=%v", config.Database, config.User, config.Password, config.Host, config.Port, config.SslMode))
 	if err != nil {
 		panicExit(err.Error())
-		return
 	}
 	err = database.Ping()
 	if err != nil {
 		panicExit(err.Error())
-		return
 	}
 }

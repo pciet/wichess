@@ -3,53 +3,39 @@
 
 package main
 
-import (
-	"fmt"
-)
+import ()
 
 const (
-	database_board_table = "boards"
+	board_table = "boards"
 
-	database_board_table_name_key       = "player"
-	database_board_table_index_key      = "slot"
-	database_board_table_identifier_key = "game_id"
+	board_name_key       = "player"
+	board_slot_key       = "slot"
+	board_identifier_key = "game_id"
 )
 
+const game_id_query = "SELECT " + board_identifier_key + " FROM " + board_table + " WHERE " + board_name_key + "=$1 AND " + board_slot_key + "=$2"
+
 func gameIdentifierAtPlayerBoardIndexFromDatabase(name string, index int) int {
-	rows, err := database.Query(fmt.Sprintf("SELECT %v FROM %v WHERE %v=$1 AND %v=$2", database_board_table_identifier_key, database_board_table, database_board_table_name_key, database_board_table_index_key), name, index)
-	if err != nil {
-		panicExit(err.Error())
-		return 0
-	}
-	defer rows.Close()
-	exists := rows.Next()
-	if exists == false {
-		return 0
-	}
+	row := database.QueryRow(game_id_query, name, index)
 	var id int
-	err = rows.Scan(&id)
+	err := row.Scan(&id)
 	if err != nil {
-		panicExit(err.Error())
-		return 0
-	}
-	if rows.Next() {
-		panicExit(fmt.Sprintf("multiple game database entries for %v at %v", name, index))
 		return 0
 	}
 	return id
 }
 
+const new_game_board_insert = "INSERT INTO " + board_table + "(" + board_name_key + ", " + board_slot_key + ", " + board_identifier_key + ") VALUES ($1, $2, $3)"
+
 func newBoardIntoDatabase(player1 string, player1setup gameSetup, player2 string, player2setup gameSetup) {
 	id := newGameIntoDatabase(player1, player1setup, player2, player2setup)
-	_, err := database.Exec(fmt.Sprintf("INSERT INTO %v (%v, %v, %v) VALUES ($1, $2, $3)", database_board_table, database_board_table_name_key, database_board_table_index_key, database_board_table_identifier_key), player1, player1setup.slot, id)
+	_, err := database.Exec(new_game_board_insert, player1, player1setup.slot, id)
 	if err != nil {
 		panicExit(err.Error())
-		return
 	}
-	_, err = database.Exec(fmt.Sprintf("INSERT INTO %v (%v, %v, %v) VALUES ($1, $2, $3)", database_board_table, database_board_table_name_key, database_board_table_index_key, database_board_table_identifier_key), player2, player2setup.slot, id)
+	_, err = database.Exec(new_game_board_insert, player2, player2setup.slot, id)
 	if err != nil {
 		panicExit(err.Error())
-		return
 	}
 }
 
@@ -59,14 +45,16 @@ type boardInfo struct {
 	Opponent string
 }
 
+const select_board_slot_and_id_query = "SELECT " + board_slot_key + ", " + board_identifier_key + " FROM " + board_table + " WHERE " + board_name_key + "=$1"
+
+// Can return metadata on up to 64 boards.
 func playerBoardInfo(name string) []boardInfo {
 	// pending matches without an opponent
 	boards := pendingMatchesFor(name)
 	// active games
-	rows, err := database.Query(fmt.Sprintf("SELECT %v, %v FROM %v WHERE %v=$1", database_board_table_index_key, database_board_table_identifier_key, database_board_table, database_board_table_name_key), name)
+	rows, err := database.Query(select_board_slot_and_id_query, name)
 	if err != nil {
 		panicExit(err.Error())
-		return nil
 	}
 	defer rows.Close()
 	for rows.Next() {
@@ -74,7 +62,6 @@ func playerBoardInfo(name string) []boardInfo {
 		err = rows.Scan(&bi.Slot, &bi.GameID)
 		if err != nil {
 			panicExit(err.Error())
-			return nil
 		}
 		bi.Opponent = opponentFor(name, bi.GameID)
 		boards = append(boards, bi)
@@ -82,7 +69,6 @@ func playerBoardInfo(name string) []boardInfo {
 	err = rows.Err()
 	if err != nil {
 		panicExit(err.Error())
-		return nil
 	}
 	return boards
 }

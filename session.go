@@ -64,11 +64,9 @@ func newSessionKey() string {
 	count, err := rand.Read(key)
 	if err != nil {
 		panicExit(err.Error())
-		return ""
 	}
 	if count != key_length {
 		panicExit(fmt.Sprintf("count %v does not match key length %v", count, key_length))
-		return ""
 	}
 	return base64.StdEncoding.EncodeToString(key)
 }

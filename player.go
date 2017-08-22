@@ -3,54 +3,40 @@
 
 package main
 
-import (
-	"fmt"
-)
+import ()
 
 const (
-	database_player_table = "players"
+	player_table = "players"
 
-	database_player_table_name_key   = "name"
-	database_player_table_crypt_key  = "crypt"
-	database_player_table_wins_key   = "wins"
-	database_player_table_losses_key = "losses"
+	player_name_key   = "name"
+	player_crypt_key  = "crypt"
+	player_wins_key   = "wins"
+	player_losses_key = "losses"
 
 	initial_piece_count = 6
 )
 
+const player_crypt_query = "SELECT " + player_crypt_key + " FROM " + player_table + " WHERE " + player_name_key + "=$1"
+
 func playerCryptFromDatabase(name string) (bool, string) {
-	rows, err := database.Query(fmt.Sprintf("SELECT %v FROM %v WHERE %v=$1", database_player_table_crypt_key, database_player_table, database_player_table_name_key), name)
-	if err != nil {
-		panicExit(err.Error())
-		return false, ""
-	}
-	defer rows.Close()
-	exists := rows.Next()
-	if exists == false {
-		return false, ""
-	}
+	row := database.QueryRow(player_crypt_query, name)
 	var c string
-	err = rows.Scan(&c)
+	err := row.Scan(&c)
 	if err != nil {
-		panicExit(err.Error())
-		return false, ""
-	}
-	if rows.Next() {
-		panicExit(fmt.Sprintf("duplicate database entries for %v", name))
 		return false, ""
 	}
 	return true, c
 
 }
 
+const new_player_insert = "INSERT INTO " + player_table + "(" + player_name_key + ", " + player_crypt_key + ", " + player_wins_key + ", " + player_losses_key + ") VALUES ($1, $2, $3, $4)"
+
 func newPlayerInDatabase(name, crypt string) {
-	_, err := database.Exec(fmt.Sprintf("INSERT INTO %v (%v, %v, %v, %v) VALUES ($1, $2, $3, $4)", database_player_table, database_player_table_name_key, database_player_table_crypt_key, database_player_table_wins_key, database_player_table_losses_key), name, crypt, 0, 0)
+	_, err := database.Exec(new_player_insert, name, crypt, 0, 0)
 	if err != nil {
 		panicExit(err.Error())
-		return
 	}
 	newPlayerPiecesIntoDatabase(name)
-	return
 }
 
 type record struct {
@@ -58,27 +44,14 @@ type record struct {
 	losses int
 }
 
+const player_record_query = "SELECT " + player_wins_key + ", " + player_losses_key + " FROM " + player_table + " WHERE " + player_name_key + "=$1"
+
 func playerRecordFromDatabase(name string) record {
-	rows, err := database.Query(fmt.Sprintf("SELECT %v, %v FROM %v WHERE %v=$1", database_player_table_wins_key, database_player_table_losses_key, database_player_table, database_player_table_name_key), name)
-	if err != nil {
-		panicExit(err.Error())
-		return record{}
-	}
-	defer rows.Close()
-	exists := rows.Next()
-	if exists == false {
-		panicExit(fmt.Sprintf("player %v not in database", name))
-		return record{}
-	}
+	row := database.QueryRow(player_record_query, name)
 	var wins, losses int
-	err = rows.Scan(&wins, &losses)
+	err := row.Scan(&wins, &losses)
 	if err != nil {
 		panicExit(err.Error())
-		return record{}
-	}
-	if rows.Next() {
-		panicExit(fmt.Sprintf("duplicate database entries for %v", name))
-		return record{}
 	}
 	return record{
 		wins:   wins,

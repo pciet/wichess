@@ -62,7 +62,6 @@ func encryptPassword(word string) string {
 	crypt, err := bcrypt.GenerateFromPassword([]byte(word), bcrypt.DefaultCost)
 	if err != nil {
 		panicExit(err.Error())
-		return ""
 	}
 	return string(crypt)
 }

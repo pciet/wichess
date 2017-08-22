@@ -21,12 +21,10 @@ func executeWebTemplate(w http.ResponseWriter, file string, data interface{}) {
 	t, err := template.ParseFiles(file)
 	if err != nil {
 		panicExit(fmt.Sprintf("failed to parse %v: %v", file, err.Error()))
-		return
 	}
 	err = t.Execute(w, data)
 	if err != nil {
 		panicExit(fmt.Sprintf("failed to execute template %v: %v", file, err.Error()))
-		return
 	}
 }
 

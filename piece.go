@@ -4,56 +4,27 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-	"net/http"
-
 	"github.com/pciet/wichess/wichessing"
 )
 
 const (
-	database_piece_table = "pieces"
+	piece_table = "pieces"
 
-	database_piece_table_id_key     = "piece_id"
-	database_piece_table_kind_key   = "kind"
-	database_piece_table_owner_key  = "owner"
-	database_piece_table_takes_key  = "takes"
-	database_piece_table_ingame_key = "ingame"
+	piece_id_key     = "piece_id"
+	piece_kind_key   = "kind"
+	piece_owner_key  = "owner"
+	piece_takes_key  = "takes"
+	piece_ingame_key = "ingame"
 
 	free_piece_slice_hint = 8
 )
 
-func freePiecesHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "GET" {
-		http.NotFound(w, r)
-		return
-	}
-	key := validSession(r)
-	if key == "" {
-		http.Redirect(w, r, "/login", http.StatusFound)
-		return
-	}
-	name := nameFromSessionKey(key)
-	if name == "" {
-		clearClientSession(w)
-		http.Redirect(w, r, "/login", http.StatusFound)
-		return
-	}
-	free := freePiecesForPlayerFromDatabase(name)
-	json, err := json.Marshal(free)
-	if err != nil {
-		panicExit(err.Error())
-		return
-	}
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(json)
-}
+const free_pieces_query = "SELECT " + piece_id_key + ", " + piece_kind_key + ", " + piece_takes_key + " FROM " + piece_table + " WHERE " + piece_owner_key + "=$1 AND " + piece_ingame_key + "=$2"
 
 func freePiecesForPlayerFromDatabase(name string) []wichessing.Piece {
-	rows, err := database.Query(fmt.Sprintf("SELECT %v, %v, %v FROM %v WHERE %v=$1 AND %v=$2", database_piece_table_id_key, database_piece_table_kind_key, database_piece_table_takes_key, database_piece_table, database_piece_table_owner_key, database_piece_table_ingame_key), name, false)
+	rows, err := database.Query(free_pieces_query, name, false)
 	if err != nil {
 		panicExit(err.Error())
-		return nil
 	}
 	defer rows.Close()
 	pieces := make([]wichessing.Piece, 0, free_piece_slice_hint)
@@ -63,23 +34,22 @@ func freePiecesForPlayerFromDatabase(name string) []wichessing.Piece {
 		err = rows.Scan(&pieces[i].Identifier, &pieces[i].Kind, &pieces[i].Takes)
 		if err != nil {
 			panicExit(err.Error())
-			return nil
 		}
 		i++
 	}
 	err = rows.Err()
 	if err != nil {
 		panicExit(err.Error())
-		return nil
 	}
 	return pieces
 }
 
+const players_best_pieces_query = "SELECT " + piece_kind_key + ", " + piece_takes_key + " FROM " + piece_table + " WHERE " + piece_owner_key + "=$1"
+
 func bestPieceForPlayerFromDatabase(name string) wichessing.Piece {
-	rows, err := database.Query(fmt.Sprintf("SELECT %v, %v FROM %v WHERE %v=$1", database_piece_table_kind_key, database_piece_table_takes_key, database_piece_table, database_piece_table_owner_key), name)
+	rows, err := database.Query(players_best_pieces_query, name)
 	if err != nil {
 		panicExit(err.Error())
-		return wichessing.Piece{}
 	}
 	defer rows.Close()
 	p := wichessing.Piece{}
@@ -88,7 +58,6 @@ func bestPieceForPlayerFromDatabase(name string) wichessing.Piece {
 		err = rows.Scan(&newp.Kind, &newp.Takes)
 		if err != nil {
 			panicExit(err.Error())
-			return wichessing.Piece{}
 		}
 		if newp.Takes > p.Takes {
 			wichessing.CopyFromPiece(newp, &p)
@@ -97,18 +66,18 @@ func bestPieceForPlayerFromDatabase(name string) wichessing.Piece {
 	err = rows.Err()
 	if err != nil {
 		panicExit(err.Error())
-		return wichessing.Piece{}
 	}
 	return p
 }
 
+const new_piece_insert = "INSERT INTO " + piece_table + "(" + piece_kind_key + ", " + piece_owner_key + ", " + piece_takes_key + ", " + piece_ingame_key + ") VALUES ($1, $2, $3, $4)"
+
 func newPlayerPiecesIntoDatabase(name string) {
 	for i := 0; i < initial_piece_count; i++ {
 		piece := wichessing.RandomPiece()
-		_, err := database.Exec(fmt.Sprintf("INSERT INTO %v (%v, %v, %v, %v) VALUES ($1, $2, $3, $4)", database_piece_table, database_piece_table_kind_key, database_piece_table_owner_key, database_piece_table_takes_key, database_piece_table_ingame_key), piece.Kind, name, 0, false)
+		_, err := database.Exec(new_piece_insert, piece.Kind, name, 0, false)
 		if err != nil {
 			panicExit(err.Error())
-			return
 		}
 	}
 }
