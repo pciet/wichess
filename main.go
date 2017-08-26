@@ -19,6 +19,8 @@ func main() {
 
 	http.HandleFunc("/request", requestMatchHandler)
 
+	http.HandleFunc("/games/", gamesHandler)
+
 	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("web/js"))))
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("web/css"))))
 	http.Handle("/img/", http.StripPrefix("/img/", http.FileServer(http.Dir("web/img"))))

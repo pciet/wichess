@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	"github.com/gorilla/websocket"
+	"github.com/pciet/wichess/wichessing"
 )
 
 type gameSetup struct {
@@ -29,6 +30,48 @@ type listeningPlayer struct {
 var listeningPlayers = make(map[string]listeningPlayer)
 var listeningPlayersLock = &sync.Mutex{}
 
+func setWhite(s *gameSetup) {
+	if s.leftRookID == 0 {
+		s.leftRookID = int(wichessing.WhiteRook)
+	}
+	if s.leftKnightID == 0 {
+		s.leftKnightID = int(wichessing.WhiteKnight)
+	}
+	if s.leftBishopID == 0 {
+		s.leftBishopID = int(wichessing.WhiteBishop)
+	}
+	if s.rightBishopID == 0 {
+		s.rightBishopID = int(wichessing.WhiteBishop)
+	}
+	if s.rightKnightID == 0 {
+		s.rightKnightID = int(wichessing.WhiteKnight)
+	}
+	if s.rightRookID == 0 {
+		s.rightRookID = int(wichessing.WhiteRook)
+	}
+}
+
+func setBlack(s *gameSetup) {
+	if s.leftRookID == 0 {
+		s.leftRookID = int(wichessing.BlackRook)
+	}
+	if s.leftKnightID == 0 {
+		s.leftKnightID = int(wichessing.BlackKnight)
+	}
+	if s.leftBishopID == 0 {
+		s.leftBishopID = int(wichessing.BlackBishop)
+	}
+	if s.rightBishopID == 0 {
+		s.rightBishopID = int(wichessing.BlackBishop)
+	}
+	if s.rightKnightID == 0 {
+		s.rightKnightID = int(wichessing.BlackKnight)
+	}
+	if s.rightRookID == 0 {
+		s.rightRookID = int(wichessing.BlackRook)
+	}
+}
+
 // An identifier of 0 means request the normal basic piece instead of a hero piece.
 func requestMatch(name string, config gameSetup) {
 	pendingMatchesLock.Lock()
@@ -48,6 +91,8 @@ func requestMatch(name string, config gameSetup) {
 			continue
 		}
 		pendingMatches[name] = config
+		setWhite(&config)
+		setBlack(&value)
 		newBoardIntoDatabase(name, config, key, value)
 		notifyMatchMadeToListeners(name, config.slot, key, pendingMatches[key].slot)
 		delete(pendingMatches, name)

@@ -3,9 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <title>wichess game</title>
+    <link rel="stylesheet" type="text/css" href="/css/gameboard.css">
+    <style>
+    div {
+        text-align: center;
+        margin: auto;
+        width: 80%;
+    }
+    .spacer {
+        height: 20px;
+    }
+    table {
+        border-collapse: collapse;
+    }
+    .pieceimg {
+        width: 100%;
+        height: auto;
+    }
+    </style>
+    <script type="text/javascript" src="/js/jquery-2.2.0.min.js"></script>
+    <script type="text/javascript">
+    var k = {
+        WHITE_KING: 7,
+        WHITE_QUEEN: 8,
+        WHITE_ROOK: 9,
+        WHITE_BISHOP: 10,
+        WHITE_KNIGHT: 11,
+        WHITE_PAWN: 12,
+        BLACK_KING: 13,
+        BLACK_QUEEN: 14,
+        BLACK_ROOK: 15,
+        BLACK_BISHOP: 16,
+        BLACK_KNIGHT: 17,
+        BLACK_PAWN: 18
+    };
+    function imageNameForKind(kind) {
+        switch (kind) {
+            case k.WHITE_KING:
+                return 'wking.png';
+            case k.WHITE_QUEEN:
+                return 'wqueen.png';
+            case k.WHITE_ROOK:
+                return 'wrook.png';
+            case k.WHITE_BISHOP:
+                return 'wbishop.png';
+            case k.WHITE_KNIGHT:
+                return 'wknight.png';
+            case k.WHITE_PAWN:
+                return 'wpawn.png';
+            case k.BLACK_KING:
+                return 'bking.png';
+            case k.BLACK_QUEEN:
+                return 'bqueen.png';
+            case k.BLACK_ROOK:
+                return 'brook.png';
+            case k.BLACK_BISHOP:
+                return 'bbishop.png';
+            case k.BLACK_KNIGHT:
+                return 'bknight.png';
+            case k.BLACK_PAWN:
+                return 'bpawn.png';
+        }
+    }
+    function heroKind(kind) {
+        if (kind > k.BLACK_PAWN) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    $(document).ready(function() {
+        var board = '';
+        board += '<table id="grid">';
+        for (var yrr = 7; yrr >= 0; yrr--) {
+            board += '<tr>';
+            for (var xcf = 0; xcf < 8; xcf++) {
+                board += '<td id="point'+(xcf+(yrr*8))+'" class="point"></td>';
+            }
+            board += '</tr>';
+        }
+        board += '</table>';
+        $('#board').html(board);
+
+        var game_id = {{.GameID}};
+        var player = {{.Name}};
+        var opponent = '';
+        var white = '';
+        var black = '';
+        $.get('/games/'+game_id).done(function(data) {
+            white = data.White;
+            black = data.Black;
+            if (white == player) {
+                opponent = black;
+            } else {
+                opponent = white;
+            }
+            for (var i = 0; i < data.Points.length; i++) {
+                if (data.Points[i] == 0) {
+                    continue;
+                } else if (heroKind(data.Points[i])) {
+                    $.get('/pieces/'+data.Points[i]).done(function(data) {
+                        console.log(data);
+                    });
+                } else {
+                    $('#point'+i).html('<img class="pieceimg" src="img/'+imageNameForKind(data.Points[i])+'">');
+                }
+            }
+        });
+    });
+    </script>
 </head>
 
 <body>
-
+    <div class="spacer"></div>
+    <div id="board"></div>
+    <div class="spacer"></div>
+    <div>{{.Name}}</div>
 </body>
 </html>

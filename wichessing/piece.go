@@ -23,7 +23,7 @@ func CopyFromPiece(from Piece, to *Piece) {
 
 type Kind int
 
-const kinds = 15
+const kinds = 27
 
 const (
 	King Kind = iota + 1
@@ -32,6 +32,18 @@ const (
 	Bishop
 	Knight
 	Pawn
+	WhiteKing
+	WhiteQueen
+	WhiteRook
+	WhiteBishop
+	WhiteKnight
+	WhitePawn
+	BlackKing
+	BlackQueen
+	BlackRook
+	BlackBishop
+	BlackKnight
+	BlackPawn
 	// knight kinds
 	Swap
 	Lock
@@ -46,8 +58,8 @@ const (
 	Fortify
 )
 
-func NameForKind(piece Kind) string {
-	switch piece {
+func NameForKind(k Kind) string {
+	switch k {
 	case King:
 		return "King"
 	case Queen:
@@ -93,7 +105,7 @@ func init() {
 }
 
 func randomHeroKind() Kind {
-	return Kind(random.Int63n(kinds-6)) + 1 + 6
+	return Kind(random.Int63n(9) + 1 + 18)
 }
 
 func RandomPiece() Piece {
