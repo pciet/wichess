@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{{.Name}} Viewer</title>
+    <style>
+        div {
+            text-align: center;
+            margin: auto;
+            width: 80%;
+        }
+        table {
+            table-layout: fixed;
+            border-collapse: collapse;
+            width: 512px;
+        }
+        tr {
+            height: 64px;
+        }
+        img {
+            width: 100%;
+            height: auto;
+        }
+        .point {
+            border: solid black 0.5px;
+            width: 64px;
+        }
+    </style>
+    <script type="text/javascript" src="../jquery-2.2.0.min.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function() {
+        var board = '';
+        board += '<table>';
+        for (var yrr = 7; yrr >= 0; yrr--) {
+            board += '<tr>';
+            for (var xcf = 0; xcf < 8; xcf++) {
+                board += '<td class="point"><img src="'+{{.Name}}+'_'+(xcf+(yrr*8))+'.png"></td>';
+            }
+            board += '</tr>';
+        }
+        board += '</table>';
+        $('#images').html(board);
+    });
+    </script>
+</head>
+<body>
+    <div>
+        <div id="images"></div>
+    </div>
+</body>
+</html>
