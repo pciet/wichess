@@ -15,16 +15,19 @@ import (
 )
 
 const (
-	incremental_offset = 0.15
+	incremental_offset = 0.01
+	incremental_rotate = 6
 
-	camera_height = 3
+	camera_height = 2.5
 
 	camera_file = "camera.inc"
 	viewer_file = "viewer.html"
 	output_dir  = "img"
 
-	povray_width  = 256
-	povray_height = 256
+	povray_width     = 256
+	povray_height    = 256
+	povray_quality   = 11
+	povray_antialias = "off"
 )
 
 // Generate a viewer page, then generate camera.inc and render 64 times.
@@ -77,6 +80,8 @@ func generateImages(forPiece string) error {
 			fmt.Sprintf("Output_File_Name=%v/%v_%v.png", output_dir, forPiece, i),
 			fmt.Sprintf("-w%v", povray_width),
 			fmt.Sprintf("-h%v", povray_height),
+			fmt.Sprintf("Quality=%v", povray_quality),
+			fmt.Sprintf("Antialias=%v", povray_antialias),
 			fmt.Sprintf("%v.pov", forPiece))
 		log.Printf("%+v", cmd.Args)
 		pl, err := cmd.CombinedOutput()
@@ -101,23 +106,29 @@ func generateCameraInc(forPoint int) error {
 	}
 	file := float64(forPoint % 8)
 	rank := float64(forPoint / 8)
-	var xOffset, zOffset float64
+	var xOffset, zOffset, xRotate, yRotate float64
 	if rank < 4 {
 		zOffset = (4 - rank) * incremental_offset
+		xRotate = (4 - rank) * incremental_rotate
 		if file < 4 { // x,z
 			xOffset = (4 - file) * incremental_offset
+			yRotate = (4 - file) * incremental_rotate * -1
 		} else { // -x,z
 			xOffset = (file - 3) * incremental_offset * -1
+			yRotate = (file - 3) * incremental_rotate
 		}
 	} else {
 		zOffset = (rank - 3) * incremental_offset * -1
+		xRotate = (rank - 3) * incremental_rotate * -1
 		if file < 4 { // x,-z
 			xOffset = (4 - file) * incremental_offset
+			yRotate = (4 - file) * incremental_rotate * -1
 		} else { // -x,-z
 			xOffset = (file - 3) * incremental_offset * -1
+			yRotate = (file - 3) * incremental_rotate
 		}
 	}
-	_, err = f.Write([]byte(fmt.Sprintf("camera {\nlocation <0,%v,0>\nlook_at <0,0,0>\ntranslate <%v,0,%v>\n}", camera_height, xOffset, zOffset)))
+	_, err = f.Write([]byte(fmt.Sprintf("camera {\nrotate <%v,0,%v>\nlocation <0,%v,0>\nlook_at <0,0,0>\ntranslate <%v,0,%v>\n}", xRotate, yRotate, camera_height, xOffset, zOffset)))
 	if err != nil {
 		return err
 	}

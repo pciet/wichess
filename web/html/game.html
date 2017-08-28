@@ -37,33 +37,47 @@
         BLACK_KNIGHT: 17,
         BLACK_PAWN: 18
     };
-    function imageNameForKind(kind) {
+    function imageNameForKind(kind, point) {
+        var name;
         switch (kind) {
             case k.WHITE_KING:
-                return 'wking.png';
+                name = 'wking_'+point;
+                break;
             case k.WHITE_QUEEN:
-                return 'wqueen.png';
+                name = 'wqueen_'+point;
+                break;
             case k.WHITE_ROOK:
-                return 'wrook.png';
+                name = 'wrook_'+point;
+                break;
             case k.WHITE_BISHOP:
-                return 'wbishop.png';
+                name = 'wbishop_'+point;
+                break;
             case k.WHITE_KNIGHT:
-                return 'wknight.png';
+                name = 'wknight_'+point;
+                break;
             case k.WHITE_PAWN:
-                return 'wpawn.png';
+                name = 'wpawn_'+point;
+                break;
             case k.BLACK_KING:
-                return 'bking.png';
+                name = 'bking_'+point;
+                break;
             case k.BLACK_QUEEN:
-                return 'bqueen.png';
+                name = 'bqueen_'+point;
+                break;
             case k.BLACK_ROOK:
-                return 'brook.png';
+                name = 'brook_'+point;
+                break;
             case k.BLACK_BISHOP:
-                return 'bbishop.png';
+                name = 'bbishop_'+point;
+                break;
             case k.BLACK_KNIGHT:
-                return 'bknight.png';
+                name = 'bknight_'+point;
+                break;
             case k.BLACK_PAWN:
-                return 'bpawn.png';
+                name = 'bpawn_'+point;
+                break;
         }
+        return name + '.png';
     }
     function heroKind(kind) {
         if (kind > k.BLACK_PAWN) {
@@ -106,7 +120,7 @@
                         console.log(data);
                     });
                 } else {
-                    $('#point'+i).html('<img class="pieceimg" src="img/'+imageNameForKind(data.Points[i])+'">');
+                    $('#point'+i).html('<img class="pieceimg" src="img/'+imageNameForKind(data.Points[i], i)+'">');
                 }
             }
         });
