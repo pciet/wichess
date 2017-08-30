@@ -24,60 +24,81 @@
     <script type="text/javascript" src="/js/jquery-2.2.0.min.js"></script>
     <script type="text/javascript">
     var k = {
-        WHITE_KING: 7,
-        WHITE_QUEEN: 8,
-        WHITE_ROOK: 9,
-        WHITE_BISHOP: 10,
-        WHITE_KNIGHT: 11,
-        WHITE_PAWN: 12,
-        BLACK_KING: 13,
-        BLACK_QUEEN: 14,
-        BLACK_ROOK: 15,
-        BLACK_BISHOP: 16,
-        BLACK_KNIGHT: 17,
-        BLACK_PAWN: 18
+        KING: 1,
+        QUEEN: 2,
+        ROOK: 3,
+        BISHOP: 4,
+        KNIGHT: 5,
+        PAWN: 6,
+        SWAP: 7,
+        LOCK: 8,
+        RECON: 9,
+        DETONATE: 10,
+        GHOST: 11,
+        STEAL: 12,
+        GUARD: 13,
+        RALLY: 14,
+        FORTIFY: 15
     };
-    function imageNameForKind(kind, point) {
+    var o = {
+        WHITE: 0,
+        BLACK: 1
+    };
+    function imageNameForKind(kind, point, orientation) {
         var name;
+        if (orientation == o.WHITE) {
+            name = 'w';
+        } else {
+            name = 'b';
+        }
         switch (kind) {
-            case k.WHITE_KING:
-                name = 'wking_'+point;
+            case k.KING:
+                name += 'king';
                 break;
-            case k.WHITE_QUEEN:
-                name = 'wqueen_'+point;
+            case k.QUEEN:
+                name += 'queen';
                 break;
-            case k.WHITE_ROOK:
-                name = 'wrook_'+point;
+            case k.ROOK:
+                name += 'rook';
                 break;
-            case k.WHITE_BISHOP:
-                name = 'wbishop_'+point;
+            case k.BISHOP:
+                name += 'bishop';
                 break;
-            case k.WHITE_KNIGHT:
-                name = 'wknight_'+point;
+            case k.KNIGHT:
+                name += 'knight';
                 break;
-            case k.WHITE_PAWN:
-                name = 'wpawn_'+point;
+            case k.PAWN:
+                name += 'pawn';
                 break;
-            case k.BLACK_KING:
-                name = 'bking_'+point;
+            case k.SWAP:
+                name += 'swap';
                 break;
-            case k.BLACK_QUEEN:
-                name = 'bqueen_'+point;
+            case k.LOCK:
+                name += 'lock';
                 break;
-            case k.BLACK_ROOK:
-                name = 'brook_'+point;
+            case k.RECON:
+                name += 'recon';
                 break;
-            case k.BLACK_BISHOP:
-                name = 'bbishop_'+point;
+            case k.DETONATE:
+                name += 'detonate';
                 break;
-            case k.BLACK_KNIGHT:
-                name = 'bknight_'+point;
+            case k.GHOST:
+                name += 'ghost';
                 break;
-            case k.BLACK_PAWN:
-                name = 'bpawn_'+point;
+            case k.STEAL:
+                name += 'steal';
+                break;
+            case k.GUARD:
+                name += 'guard';
+                break;
+            case RALLY:
+                name += 'rally';
+                break;
+            case FORTIFY:
+                name += 'fortify';
                 break;
         }
-        return name + '.png';
+        return name + '_' + point + '.png';
     }
     function heroKind(kind) {
         if (kind > k.BLACK_PAWN) {
@@ -113,14 +134,10 @@
                 opponent = white;
             }
             for (var i = 0; i < data.Points.length; i++) {
-                if (data.Points[i] == 0) {
+                if (data.Points[i].Kind == 0) {
                     continue;
-                } else if (heroKind(data.Points[i])) {
-                    $.get('/pieces/'+data.Points[i]).done(function(data) {
-                        console.log(data);
-                    });
                 } else {
-                    $('#point'+i).html('<img class="pieceimg" src="img/'+imageNameForKind(data.Points[i], i)+'">');
+                    $('#point'+i).html('<img class="pieceimg" src="img/'+imageNameForKind(data.Points[i].Kind, i, data.Points[i].Orientation)+'">');
                 }
             }
         });

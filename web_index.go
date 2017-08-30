@@ -6,8 +6,6 @@ package main
 import (
 	"net/http"
 	"strconv"
-
-	"github.com/pciet/wichess/wichessing"
 )
 
 const (
@@ -56,7 +54,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 			Name:           name,
 			Wins:           record.wins,
 			Losses:         record.losses,
-			BestPieceName:  wichessing.NameForKind(piece.Kind),
+			BestPieceName:  nameForKind(piece.Kind),
 			BestPieceTakes: piece.Takes,
 		})
 		return
