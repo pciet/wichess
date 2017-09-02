@@ -20,6 +20,7 @@ func main() {
 	http.HandleFunc("/request", requestMatchHandler)
 
 	http.HandleFunc("/games/", gamesHandler)
+	http.HandleFunc("/moves/", movesHandler)
 
 	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("web/js"))))
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("web/css"))))

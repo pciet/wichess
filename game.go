@@ -54,8 +54,34 @@ func decodedPoints(pts [64]pieceEncoding) [64]piece {
 	var ret [64]piece
 	for i := 0; i < 64; i++ {
 		ret[i] = pts[i].decode()
+		ret[i].Piece = ret[i].Piece.SetKindFlags()
 	}
 	return ret
+}
+
+// The map keys are wichessing.AbsPoint converted to "x/file-y/rank" formatted string.
+func (g game) moves() map[string]map[string]struct{} {
+	var board wichessing.Board
+	for i := 0; i < 64; i++ {
+		var p *wichessing.Piece
+		if g.Points[i].Piece.Kind == 0 {
+			p = nil
+		} else {
+			p = &g.Points[i].Piece
+		}
+		board[i] = wichessing.Point{
+			Piece: p,
+			AbsPoint: wichessing.AbsPoint{
+				File: wichessing.FileFromIndex(uint8(i)),
+				Rank: wichessing.RankFromIndex(uint8(i)),
+			},
+		}
+	}
+	moves := make(map[string]map[string]struct{})
+	for point, set := range board.Moves() {
+		moves[point.String()] = set.String()
+	}
+	return moves
 }
 
 const game_query = "SELECT * FROM " + games_table + " WHERE " + games_identifier + "=$1"

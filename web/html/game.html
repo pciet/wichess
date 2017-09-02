@@ -20,6 +20,9 @@
         width: 100%;
         height: auto;
     }
+    .move {
+        border: 2px solid black;
+    }
     </style>
     <script type="text/javascript" src="/js/jquery-2.2.0.min.js"></script>
     <script type="text/javascript">
@@ -100,13 +103,6 @@
         }
         return name + '_' + point + '.png';
     }
-    function heroKind(kind) {
-        if (kind > k.BLACK_PAWN) {
-            return true;
-        } else {
-            return false;
-        }
-    }
     $(document).ready(function() {
         var board = '';
         board += '<table id="grid">';
@@ -141,6 +137,28 @@
                 }
             }
         });
+        var Moves = null;
+        $.get('/moves/'+game_id).done(function(data) {
+            Moves = data;
+            for (var point in data) {
+                if (data.hasOwnProperty(point) == false) {
+                    continue;
+                }
+                $('#point'+addrStringToIndex(point)).mouseover({addr: point}, function(event) {
+                    for (var hp in Moves[event.data.addr]) {
+                        $('#point'+addrStringToIndex(hp)).toggleClass('move');
+                    }
+                }).mouseout({addr: point}, function(event) {
+                    for (var hp in Moves[event.data.addr]) {
+                        $('#point'+addrStringToIndex(hp)).toggleClass('move');
+                    }
+                });
+            }
+        });
+        function addrStringToIndex(str) {
+            var address = str.split('-');
+            return parseInt(address[0], 10) + (8 * parseInt(address[1], 10))
+        }
     });
     </script>
 </head>

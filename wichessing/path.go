@@ -8,7 +8,7 @@ import (
 )
 
 // This function will truncate moves that leave the board and convert the defined relative points to actual board points but does not remove points with other pieces or other similar constraints.
-func TruncatedAbsPathsForKind(the Kind, from AbsPoint) AbsPathSetMap {
+func TruncatedAbsPathsForKind(the Kind, from AbsPoint, with Orientation) AbsPathSetMap {
 	absmap := make(AbsPathSetMap)
 	for movetype, paths := range RelPathMapForKind(the) {
 		availablepaths := make(AbsPathSet)
@@ -19,7 +19,12 @@ func TruncatedAbsPathsForKind(the Kind, from AbsPoint) AbsPathSetMap {
 				if (absfile > 7) || (absfile < 0) {
 					break
 				}
-				absrank := int8(from.Rank) + point.YOffset
+				var absrank int8
+				if with == White {
+					absrank = int8(from.Rank) + point.YOffset
+				} else {
+					absrank = int8(from.Rank) - point.YOffset
+				}
 				if (absrank > 7) || (absrank < 0) {
 					break
 				}

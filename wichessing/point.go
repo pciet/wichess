@@ -3,7 +3,9 @@
 
 package wichessing
 
-import ()
+import (
+	"fmt"
+)
 
 type Point struct {
 	*Piece // nil for no piece
@@ -23,6 +25,26 @@ type RelPoint struct {
 
 type AbsPointSet map[*AbsPoint]struct{}
 
+func (s AbsPointSet) String() map[string]struct{} {
+	m := make(map[string]struct{})
+	for p, _ := range s {
+		m[p.String()] = struct{}{}
+	}
+	return m
+}
+
 func (p AbsPoint) Index() uint8 {
 	return (p.File + (8 * p.Rank))
+}
+
+func FileFromIndex(i uint8) uint8 {
+	return i % 8
+}
+
+func RankFromIndex(i uint8) uint8 {
+	return i / 8
+}
+
+func (p AbsPoint) String() string {
+	return fmt.Sprintf("%v-%v", p.File, p.Rank)
 }

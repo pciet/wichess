@@ -10,8 +10,9 @@ import ()
 type Piece struct {
 	Kind
 	Orientation
-	Moved bool
-	Ghost bool // can move through other pieces
+	Moved   bool
+	Ghost   bool // can move through other pieces
+	MustEnd bool // can only move to last point in path
 }
 
 type Orientation int
@@ -43,3 +44,11 @@ const (
 	Rally
 	Fortify
 )
+
+func (the Piece) SetKindFlags() Piece {
+	if the.Kind == Knight {
+		the.Ghost = true
+		the.MustEnd = true
+	}
+	return the
+}
