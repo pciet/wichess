@@ -1,24 +1,15 @@
-#declare Neck = difference {
-    box { 0.4, -0.4 }
-    torus { 0.9, 0.75 }
-    translate <0, 0.5, 0>
-}
-
-#declare Base = cylinder {
-    <0,0,0>, <0,0.1,0>, 0.3
-}
+#include "piece.inc"
 
 #declare Cap = cylinder {
-    <0,0.9,0>, <0,0.95,0>, 0.3
+    <0,0.6,0>, <0,0.65,0>, 0.28
 }
 
 #declare Pawn = merge {
-    object { Base }
-    object { Neck }
+    object { ShortBody }
     object { Cap }
     sphere {
         0, 0.1
-        translate <0,1,0>
+        translate <0,0.65,0>
     }
 }
 

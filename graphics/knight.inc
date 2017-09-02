@@ -373,5 +373,6 @@
 #declare Knight = merge {
     object{Knight_Base}
     object{Knight_Mid}
-    scale<.45,.45,.45>
+    scale 0.7
+    translate <0,-0.8,0>
 }
