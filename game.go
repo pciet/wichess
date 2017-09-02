@@ -36,6 +36,17 @@ func opponentFor(name string, gameID int) string {
 	return ""
 }
 
+// White, Black.
+func playersFor(gameID int) (string, string) {
+	row := database.QueryRow(game_players_query, gameID)
+	var white, black string
+	err := row.Scan(&white, &black)
+	if err != nil {
+		panicExit(err.Error())
+	}
+	return white, black
+}
+
 type encodedGame struct {
 	ID     int
 	White  string

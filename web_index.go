@@ -27,8 +27,10 @@ type setupTemplate struct {
 }
 
 type gameTemplate struct {
-	Name   string
+	White  string
+	Black  string
 	GameID int
+	Name   string
 }
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
@@ -74,9 +76,12 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
+	white, black := playersFor(gameID)
 	executeWebTemplate(w, game_template, gameTemplate{
-		Name:   name,
+		White:  white,
+		Black:  black,
 		GameID: gameID,
+		Name:   name,
 	})
 }
 

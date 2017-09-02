@@ -3,18 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <title>wichess game</title>
-    <link rel="stylesheet" type="text/css" href="/css/gameboard.css">
     <style>
     div {
         text-align: center;
-        margin: auto;
-        width: 80%;
+        margin: 0 auto;
+        width: 100%;
+    }
+    table {
+        table-layout: fixed;
+        border-collapse: collapse;
+        width: 512px;
+        margin: 0 auto;
+    }
+    tr {
+        height: 64px;
+    }
+    .point {
+        width: 64px;
+        border: 0.5px solid black;
     }
     .spacer {
         height: 20px;
-    }
-    table {
-        border-collapse: collapse;
     }
     .pieceimg {
         width: 100%;
@@ -165,8 +174,10 @@
 
 <body>
     <div class="spacer"></div>
+    <div>{{.White}}</div>
+    <div class="spacer"></div>
     <div id="board"></div>
     <div class="spacer"></div>
-    <div>{{.Name}}</div>
+    <div>{{.Black}}</div>
 </body>
 </html>
