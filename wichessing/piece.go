@@ -11,8 +11,8 @@ type Piece struct {
 	Kind
 	Orientation
 	Moved   bool
-	Ghost   bool // can move through other pieces
-	MustEnd bool // can only move to last point in path
+	Ghost   bool `json:"-"` // can move through other pieces
+	MustEnd bool `json:"-"` // can only move to last point in path
 }
 
 type Orientation int

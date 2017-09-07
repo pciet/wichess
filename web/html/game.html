@@ -16,101 +16,95 @@
         margin: 0 auto;
     }
     tr {
-        height: 64px;
+        height: 66px;
     }
     .point {
-        width: 64px;
-        border: 0.5px solid black;
+        width: 66px;
+        border: 1px solid #f4f4f4;
     }
     .spacer {
         height: 20px;
     }
     .pieceimg {
-        width: 100%;
-        height: auto;
+        width: 64px;
+        height: 64px;
     }
-    .move {
-        border: 2px solid black;
+    .hovered {
+        outline: 2px solid black;
+        outline-offset: -1px;
+    }
+    .hoveredopp {
+        outline: 2px dotted black;
+        outline-offset: -1px;
+    }
+    .selected {
+        outline: 2px solid black;
+        outline-offset: -1px;
+    }
+    .selectedopp {
+        outline: 2px dotted black;
+        outline-offset: -1px;
     }
     </style>
     <script type="text/javascript" src="/js/jquery-2.2.0.min.js"></script>
+    <script type="text/javascript" src="/js/pieces.js"></script>
     <script type="text/javascript">
-    var k = {
-        KING: 1,
-        QUEEN: 2,
-        ROOK: 3,
-        BISHOP: 4,
-        KNIGHT: 5,
-        PAWN: 6,
-        SWAP: 7,
-        LOCK: 8,
-        RECON: 9,
-        DETONATE: 10,
-        GHOST: 11,
-        STEAL: 12,
-        GUARD: 13,
-        RALLY: 14,
-        FORTIFY: 15
-    };
-    var o = {
-        WHITE: 0,
-        BLACK: 1
-    };
-    function imageNameForKind(kind, point, orientation) {
-        var name;
-        if (orientation == o.WHITE) {
-            name = 'w';
-        } else {
-            name = 'b';
-        }
-        switch (kind) {
-            case k.KING:
-                name += 'king';
-                break;
-            case k.QUEEN:
-                name += 'queen';
-                break;
-            case k.ROOK:
-                name += 'rook';
-                break;
-            case k.BISHOP:
-                name += 'bishop';
-                break;
-            case k.KNIGHT:
-                name += 'knight';
-                break;
-            case k.PAWN:
-                name += 'pawn';
-                break;
-            case k.SWAP:
-                name += 'swap';
-                break;
-            case k.LOCK:
-                name += 'lock';
-                break;
-            case k.RECON:
-                name += 'recon';
-                break;
-            case k.DETONATE:
-                name += 'detonate';
-                break;
-            case k.GHOST:
-                name += 'ghost';
-                break;
-            case k.STEAL:
-                name += 'steal';
-                break;
-            case k.GUARD:
-                name += 'guard';
-                break;
-            case RALLY:
-                name += 'rally';
-                break;
-            case FORTIFY:
-                name += 'fortify';
-                break;
-        }
-        return name + '_' + point + '.png';
+    var game_id = {{.GameID}};
+    var Player = {{.Name}};
+    var PlayerOrientation;
+    var Opponent = '';
+    var White = '';
+    var Black = '';
+    var Turn = '';
+    var Board = null;
+    var Selected = null;
+    var Moves = null;
+    function setPieceImage(index, kind, orientation) {
+        $('#point'+index).html('<img class="pieceimg" src="img/'+imageNameForKind(kind, index, orientation)+'">');
+    }
+    function unsetPieceImage(index) {
+        $('#point'+index).html('');
+    }
+    function getMoves() {
+        $.get('/moves/'+game_id).done(function(data) {
+            Moves = data;
+        });
+    }
+    function requestMove(from, to) {
+        $.post('/move/'+game_id, {From: from, To: to}).done(function(data) {
+            for (var point in data) {
+                var index = addrStringToIndex(point);
+                if (data[point].Kind == 0) {
+                    unsetPieceImage(index);
+                } else {
+                    setPieceImage(index, data[point].Kind, data[point].Orientation);
+                }
+                Board[index] = data[point];
+            }
+            $.get('/moves/'+game_id).done(function(data) {
+                $('.selected').removeClass('selected');
+                $('.hovered').removeClass('hovered');
+                $('.hoveredopp').removeClass('hoveredopp');
+                Selected = null;
+                Moves = data;
+            });
+            if (Turn == o.WHITE) {
+                $('#whiteactive').html('');
+                $('#blackactive').html('*');
+                Turn = o.BLACK;
+            } else {
+                $('#whiteactive').html('*');
+                $('#blackactive').html('');
+                Turn = o.WHITE;
+            }
+        });
+    }
+    function addrStringToIndex(str) {
+        var address = str.split('-');
+        return parseInt(address[0], 10) + (8 * parseInt(address[1], 10))
+    }
+    function indexToAddrString(i) {
+        return (i%8).toString() + '-' + (Math.floor(i/8)).toString();
     }
     $(document).ready(function() {
         var board = '';
@@ -124,60 +118,126 @@
         }
         board += '</table>';
         $('#board').html(board);
-
-        var game_id = {{.GameID}};
-        var player = {{.Name}};
-        var opponent = '';
-        var white = '';
-        var black = '';
         $.get('/games/'+game_id).done(function(data) {
-            white = data.White;
-            black = data.Black;
-            if (white == player) {
-                opponent = black;
+            Board = data.Points;
+            White = data.White;
+            Black = data.Black;
+            if (White == Player) {
+                Opponent = Black;
+                PlayerOrientation = o.WHITE;
+                $('#youwhite').html('You -> ');
             } else {
-                opponent = white;
+                Opponent = White;
+                PlayerOrientation = o.BLACK;
+                $('#youblack').html('You -> ');
             }
-            for (var i = 0; i < data.Points.length; i++) {
-                if (data.Points[i].Kind == 0) {
+            if (data.Active == White) {
+                Turn = o.WHITE;
+                $('#whiteactive').html('*');
+            } else {
+                Turn = o.BLACK;
+                $('#blackactive').html('*');
+            }
+            for (var i = 0; i < Board.length; i++) {
+                if (Board[i].Kind == 0) {
                     continue;
                 } else {
-                    $('#point'+i).html('<img class="pieceimg" src="img/'+imageNameForKind(data.Points[i].Kind, i, data.Points[i].Orientation)+'">');
+                    setPieceImage(i, Board[i].Kind, Board[i].Orientation);
                 }
             }
         });
-        var Moves = null;
         $.get('/moves/'+game_id).done(function(data) {
             Moves = data;
-            for (var point in data) {
-                if (data.hasOwnProperty(point) == false) {
-                    continue;
-                }
-                $('#point'+addrStringToIndex(point)).mouseover({addr: point}, function(event) {
-                    for (var hp in Moves[event.data.addr]) {
-                        $('#point'+addrStringToIndex(hp)).toggleClass('move');
+            for (var i = 0; i < 64; i++) {
+                $('#point'+i).click({Index: i}, function(event) {
+                    var index = event.data.Index;
+                    var className = '';
+                    if ((Selected != index) && ($('#point'+index).hasClass('selected'))) {
+                        if (Turn == PlayerOrientation) {
+                            requestMove(Selected, index);
+                        }
+                        return;
                     }
-                }).mouseout({addr: point}, function(event) {
-                    for (var hp in Moves[event.data.addr]) {
-                        $('#point'+addrStringToIndex(hp)).toggleClass('move');
+                    if (Board[index].Kind == 0) {
+                        return;
+                    }
+                    if (Moves[indexToAddrString(index)] == null) {
+                        return;
+                    }
+                    if (Selected != null) {
+                        if (Board[Selected].Orientation == PlayerOrientation) {
+                            className = 'selected';
+                        } else {
+                            className = 'selectedopp';
+                        }
+                        $('#point'+Selected).removeClass(className);
+                        for (var point in Moves[indexToAddrString(Selected)]) {
+                            $('#point'+addrStringToIndex(point)).removeClass(className);
+                        }
+                        if (Selected == index) {
+                            Selected = null;
+                            return;
+                        }
+                    }
+                    if (Board[index].Orientation == PlayerOrientation) {
+                        className = 'selected';
+                    } else {
+                        className = 'selectedopp';
+                    }
+                    $('#point'+index).addClass(className);
+                    for (var point in Moves[indexToAddrString(index)]) {
+                        $('#point'+addrStringToIndex(point)).addClass(className);
+                    }
+                    Selected = index;
+                }).mouseenter({Index: i}, function(event) {
+                    var index = event.data.Index;
+                    var className;
+                    if (Board[index].Kind == 0) {
+                        return;
+                    }
+                    if (Moves[indexToAddrString(index)] == null) {
+                        return;
+                    }
+                    if (Board[index].Orientation == PlayerOrientation) {
+                        className = 'hovered';
+                    } else {
+                        className = 'hoveredopp';
+                    }
+                    $('#point'+index).addClass(className);
+                    for (var point in Moves[indexToAddrString(index)]) {
+                        $('#point'+addrStringToIndex(point)).addClass(className);
+                    }
+                }).mouseleave({Index: i}, function(event) {
+                    var index = event.data.Index;
+                    var className;
+                    if (Board[index].Kind == 0) {
+                        return;
+                    }
+                    if (Moves[indexToAddrString(index)] == null) {
+                        return;
+                    }
+                    if (Board[index].Orientation == PlayerOrientation) {
+                        className = 'hovered';
+                    } else {
+                        className = 'hoveredopp';
+                    }
+                    $('#point'+index).removeClass(className);
+                    for (var point in Moves[indexToAddrString(index)]) {
+                        $('#point'+addrStringToIndex(point)).removeClass(className);
                     }
                 });
             }
         });
-        function addrStringToIndex(str) {
-            var address = str.split('-');
-            return parseInt(address[0], 10) + (8 * parseInt(address[1], 10))
-        }
     });
     </script>
 </head>
 
 <body>
     <div class="spacer"></div>
-    <div>{{.White}}</div>
+    <div><span id="youblack"></span><span>{{.Black}}</span><span id="blackactive"></span></div>
     <div class="spacer"></div>
     <div id="board"></div>
     <div class="spacer"></div>
-    <div>{{.Black}}</div>
+    <div><span id="youwhite"></span><span>{{.White}}</span><span id="whiteactive"></span></div>
 </body>
 </html>

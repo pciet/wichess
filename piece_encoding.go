@@ -4,6 +4,8 @@
 package main
 
 import (
+	"strconv"
+
 	"github.com/pciet/wichess/wichessing"
 )
 
@@ -41,6 +43,10 @@ func (e pieceEncoding) decode() piece {
 			Kind:        wichessing.Kind((e >> kind_bit) & kind_mask),
 		},
 	}
+}
+
+func (e pieceEncoding) String() string {
+	return strconv.Itoa(int(e))
 }
 
 func btoi(b bool) int {

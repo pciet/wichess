@@ -12,6 +12,8 @@ type Point struct {
 	AbsPoint
 }
 
+type PointSet map[*Point]struct{}
+
 // Absolute Point represents a specific point on the board.
 type AbsPoint struct {
 	File uint8
@@ -47,4 +49,17 @@ func RankFromIndex(i uint8) uint8 {
 
 func (p AbsPoint) String() string {
 	return fmt.Sprintf("%v-%v", p.File, p.Rank)
+}
+
+func IndexFromAddressString(address string) uint8 {
+	var file, rank int
+	_, err := fmt.Sscanf(address, "%d-%d", &file, &rank)
+	if err != nil {
+		panic(err.Error())
+	}
+	return IndexFromFileAndRank(uint8(file), uint8(rank))
+}
+
+func IndexFromFileAndRank(file, rank uint8) uint8 {
+	return file + (rank * 8)
 }

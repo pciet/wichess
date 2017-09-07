@@ -9,6 +9,33 @@ import (
 
 type Board [64]Point
 
+// An empty PointSet return indicates no changes to the board - an invalid move.
+// The board itself is not returned so no modifications are made to the receiver Board.
+func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) PointSet {
+	if b[from.Index()].Piece == nil {
+		return PointSet{}
+	}
+	if b[from.Index()].Orientation != turn {
+		return PointSet{}
+	}
+	if b[to.Index()].Piece != nil {
+		if b[to.Index()].Orientation == turn {
+			return PointSet{}
+		}
+	}
+	set := make(PointSet)
+	set[&Point{
+		Piece:    nil,
+		AbsPoint: from,
+	}] = struct{}{}
+	b[from.Index()].Piece.Moved = true
+	set[&Point{
+		Piece:    b[from.Index()].Piece,
+		AbsPoint: to,
+	}] = struct{}{}
+	return set
+}
+
 func (b Board) Moves() map[AbsPoint]AbsPointSet {
 	sets := make(map[AbsPoint]AbsPointSet)
 	for _, point := range b {
