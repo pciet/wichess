@@ -59,6 +59,10 @@
     var Board = null;
     var Selected = null;
     var Moves = null;
+    var ws = new WebSocket("ws://localhost:8080/moven/"+game_id);
+    ws.onmessage = function(event) {
+        makeMove(JSON.parse(event.data));
+    }
     function setPieceImage(index, kind, orientation) {
         $('#point'+index).html('<img class="pieceimg" src="img/'+imageNameForKind(kind, index, orientation)+'">');
     }
@@ -71,33 +75,34 @@
         });
     }
     function requestMove(from, to) {
-        $.post('/move/'+game_id, {From: from, To: to}).done(function(data) {
-            for (var point in data) {
-                var index = addrStringToIndex(point);
-                if (data[point].Kind == 0) {
-                    unsetPieceImage(index);
-                } else {
-                    setPieceImage(index, data[point].Kind, data[point].Orientation);
-                }
-                Board[index] = data[point];
-            }
-            $.get('/moves/'+game_id).done(function(data) {
-                $('.selected').removeClass('selected');
-                $('.hovered').removeClass('hovered');
-                $('.hoveredopp').removeClass('hoveredopp');
-                Selected = null;
-                Moves = data;
-            });
-            if (Turn == o.WHITE) {
-                $('#whiteactive').html('');
-                $('#blackactive').html('*');
-                Turn = o.BLACK;
+        $.post('/move/'+game_id, {From: from, To: to}).done(makeMove);
+    }
+    function makeMove(diff) {
+        for (var point in diff) {
+            var index = addrStringToIndex(point);
+            if (diff[point].Kind == 0) {
+                unsetPieceImage(index);
             } else {
-                $('#whiteactive').html('*');
-                $('#blackactive').html('');
-                Turn = o.WHITE;
+                setPieceImage(index, diff[point].Kind, diff[point].Orientation);
             }
+            Board[index] = diff[point];
+        }
+        $.get('/moves/'+game_id).done(function(data) {
+            $('.selected').removeClass('selected');
+            $('.hovered').removeClass('hovered');
+            $('.hoveredopp').removeClass('hoveredopp');
+            Selected = null;
+            Moves = data;
         });
+        if (Turn == o.WHITE) {
+            $('#whiteactive').html('');
+            $('#blackactive').html('*');
+            Turn = o.BLACK;
+        } else {
+            $('#whiteactive').html('*');
+            $('#blackactive').html('');
+            Turn = o.WHITE;
+        }
     }
     function addrStringToIndex(str) {
         var address = str.split('-');

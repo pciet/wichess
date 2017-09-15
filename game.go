@@ -7,6 +7,7 @@ import (
 	"bytes"
 	"fmt"
 
+	"github.com/gorilla/websocket"
 	"github.com/pciet/wichess/wichessing"
 )
 
@@ -65,6 +66,18 @@ type game struct {
 	Points [64]piece
 }
 
+type gameListeners struct {
+	white chan map[string]piece
+	black chan map[string]piece
+}
+
+// TODO: mutex
+var gameListening map[int]*gameListeners
+
+func init() {
+	gameListening = make(map[int]*gameListeners)
+}
+
 func decodedPoints(pts [64]pieceEncoding) [64]piece {
 	var ret [64]piece
 	for i := 0; i < 64; i++ {
@@ -101,7 +114,7 @@ func absPoint(index int) wichessing.AbsPoint {
 	}
 }
 
-// Returns address that have changed, Kind 0 piece for a now empty point.
+// Returns address that have changed, Kind 0 piece for a now empty point, but does not update the board points.
 func (g game) move(from, to int, mover string) map[string]piece {
 	var nextMover string
 	var orientation wichessing.Orientation
@@ -134,6 +147,17 @@ func (g game) move(from, to int, mover string) map[string]piece {
 		}
 	}
 	writeGameChangesToDatabase(g.ID, diff, nextMover)
+	if len(diff) != 0 {
+		if orientation == wichessing.White {
+			if gameListening[g.ID].black != nil {
+				gameListening[g.ID].black <- diff
+			}
+		} else {
+			if gameListening[g.ID].white != nil {
+				gameListening[g.ID].white <- diff
+			}
+		}
+	}
 	return diff
 }
 
@@ -160,6 +184,37 @@ func (g game) moves() map[string]map[string]struct{} {
 		moves[point.String()] = set.String()
 	}
 	return moves
+}
+
+func listeningToGame(name string, white string, black string, id int, socket *websocket.Conn) {
+	// TODO: remove game from this map when finished
+	_, has := gameListening[id]
+	if has == false {
+		gameListening[id] = &gameListeners{}
+	}
+	var l chan map[string]piece
+	if name == white {
+		gameListening[id].white = make(chan map[string]piece)
+		l = gameListening[id].white
+	} else if name == black {
+		gameListening[id].black = make(chan map[string]piece)
+		l = gameListening[id].black
+	} else {
+		panicExit("unexpected name " + name)
+	}
+	go func(listenTo chan map[string]piece, conn *websocket.Conn) {
+		for {
+			err := conn.WriteJSON(<-listenTo)
+			if err != nil {
+				if name == white {
+					gameListening[id].white = nil
+				} else {
+					gameListening[id].black = nil
+				}
+				return
+			}
+		}
+	}(l, socket)
 }
 
 const game_query = "SELECT * FROM " + games_table + " WHERE " + games_identifier + "=$1"
