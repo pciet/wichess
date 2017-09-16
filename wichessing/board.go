@@ -19,11 +19,26 @@ func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) PointSet {
 		return PointSet{}
 	}
 	if b[to.Index()].Piece != nil {
-		if b[to.Index()].Orientation == turn {
+		if (b[to.Index()].Orientation == turn) && (b[from.Index()].Swaps == false) {
 			return PointSet{}
 		}
 	}
 	set := make(PointSet)
+	if b[to.Index()].Piece != nil {
+		if b[from.Index()].Swaps && (b[to.Index()].Orientation == turn) {
+			set[&Point{
+				Piece:    b[to.Index()].Piece,
+				AbsPoint: from,
+			}] = struct{}{}
+			b[to.Index()].Piece.Moved = true
+			set[&Point{
+				Piece:    b[from.Index()].Piece,
+				AbsPoint: to,
+			}] = struct{}{}
+			b[from.Index()].Piece.Moved = true
+			return set
+		}
+	}
 	set[&Point{
 		Piece:    nil,
 		AbsPoint: from,
@@ -68,7 +83,9 @@ func (b Board) MovesFromPoint(the Point) AbsPointSet {
 					if (b[point.Index()].Piece != nil) && (the.Piece.Ghost == false) {
 						break
 					} else if b[point.Index()].Piece != nil {
-						continue
+						if (b[point.Index()].Piece.Orientation != the.Piece.Orientation) || (the.Piece.Swaps == false) {
+							continue
+						}
 					}
 					if the.Piece.MustEnd {
 						if len(path.Points) != i+1 {
@@ -89,7 +106,9 @@ func (b Board) MovesFromPoint(the Point) AbsPointSet {
 					if (b[point.Index()].Piece != nil) && (the.Piece.Ghost == false) {
 						break
 					} else if b[point.Index()].Piece != nil {
-						continue
+						if (b[point.Index()].Piece.Orientation != the.Piece.Orientation) || (the.Piece.Swaps == false) {
+							continue
+						}
 					}
 					if the.Piece.MustEnd {
 						if len(path.Points) != i+1 {

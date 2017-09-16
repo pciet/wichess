@@ -110,6 +110,11 @@ func randomHeroPiece() piece {
 			Kind: wichessing.Kind(random.Int63n(9) + 1 + 6),
 		},
 	}
+	//return piece{
+	//	Piece: wichessing.Piece{
+	//		Kind: wichessing.Swap,
+	//	},
+	//}
 }
 
 const piece_owner_query = "SELECT " + piece_owner_key + ", " + piece_kind_key + " FROM " + piece_table + " WHERE " + piece_id_key + "=$1"
