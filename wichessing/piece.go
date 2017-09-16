@@ -10,9 +10,10 @@ import ()
 type Piece struct {
 	Kind
 	Orientation
-	Moved   bool
-	Ghost   bool `json:"-"` // can move through other pieces
-	MustEnd bool `json:"-"` // can only move to last point in path
+	Moved    bool
+	Ghost    bool `json:"-"` // can move through other pieces
+	MustEnd  bool `json:"-"` // can only move to last point in path
+	MustTake bool `json:"-"` // if taking is possible then only take moves can be made
 }
 
 type Orientation int
@@ -46,9 +47,12 @@ const (
 )
 
 func (the Piece) SetKindFlags() Piece {
-	if the.Kind == Knight {
+	switch the.Kind {
+	case Knight:
 		the.Ghost = true
 		the.MustEnd = true
+	case Pawn:
+		the.MustTake = true
 	}
 	return the
 }

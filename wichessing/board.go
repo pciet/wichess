@@ -55,58 +55,69 @@ func (b Board) MovesFromPoint(the Point) AbsPointSet {
 	if the.Piece == nil {
 		panic(fmt.Sprintf("wichessing: point (%v,%v) without piece", the.File, the.Rank))
 	}
-	set := make(AbsPointSet)
+	firstSet := make(AbsPointSet)
+	moveSet := make(AbsPointSet)
+	takeSet := make(AbsPointSet)
 	for movetype, unfilteredpaths := range TruncatedAbsPathsForKind(the.Piece.Kind, the.AbsPoint, the.Piece.Orientation) {
 		if (movetype == First) && (the.Piece.Moved == false) {
 			for path, _ := range unfilteredpaths {
-				for i, point := range *path {
+				if path.Truncated && the.Piece.MustEnd {
+					continue
+				}
+				for i, point := range path.Points {
 					if (b[point.Index()].Piece != nil) && (the.Piece.Ghost == false) {
 						break
 					} else if b[point.Index()].Piece != nil {
 						continue
 					}
 					if the.Piece.MustEnd {
-						if len(*path) != i+1 {
+						if len(path.Points) != i+1 {
 							continue
 						}
 					}
-					set[&AbsPoint{
+					firstSet[&AbsPoint{
 						File: point.File,
 						Rank: point.Rank}] = struct{}{}
 				}
 			}
 		} else if (movetype == Move) && (the.Piece.Moved == true) {
 			for path, _ := range unfilteredpaths {
-				for i, point := range *path {
+				if path.Truncated && the.Piece.MustEnd {
+					continue
+				}
+				for i, point := range path.Points {
 					if (b[point.Index()].Piece != nil) && (the.Piece.Ghost == false) {
 						break
 					} else if b[point.Index()].Piece != nil {
 						continue
 					}
 					if the.Piece.MustEnd {
-						if len(*path) != i+1 {
+						if len(path.Points) != i+1 {
 							continue
 						}
 					}
-					set[&AbsPoint{
+					moveSet[&AbsPoint{
 						File: point.File,
 						Rank: point.Rank}] = struct{}{}
 				}
 			}
 		} else if movetype == Take {
 			for path, _ := range unfilteredpaths {
-				for ind, point := range *path {
+				if path.Truncated && the.Piece.MustEnd {
+					continue
+				}
+				for ind, point := range path.Points {
 					i := point.Index()
 					if b[i].Piece == nil {
 						continue
 					}
 					if the.Piece.MustEnd {
-						if len(*path) != ind+1 {
+						if len(path.Points) != ind+1 {
 							continue
 						}
 					}
 					if b[i].Piece.Orientation != the.Piece.Orientation {
-						set[&AbsPoint{
+						takeSet[&AbsPoint{
 							File: point.File,
 							Rank: point.Rank}] = struct{}{}
 						break
@@ -119,5 +130,11 @@ func (b Board) MovesFromPoint(the Point) AbsPointSet {
 			}
 		}
 	}
+	set := make(AbsPointSet)
+	if (len(takeSet) == 0) || (the.Piece.MustTake == false) {
+		set = set.Add(firstSet)
+		set = set.Add(moveSet)
+	}
+	set = set.Add(takeSet)
 	return set
 }

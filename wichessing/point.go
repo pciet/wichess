@@ -27,6 +27,29 @@ type RelPoint struct {
 
 type AbsPointSet map[*AbsPoint]struct{}
 
+func (s AbsPointSet) Add(the AbsPointSet) AbsPointSet {
+	newset := make(AbsPointSet)
+	for pt, _ := range s {
+		newset[&AbsPoint{
+			File: pt.File,
+			Rank: pt.Rank,
+		}] = struct{}{}
+	}
+OUTER:
+	for pt, _ := range the {
+		for ep, _ := range newset {
+			if (pt.File == ep.File) && (pt.Rank == ep.Rank) {
+				continue OUTER
+			}
+		}
+		newset[&AbsPoint{
+			File: pt.File,
+			Rank: pt.Rank,
+		}] = struct{}{}
+	}
+	return newset
+}
+
 func (s AbsPointSet) String() map[string]struct{} {
 	m := make(map[string]struct{})
 	for p, _ := range s {

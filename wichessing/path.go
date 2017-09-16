@@ -13,10 +13,14 @@ func TruncatedAbsPathsForKind(the Kind, from AbsPoint, with Orientation) AbsPath
 	for movetype, paths := range RelPathMapForKind(the) {
 		availablepaths := make(AbsPathSet)
 		for path, _ := range paths {
-			availablepath := make(AbsPath, 0, len(*path))
+			availablepath := AbsPath{
+				Points: make([]AbsPoint, 0, len(*path)),
+			}
+			truncated := false
 			for _, point := range *path {
 				absfile := int8(from.File) + point.XOffset
 				if (absfile > 7) || (absfile < 0) {
+					truncated = true
 					break
 				}
 				var absrank int8
@@ -26,11 +30,13 @@ func TruncatedAbsPathsForKind(the Kind, from AbsPoint, with Orientation) AbsPath
 					absrank = int8(from.Rank) - point.YOffset
 				}
 				if (absrank > 7) || (absrank < 0) {
+					truncated = true
 					break
 				}
-				availablepath = append(availablepath, AbsPoint{File: uint8(absfile), Rank: uint8(absrank)})
+				availablepath.Points = append(availablepath.Points, AbsPoint{File: uint8(absfile), Rank: uint8(absrank)})
 			}
-			if len(availablepath) != 0 {
+			availablepath.Truncated = truncated
+			if len(availablepath.Points) != 0 {
 				availablepaths[&availablepath] = struct{}{}
 			}
 		}
@@ -61,7 +67,11 @@ func RelPathMapForKind(the Kind) RelPathSetMap {
 }
 
 type RelPath []RelPoint
-type AbsPath []AbsPoint
+
+type AbsPath struct {
+	Points    []AbsPoint
+	Truncated bool
+}
 
 // All relative paths for a piece, used to calculate actual paths for a board state.
 type RelPathSet map[*RelPath]struct{}
