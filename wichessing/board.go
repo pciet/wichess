@@ -9,6 +9,27 @@ import (
 
 type Board [64]Point
 
+func (b Board) SurroundingPoints(from Point) PointSet {
+	set := make(PointSet)
+	for i := -1; i <= 1; i++ {
+		for j := -1; j <= 1; j++ {
+			if (i == 0) && (j == 0) {
+				continue
+			}
+			f := i + int(from.File)
+			r := j + int(from.Rank)
+			if (f < 0) || (f >= 8) {
+				continue
+			}
+			if (r < 0) || (r >= 8) {
+				continue
+			}
+			set[&b[IndexFromFileAndRank(uint8(f), uint8(r))]] = struct{}{}
+		}
+	}
+	return set
+}
+
 // An empty PointSet return indicates no changes to the board - an invalid move.
 // The board itself is not returned so no modifications are made to the receiver Board.
 func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) PointSet {
@@ -21,6 +42,13 @@ func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) PointSet {
 	if b[to.Index()].Piece != nil {
 		if (b[to.Index()].Orientation == turn) && (b[from.Index()].Swaps == false) {
 			return PointSet{}
+		}
+	}
+	for pt, _ := range b.SurroundingPoints(b[from.Index()]) {
+		if pt.Piece != nil {
+			if (pt.Piece.Orientation != b[from.Index()].Piece.Orientation) && (pt.Piece.Locks) {
+				return PointSet{}
+			}
 		}
 	}
 	set := make(PointSet)
@@ -69,6 +97,13 @@ func (b Board) Moves() map[AbsPoint]AbsPointSet {
 func (b Board) MovesFromPoint(the Point) AbsPointSet {
 	if the.Piece == nil {
 		panic(fmt.Sprintf("wichessing: point (%v,%v) without piece", the.File, the.Rank))
+	}
+	for pt, _ := range b.SurroundingPoints(the) {
+		if pt.Piece != nil {
+			if (pt.Piece.Orientation != the.Piece.Orientation) && (pt.Piece.Locks) {
+				return AbsPointSet{}
+			}
+		}
 	}
 	firstSet := make(AbsPointSet)
 	moveSet := make(AbsPointSet)
