@@ -9,27 +9,6 @@ import (
 
 type Board [64]Point
 
-func (b Board) SurroundingPoints(from Point) PointSet {
-	set := make(PointSet)
-	for i := -1; i <= 1; i++ {
-		for j := -1; j <= 1; j++ {
-			if (i == 0) && (j == 0) {
-				continue
-			}
-			f := i + int(from.File)
-			r := j + int(from.Rank)
-			if (f < 0) || (f >= 8) {
-				continue
-			}
-			if (r < 0) || (r >= 8) {
-				continue
-			}
-			set[&b[IndexFromFileAndRank(uint8(f), uint8(r))]] = struct{}{}
-		}
-	}
-	return set
-}
-
 // An empty PointSet return indicates no changes to the board - an invalid move.
 // The board itself is not returned so no modifications are made to the receiver Board.
 func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) PointSet {
@@ -50,6 +29,9 @@ func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) PointSet {
 				return PointSet{}
 			}
 		}
+	}
+	if b.MovesFromPoint(b[from.Index()]).Has(to) == false {
+		return PointSet{}
 	}
 	set := make(PointSet)
 	if b[to.Index()].Piece != nil {
@@ -190,5 +172,78 @@ func (b Board) MovesFromPoint(the Point) AbsPointSet {
 		set = set.Add(moveSet)
 	}
 	set = set.Add(takeSet)
+	set = set.Add(b.ReconPointsFrom(the))
+	set = set.Reduce()
+	return set
+}
+
+func (b Board) ReconPointsFrom(the Point) AbsPointSet {
+	if the.Piece == nil {
+		return AbsPointSet{}
+	}
+	var rank int
+	if the.Piece.Orientation == White {
+		rank = int(the.Rank) + 1
+	} else {
+		rank = int(the.Rank) - 1
+	}
+	if (rank < 0) || (rank >= 8) {
+		return AbsPointSet{}
+	}
+	set := make(AbsPointSet)
+	for f := -1; f <= 1; f++ {
+		file := int(the.File) + f
+		if (file < 0) || (file >= 8) {
+			continue
+		}
+		index := IndexFromFileAndRank(uint8(file), uint8(rank))
+		piece := b[index].Piece
+		if piece == nil {
+			continue
+		}
+		if piece.Orientation != the.Piece.Orientation {
+			continue
+		}
+		if piece.Recons == false {
+			continue
+		}
+		var nrank int
+		if the.Piece.Orientation == White {
+			nrank = int(b[index].Rank) + 1
+		} else {
+			nrank = int(b[index].Rank) - 1
+		}
+		if (nrank < 0) || (nrank >= 8) {
+			continue
+		}
+		if b[IndexFromFileAndRank(uint8(file), uint8(nrank))].Piece != nil {
+			continue
+		}
+		set[&AbsPoint{
+			File: b[index].File,
+			Rank: uint8(nrank),
+		}] = struct{}{}
+	}
+	return set
+}
+
+func (b Board) SurroundingPoints(from Point) PointSet {
+	set := make(PointSet)
+	for i := -1; i <= 1; i++ {
+		for j := -1; j <= 1; j++ {
+			if (i == 0) && (j == 0) {
+				continue
+			}
+			f := i + int(from.File)
+			r := j + int(from.Rank)
+			if (f < 0) || (f >= 8) {
+				continue
+			}
+			if (r < 0) || (r >= 8) {
+				continue
+			}
+			set[&b[IndexFromFileAndRank(uint8(f), uint8(r))]] = struct{}{}
+		}
+	}
 	return set
 }

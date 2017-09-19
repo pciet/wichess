@@ -16,6 +16,7 @@ type Piece struct {
 	MustTake bool `json:"-"` // if taking is possible then only take moves can be made
 	Swaps    bool `json:"-"` // may move to swap with friendly pieces
 	Locks    bool `json:"-"` // surrounding enemy pieces cannot move
+	Recons   bool `json:"-"` // friendly pieces in one of the three behind points can move to the one ahead point when empty
 }
 
 type Orientation int
@@ -35,9 +36,9 @@ const (
 	Knight
 	Pawn
 	// knight kinds
-	Swap // can switch with friendly pieces by normal moves
-	Lock // surrounding enemy pieces cannot move
-	Recon
+	Swap  // can switch with friendly pieces by normal moves
+	Lock  // surrounding enemy pieces cannot move
+	Recon // pieces can move from one of the three behind points to the empty one ahead of this piece
 	// bishop kinds
 	Detonate
 	Ghost
@@ -61,6 +62,10 @@ func (the Piece) SetKindFlags() Piece {
 		the.Ghost = true
 		the.MustEnd = true
 		the.Locks = true
+	case Recon:
+		the.Ghost = true
+		the.MustEnd = true
+		the.Recons = true
 	case Pawn:
 		the.MustTake = true
 	}
