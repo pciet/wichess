@@ -42,7 +42,7 @@ const (
 	Recon // pieces can move from one of the three behind points to the empty one ahead of this piece
 	// bishop kinds
 	Detonate // takes all surrounding pieces when taken, friend and enemy
-	Ghost
+	Ghost    // can move through other pieces
 	Steal
 	// rook kinds
 	Guard
@@ -69,6 +69,8 @@ func (the Piece) SetKindFlags() Piece {
 		the.Recons = true
 	case Detonate:
 		the.Detonates = true
+	case Ghost:
+		the.Ghost = true
 	case Pawn:
 		the.MustTake = true
 	}
