@@ -50,14 +50,23 @@ func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) PointSet {
 		}
 	}
 	set[&Point{
-		Piece:    nil,
 		AbsPoint: from,
 	}] = struct{}{}
+	dset := b.DetonationsFrom(to)
+	if len(dset) > 1 {
+		for pt, _ := range dset {
+			set[&Point{
+				AbsPoint: *pt,
+			}] = struct{}{}
+		}
+		return set
+	}
 	b[from.Index()].Piece.Moved = true
 	set[&Point{
 		Piece:    b[from.Index()].Piece,
 		AbsPoint: to,
 	}] = struct{}{}
+
 	return set
 }
 
@@ -175,6 +184,23 @@ func (b Board) MovesFromPoint(the Point) AbsPointSet {
 	set = set.Add(b.ReconPointsFrom(the))
 	set = set.Reduce()
 	return set
+}
+
+func (b Board) DetonationsFrom(the AbsPoint) AbsPointSet {
+	index := the.Index()
+	set := make(AbsPointSet)
+	if b[index].Piece == nil {
+		return set
+	}
+
+	set[&the] = struct{}{}
+	if b[index].Piece.Detonates == false {
+		return set
+	}
+	for pt, _ := range b.SurroundingPoints(b[index]) {
+		set = set.Add(b.DetonationsFrom(pt.AbsPoint))
+	}
+	return set.Reduce()
 }
 
 func (b Board) ReconPointsFrom(the Point) AbsPointSet {

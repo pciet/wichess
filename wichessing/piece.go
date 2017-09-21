@@ -10,13 +10,14 @@ import ()
 type Piece struct {
 	Kind
 	Orientation
-	Moved    bool
-	Ghost    bool `json:"-"` // can move through other pieces
-	MustEnd  bool `json:"-"` // can only move to last point in path
-	MustTake bool `json:"-"` // if taking is possible then only take moves can be made
-	Swaps    bool `json:"-"` // may move to swap with friendly pieces
-	Locks    bool `json:"-"` // surrounding enemy pieces cannot move
-	Recons   bool `json:"-"` // friendly pieces in one of the three behind points can move to the one ahead point when empty
+	Moved     bool
+	Ghost     bool `json:"-"` // can move through other pieces
+	MustEnd   bool `json:"-"` // can only move to last point in path
+	MustTake  bool `json:"-"` // if taking is possible then only take moves can be made
+	Swaps     bool `json:"-"` // may move to swap with friendly pieces
+	Locks     bool `json:"-"` // surrounding enemy pieces cannot move
+	Recons    bool `json:"-"` // friendly pieces in one of the three behind points can move to the one ahead point when empty
+	Detonates bool `json:"-"` // takes all surrounding pieces when taken
 }
 
 type Orientation int
@@ -40,7 +41,7 @@ const (
 	Lock  // surrounding enemy pieces cannot move
 	Recon // pieces can move from one of the three behind points to the empty one ahead of this piece
 	// bishop kinds
-	Detonate
+	Detonate // takes all surrounding pieces when taken, friend and enemy
 	Ghost
 	Steal
 	// rook kinds
@@ -66,6 +67,8 @@ func (the Piece) SetKindFlags() Piece {
 		the.Ghost = true
 		the.MustEnd = true
 		the.Recons = true
+	case Detonate:
+		the.Detonates = true
 	case Pawn:
 		the.MustTake = true
 	}
