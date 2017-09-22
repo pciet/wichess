@@ -137,6 +137,7 @@ func (b Board) MovesFromPoint(the Point) AbsPointSet {
 	firstSet := make(AbsPointSet)
 	moveSet := make(AbsPointSet)
 	takeSet := make(AbsPointSet)
+	rallySet := make(AbsPointSet)
 	for movetype, unfilteredpaths := range TruncatedAbsPathsForKind(the.Piece.Kind, the.AbsPoint, the.Piece.Orientation) {
 		for path, _ := range b.ActualPaths(the, movetype, unfilteredpaths) {
 			for _, pt := range path.Points {
@@ -156,6 +157,11 @@ func (b Board) MovesFromPoint(the Point) AbsPointSet {
 						File: pt.File,
 						Rank: pt.Rank,
 					}] = struct{}{}
+				case RallyMove:
+					rallySet[&AbsPoint{
+						File: pt.File,
+						Rank: pt.Rank,
+					}] = struct{}{}
 				}
 			}
 		}
@@ -164,6 +170,7 @@ func (b Board) MovesFromPoint(the Point) AbsPointSet {
 	if (len(takeSet) == 0) || (the.MustTake == false) {
 		set = set.Add(firstSet)
 		set = set.Add(moveSet)
+		set = set.Add(rallySet)
 	}
 	set = set.Add(takeSet)
 	set = set.Add(b.ReconPointsFrom(the))
@@ -265,6 +272,46 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 						break
 					}
 				}
+			}
+			if len(filteredPath.Points) > 0 {
+				actualPaths[filteredPath.Copy()] = struct{}{}
+			}
+		}
+	case RallyMove:
+		var rallied bool
+		for point, _ := range b.SurroundingPoints(the) {
+			if point.Piece != nil {
+				if (point.Orientation == the.Orientation) && point.Rallies {
+					rallied = true
+					break
+				}
+			}
+		}
+		if rallied == false {
+			break
+		}
+		for path, _ := range unfilteredpaths {
+			if path.Truncated && the.MustEnd {
+				continue
+			}
+			filteredPath := AbsPath{
+				Points: make([]AbsPoint, 0, len(path.Points)),
+			}
+			for i, point := range path.Points {
+				actualPoint := b[point.Index()]
+				if (actualPoint.Piece != nil) && (the.Ghost == false) {
+					break
+				} else if actualPoint.Piece != nil {
+					if (actualPoint.Orientation != the.Orientation) || (the.Swaps == false) {
+						continue
+					}
+				}
+				if the.MustEnd {
+					if len(path.Points) != i+1 {
+						continue
+					}
+				}
+				filteredPath.Points = append(filteredPath.Points, point)
 			}
 			if len(filteredPath.Points) > 0 {
 				actualPaths[filteredPath.Copy()] = struct{}{}

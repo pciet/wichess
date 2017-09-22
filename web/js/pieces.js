@@ -66,10 +66,10 @@ function imageNameForKind(kind, point, orientation) {
         case k.GUARD:
             name += 'guard';
             break;
-        case RALLY:
+        case k.RALLY:
             name += 'rally';
             break;
-        case FORTIFY:
+        case k.FORTIFY:
             name += 'fortify';
             break;
     }

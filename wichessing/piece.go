@@ -11,15 +11,16 @@ type Piece struct {
 	Kind
 	Orientation
 	Moved     bool
-	Ghost     bool `json:"-"` // can move through other pieces
-	MustEnd   bool `json:"-"` // can only move to last point in path
-	MustTake  bool `json:"-"` // if taking is possible then only take moves can be made
-	Swaps     bool `json:"-"` // may move to swap with friendly pieces
-	Locks     bool `json:"-"` // surrounding enemy pieces cannot move
-	Recons    bool `json:"-"` // friendly pieces in one of the three behind points can move to the one ahead point when empty
-	Detonates bool `json:"-"` // takes all surrounding pieces when taken
-	Steals    bool `json:"-"` // instead of taking convert the other piece
-	Guards    bool `json:"-"` // adjacent enemy pieces are taken by this piece
+	Ghost     bool `json:"-"`  // can move through other pieces
+	MustEnd   bool `json:"-"`  // can only move to last point in path
+	MustTake  bool `json:"-"`  // if taking is possible then only take moves can be made
+	Swaps     bool `json:"-"`  // may move to swap with friendly pieces
+	Locks     bool `json:"-"`  // surrounding enemy pieces cannot move
+	Recons    bool `json:"-"`  // friendly pieces in one of the three behind points can move to the one ahead point when empty
+	Detonates bool `json:"-"`  // takes all surrounding pieces when taken
+	Steals    bool `json:"-"`  // instead of taking convert the other piece
+	Guards    bool `json:"-"`  // adjacent enemy pieces are taken by this piece
+	Rallies   bool `'json:"-"` // adjacent friendly pieces gain their rally moves
 }
 
 type Orientation int
@@ -48,7 +49,7 @@ const (
 	Steal    // instead of taking, this piece converts the other piece and moves adjacent
 	// rook kinds
 	Guard // can only move one but any adjacent enemy is taken
-	Rally
+	Rally // adjacent friendly pieces gain additional rally move paths
 	Fortify
 )
 
@@ -77,6 +78,8 @@ func (the Piece) SetKindFlags() Piece {
 		the.Steals = true
 	case Guard:
 		the.Guards = true
+	case Rally:
+		the.Rallies = true
 	case Pawn:
 		the.MustTake = true
 	}
