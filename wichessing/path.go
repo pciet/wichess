@@ -53,9 +53,11 @@ func RelPathMapForKind(the Kind) RelPathSetMap {
 	switch the {
 	case King:
 		return KingPathMap
+	case Guard:
+		return GuardPathMap
 	case Queen:
 		return QueenPathMap
-	case Rook, Guard, Rally, Fortify:
+	case Rook, Rally, Fortify:
 		return RookPathMap
 	case Bishop, Detonate, Ghost, Steal:
 		return BishopPathMap
@@ -186,5 +188,9 @@ var (
 		First: KingPathSet,
 		Move:  KingPathSet,
 		Take:  KingPathSet,
+	}
+	GuardPathMap = RelPathSetMap{
+		First: KingPathSet,
+		Move:  KingPathSet,
 	}
 )

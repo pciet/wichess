@@ -19,6 +19,7 @@ type Piece struct {
 	Recons    bool `json:"-"` // friendly pieces in one of the three behind points can move to the one ahead point when empty
 	Detonates bool `json:"-"` // takes all surrounding pieces when taken
 	Steals    bool `json:"-"` // instead of taking convert the other piece
+	Guards    bool `json:"-"` // adjacent enemy pieces are taken by this piece
 }
 
 type Orientation int
@@ -44,9 +45,9 @@ const (
 	// bishop kinds
 	Detonate // takes all surrounding pieces when taken, friend and enemy
 	Ghost    // can move through other pieces
-	Steal    // instead of taking, this piece converts the other piece
+	Steal    // instead of taking, this piece converts the other piece and moves adjacent
 	// rook kinds
-	Guard
+	Guard // can only move one but any adjacent enemy is taken
 	Rally
 	Fortify
 )
@@ -74,6 +75,8 @@ func (the Piece) SetKindFlags() Piece {
 		the.Ghost = true
 	case Steal:
 		the.Steals = true
+	case Guard:
+		the.Guards = true
 	case Pawn:
 		the.MustTake = true
 	}

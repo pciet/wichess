@@ -25,17 +25,34 @@ func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) PointSet {
 			return PointSet{}
 		}
 	}
+	set := make(PointSet)
 	for pt, _ := range b.SurroundingPoints(fromPoint) {
 		if pt.Piece != nil {
-			if (pt.Orientation != fromPoint.Orientation) && (pt.Locks) {
+			if (pt.Orientation != fromPoint.Orientation) && pt.Locks {
 				return PointSet{}
+			}
+		}
+	}
+	for pt, _ := range b.SurroundingPoints(toPoint) {
+		if pt.Piece != nil {
+			if (pt.Orientation != fromPoint.Orientation) && pt.Guards {
+				set[&Point{
+					AbsPoint: fromPoint.AbsPoint,
+				}] = struct{}{}
+				set[&Point{
+					AbsPoint: pt.AbsPoint,
+				}] = struct{}{}
+				set[&Point{
+					Piece:    pt.Piece,
+					AbsPoint: toPoint.AbsPoint,
+				}] = struct{}{}
+				return set
 			}
 		}
 	}
 	if b.MovesFromPoint(fromPoint).Has(to) == false {
 		return PointSet{}
 	}
-	set := make(PointSet)
 	if toPoint.Piece != nil {
 		if fromPoint.Steals && (toPoint.Orientation != turn) {
 			toPoint.Orientation = turn
