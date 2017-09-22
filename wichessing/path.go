@@ -7,6 +7,8 @@ import (
 	"fmt"
 )
 
+type Path []Point
+
 // This function will truncate moves that leave the board and convert the defined relative points to actual board points but does not remove points with other pieces or other similar constraints.
 func TruncatedAbsPathsForKind(the Kind, from AbsPoint, with Orientation) AbsPathSetMap {
 	absmap := make(AbsPathSetMap)
@@ -71,6 +73,16 @@ type RelPath []RelPoint
 type AbsPath struct {
 	Points    []AbsPoint
 	Truncated bool
+}
+
+func (the AbsPath) Copy() *AbsPath {
+	p := AbsPath{
+		Points: make([]AbsPoint, 0, len(the.Points)),
+	}
+	for _, pt := range the.Points {
+		p.Points = append(p.Points, pt)
+	}
+	return &p
 }
 
 // All relative paths for a piece, used to calculate actual paths for a board state.
