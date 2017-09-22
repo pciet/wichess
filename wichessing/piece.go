@@ -21,6 +21,7 @@ type Piece struct {
 	Steals    bool `json:"-"`  // instead of taking convert the other piece
 	Guards    bool `json:"-"`  // adjacent enemy pieces are taken by this piece
 	Rallies   bool `'json:"-"` // adjacent friendly pieces gain their rally moves
+	Fortified bool `'json:"-"` // can't be taken by pawns
 }
 
 type Orientation int
@@ -48,9 +49,9 @@ const (
 	Ghost    // can move through other pieces
 	Steal    // instead of taking, this piece converts the other piece and moves adjacent
 	// rook kinds
-	Guard // can only move one but any adjacent enemy is taken
-	Rally // adjacent friendly pieces gain additional rally move paths
-	Fortify
+	Guard   // can only move one but any adjacent enemy is taken
+	Rally   // adjacent friendly pieces gain additional rally move paths
+	Fortify // can't be taken by pawns
 )
 
 func (the Piece) SetKindFlags() Piece {
@@ -80,6 +81,8 @@ func (the Piece) SetKindFlags() Piece {
 		the.Guards = true
 	case Rally:
 		the.Rallies = true
+	case Fortify:
+		the.Fortified = true
 	case Pawn:
 		the.MustTake = true
 	}

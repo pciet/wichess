@@ -265,6 +265,9 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 					}
 				}
 				if actualPoint.Orientation != the.Orientation {
+					if (the.Kind == Pawn) && actualPoint.Fortified {
+						break
+					}
 					filteredPath.Points = append(filteredPath.Points, point)
 					break
 				} else {
