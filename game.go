@@ -142,7 +142,7 @@ func (g game) move(from, to int, mover string) map[string]piece {
 		} else {
 			diff[point.AbsPoint.String()] = piece{
 				Piece:      *point.Piece,
-				Identifier: g.Points[from].Identifier,
+				Identifier: g.Points[from].Identifier, // TODO: this could be incorrect
 			}
 		}
 	}
@@ -161,7 +161,13 @@ func (g game) move(from, to int, mover string) map[string]piece {
 	return diff
 }
 
+const (
+	check_key     = "check"
+	checkmate_key = "checkmate"
+)
+
 // The map keys are wichessing.AbsPoint converted to "x/file-y/rank" formatted string.
+// If the game is in a check or checkmate state then a corresponding key with a nil value will be set.
 func (g game) moves() map[string]map[string]struct{} {
 	var board wichessing.Board
 	for i := 0; i < 64; i++ {
@@ -179,9 +185,21 @@ func (g game) moves() map[string]map[string]struct{} {
 			},
 		}
 	}
+	var m map[wichessing.AbsPoint]wichessing.AbsPointSet
+	var check, checkmate bool
+	if g.Active == g.White {
+		m, check, checkmate = board.Moves(wichessing.White)
+	} else {
+		m, check, checkmate = board.Moves(wichessing.Black)
+	}
 	moves := make(map[string]map[string]struct{})
-	for point, set := range board.Moves() {
+	for point, set := range m {
 		moves[point.String()] = set.String()
+	}
+	if checkmate {
+		moves[checkmate_key] = nil
+	} else if check {
+		moves[check_key] = nil
 	}
 	return moves
 }

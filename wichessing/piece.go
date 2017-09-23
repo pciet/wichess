@@ -88,3 +88,16 @@ func (the Piece) SetKindFlags() Piece {
 	}
 	return the
 }
+
+func (the *Piece) Copy() *Piece {
+	if the == nil {
+		return nil
+	}
+	p := Piece{
+		Kind:        the.Kind,
+		Orientation: the.Orientation,
+		Moved:       the.Moved,
+	}
+	p = p.SetKindFlags()
+	return &p
+}

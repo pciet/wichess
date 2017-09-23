@@ -69,11 +69,6 @@
     function unsetPieceImage(index) {
         $('#point'+index).html('');
     }
-    function getMoves() {
-        $.get('/moves/'+game_id).done(function(data) {
-            Moves = data;
-        });
-    }
     function requestMove(from, to) {
         $.post('/move/'+game_id, {From: from, To: to}).done(makeMove);
     }
@@ -93,6 +88,11 @@
             $('.hoveredopp').removeClass('hoveredopp');
             Selected = null;
             Moves = data;
+            if ('check' in Moves) {
+                console.log('check!');
+            } else if ('checkmate' in Moves) {
+                console.log('checkmate!');
+            }
         });
         if (Turn == o.WHITE) {
             $('#whiteactive').html('');
@@ -153,6 +153,11 @@
         });
         $.get('/moves/'+game_id).done(function(data) {
             Moves = data;
+            if ('check' in Moves) {
+                console.log('check!');
+            } else if ('checkmate' in Moves) {
+                console.log('checkmate!');
+            }
             for (var i = 0; i < 64; i++) {
                 $('#point'+i).click({Index: i}, function(event) {
                     var index = event.data.Index;

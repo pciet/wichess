@@ -55,10 +55,6 @@ func moveRequestHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	if game.Active != name {
-		http.NotFound(w, r)
-		return
-	}
 	diff := game.move(from, to, name)
 	if (diff == nil) || (len(diff) == 0) {
 		http.NotFound(w, r)
