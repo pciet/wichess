@@ -3,7 +3,9 @@
 
 package main
 
-import ()
+import (
+	"fmt"
+)
 
 const (
 	board_table = "boards"
@@ -71,4 +73,18 @@ func playerBoardInfo(name string) []boardInfo {
 		panicExit(err.Error())
 	}
 	return boards
+}
+
+func deleteBoardFromDatabase(player string, gameID int) {
+	result, err := database.Exec("DELETE FROM "+board_table+" WHERE "+board_name_key+" = $1 AND "+board_identifier_key+" = $2;", player, gameID)
+	if err != nil {
+		panicExit(err.Error())
+	}
+	count, err := result.RowsAffected()
+	if err != nil {
+		panicExit(err.Error())
+	}
+	if count != 1 {
+		panicExit(fmt.Sprintf("%v rows affected by delete board exec for %v %v", count, player, gameID))
+	}
 }

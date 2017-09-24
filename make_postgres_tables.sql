@@ -15,7 +15,9 @@ CREATE TABLE Boards (
 CREATE TABLE Games (
     game_id SERIAL PRIMARY KEY,
     white VARCHAR(64) NOT NULL,
+    white_ack BOOLEAN,
     black VARCHAR(64) NOT NULL,
+    black_ack BOOLEAN,
     active VARCHAR(64) NOT NULL,
     s0 BIGINT, s1 BIGINT, s2 BIGINT, s3 BIGINT,
     s4 BIGINT, s5 BIGINT, s6 BIGINT, s7 BIGINT,

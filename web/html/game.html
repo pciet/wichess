@@ -16,6 +16,9 @@
         border-collapse: collapse;
         margin: 0 auto;
     }
+    #grid {
+        outline: 7px outset #d4cca5;
+    }
     #check {
         float: left;
     }
@@ -23,10 +26,10 @@
         float: right;
     }
     tr {
-        height: 66px;
+        height: 50px;
     }
     .point {
-        width: 66px;
+        width: 50px;
         border: 1px solid #f4f4f4;
         background-color: white;
     }
@@ -34,8 +37,8 @@
         height: 20px;
     }
     .pieceimg {
-        width: 64px;
-        height: 64px;
+        width: 48px;
+        height: 48px;
     }
     .hovered {
         outline: 2px solid black;
@@ -116,6 +119,7 @@
             }
             if ('checkmate' in Moves) {
                 $('#checkmate').addClass('indicating');
+                $('#acknowledge').html('<input type="button" value="Acknowledge" onclick="acknowledge();"/>');
             } 
         });
         if (Turn == o.WHITE) {
@@ -184,6 +188,7 @@
             }
             if ('checkmate' in Moves) {
                 $('#checkmate').addClass('indicating');
+                $('#acknowledge').html('<input type="button" value="Acknowledge" onclick="acknowledge();"/>');
             }
             for (var i = 0; i < 64; i++) {
                 $('#point'+i).click({Index: i}, function(event) {
@@ -266,6 +271,14 @@
             }
         });
     });
+    function acknowledge() {
+        jQuery.post('acknowledge', {
+            player: Player,
+            gameid: game_id
+        }).done(function() {
+            window.location.pathname = '/';
+        });
+    }
     </script>
 </head>
 
@@ -275,13 +288,16 @@
         <span class="indicator" id="blackactive">Turn</span>
     </div>
     <div class="spacer"></div>
+    <div class="spacer"></div>
     <div>
         <table><tr>
             <td><span class="indicator" id="check">Check</span></td>
             <td><div id="board"></div></td>
-            <td><span class="indicator" id="checkmate">Checkmate</span></td>
+            <td><table><tr><td><span class="indicator" id="checkmate">Checkmate</span></td></tr>
+                <tr><td id="acknowledge"></td></tr></table></td>
         </tr></table>
     </div>
+    <div class="spacer"></div>
     <div class="spacer"></div>
     <div><span id="youwhite"></span><span>{{.White}}</span>
         <span class="indicator" id="whiteactive">Turn</span>
