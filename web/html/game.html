@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>wichess game</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Libre+Baskerville">
+    <link rel="stylesheet" type="text/css" href="/css/body.css">
     <style>
     div {
         text-align: center;
@@ -12,8 +14,13 @@
     table {
         table-layout: fixed;
         border-collapse: collapse;
-        width: 512px;
         margin: 0 auto;
+    }
+    #check {
+        float: left;
+    }
+    #checkmate {
+        float: right;
     }
     tr {
         height: 66px;
@@ -21,6 +28,7 @@
     .point {
         width: 66px;
         border: 1px solid #f4f4f4;
+        background-color: white;
     }
     .spacer {
         height: 20px;
@@ -44,6 +52,19 @@
     .selectedopp {
         outline: 2px dotted black;
         outline-offset: -1px;
+    }
+    span {
+        padding: 1em;
+    }
+    .indicator {
+        outline: 1px solid black;
+        background-color: #cc785c;
+        color: #fb835e;
+        margin: 1em;
+    }
+    .indicating {
+        background-color: #d4cca5;
+        color: #825444;
     }
     </style>
     <script type="text/javascript" src="/js/jquery-2.2.0.min.js"></script>
@@ -89,18 +110,21 @@
             Selected = null;
             Moves = data;
             if ('check' in Moves) {
-                console.log('check!');
-            } else if ('checkmate' in Moves) {
-                console.log('checkmate!');
+                $('#check').addClass('indicating');
+            } else {
+                $('#check').removeClass('indicating');
             }
+            if ('checkmate' in Moves) {
+                $('#checkmate').addClass('indicating');
+            } 
         });
         if (Turn == o.WHITE) {
-            $('#whiteactive').html('');
-            $('#blackactive').html('*');
+            $('#whiteactive').removeClass('indicating');
+            $('#blackactive').addClass('indicating');
             Turn = o.BLACK;
         } else {
-            $('#whiteactive').html('*');
-            $('#blackactive').html('');
+            $('#whiteactive').addClass('indicating');
+            $('#blackactive').removeClass('indicating');
             Turn = o.WHITE;
         }
     }
@@ -130,18 +154,18 @@
             if (White == Player) {
                 Opponent = Black;
                 PlayerOrientation = o.WHITE;
-                $('#youwhite').html('You -> ');
+                $('#youwhite').html('> ');
             } else {
                 Opponent = White;
                 PlayerOrientation = o.BLACK;
-                $('#youblack').html('You -> ');
+                $('#youblack').html('> ');
             }
             if (data.Active == White) {
                 Turn = o.WHITE;
-                $('#whiteactive').html('*');
+                $('#whiteactive').addClass('indicating');
             } else {
                 Turn = o.BLACK;
-                $('#blackactive').html('*');
+                $('#blackactive').addClass('indicating');
             }
             for (var i = 0; i < Board.length; i++) {
                 if (Board[i].Kind == 0) {
@@ -154,9 +178,12 @@
         $.get('/moves/'+game_id).done(function(data) {
             Moves = data;
             if ('check' in Moves) {
-                console.log('check!');
-            } else if ('checkmate' in Moves) {
-                console.log('checkmate!');
+                $('#check').addClass('indicating');
+            } else {
+                $('#check').removeClass('indicating');
+            }
+            if ('checkmate' in Moves) {
+                $('#checkmate').addClass('indicating');
             }
             for (var i = 0; i < 64; i++) {
                 $('#point'+i).click({Index: i}, function(event) {
@@ -244,10 +271,20 @@
 
 <body>
     <div class="spacer"></div>
-    <div><span id="youblack"></span><span>{{.Black}}</span><span id="blackactive"></span></div>
+    <div><span id="youblack"></span><span>{{.Black}}</span>
+        <span class="indicator" id="blackactive">Turn</span>
+    </div>
     <div class="spacer"></div>
-    <div id="board"></div>
+    <div>
+        <table><tr>
+            <td><span class="indicator" id="check">Check</span></td>
+            <td><div id="board"></div></td>
+            <td><span class="indicator" id="checkmate">Checkmate</span></td>
+        </tr></table>
+    </div>
     <div class="spacer"></div>
-    <div><span id="youwhite"></span><span>{{.White}}</span><span id="whiteactive"></span></div>
+    <div><span id="youwhite"></span><span>{{.White}}</span>
+        <span class="indicator" id="whiteactive">Turn</span>
+    </div>
 </body>
 </html>

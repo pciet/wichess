@@ -3,12 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <title>wichess index</title>
-    <link rel="stylesheet" type="text/css" href="/css/gamesboard.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Libre+Baskerville">
+    <link rel="stylesheet" type="text/css" href="/css/body.css">
     <style>
         div {
             text-align: center;
-            margin: auto;
-            width: 80%;
+            margin: 0 auto;
+            width: 100%;
+        }
+        #games {
+            width: 512px;
+        }
+        #grid {
+            table-layout: fixed;
+            border-collapse: collapse;
+            width: 512px;
+        }
+        #grid tr {
+            height: 64px;
+        }
+        #grid td {
+            word-wrap: break-word;
+        }
+        .point {
+            border: solid black 0.5px;
+            width: 64px;
+            background-color: white;
+            font-size: 11px;
+            /* https://stackoverflow.com/questions/826782/how-to-disable-text-selection-highlighting-using-css */
+            -webkit-touch-callout: none; /* iOS Safari */
+            -webkit-user-select: none; /* Safari */
+            -khtml-user-select: none; /* Konqueror HTML */
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
+            cursor: default;
+        }
+        .selected {
+            border: solid black 2px;
         }
         .inline {
             display: inline;
@@ -22,10 +54,12 @@
             border-collapse: collapse;
         }
         .pendingGame {
-            background-color: yellow;
+            background-color: #d4cca5;
+            color: #cc785c;
         }
         .activeGame {
-            background-color: green;
+            background-color: #cc785c;
+            color: #d4cca5;
         }
     </style>
     <script type="text/javascript" src="/js/jquery-2.2.0.min.js"></script>
@@ -53,7 +87,7 @@
         if (gameInfoObject.GameID == 0) {
             point.toggleClass('pendingGame').html('Waiting');
         } else {
-            point.toggleClass('activeGame').html('Opponent ' + gameInfoObject.Opponent);;
+            point.toggleClass('activeGame').html(gameInfoObject.Opponent);;
         }
 
     }
@@ -102,6 +136,7 @@
     <div class="spacer"></div>
     <div>
         <div class="inline">{{.Wins}} Wins / {{.Losses}} Losses</div>
+        <div class="inline">{{.Name}}</div>
         <div class="inline">Best Piece ({{.BestPieceName}}) has {{.BestPieceTakes}} Takes</div>
     </div>
     <div class="spacer"></div>
@@ -110,7 +145,5 @@
     </div>
     <div class="spacer"></div>
     <div id="navigation"></div>
-    <div class="spacer"></div>
-    <div>{{.Name}}</div>
 </body>
 </html>

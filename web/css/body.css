@@ -1,0 +1,16 @@
+body {
+    background-color: #cc785c;
+    color: #d4cca5;
+    font-family: 'Libre Baskerville', serif;
+    font-size: 16px;
+}
+input {
+    background-color: #fb835e;
+    color: #d4cca5;
+    border: none;
+    outline: none;
+    padding: 1em;
+    font-family: 'Libre Baskerville', serif;
+    font-size: 12px;
+}
+
