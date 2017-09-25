@@ -6,6 +6,7 @@ package main
 import (
 	"bufio"
 	"errors"
+	"flag"
 	"fmt"
 	"html/template"
 	"log"
@@ -20,18 +21,26 @@ const (
 
 	camera_height = 2.5
 
+	view_camera_height   = 0.6
+	view_camera_look_at  = 0.05
+	view_camera_rotate   = 120
+	view_camera_distance = 3
+
 	camera_file = "camera.inc"
 	viewer_file = "viewer.html"
 	output_dir  = "img"
 
-	povray_width     = 256
-	povray_height    = 256
-	povray_quality   = 11
-	povray_antialias = "off"
+	povray_width        = 512
+	povray_height       = 512
+	povray_quality      = 11
+	povray_antialias    = "off"
+	povray_output_alpha = "on"
 )
 
 // Generate a viewer page, then generate camera.inc and render 64 times.
 func main() {
+	viewOnly := flag.Bool("viewonly", false, "only generate the single view image")
+	flag.Parse()
 	t, err := template.ParseFiles(viewer_file)
 	if err != nil {
 		log.Panicln(err.Error())
@@ -40,13 +49,15 @@ func main() {
 	if (err != nil) && (os.IsExist(err) == false) {
 		log.Panicln(err.Error())
 	}
-	for _, file := range os.Args[1:] {
+	for _, file := range flag.Args() {
 		name := file[:len(file)-len(".pov")]
-		err = generateViewer(t, name)
-		if err != nil {
-			log.Panicln(err.Error())
+		if *viewOnly == false {
+			err = generateViewer(t, name)
+			if err != nil {
+				log.Panicln(err.Error())
+			}
 		}
-		err = generateImages(name)
+		err = generateImages(name, *viewOnly)
 		if err != nil {
 			log.Panicln(err.Error())
 		}
@@ -68,11 +79,21 @@ func generateViewer(templ *template.Template, forPiece string) error {
 	})
 }
 
-func generateImages(forPiece string) error {
-	for i := 0; i < 64; i++ {
-		err := generateCameraInc(i)
-		if err != nil {
-			return err
+func generateImages(forPiece string, viewOnly bool) error {
+	for i := 0; i <= 64; i++ {
+		if viewOnly {
+			i = 64
+		}
+		if i < 64 {
+			err := generateCameraInc(i)
+			if err != nil {
+				return err
+			}
+		} else {
+			err := generateViewCameraInc()
+			if err != nil {
+				return err
+			}
 		}
 		cmd := exec.Command("/usr/local/bin/povray",
 			"Output_To_File=true",
@@ -82,6 +103,7 @@ func generateImages(forPiece string) error {
 			fmt.Sprintf("-h%v", povray_height),
 			fmt.Sprintf("Quality=%v", povray_quality),
 			fmt.Sprintf("Antialias=%v", povray_antialias),
+			fmt.Sprintf("Output_Alpha=%v", povray_output_alpha),
 			fmt.Sprintf("%v.pov", forPiece))
 		log.Printf("%+v", cmd.Args)
 		pl, err := cmd.CombinedOutput()
@@ -129,6 +151,19 @@ func generateCameraInc(forPoint int) error {
 		}
 	}
 	_, err = f.Write([]byte(fmt.Sprintf("camera {\nrotate <%v,0,%v>\nlocation <0,%v,0>\nlook_at <0,0,0>\ntranslate <%v,0,%v>\n}", xRotate, yRotate, camera_height, xOffset, zOffset)))
+	if err != nil {
+		return err
+	}
+	return f.Close()
+}
+
+// For piece selection and viewing outside of the game board.
+func generateViewCameraInc() error {
+	f, err := os.Create(camera_file)
+	if err != nil {
+		return err
+	}
+	_, err = f.Write([]byte(fmt.Sprintf("camera {\nlocation <%v,%v,0>\nrotate <0,%v,0>\nlook_at <0,%v,0>\n}", view_camera_distance, view_camera_height, view_camera_rotate, view_camera_look_at)))
 	if err != nil {
 		return err
 	}

@@ -373,6 +373,7 @@
 #declare Knight = merge {
     object{Knight_Base}
     object{Knight_Mid}
-    scale 0.7
-    translate <0,-0.8,0>
+    scale 0.35
+    translate <0,-1.15,0>
+    rotate <0,60,0>
 }

@@ -30,8 +30,13 @@
     }
     .point {
         width: 50px;
-        border: 1px solid #f4f4f4;
         background-color: white;
+    }
+    .even {
+        background-color: #e1e1e1;
+    }
+    .odd {
+        background-color: #f3f3f3;
     }
     .spacer {
         height: 20px;
@@ -159,6 +164,23 @@
         }
         board += '</table>';
         $('#board').html(board);
+        for (var i = 0; i < 64; i++) {
+            var y = Math.floor(i / 8);
+            var x = i % 8;
+            if ((y%2) == 0) {
+                if ((x%2) == 0) {
+                    $('#point'+i).addClass('even');
+                } else {
+                    $('#point'+i).addClass('odd');
+                }
+            } else {
+                if ((x%2) == 0) {
+                    $('#point'+i).addClass('odd');
+                } else {
+                    $('#point'+i).addClass('even');
+                }
+            }
+        }
         $.get('/games/'+game_id).done(function(data) {
             Board = data.Points;
             White = data.White;
