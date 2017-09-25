@@ -11,23 +11,21 @@
             margin: 0 auto;
             width: 100%;
         }
-        #games {
-            width: 512px;
-        }
         #grid {
             table-layout: fixed;
             border-collapse: collapse;
-            width: 512px;
+            outline: 7px outset #d4cca5;
+            margin: 0 auto;
         }
         #grid tr {
-            height: 64px;
+            height: 50px;
         }
         #grid td {
             word-wrap: break-word;
         }
         .point {
-            border: solid black 0.5px;
-            width: 64px;
+            border: 1px solid #f4f4f4;
+            width: 50px;
             background-color: white;
             font-size: 11px;
             /* https://stackoverflow.com/questions/826782/how-to-disable-text-selection-highlighting-using-css */
@@ -44,7 +42,6 @@
         }
         .inline {
             display: inline;
-            border: solid black 1px;
             padding: 10px;
         }
         .spacer {
@@ -124,7 +121,7 @@
                     pointselected.toggleClass('selected');
                 }
                 pointselected = newpointselected;
-                $('#navigation').html('<input type="button" onclick="location.href='+eventData.data.pointIndex+'" value="Go To Board" class="travelbutton"/>');
+                $('#navigation').html('<input type="button" onclick="location.href='+eventData.data.pointIndex+'" value="Go" class="travelbutton"/>');
                 pointselected.toggleClass('selected');
             });
         }
@@ -135,9 +132,9 @@
 <body>
     <div class="spacer"></div>
     <div>
-        <div class="inline">{{.Wins}} Wins / {{.Losses}} Losses</div>
         <div class="inline">{{.Name}}</div>
-        <div class="inline">Best Piece ({{.BestPieceName}}) has {{.BestPieceTakes}} Takes</div>
+        <div class="inline">+{{.Wins}} / -{{.Losses}}</div>
+        <!-- <div class="inline">Best Piece ({{.BestPieceName}}) has {{.BestPieceTakes}} Takes</div> -->
     </div>
     <div class="spacer"></div>
     <div>

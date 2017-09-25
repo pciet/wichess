@@ -60,10 +60,18 @@
         padding: 1em;
     }
     .indicator {
-        outline: 1px solid black;
+        outline: 3px inset #d4cca5;
         background-color: #cc785c;
         color: #fb835e;
         margin: 1em;
+        /* https://stackoverflow.com/questions/826782/how-to-disable-text-selection-highlighting-using-css */
+        -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Safari */
+        -khtml-user-select: none; /* Konqueror HTML */
+        -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
+        cursor: default;
     }
     .indicating {
         background-color: #d4cca5;
@@ -291,10 +299,12 @@
     <div class="spacer"></div>
     <div>
         <table><tr>
-            <td><span class="indicator" id="check">Check</span></td>
+            <td><table><tr><td><span class="indicator" id="check">Check</span></td></tr>
+                <tr><td><input type="button" value="Back" onclick="window.location.pathname = '/';"/></td></tr></table></td>
             <td><div id="board"></div></td>
             <td><table><tr><td><span class="indicator" id="checkmate">Checkmate</span></td></tr>
                 <tr><td id="acknowledge"></td></tr></table></td>
+            <td></td>
         </tr></table>
     </div>
     <div class="spacer"></div>

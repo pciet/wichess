@@ -16,6 +16,22 @@ const (
 	initial_piece_count = 6
 )
 
+const (
+	player_record_win_update  = "UPDATE " + player_table + " SET " + player_wins_key + " = " + player_wins_key + " + 1 WHERE " + player_name_key + " = $1;"
+	player_record_lose_update = "UPDATE " + player_table + " SET " + player_losses_key + " = " + player_losses_key + " + 1 WHERE " + player_name_key + " = $1;"
+)
+
+func writePlayerRecordUpdateToDatabase(winner, loser string) {
+	_, err := database.Exec(player_record_win_update, winner)
+	if err != nil {
+		panicExit(err.Error())
+	}
+	_, err = database.Exec(player_record_lose_update, loser)
+	if err != nil {
+		panicExit(err.Error())
+	}
+}
+
 const player_crypt_query = "SELECT " + player_crypt_key + " FROM " + player_table + " WHERE " + player_name_key + "=$1"
 
 func playerCryptFromDatabase(name string) (bool, string) {

@@ -152,16 +152,30 @@ func (g game) move(from, to int, mover string) map[string]piece {
 			}
 		}
 	}
+	if len(diff) == 0 {
+		return diff
+	}
 	writeGameChangesToDatabase(g.ID, diff, nextMover)
-	if len(diff) != 0 {
-		if orientation == wichessing.White {
-			if gameListening[g.ID].black != nil {
-				gameListening[g.ID].black <- diff
-			}
+	if orientation == wichessing.White {
+		if gameListening[g.ID].black != nil {
+			gameListening[g.ID].black <- diff
+		}
+	} else {
+		if gameListening[g.ID].white != nil {
+			gameListening[g.ID].white <- diff
+		}
+	}
+	var checkOrientation wichessing.Orientation
+	if orientation == wichessing.White {
+		checkOrientation = wichessing.Black
+	} else {
+		checkOrientation = wichessing.White
+	}
+	if g.wichessingBoard().AfterMove(absPoint(from), absPoint(to), orientation).Checkmate(checkOrientation) {
+		if checkOrientation == wichessing.White {
+			writePlayerRecordUpdateToDatabase(g.Black, g.White)
 		} else {
-			if gameListening[g.ID].white != nil {
-				gameListening[g.ID].white <- diff
-			}
+			writePlayerRecordUpdateToDatabase(g.White, g.Black)
 		}
 	}
 	return diff
