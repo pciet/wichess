@@ -259,7 +259,7 @@
             }
             return null;
         }
-        function requestGame() {
+        function requestGame(computer) {
             var lr = 0, lk = 0, lb = 0, rr = 0, rk = 0, rb = 0;
             if (leftrook != null) {
                 lr = leftrook.Identifier;
@@ -287,6 +287,7 @@
                 rbishop: rb,
                 rknight: rk,
                 rrook: rr,
+                computer: computer
             }).done(function() {
                 window.location.pathname = '/';
             });
@@ -297,7 +298,14 @@
 <body>
 <div class="spacer"></div>
 <div>
-    <input type="button" value="Ready" onclick="requestGame();"/>
+    <table>
+        <tr>
+            <td><input type="button" value="Match Human" onclick="requestGame(false);"/></td>
+        </tr>
+        <tr>
+            <td><input type="button" value="Play Computer" onclick="requestGame(true);"/></td>
+        </tr>
+    </table>
 </div>
 <div>
     <table id="slots">

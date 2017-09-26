@@ -9,6 +9,8 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+const computer_player = "Computer Player"
+
 // A zero for an ID value means use the regular piece.
 type gameSetup struct {
 	slot          int
@@ -29,6 +31,11 @@ type listeningPlayer struct {
 
 var listeningPlayers = make(map[string]listeningPlayer)
 var listeningPlayersLock = &sync.Mutex{}
+
+func requestComputerMatch(name string, config gameSetup) {
+	newBoardIntoDatabase(name, config, computer_player, gameSetup{})
+	notifyMatchMadeToListeners(name, config.slot, computer_player, 0)
+}
 
 // An identifier of 0 means request the normal basic piece instead of a hero piece.
 func requestMatch(name string, config gameSetup) {

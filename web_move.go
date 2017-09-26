@@ -60,6 +60,14 @@ func moveRequestHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
+	if (game.White == computer_player) || (game.Black == computer_player) {
+		cdiff := computerMoveForGame(int(gameid))
+		if (cdiff != nil) && (len(cdiff) != 0) {
+			for addr, piece := range cdiff {
+				diff[addr] = piece
+			}
+		}
+	}
 	json, err := json.Marshal(diff)
 	if err != nil {
 		panicExit(err.Error())

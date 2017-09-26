@@ -35,6 +35,9 @@ func createAndLogin(name, crypt, remoteAddr string) string {
 	if exists {
 		return ""
 	}
+	if name == computer_player {
+		return ""
+	}
 	newPlayerInDatabase(name, crypt)
 	return login(name, crypt, remoteAddr)
 }

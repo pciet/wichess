@@ -31,13 +31,17 @@ const new_game_board_insert = "INSERT INTO " + board_table + "(" + board_name_ke
 
 func newBoardIntoDatabase(player1 string, player1setup gameSetup, player2 string, player2setup gameSetup) {
 	id := newGameIntoDatabase(player1, player1setup, player2, player2setup)
-	_, err := database.Exec(new_game_board_insert, player1, player1setup.slot, id)
-	if err != nil {
-		panicExit(err.Error())
+	if player1 != computer_player {
+		_, err := database.Exec(new_game_board_insert, player1, player1setup.slot, id)
+		if err != nil {
+			panicExit(err.Error())
+		}
 	}
-	_, err = database.Exec(new_game_board_insert, player2, player2setup.slot, id)
-	if err != nil {
-		panicExit(err.Error())
+	if player2 != computer_player {
+		_, err := database.Exec(new_game_board_insert, player2, player2setup.slot, id)
+		if err != nil {
+			panicExit(err.Error())
+		}
 	}
 }
 

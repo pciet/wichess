@@ -120,6 +120,22 @@ func absPoint(index int) wichessing.AbsPoint {
 	}
 }
 
+func computerMoveForGame(id int) map[string]piece {
+	g := gameWithIdentifier(id)
+	var orientation wichessing.Orientation
+	if computer_player == g.White {
+		orientation = wichessing.White
+	} else {
+		orientation = wichessing.Black
+	}
+	move := g.wichessingBoard().ComputerMove(orientation)
+	if move == nil {
+		g.acknowledge(computer_player)
+		return nil
+	}
+	return g.move(int(move.From.Index()), int(move.To.Index()), computer_player)
+}
+
 // Returns address that have changed, Kind 0 piece for a now empty point, but does not update the board points.
 func (g game) move(from, to int, mover string) map[string]piece {
 	var nextMover string
@@ -235,7 +251,9 @@ func (g game) acknowledge(player string) {
 	} else {
 		panicExit("player " + player + " is not " + g.Black + " (black) or " + g.White + " (white)")
 	}
-	deleteBoardFromDatabase(player, g.ID)
+	if player != computer_player {
+		deleteBoardFromDatabase(player, g.ID)
+	}
 	if g.BlackAcknowledge && g.WhiteAcknowledge {
 		g.deleteFromDatabase()
 		return

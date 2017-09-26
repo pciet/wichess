@@ -9,13 +9,14 @@ import (
 )
 
 const (
-	request_left_rook    = "lrook"
-	request_left_knight  = "lknight"
-	request_left_bishop  = "lbishop"
-	request_right_bishop = "rbishop"
-	request_right_knight = "rknight"
-	request_right_rook   = "rrook"
-	request_point        = "point"
+	request_left_rook        = "lrook"
+	request_left_knight      = "lknight"
+	request_left_bishop      = "lbishop"
+	request_right_bishop     = "rbishop"
+	request_right_knight     = "rknight"
+	request_right_rook       = "rrook"
+	request_point            = "point"
+	request_against_computer = "computer"
 )
 
 func requestMatchHandler(w http.ResponseWriter, r *http.Request) {
@@ -35,6 +36,7 @@ func requestMatchHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var lr, lk, lb, rb, rk, rr, slot int
+	var againstComputer bool
 	var err error
 	if r.FormValue(request_left_rook) != "" {
 		lr, err = strconv.Atoi(r.FormValue(request_left_rook))
@@ -85,7 +87,14 @@ func requestMatchHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	requestMatch(name, gameSetup{
+	if r.FormValue(request_against_computer) != "" {
+		againstComputer, err = strconv.ParseBool(r.FormValue(request_against_computer))
+		if err != nil {
+			http.NotFound(w, r)
+			return
+		}
+	}
+	setup := gameSetup{
 		slot:          slot,
 		leftRookID:    lr,
 		leftKnightID:  lk,
@@ -93,5 +102,10 @@ func requestMatchHandler(w http.ResponseWriter, r *http.Request) {
 		rightBishopID: rb,
 		rightKnightID: rk,
 		rightRookID:   rr,
-	})
+	}
+	if againstComputer {
+		requestComputerMatch(name, setup)
+	} else {
+		requestMatch(name, setup)
+	}
 }

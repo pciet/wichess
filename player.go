@@ -22,13 +22,17 @@ const (
 )
 
 func writePlayerRecordUpdateToDatabase(winner, loser string) {
-	_, err := database.Exec(player_record_win_update, winner)
-	if err != nil {
-		panicExit(err.Error())
+	if winner != computer_player {
+		_, err := database.Exec(player_record_win_update, winner)
+		if err != nil {
+			panicExit(err.Error())
+		}
 	}
-	_, err = database.Exec(player_record_lose_update, loser)
-	if err != nil {
-		panicExit(err.Error())
+	if loser != computer_player {
+		_, err := database.Exec(player_record_lose_update, loser)
+		if err != nil {
+			panicExit(err.Error())
+		}
 	}
 }
 
