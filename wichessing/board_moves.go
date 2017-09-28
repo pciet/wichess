@@ -132,6 +132,44 @@ func (b Board) MovesFromPoint(the Point) AbsPointSet {
 	}
 	set = set.Add(takeSet)
 	set = set.Add(b.ReconPointsFrom(the))
+	// castling
+	if (the.Kind == King) && (the.Moved == false) {
+		if (the.File == 4) && (the.Rank == 0) {
+			if (b[1].Piece == nil) && (b[2].Piece == nil) && (b[3].Piece == nil) && (b[0].Piece != nil) {
+				if b[0].Moved == false {
+					set[&AbsPoint{
+						File: 2,
+						Rank: 0,
+					}] = struct{}{}
+				}
+			}
+			if (b[5].Piece == nil) && (b[6].Piece == nil) && (b[7].Piece != nil) {
+				if b[7].Moved == false {
+					set[&AbsPoint{
+						File: 6,
+						Rank: 0,
+					}] = struct{}{}
+				}
+			}
+		} else if (the.File == 4) && (the.Rank == 7) {
+			if (b[57].Piece == nil) && (b[58].Piece == nil) && (b[59].Piece == nil) && (b[56].Piece != nil) {
+				if b[56].Moved == false {
+					set[&AbsPoint{
+						File: 2,
+						Rank: 7,
+					}] = struct{}{}
+				}
+			}
+			if (b[61].Piece == nil) && (b[62].Piece == nil) && (b[63].Piece != nil) {
+				if b[63].Moved == false {
+					set[&AbsPoint{
+						File: 6,
+						Rank: 7,
+					}] = struct{}{}
+				}
+			}
+		}
+	}
 	set = set.Reduce()
 	return set
 }

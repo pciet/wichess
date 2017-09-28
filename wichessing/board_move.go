@@ -57,6 +57,107 @@ func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) PointSet {
 	if b.MovesFromPoint(fromPoint).Has(to) == false {
 		return PointSet{}
 	}
+	// castling can only be done when in-between points are unoccupied and check isn't entered, as verified by MovesFromPoint above
+	if (fromPoint.Kind == King) && (fromPoint.Moved == false) {
+		// these to moves are only available when castling is available
+		if (to.File == 2) && (to.Rank == 0) {
+			set[&Point{
+				AbsPoint: from,
+			}] = struct{}{}
+			set[&Point{
+				AbsPoint: AbsPoint{
+					File: 0,
+					Rank: 0,
+				},
+			}] = struct{}{}
+			set[&Point{
+				AbsPoint: to,
+				Piece:    fromPoint.Piece,
+			}] = struct{}{}
+			fromPoint.Moved = true
+			set[&Point{
+				AbsPoint: AbsPoint{
+					File: 3,
+					Rank: 0,
+				},
+				Piece: b[0].Piece,
+			}] = struct{}{}
+			b[0].Moved = true
+			return set
+		} else if (to.File == 6) && (to.Rank == 0) {
+			set[&Point{
+				AbsPoint: from,
+			}] = struct{}{}
+			set[&Point{
+				AbsPoint: AbsPoint{
+					File: 7,
+					Rank: 0,
+				},
+			}] = struct{}{}
+			set[&Point{
+				AbsPoint: to,
+				Piece:    fromPoint.Piece,
+			}] = struct{}{}
+			fromPoint.Moved = true
+			set[&Point{
+				AbsPoint: AbsPoint{
+					File: 5,
+					Rank: 0,
+				},
+				Piece: b[7].Piece,
+			}] = struct{}{}
+			b[7].Moved = true
+			return set
+		} else if (to.File == 2) && (to.Rank == 7) {
+			set[&Point{
+				AbsPoint: from,
+			}] = struct{}{}
+			set[&Point{
+				AbsPoint: AbsPoint{
+					File: 0,
+					Rank: 7,
+				},
+			}] = struct{}{}
+			set[&Point{
+				AbsPoint: to,
+				Piece:    fromPoint.Piece,
+			}] = struct{}{}
+			fromPoint.Moved = true
+			set[&Point{
+				AbsPoint: AbsPoint{
+					File: 3,
+					Rank: 7,
+				},
+				Piece: b[56].Piece,
+			}] = struct{}{}
+			b[56].Moved = true
+			return set
+		} else if (to.File == 6) && (to.Rank == 7) {
+			set[&Point{
+				AbsPoint: from,
+			}] = struct{}{}
+			set[&Point{
+				AbsPoint: AbsPoint{
+					File: 7,
+					Rank: 7,
+				},
+			}] = struct{}{}
+			set[&Point{
+				AbsPoint: to,
+				Piece:    fromPoint.Piece,
+			}] = struct{}{}
+			fromPoint.Moved = true
+			set[&Point{
+				AbsPoint: AbsPoint{
+					File: 6,
+					Rank: 7,
+				},
+				Piece: b[63].Piece,
+			}] = struct{}{}
+			b[63].Moved = true
+			return set
+		}
+	}
 	if toPoint.Piece != nil {
 		if fromPoint.Steals && (toPoint.Orientation != turn) {
 			toPoint.Orientation = turn
