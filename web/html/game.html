@@ -39,33 +39,34 @@
         background-color: #f3f3f3;
     }
     .spacer {
-        height: 20px;
+        height: 35px;
     }
     .pieceimg {
         width: 48px;
         height: 48px;
     }
     .hovered {
-        outline: 2px solid black;
+        outline: 2px solid #fb835e;
         outline-offset: -1px;
     }
     .hoveredopp {
-        outline: 2px dotted black;
+        outline: 2px dotted #fb835e;
         outline-offset: -1px;
     }
     .selected {
-        outline: 2px solid black;
+        outline: 2px solid #fb835e;
         outline-offset: -1px;
     }
     .selectedopp {
-        outline: 2px dotted black;
+        outline: 2px dotted #fb835e;
         outline-offset: -1px;
     }
     span {
         padding: 1em;
     }
     .indicator {
-        outline: 3px inset #d4cca5;
+        border-radius: 10px;
+        border: 2px solid #d4cca5;
         background-color: #cc785c;
         color: #fb835e;
         margin: 1em;
@@ -81,6 +82,10 @@
     .indicating {
         background-color: #d4cca5;
         color: #825444;
+    }
+    input {
+        border-radius: 5px;
+        box-shadow: 0px 1px 1px black;
     }
     </style>
     <script type="text/javascript" src="/js/jquery-2.2.0.min.js"></script>
@@ -318,7 +323,6 @@
         <span class="indicator" id="blackactive">Turn</span>
     </div>
     <div class="spacer"></div>
-    <div class="spacer"></div>
     <div>
         <table><tr>
             <td><table><tr><td><span class="indicator" id="check">Check</span></td></tr>
@@ -329,7 +333,6 @@
             <td></td>
         </tr></table>
     </div>
-    <div class="spacer"></div>
     <div class="spacer"></div>
     <div><span id="youwhite"></span><span>{{.White}}</span>
         <span class="indicator" id="whiteactive">Turn</span>
