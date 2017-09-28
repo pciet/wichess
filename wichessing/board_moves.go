@@ -153,6 +153,7 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 			filteredPath := AbsPath{
 				Points: make([]AbsPoint, 0, len(path.Points)),
 			}
+		FIRST_PATH_OUTER:
 			for i, point := range path.Points {
 				actualPoint := b[point.Index()]
 				if (actualPoint.Piece != nil) && (the.Ghost == false) {
@@ -165,6 +166,19 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 				if the.MustEnd {
 					if len(path.Points) != i+1 {
 						continue
+					}
+				}
+				if the.Kind == King {
+					for pt, _ := range b.SurroundingPoints(actualPoint) {
+						if pt.Piece == nil {
+							continue
+						}
+						if pt.Orientation == the.Orientation {
+							continue
+						}
+						if pt.Kind == Guard {
+							break FIRST_PATH_OUTER
+						}
 					}
 				}
 				filteredPath.Points = append(filteredPath.Points, point)
@@ -184,6 +198,7 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 			filteredPath := AbsPath{
 				Points: make([]AbsPoint, 0, len(path.Points)),
 			}
+		MOVE_PATH_OUTER:
 			for i, point := range path.Points {
 				actualPoint := b[point.Index()]
 				if (actualPoint.Piece != nil) && (the.Ghost == false) {
@@ -196,6 +211,19 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 				if the.MustEnd {
 					if len(path.Points) != i+1 {
 						continue
+					}
+				}
+				if the.Kind == King {
+					for pt, _ := range b.SurroundingPoints(actualPoint) {
+						if pt.Piece == nil {
+							continue
+						}
+						if pt.Orientation == the.Orientation {
+							continue
+						}
+						if pt.Kind == Guard {
+							break MOVE_PATH_OUTER
+						}
 					}
 				}
 				filteredPath.Points = append(filteredPath.Points, point)
@@ -212,6 +240,7 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 			filteredPath := AbsPath{
 				Points: make([]AbsPoint, 0, len(path.Points)),
 			}
+		TAKE_PATH_OUTER:
 			for ind, point := range path.Points {
 				actualPoint := b[point.Index()]
 				if actualPoint.Piece == nil {
@@ -225,6 +254,35 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 				if actualPoint.Orientation != the.Orientation {
 					if (the.Kind == Pawn) && actualPoint.Fortified {
 						break
+					}
+					if actualPoint.Kind == Detonate {
+						if the.Kind == King {
+							break
+						}
+						for pt, _ := range b.SurroundingPoints(actualPoint) {
+							if pt.Piece == nil {
+								continue
+							}
+							if pt.Orientation != the.Orientation {
+								continue
+							}
+							if pt.Kind == King {
+								break TAKE_PATH_OUTER
+							}
+						}
+					}
+					if the.Kind == King {
+						for pt, _ := range b.SurroundingPoints(actualPoint) {
+							if pt.Piece == nil {
+								continue
+							}
+							if pt.Orientation == the.Orientation {
+								continue
+							}
+							if pt.Kind == Guard {
+								break TAKE_PATH_OUTER
+							}
+						}
 					}
 					filteredPath.Points = append(filteredPath.Points, point)
 					break
@@ -258,6 +316,7 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 			filteredPath := AbsPath{
 				Points: make([]AbsPoint, 0, len(path.Points)),
 			}
+		RALLY_PATH_OUTER:
 			for i, point := range path.Points {
 				actualPoint := b[point.Index()]
 				if (actualPoint.Piece != nil) && (the.Ghost == false) {
@@ -270,6 +329,19 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 				if the.MustEnd {
 					if len(path.Points) != i+1 {
 						continue
+					}
+				}
+				if the.Kind == King {
+					for pt, _ := range b.SurroundingPoints(actualPoint) {
+						if pt.Piece == nil {
+							continue
+						}
+						if pt.Orientation == the.Orientation {
+							continue
+						}
+						if pt.Kind == Guard {
+							break RALLY_PATH_OUTER
+						}
 					}
 				}
 				filteredPath.Points = append(filteredPath.Points, point)
