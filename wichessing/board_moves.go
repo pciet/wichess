@@ -170,7 +170,89 @@ func (b Board) MovesFromPoint(the Point) AbsPointSet {
 			}
 		}
 	}
+	set = set.Add(b.EnPassantTakeFromPoint(the))
 	set = set.Reduce()
+	return set
+}
+
+func (b Board) EnPassantTakeFromPoint(the Point) AbsPointSet {
+	if the.Piece == nil {
+		return AbsPointSet{}
+	}
+	if the.Kind != Pawn {
+		return AbsPointSet{}
+	}
+	if ((the.Orientation == White) && (the.Rank != 4)) || ((the.Orientation == Black) && (the.Rank != 3)) {
+		return AbsPointSet{}
+	}
+	set := make(AbsPointSet)
+	if the.Orientation == White {
+		file := int(the.File) + 1
+		if file < 8 {
+			index := AbsPoint{
+				File: uint8(file),
+				Rank: 4,
+			}.Index()
+			piece := b[index].Piece
+			if piece != nil {
+				if (piece.Orientation != the.Orientation) && (piece.Kind == Pawn) && (piece.Previous == AbsPoint{File: uint8(file), Rank: 6}.Index()) {
+					set[&AbsPoint{
+						File: uint8(file),
+						Rank: 5,
+					}] = struct{}{}
+				}
+			}
+		}
+		file = int(the.File) - 1
+		if file >= 0 {
+			index := AbsPoint{
+				File: uint8(file),
+				Rank: 4,
+			}.Index()
+			piece := b[index].Piece
+			if piece != nil {
+				if (piece.Orientation != the.Orientation) && (piece.Kind == Pawn) && (piece.Previous == AbsPoint{File: uint8(file), Rank: 6}.Index()) {
+					set[&AbsPoint{
+						File: uint8(file),
+						Rank: 5,
+					}] = struct{}{}
+				}
+			}
+		}
+	} else {
+		file := int(the.File) + 1
+		if file < 8 {
+			index := AbsPoint{
+				File: uint8(file),
+				Rank: 3,
+			}.Index()
+			piece := b[index].Piece
+			if piece != nil {
+				if (piece.Orientation != the.Orientation) && (piece.Kind == Pawn) && (piece.Previous == AbsPoint{File: uint8(file), Rank: 1}.Index()) {
+					set[&AbsPoint{
+						File: uint8(file),
+						Rank: 2,
+					}] = struct{}{}
+				}
+			}
+		}
+		file = int(the.File) - 1
+		if file >= 0 {
+			index := AbsPoint{
+				File: uint8(file),
+				Rank: 3,
+			}.Index()
+			piece := b[index].Piece
+			if piece != nil {
+				if (piece.Orientation != the.Orientation) && (piece.Kind == Pawn) && (piece.Previous == AbsPoint{File: uint8(file), Rank: 1}.Index()) {
+					set[&AbsPoint{
+						File: uint8(file),
+						Rank: 2,
+					}] = struct{}{}
+				}
+			}
+		}
+	}
 	return set
 }
 

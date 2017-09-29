@@ -10,7 +10,9 @@ import ()
 type Piece struct {
 	Kind
 	Orientation
-	Moved     bool
+	Moved    bool
+	Previous uint8 `json:"-"` // previous point
+
 	Ghost     bool `json:"-"`  // can move through other pieces
 	MustEnd   bool `json:"-"`  // can only move to last point in path
 	MustTake  bool `json:"-"`  // if taking is possible then only take moves can be made
@@ -97,6 +99,7 @@ func (the *Piece) Copy() *Piece {
 		Kind:        the.Kind,
 		Orientation: the.Orientation,
 		Moved:       the.Moved,
+		Previous:    the.Previous,
 	}
 	p = p.SetKindFlags()
 	return &p

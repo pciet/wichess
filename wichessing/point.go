@@ -96,6 +96,13 @@ func RankFromIndex(i uint8) uint8 {
 	return i / 8
 }
 
+func AbsPointFromIndex(i uint8) AbsPoint {
+	return AbsPoint{
+		File: FileFromIndex(i),
+		Rank: RankFromIndex(i),
+	}
+}
+
 func (p AbsPoint) String() string {
 	return fmt.Sprintf("%v-%v", p.File, p.Rank)
 }

@@ -5,6 +5,18 @@ package wichessing
 
 import ()
 
+func (b Board) UpdatePiecePrevious(turn Orientation) {
+	for index, point := range b {
+		if point.Piece == nil {
+			continue
+		}
+		if point.Orientation != turn {
+			continue
+		}
+		point.Piece.Previous = uint8(index)
+	}
+}
+
 func (b Board) PieceCount(player Orientation) uint8 {
 	count := 0
 	for _, point := range b {
