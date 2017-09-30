@@ -168,10 +168,12 @@
                 $('#acknowledge').html('<input type="button" value="Acknowledge" onclick="acknowledge();"/>');
             } 
             if ('promote' in Moves) {
-                if (White == Player) {
-                    $('#whitepromote').html(promotionButtons);
-                } else {
-                    $('#blackpromote').html(promotionButtons);
+                if (Turn == PlayerOrientation) {
+                    if (White == Player) {
+                        $('#whitepromote').html(promotionButtons);
+                    } else {
+                        $('#blackpromote').html(promotionButtons);
+                    }
                 }
             } else {
                 $('#whitepromote').html('');
@@ -252,107 +254,109 @@
                     setPieceImage(i, Board[i].Kind, Board[i].Orientation);
                 }
             }
-        });
-        $.get('/moves/'+game_id).done(function(data) {
-            Moves = data;
-            if ('check' in Moves) {
-                $('#check').addClass('indicating');
-            } else {
-                $('#check').removeClass('indicating');
-            }
-            if ('checkmate' in Moves) {
-                $('#checkmate').addClass('indicating');
-                $('#acknowledge').html('<input type="button" value="Acknowledge" onclick="acknowledge();"/>');
-            }
-            if ('promote' in Moves) {
-                if (White == Player) {
-                    $('#whitepromote').html(promotionButtons);
+            $.get('/moves/'+game_id).done(function(data) {
+                Moves = data;
+                if ('check' in Moves) {
+                    $('#check').addClass('indicating');
                 } else {
-                    $('#blackpromote').html(promotionButtons);
+                    $('#check').removeClass('indicating');
                 }
-            } else {
-                $('#whitepromote').html('');
-                $('#blackpromote').html('');
-            }
-            for (var i = 0; i < 64; i++) {
-                $('#point'+i).click({Index: i}, function(event) {
-                    var index = event.data.Index;
-                    var className = '';
-                    if ((Selected != index) && ($('#point'+index).hasClass('selected'))) {
-                        if (Turn == PlayerOrientation) {
-                            requestMove(Selected, index);
+                if ('checkmate' in Moves) {
+                    $('#checkmate').addClass('indicating');
+                    $('#acknowledge').html('<input type="button" value="Acknowledge" onclick="acknowledge();"/>');
+                }
+                if ('promote' in Moves) {
+                    if (Turn == PlayerOrientation) {
+                        if (White == Player) {
+                            $('#whitepromote').html(promotionButtons);
+                        } else {
+                            $('#blackpromote').html(promotionButtons);
                         }
-                        return;
                     }
-                    if (Board[index].Kind == 0) {
-                        return;
-                    }
-                    if (Moves[indexToAddrString(index)] == null) {
-                        return;
-                    }
-                    if (Selected != null) {
-                        if (Board[Selected].Orientation == PlayerOrientation) {
+                } else {
+                    $('#whitepromote').html('');
+                    $('#blackpromote').html('');
+                }
+                for (var i = 0; i < 64; i++) {
+                    $('#point'+i).click({Index: i}, function(event) {
+                        var index = event.data.Index;
+                        var className = '';
+                        if ((Selected != index) && ($('#point'+index).hasClass('selected'))) {
+                            if (Turn == PlayerOrientation) {
+                                requestMove(Selected, index);
+                            }
+                            return;
+                        }
+                        if (Board[index].Kind == 0) {
+                            return;
+                        }
+                        if (Moves[indexToAddrString(index)] == null) {
+                            return;
+                        }
+                        if (Selected != null) {
+                            if (Board[Selected].Orientation == PlayerOrientation) {
+                                className = 'selected';
+                            } else {
+                                className = 'selectedopp';
+                            }
+                            $('#point'+Selected).removeClass(className);
+                            for (var point in Moves[indexToAddrString(Selected)]) {
+                                $('#point'+addrStringToIndex(point)).removeClass(className);
+                            }
+                            if (Selected == index) {
+                                Selected = null;
+                                return;
+                            }
+                        }
+                        if (Board[index].Orientation == PlayerOrientation) {
                             className = 'selected';
                         } else {
                             className = 'selectedopp';
                         }
-                        $('#point'+Selected).removeClass(className);
-                        for (var point in Moves[indexToAddrString(Selected)]) {
-                            $('#point'+addrStringToIndex(point)).removeClass(className);
+                        $('#point'+index).addClass(className);
+                        for (var point in Moves[indexToAddrString(index)]) {
+                            $('#point'+addrStringToIndex(point)).addClass(className);
                         }
-                        if (Selected == index) {
-                            Selected = null;
+                        Selected = index;
+                    }).mouseenter({Index: i}, function(event) {
+                        var index = event.data.Index;
+                        var className;
+                        if (Board[index].Kind == 0) {
                             return;
                         }
-                    }
-                    if (Board[index].Orientation == PlayerOrientation) {
-                        className = 'selected';
-                    } else {
-                        className = 'selectedopp';
-                    }
-                    $('#point'+index).addClass(className);
-                    for (var point in Moves[indexToAddrString(index)]) {
-                        $('#point'+addrStringToIndex(point)).addClass(className);
-                    }
-                    Selected = index;
-                }).mouseenter({Index: i}, function(event) {
-                    var index = event.data.Index;
-                    var className;
-                    if (Board[index].Kind == 0) {
-                        return;
-                    }
-                    if (Moves[indexToAddrString(index)] == null) {
-                        return;
-                    }
-                    if (Board[index].Orientation == PlayerOrientation) {
-                        className = 'hovered';
-                    } else {
-                        className = 'hoveredopp';
-                    }
-                    $('#point'+index).addClass(className);
-                    for (var point in Moves[indexToAddrString(index)]) {
-                        $('#point'+addrStringToIndex(point)).addClass(className);
-                    }
-                }).mouseleave({Index: i}, function(event) {
-                    var index = event.data.Index;
-                    var className;
-                    if (Board[index].Kind == 0) {
-                        return;
-                    }
-                    if (Moves[indexToAddrString(index)] == null) {
-                        return;
-                    }
-                    if (Board[index].Orientation == PlayerOrientation) {
-                        className = 'hovered';
-                    } else {
-                        className = 'hoveredopp';
-                    }
-                    $('#point'+index).removeClass(className);
-                    for (var point in Moves[indexToAddrString(index)]) {
-                        $('#point'+addrStringToIndex(point)).removeClass(className);
-                    }
-                });
-            }
+                        if (Moves[indexToAddrString(index)] == null) {
+                            return;
+                        }
+                        if (Board[index].Orientation == PlayerOrientation) {
+                            className = 'hovered';
+                        } else {
+                            className = 'hoveredopp';
+                        }
+                        $('#point'+index).addClass(className);
+                        for (var point in Moves[indexToAddrString(index)]) {
+                            $('#point'+addrStringToIndex(point)).addClass(className);
+                        }
+                    }).mouseleave({Index: i}, function(event) {
+                        var index = event.data.Index;
+                        var className;
+                        if (Board[index].Kind == 0) {
+                            return;
+                        }
+                        if (Moves[indexToAddrString(index)] == null) {
+                            return;
+                        }
+                        if (Board[index].Orientation == PlayerOrientation) {
+                            className = 'hovered';
+                        } else {
+                            className = 'hoveredopp';
+                        }
+                        $('#point'+index).removeClass(className);
+                        for (var point in Moves[indexToAddrString(index)]) {
+                            $('#point'+addrStringToIndex(point)).removeClass(className);
+                        }
+                    });
+                }
+            });
         });
     });
     function acknowledge() {

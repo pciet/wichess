@@ -62,14 +62,18 @@ func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) PointSet {
 	if b.MovesFromPoint(fromPoint).Has(to) == false {
 		return PointSet{}
 	}
+	// en passant / in passing
 	if (fromPoint.Kind == Pawn) && (toPoint.Piece == nil) {
 		var piece *Piece
+		var expectedToRank uint8
 		if turn == Black {
 			piece = b[AbsPoint{File: to.File, Rank: 3}.Index()].Piece
+			expectedToRank = 2
 		} else {
 			piece = b[AbsPoint{File: to.File, Rank: 4}.Index()].Piece
+			expectedToRank = 5
 		}
-		if piece != nil {
+		if (piece != nil) && (to.Rank == expectedToRank) {
 			if (piece.Orientation != turn) && (piece.Kind == Pawn) {
 				if turn == Black {
 					if piece.Previous == (AbsPoint{File: to.File, Rank: 1}).Index() {

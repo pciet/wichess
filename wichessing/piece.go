@@ -10,7 +10,7 @@ import ()
 type Piece struct {
 	Kind
 	Orientation
-	Moved    bool
+	Moved    bool  `json:"-"`
 	Previous uint8 `json:"-"` // previous point
 
 	Ghost     bool `json:"-"` // can move through other pieces
@@ -85,8 +85,6 @@ func (the Piece) SetKindFlags() Piece {
 		the.Rallies = true
 	case Fortify:
 		the.Fortified = true
-	case Pawn:
-		the.MustTake = true
 	}
 	return the
 }
