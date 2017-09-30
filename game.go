@@ -133,28 +133,60 @@ func computerMoveForGame(id int) map[string]piece {
 		g.acknowledge(computer_player)
 		return nil
 	}
-	return g.move(int(move.From.Index()), int(move.To.Index()), computer_player)
+	diff, promoting := g.move(int(move.From.Index()), int(move.To.Index()), computer_player)
+	if promoting {
+		var from int
+		if orientation == wichessing.White {
+			for i := 56; i < 64; i++ {
+				p := g.Points[i]
+				if (p.Kind == wichessing.Pawn) && (p.Orientation == wichessing.White) {
+					from = i
+					break
+				}
+			}
+		} else {
+			for i := 0; i < 8; i++ {
+				p := g.Points[i]
+				if (p.Kind == wichessing.Pawn) && (p.Orientation == wichessing.Black) {
+					from = i
+					break
+				}
+			}
+		}
+		pdiff := g.promote(from, computer_player, wichessing.Queen)
+		for point, piece := range pdiff {
+			diff[point] = piece
+		}
+	}
+	return diff
 }
 
-// Returns address that have changed, Kind 0 piece for a now empty point, but does not update the board points.
-func (g game) move(from, to int, mover string) map[string]piece {
+func (g game) promote(from int, player string, kind wichessing.Kind) map[string]piece {
 	var nextMover string
 	var orientation wichessing.Orientation
-	if g.White == g.Active {
-		if g.White != mover {
-			return nil
-		}
-		orientation = wichessing.White
+	if g.White == player {
 		nextMover = g.Black
-	} else {
-		if g.Black != mover {
+		orientation = wichessing.White
+		if (from < 56) || (from > 63) {
 			return nil
 		}
-		orientation = wichessing.Black
+	} else {
 		nextMover = g.White
+		orientation = wichessing.Black
+		if (from < 0) || (from > 7) {
+			return nil
+		}
 	}
+	point := g.Points[from]
+	if point.Kind == 0 {
+		return nil
+	}
+	if (point.Orientation != orientation) || (point.Kind != wichessing.Pawn) {
+		return nil
+	}
+	b := g.wichessingBoard()
 	diff := make(map[string]piece)
-	for point, _ := range g.wichessingBoard().Move(absPoint(from), absPoint(to), orientation) {
+	for point, _ := range b.PromotePawn(wichessing.AbsPointFromIndex(uint8(from)), wichessing.Kind(kind)) {
 		if point.Piece == nil {
 			diff[point.AbsPoint.String()] = piece{
 				Piece: wichessing.Piece{
@@ -163,12 +195,11 @@ func (g game) move(from, to int, mover string) map[string]piece {
 			}
 		} else {
 			diff[point.AbsPoint.String()] = piece{
-				Piece:      *point.Piece,
-				Identifier: g.Points[from].Identifier, // TODO: this could be incorrect
+				Piece: *point.Piece,
 			}
 		}
 	}
-	if len(diff) == 0 {
+	if (diff == nil) || (len(diff) == 0) {
 		return diff
 	}
 	writeGameChangesToDatabase(g.ID, diff, nextMover)
@@ -187,7 +218,7 @@ func (g game) move(from, to int, mover string) map[string]piece {
 	} else {
 		checkOrientation = wichessing.White
 	}
-	if g.wichessingBoard().AfterMove(absPoint(from), absPoint(to), orientation).Checkmate(checkOrientation) {
+	if b.AfterPromote(absPoint(from), wichessing.Kind(kind)).Checkmate(checkOrientation) {
 		if checkOrientation == wichessing.White {
 			writePlayerRecordUpdateToDatabase(g.Black, g.White)
 		} else {
@@ -197,13 +228,86 @@ func (g game) move(from, to int, mover string) map[string]piece {
 	return diff
 }
 
+// Returns address that have changed, Kind 0 piece for a now empty point, but does not update the board points. Returns true if promoting.
+func (g game) move(from, to int, mover string) (map[string]piece, bool) {
+	var nextMover string
+	var orientation wichessing.Orientation
+	if g.White == g.Active {
+		if g.White != mover {
+			return nil, false
+		}
+		orientation = wichessing.White
+		nextMover = g.Black
+	} else {
+		if g.Black != mover {
+			return nil, false
+		}
+		orientation = wichessing.Black
+		nextMover = g.White
+	}
+	b := g.wichessingBoard()
+	if b.HasPawnToPromote() {
+		return nil, false
+	}
+	diff := make(map[string]piece)
+	for point, _ := range b.Move(absPoint(from), absPoint(to), orientation) {
+		if point.Piece == nil {
+			diff[point.AbsPoint.String()] = piece{
+				Piece: wichessing.Piece{
+					Kind: 0,
+				},
+			}
+		} else {
+			diff[point.AbsPoint.String()] = piece{
+				Piece:      *point.Piece,
+				Identifier: g.Points[from].Identifier, // TODO: this could be incorrect
+			}
+		}
+	}
+	if len(diff) == 0 {
+		return diff, false
+	}
+	after := b.AfterMove(absPoint(from), absPoint(to), orientation)
+	var promoting bool
+	if after.HasPawnToPromote() {
+		writeGameChangesToDatabase(g.ID, diff, mover)
+		promoting = true
+	} else {
+		writeGameChangesToDatabase(g.ID, diff, nextMover)
+	}
+	if orientation == wichessing.White {
+		if gameListening[g.ID].black != nil {
+			gameListening[g.ID].black <- diff
+		}
+	} else {
+		if gameListening[g.ID].white != nil {
+			gameListening[g.ID].white <- diff
+		}
+	}
+	var checkOrientation wichessing.Orientation
+	if orientation == wichessing.White {
+		checkOrientation = wichessing.Black
+	} else {
+		checkOrientation = wichessing.White
+	}
+	if after.Checkmate(checkOrientation) {
+		if checkOrientation == wichessing.White {
+			writePlayerRecordUpdateToDatabase(g.Black, g.White)
+		} else {
+			writePlayerRecordUpdateToDatabase(g.White, g.Black)
+		}
+	}
+	return diff, promoting
+}
+
 const (
 	check_key     = "check"
 	checkmate_key = "checkmate"
+	promote_key   = "promote"
 )
 
 // The map keys are wichessing.AbsPoint converted to "x/file-y/rank" formatted string.
-// If the game is in a check or checkmate state then a corresponding key with a nil value will be set.
+// If the game is in a check or checkmate state, or a piece is to be promoted, then a corresponding key with a nil value will be set.
 func (g game) moves() map[string]map[string]struct{} {
 	var board wichessing.Board
 	for i := 0; i < 64; i++ {
@@ -221,6 +325,11 @@ func (g game) moves() map[string]map[string]struct{} {
 			},
 		}
 	}
+	moves := make(map[string]map[string]struct{})
+	if board.HasPawnToPromote() {
+		moves[promote_key] = nil
+		return moves
+	}
 	var m map[wichessing.AbsPoint]wichessing.AbsPointSet
 	var check, checkmate bool
 	if g.Active == g.White {
@@ -228,7 +337,6 @@ func (g game) moves() map[string]map[string]struct{} {
 	} else {
 		m, check, checkmate = board.Moves(wichessing.Black)
 	}
-	moves := make(map[string]map[string]struct{})
 	for point, set := range m {
 		moves[point.String()] = set.String()
 	}

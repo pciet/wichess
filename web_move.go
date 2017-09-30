@@ -7,11 +7,14 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+
+	"github.com/pciet/wichess/wichessing"
 )
 
 const (
-	request_from = "From"
-	request_to   = "To"
+	request_from         = "From"
+	request_to           = "To"
+	request_promote_kind = "Kind"
 )
 
 func moveRequestHandler(w http.ResponseWriter, r *http.Request) {
@@ -45,22 +48,50 @@ func moveRequestHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	to, err = strconv.Atoi(r.FormValue(request_to))
-	if err != nil {
-		http.NotFound(w, r)
-		return
+
+	var kind int
+	if r.FormValue(request_promote_kind) != "" {
+		kind, err = strconv.Atoi(r.FormValue(request_promote_kind))
+		if err != nil {
+			http.NotFound(w, r)
+			return
+		}
+		if (wichessing.Kind(kind) != wichessing.Knight) &&
+			(wichessing.Kind(kind) != wichessing.Bishop) &&
+			(wichessing.Kind(kind) != wichessing.Rook) &&
+			(wichessing.Kind(kind) != wichessing.Queen) {
+			http.NotFound(w, r)
+			return
+		}
+	} else {
+		to, err = strconv.Atoi(r.FormValue(request_to))
+		if err != nil {
+			http.NotFound(w, r)
+			return
+		}
 	}
 	game := gameWithIdentifier(int(gameid))
 	if (game.White != name) && (game.Black != name) {
 		http.NotFound(w, r)
 		return
 	}
-	diff := game.move(from, to, name)
-	if (diff == nil) || (len(diff) == 0) {
-		http.NotFound(w, r)
-		return
+	var diff map[string]piece
+	var promoting bool
+	if kind != 0 { // promotion
+		diff = game.promote(from, name, wichessing.Kind(kind))
+		if (diff == nil) || (len(diff) == 0) {
+			http.NotFound(w, r)
+			return
+		}
+	} else {
+		diff, promoting = game.move(from, to, name)
+		if (diff == nil) || (len(diff) == 0) {
+			http.NotFound(w, r)
+			return
+		}
+
 	}
-	if (game.White == computer_player) || (game.Black == computer_player) {
+	if (promoting == false) && ((game.White == computer_player) || (game.Black == computer_player)) {
 		cdiff := computerMoveForGame(int(gameid))
 		if (cdiff != nil) && (len(cdiff) != 0) {
 			for addr, piece := range cdiff {

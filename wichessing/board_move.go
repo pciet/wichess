@@ -23,6 +23,9 @@ func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) PointSet {
 	if fromPoint.Orientation != turn {
 		return PointSet{}
 	}
+	if b.HasPawnToPromote() {
+		return PointSet{}
+	}
 	toPoint := b[to.Index()]
 	if toPoint.Piece != nil {
 		if (toPoint.Orientation == turn) && (fromPoint.Swaps == false) {

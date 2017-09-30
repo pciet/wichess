@@ -41,6 +41,12 @@
     .spacer {
         height: 35px;
     }
+    .promotion {
+        height: 35px;
+    }
+    .promb {
+        font-size: 11px;
+    }
     .pieceimg {
         width: 48px;
         height: 48px;
@@ -114,6 +120,28 @@
     function requestMove(from, to) {
         $.post('/move/'+game_id, {From: from, To: to}).done(makeMove);
     }
+    var promotionButtons = '<input type="button" class="promb" value="Queen" onclick="promote('+k.QUEEN+');"/> <input type="button" class="promb" value="Rook" onclick="promote('+k.ROOK+');"/> <input type="button" class="promb" value="Bishop" onclick="promote('+k.BISHOP+');"/> <input type="button" class="promb" value="Knight" onclick="promote('+k.KNIGHT+');"/>';
+    function promote(kind) {
+        var from = 0;
+        if (Player == White) {
+            for (var i = 56; i < 64; i++) {
+                var piece = Board[i];
+                if ((piece.Kind == k.PAWN) && (piece.Orientation == o.WHITE)) {
+                    from = i;
+                    break;
+                }
+            }
+        } else {
+            for (var i = 0; i < 8; i++) {
+                var piece = Board[i];
+                if ((piece.Kind == k.PAWN) && (piece.Orientation == o.BLACK)) {
+                    from = i;
+                    break;
+                }
+            }
+        }
+        $.post('/move/'+game_id, {From: from, Kind: kind}).done(makeMove);
+    }
     function makeMove(diff) {
         for (var point in diff) {
             var index = addrStringToIndex(point);
@@ -139,16 +167,27 @@
                 $('#checkmate').addClass('indicating');
                 $('#acknowledge').html('<input type="button" value="Acknowledge" onclick="acknowledge();"/>');
             } 
+            if ('promote' in Moves) {
+                if (White == Player) {
+                    $('#whitepromote').html(promotionButtons);
+                } else {
+                    $('#blackpromote').html(promotionButtons);
+                }
+            } else {
+                $('#whitepromote').html('');
+                $('#blackpromote').html('');
+                if (Turn == o.WHITE) {
+                    $('#whiteactive').removeClass('indicating');
+                    $('#blackactive').addClass('indicating');
+                    Turn = o.BLACK;
+                } else {
+                    $('#whiteactive').addClass('indicating');
+                    $('#blackactive').removeClass('indicating');
+                    Turn = o.WHITE;
+                }
+            }
         });
-        if (Turn == o.WHITE) {
-            $('#whiteactive').removeClass('indicating');
-            $('#blackactive').addClass('indicating');
-            Turn = o.BLACK;
-        } else {
-            $('#whiteactive').addClass('indicating');
-            $('#blackactive').removeClass('indicating');
-            Turn = o.WHITE;
-        }
+
     }
     function addrStringToIndex(str) {
         var address = str.split('-');
@@ -224,6 +263,16 @@
             if ('checkmate' in Moves) {
                 $('#checkmate').addClass('indicating');
                 $('#acknowledge').html('<input type="button" value="Acknowledge" onclick="acknowledge();"/>');
+            }
+            if ('promote' in Moves) {
+                if (White == Player) {
+                    $('#whitepromote').html(promotionButtons);
+                } else {
+                    $('#blackpromote').html(promotionButtons);
+                }
+            } else {
+                $('#whitepromote').html('');
+                $('#blackpromote').html('');
             }
             for (var i = 0; i < 64; i++) {
                 $('#point'+i).click({Index: i}, function(event) {
@@ -319,9 +368,11 @@
 
 <body>
     <div class="spacer"></div>
-    <div><span id="youblack"></span><span>{{.Black}}</span>
-        <span class="indicator" id="blackactive">Turn</span>
-    </div>
+    <table><tr>
+        <td><div><span id="youblack"></span><span>{{.Black}}</span>
+        <span class="indicator" id="blackactive">Turn</span></td>
+        <td><div id="whitepromote" class="promotion"></div></td>
+    </tr></table>
     <div class="spacer"></div>
     <div>
         <table><tr>
@@ -334,8 +385,10 @@
         </tr></table>
     </div>
     <div class="spacer"></div>
-    <div><span id="youwhite"></span><span>{{.White}}</span>
-        <span class="indicator" id="whiteactive">Turn</span>
-    </div>
+    <table><tr>
+        <td><div id="blackpromote" class="promotion"></div></td>
+        <td><div><span id="youwhite"></span><span>{{.White}}</span>
+            <span class="indicator" id="whiteactive">Turn</span></td>
+    </tr></table>
 </body>
 </html>
