@@ -185,6 +185,9 @@ func (g game) promote(from int, player string, kind wichessing.Kind) map[string]
 		return nil
 	}
 	b := g.wichessingBoard()
+	if b.Draw(orientation) {
+		return nil
+	}
 	diff := make(map[string]piece)
 	for point, _ := range b.PromotePawn(wichessing.AbsPointFromIndex(uint8(from)), wichessing.Kind(kind)) {
 		if point.Piece == nil {
@@ -218,12 +221,15 @@ func (g game) promote(from int, player string, kind wichessing.Kind) map[string]
 	} else {
 		checkOrientation = wichessing.White
 	}
-	if b.AfterPromote(absPoint(from), wichessing.Kind(kind)).Checkmate(checkOrientation) {
+	after := b.AfterPromote(absPoint(from), wichessing.Kind(kind))
+	if after.Checkmate(checkOrientation) {
 		if checkOrientation == wichessing.White {
-			writePlayerRecordUpdateToDatabase(g.Black, g.White)
+			writePlayerRecordUpdateToDatabase(g.Black, g.White, false)
 		} else {
-			writePlayerRecordUpdateToDatabase(g.White, g.Black)
+			writePlayerRecordUpdateToDatabase(g.White, g.Black, false)
 		}
+	} else if after.Draw(checkOrientation) {
+		writePlayerRecordUpdateToDatabase(g.White, g.Black, true)
 	}
 	return diff
 }
@@ -247,6 +253,9 @@ func (g game) move(from, to int, mover string) (map[string]piece, bool) {
 	}
 	b := g.wichessingBoard()
 	if b.HasPawnToPromote() {
+		return nil, false
+	}
+	if b.Draw(orientation) {
 		return nil, false
 	}
 	diff := make(map[string]piece)
@@ -292,10 +301,12 @@ func (g game) move(from, to int, mover string) (map[string]piece, bool) {
 	}
 	if after.Checkmate(checkOrientation) {
 		if checkOrientation == wichessing.White {
-			writePlayerRecordUpdateToDatabase(g.Black, g.White)
+			writePlayerRecordUpdateToDatabase(g.Black, g.White, false)
 		} else {
-			writePlayerRecordUpdateToDatabase(g.White, g.Black)
+			writePlayerRecordUpdateToDatabase(g.White, g.Black, false)
 		}
+	} else if after.Draw(checkOrientation) {
+		writePlayerRecordUpdateToDatabase(g.White, g.Black, true)
 	}
 	return diff, promoting
 }
@@ -304,6 +315,7 @@ const (
 	check_key     = "check"
 	checkmate_key = "checkmate"
 	promote_key   = "promote"
+	draw_key      = "draw"
 )
 
 // The map keys are wichessing.AbsPoint converted to "x/file-y/rank" formatted string.
@@ -330,13 +342,17 @@ func (g game) moves() map[string]map[string]struct{} {
 		moves[promote_key] = nil
 		return moves
 	}
-	var m map[wichessing.AbsPoint]wichessing.AbsPointSet
-	var check, checkmate bool
+	var active wichessing.Orientation
 	if g.Active == g.White {
-		m, check, checkmate = board.Moves(wichessing.White)
+		active = wichessing.White
 	} else {
-		m, check, checkmate = board.Moves(wichessing.Black)
+		active = wichessing.Black
 	}
+	if board.Draw(active) {
+		moves[draw_key] = nil
+		return moves
+	}
+	m, check, checkmate := board.Moves(active)
 	for point, set := range m {
 		moves[point.String()] = set.String()
 	}
@@ -348,7 +364,17 @@ func (g game) moves() map[string]map[string]struct{} {
 	return moves
 }
 
-func (g game) acknowledge(player string) {
+func (g game) acknowledge(player string) bool {
+	var active wichessing.Orientation
+	if g.Active == g.Black {
+		active = wichessing.Black
+	} else {
+		active = wichessing.White
+	}
+	b := g.wichessingBoard()
+	if (b.Checkmate(active) == false) && (b.Draw(active) == false) {
+		return false
+	}
 	var ackKey string
 	if player == g.Black {
 		ackKey = games_black_acknowledge
@@ -364,7 +390,7 @@ func (g game) acknowledge(player string) {
 	}
 	if g.BlackAcknowledge && g.WhiteAcknowledge {
 		g.deleteFromDatabase()
-		return
+		return true
 	}
 	result, err := database.Exec("UPDATE "+games_table+" SET "+ackKey+" = $1 WHERE "+games_identifier+" = $2;", true, g.ID)
 	if err != nil {
@@ -377,6 +403,7 @@ func (g game) acknowledge(player string) {
 	if count != 1 {
 		panicExit(fmt.Sprintf("%v rows affected by ack update exec", count))
 	}
+	return true
 }
 
 func (g game) deleteFromDatabase() {

@@ -49,5 +49,9 @@ func acknowledgeGameCompletionHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	game.acknowledge(name)
+	success := game.acknowledge(name)
+	if success == false {
+		http.NotFound(w, r)
+		return
+	}
 }

@@ -92,6 +92,7 @@
     input {
         border-radius: 5px;
         box-shadow: 0px 1px 1px black;
+        margin: 1em;
     }
     </style>
     <script type="text/javascript" src="/js/jquery-2.2.0.min.js"></script>
@@ -166,7 +167,10 @@
             if ('checkmate' in Moves) {
                 $('#checkmate').addClass('indicating');
                 $('#acknowledge').html('<input type="button" value="Acknowledge" onclick="acknowledge();"/>');
-            } 
+            } else if ('draw' in Moves) {
+                $('#draw').addClass('indicating');
+                $('#acknowledge').html('<input type="button" value="Acknowledge" onclick="acknowledge();"/>');
+            }
             if ('promote' in Moves) {
                 if (Turn == PlayerOrientation) {
                     if (White == Player) {
@@ -263,6 +267,9 @@
                 }
                 if ('checkmate' in Moves) {
                     $('#checkmate').addClass('indicating');
+                    $('#acknowledge').html('<input type="button" value="Acknowledge" onclick="acknowledge();"/>');
+                } else if ('draw' in Moves) {
+                    $('#draw').addClass('indicating');
                     $('#acknowledge').html('<input type="button" value="Acknowledge" onclick="acknowledge();"/>');
                 }
                 if ('promote' in Moves) {
@@ -383,8 +390,11 @@
             <td><table><tr><td><span class="indicator" id="check">Check</span></td></tr>
                 <tr><td><input type="button" value="Back" onclick="window.location.pathname = '/';"/></td></tr></table></td>
             <td><div id="board"></div></td>
-            <td><table><tr><td><span class="indicator" id="checkmate">Checkmate</span></td></tr>
-                <tr><td id="acknowledge"></td></tr></table></td>
+            <td><table>
+                <tr><td><span class="indicator" id="checkmate">Checkmate</span></td></tr>
+                <tr><td><span class="indicator" id="draw">Draw</span></td></tr>
+                <tr><td id="acknowledge"></td></tr>
+            </table></td>
             <td></td>
         </tr></table>
     </div>

@@ -26,6 +26,13 @@ type Piece struct {
 	Fortified bool `json:"-"` // can't be taken by pawns
 }
 
+type PieceSet map[*Piece]struct{}
+
+func (the PieceSet) Add(a Piece) PieceSet {
+	the[&a] = struct{}{}
+	return the
+}
+
 type Orientation int
 
 const (

@@ -2,7 +2,8 @@ CREATE TABLE Players (
     name VARCHAR(64) PRIMARY KEY,
     crypt CHAR(64) UNIQUE NOT NULL,
     wins INTEGER,
-    losses INTEGER
+    losses INTEGER,
+    draws INTEGER
 );
 
 CREATE TABLE Boards (

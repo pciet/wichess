@@ -3,7 +3,33 @@
 
 package wichessing
 
-import ()
+import (
+	"fmt"
+)
+
+func (b Board) IndexPositionOfPiece(the *Piece) uint8 {
+	for index, point := range b {
+		if point.Piece == the {
+			return uint8(index)
+		}
+	}
+	panic(fmt.Sprintf("wichessing: piece %v not on board", *the))
+	return 0
+}
+
+func (b Board) PiecesFor(player Orientation) PieceSet {
+	set := make(PieceSet)
+	for _, point := range b {
+		if point.Piece == nil {
+			continue
+		}
+		if point.Orientation != player {
+			continue
+		}
+		set = set.Add(*point.Piece)
+	}
+	return set
+}
 
 func (b Board) UpdatePiecePrevious(turn Orientation) {
 	for index, point := range b {

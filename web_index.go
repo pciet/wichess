@@ -17,6 +17,7 @@ const (
 type indexTemplate struct {
 	Wins           int
 	Losses         int
+	Draws          int
 	BestPieceName  string
 	BestPieceTakes int
 	Name           string
@@ -56,6 +57,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 			Name:           name,
 			Wins:           record.wins,
 			Losses:         record.losses,
+			Draws:          record.draws,
 			BestPieceName:  nameForKind(piece.Kind),
 			BestPieceTakes: piece.Takes,
 		})
