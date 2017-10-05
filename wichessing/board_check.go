@@ -16,6 +16,8 @@ func (b Board) Checkmate(turn Orientation) bool {
 	return true
 }
 
+// TODO: if detonate bishop is in danger next to king, then king is in check
+
 func (b Board) Check(turn Orientation) bool {
 	var kingLocation AbsPoint
 	moves := make(AbsPointSet)

@@ -108,6 +108,8 @@
     var Board = null;
     var Selected = null;
     var Moves = null;
+    var EasyComputer = 'Easy Computer Player';
+    var HardComputer = 'Hard Computer Player';
     var ws = new WebSocket("ws://localhost:8080/moven/"+game_id);
     ws.onmessage = function(event) {
         makeMove(JSON.parse(event.data));
@@ -182,7 +184,7 @@
             } else {
                 $('#whitepromote').html('');
                 $('#blackpromote').html('');
-                if (Turn == o.WHITE) {
+                if ((Turn == o.WHITE) && (Opponent != EasyComputer) && (Opponent != HardComputer)) {
                     $('#whiteactive').removeClass('indicating');
                     $('#blackactive').addClass('indicating');
                     Turn = o.BLACK;

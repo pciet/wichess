@@ -135,15 +135,18 @@ func easyComputerMoveForGame(id int) map[string]piece {
 	}
 	move := g.wichessingBoard().ComputerMove(orientation)
 	if move == nil {
-		g.acknowledge(easy_computer_player)
 		return nil
 	}
 	diff, promoting := g.move(int(move.From.Index()), int(move.To.Index()), easy_computer_player)
 	if promoting {
+		after := g.wichessingBoard().AfterMove(move.From, move.To, orientation)
 		var from int
 		if orientation == wichessing.White {
 			for i := 56; i < 64; i++ {
-				p := g.Points[i]
+				p := after[i]
+				if p.Piece == nil {
+					continue
+				}
 				if (p.Kind == wichessing.Pawn) && (p.Orientation == wichessing.White) {
 					from = i
 					break
@@ -151,14 +154,17 @@ func easyComputerMoveForGame(id int) map[string]piece {
 			}
 		} else {
 			for i := 0; i < 8; i++ {
-				p := g.Points[i]
+				p := after[i]
+				if p.Piece == nil {
+					continue
+				}
 				if (p.Kind == wichessing.Pawn) && (p.Orientation == wichessing.Black) {
 					from = i
 					break
 				}
 			}
 		}
-		pdiff := g.promote(from, easy_computer_player, wichessing.Queen)
+		pdiff := gameWithIdentifier(id).promote(from, easy_computer_player, wichessing.Queen)
 		for point, piece := range pdiff {
 			diff[point] = piece
 		}
@@ -211,13 +217,15 @@ func (g game) promote(from int, player string, kind wichessing.Kind) map[string]
 		return diff
 	}
 	writeGameChangesToDatabase(g.ID, diff, nextMover)
-	if orientation == wichessing.White {
-		if gameListening[g.ID].black != nil {
-			gameListening[g.ID].black <- diff
-		}
-	} else {
-		if gameListening[g.ID].white != nil {
-			gameListening[g.ID].white <- diff
+	if (player != easy_computer_player) && (player != hard_computer_player) {
+		if orientation == wichessing.White {
+			if gameListening[g.ID].black != nil {
+				gameListening[g.ID].black <- diff
+			}
+		} else {
+			if gameListening[g.ID].white != nil {
+				gameListening[g.ID].white <- diff
+			}
 		}
 	}
 	var checkOrientation wichessing.Orientation
@@ -242,18 +250,20 @@ func (g game) promote(from int, player string, kind wichessing.Kind) map[string]
 // Returns address that have changed, Kind 0 piece for a now empty point, but does not update the board points. Returns true if promoting.
 func (g game) move(from, to int, mover string) (map[string]piece, bool) {
 	var nextMover string
-	var orientation wichessing.Orientation
+	var orientation, nextOrientation wichessing.Orientation
 	if g.White == g.Active {
 		if g.White != mover {
 			return nil, false
 		}
 		orientation = wichessing.White
+		nextOrientation = wichessing.Black
 		nextMover = g.Black
 	} else {
 		if g.Black != mover {
 			return nil, false
 		}
 		orientation = wichessing.Black
+		nextOrientation = wichessing.White
 		nextMover = g.White
 	}
 	b := g.wichessingBoard()
@@ -289,28 +299,24 @@ func (g game) move(from, to int, mover string) (map[string]piece, bool) {
 	} else {
 		writeGameChangesToDatabase(g.ID, diff, nextMover)
 	}
-	if orientation == wichessing.White {
-		if gameListening[g.ID].black != nil {
-			gameListening[g.ID].black <- diff
-		}
-	} else {
-		if gameListening[g.ID].white != nil {
-			gameListening[g.ID].white <- diff
+	if (mover != easy_computer_player) && (mover != hard_computer_player) {
+		if orientation == wichessing.White {
+			if gameListening[g.ID].black != nil {
+				gameListening[g.ID].black <- diff
+			}
+		} else {
+			if gameListening[g.ID].white != nil {
+				gameListening[g.ID].white <- diff
+			}
 		}
 	}
-	var checkOrientation wichessing.Orientation
-	if orientation == wichessing.White {
-		checkOrientation = wichessing.Black
-	} else {
-		checkOrientation = wichessing.White
-	}
-	if after.Checkmate(checkOrientation) {
-		if checkOrientation == wichessing.White {
+	if after.Checkmate(nextOrientation) {
+		if nextOrientation == wichessing.White {
 			writePlayerRecordUpdateToDatabase(g.Black, g.White, false)
 		} else {
 			writePlayerRecordUpdateToDatabase(g.White, g.Black, false)
 		}
-	} else if after.Draw(checkOrientation) {
+	} else if after.Draw(nextOrientation) {
 		writePlayerRecordUpdateToDatabase(g.White, g.Black, true)
 	}
 	return diff, promoting
@@ -369,7 +375,7 @@ func (g game) moves() map[string]map[string]struct{} {
 	return moves
 }
 
-func (g game) acknowledge(player string) bool {
+func (g *game) acknowledge(player string) bool {
 	var active wichessing.Orientation
 	if g.Active == g.Black {
 		active = wichessing.Black
@@ -465,14 +471,14 @@ func easyComputerGame(player string) int {
 	return id
 }
 
-const game_query = "SELECT * FROM " + games_table + " WHERE " + games_identifier + "=$1"
+const game_query = "SELECT * FROM " + games_table + " WHERE " + games_identifier + "=$1;"
 
 func gameWithIdentifier(id int) game {
 	row := database.QueryRow(game_query, id)
 	g := encodedGame{}
 	err := row.Scan(&g.ID, &g.White, &g.WhiteAcknowledge, &g.Black, &g.BlackAcknowledge, &g.Active, &g.Points[0], &g.Points[1], &g.Points[2], &g.Points[3], &g.Points[4], &g.Points[5], &g.Points[6], &g.Points[7], &g.Points[8], &g.Points[9], &g.Points[10], &g.Points[11], &g.Points[12], &g.Points[13], &g.Points[14], &g.Points[15], &g.Points[16], &g.Points[17], &g.Points[18], &g.Points[19], &g.Points[20], &g.Points[21], &g.Points[22], &g.Points[23], &g.Points[24], &g.Points[25], &g.Points[26], &g.Points[27], &g.Points[28], &g.Points[29], &g.Points[30], &g.Points[31], &g.Points[32], &g.Points[33], &g.Points[34], &g.Points[35], &g.Points[36], &g.Points[37], &g.Points[38], &g.Points[39], &g.Points[40], &g.Points[41], &g.Points[42], &g.Points[43], &g.Points[44], &g.Points[45], &g.Points[46], &g.Points[47], &g.Points[48], &g.Points[49], &g.Points[50], &g.Points[51], &g.Points[52], &g.Points[53], &g.Points[54], &g.Points[55], &g.Points[56], &g.Points[57], &g.Points[58], &g.Points[59], &g.Points[60], &g.Points[61], &g.Points[62], &g.Points[63])
 	if err != nil {
-		panicExit(err.Error())
+		return game{}
 	}
 	return game{
 		ID:               g.ID,
