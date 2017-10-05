@@ -42,7 +42,7 @@ func opponentFor(name string, gameID int) string {
 }
 
 // White, Black.
-func playersFor(gameID int) (string, string) {
+func gamePlayers(gameID int) (string, string) {
 	row := database.QueryRow(game_players_query, gameID)
 	var white, black string
 	err := row.Scan(&white, &black)
@@ -120,20 +120,25 @@ func absPoint(index int) wichessing.AbsPoint {
 	}
 }
 
-func computerMoveForGame(id int) map[string]piece {
+func hardComputerMoveForGame(id int) map[string]piece {
+	panicExit("game: hard computer move not implemented")
+	return nil
+}
+
+func easyComputerMoveForGame(id int) map[string]piece {
 	g := gameWithIdentifier(id)
 	var orientation wichessing.Orientation
-	if computer_player == g.White {
+	if easy_computer_player == g.White {
 		orientation = wichessing.White
 	} else {
 		orientation = wichessing.Black
 	}
 	move := g.wichessingBoard().ComputerMove(orientation)
 	if move == nil {
-		g.acknowledge(computer_player)
+		g.acknowledge(easy_computer_player)
 		return nil
 	}
-	diff, promoting := g.move(int(move.From.Index()), int(move.To.Index()), computer_player)
+	diff, promoting := g.move(int(move.From.Index()), int(move.To.Index()), easy_computer_player)
 	if promoting {
 		var from int
 		if orientation == wichessing.White {
@@ -153,7 +158,7 @@ func computerMoveForGame(id int) map[string]piece {
 				}
 			}
 		}
-		pdiff := g.promote(from, computer_player, wichessing.Queen)
+		pdiff := g.promote(from, easy_computer_player, wichessing.Queen)
 		for point, piece := range pdiff {
 			diff[point] = piece
 		}
@@ -385,9 +390,6 @@ func (g game) acknowledge(player string) bool {
 	} else {
 		panicExit("player " + player + " is not " + g.Black + " (black) or " + g.White + " (white)")
 	}
-	if player != computer_player {
-		deleteBoardFromDatabase(player, g.ID)
-	}
 	if g.BlackAcknowledge && g.WhiteAcknowledge {
 		g.deleteFromDatabase()
 		return true
@@ -451,6 +453,18 @@ func listeningToGame(name string, white string, black string, id int, socket *we
 	}(l, socket)
 }
 
+const game_easy_computer_query = "SELECT " + games_identifier + " FROM " + games_table + " WHERE (" + games_white + " = $1 AND " + games_black + " = $2) OR (" + games_white + " = $3 AND " + games_black + " = $4);"
+
+func easyComputerGame(player string) int {
+	row := database.QueryRow(game_easy_computer_query, player, easy_computer_player, easy_computer_player, player)
+	var id int
+	err := row.Scan(&id)
+	if err != nil {
+		return 0
+	}
+	return id
+}
+
 const game_query = "SELECT * FROM " + games_table + " WHERE " + games_identifier + "=$1"
 
 func gameWithIdentifier(id int) game {
@@ -477,31 +491,43 @@ const new_game_insert = "INSERT INTO " + games_table + " (" + games_white + ", "
 func newGameIntoDatabase(player1 string, player1setup gameSetup, player2 string, player2setup gameSetup) int {
 	// https://github.com/lib/pq/issues/24
 	var id int
-	whitePawn := pieceWithID(0, wichessing.Pawn, wichessing.White, player1).encode()
-	blackPawn := pieceWithID(0, wichessing.Pawn, wichessing.Black, player2).encode()
 	err := database.QueryRow(new_game_insert, player1, false, player2, false, player1,
-		pieceWithID(player1setup.leftRookID, wichessing.Rook, wichessing.White, player1).encode(),
-		pieceWithID(player1setup.leftKnightID, wichessing.Knight, wichessing.White, player1).encode(),
-		pieceWithID(player1setup.leftBishopID, wichessing.Bishop, wichessing.White, player1).encode(),
-		pieceWithID(0, wichessing.Queen, wichessing.White, player1).encode(),
-		pieceWithID(0, wichessing.King, wichessing.White, player1).encode(),
-		pieceWithID(player1setup.rightBishopID, wichessing.Bishop, wichessing.White, player1).encode(),
-		pieceWithID(player1setup.rightKnightID, wichessing.Knight, wichessing.White, player1).encode(),
-		pieceWithID(player1setup.rightRookID, wichessing.Rook, wichessing.White, player1).encode(),
-		whitePawn, whitePawn, whitePawn, whitePawn, whitePawn, whitePawn, whitePawn, whitePawn,
+		pieceWithID(player1setup[8], wichessing.Rook, wichessing.White, player1).encode(),
+		pieceWithID(player1setup[9], wichessing.Knight, wichessing.White, player1).encode(),
+		pieceWithID(player1setup[10], wichessing.Bishop, wichessing.White, player1).encode(),
+		pieceWithID(player1setup[11], wichessing.Queen, wichessing.White, player1).encode(),
+		pieceWithID(player1setup[12], wichessing.King, wichessing.White, player1).encode(),
+		pieceWithID(player1setup[13], wichessing.Bishop, wichessing.White, player1).encode(),
+		pieceWithID(player1setup[14], wichessing.Knight, wichessing.White, player1).encode(),
+		pieceWithID(player1setup[15], wichessing.Rook, wichessing.White, player1).encode(),
+		pieceWithID(player1setup[0], wichessing.Pawn, wichessing.White, player1).encode(),
+		pieceWithID(player1setup[1], wichessing.Pawn, wichessing.White, player1).encode(),
+		pieceWithID(player1setup[2], wichessing.Pawn, wichessing.White, player1).encode(),
+		pieceWithID(player1setup[3], wichessing.Pawn, wichessing.White, player1).encode(),
+		pieceWithID(player1setup[4], wichessing.Pawn, wichessing.White, player1).encode(),
+		pieceWithID(player1setup[5], wichessing.Pawn, wichessing.White, player1).encode(),
+		pieceWithID(player1setup[6], wichessing.Pawn, wichessing.White, player1).encode(),
+		pieceWithID(player1setup[7], wichessing.Pawn, wichessing.White, player1).encode(),
 		0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0,
-		blackPawn, blackPawn, blackPawn, blackPawn, blackPawn, blackPawn, blackPawn, blackPawn,
-		pieceWithID(player2setup.leftRookID, wichessing.Rook, wichessing.Black, player2).encode(),
-		pieceWithID(player2setup.leftKnightID, wichessing.Knight, wichessing.Black, player2).encode(),
-		pieceWithID(player2setup.leftBishopID, wichessing.Bishop, wichessing.Black, player2).encode(),
-		pieceWithID(0, wichessing.Queen, wichessing.Black, player2).encode(),
-		pieceWithID(0, wichessing.King, wichessing.Black, player2).encode(),
-		pieceWithID(player2setup.rightBishopID, wichessing.Bishop, wichessing.Black, player2).encode(),
-		pieceWithID(player2setup.rightKnightID, wichessing.Knight, wichessing.Black, player2).encode(),
-		pieceWithID(player2setup.rightRookID, wichessing.Rook, wichessing.Black, player2).encode()).Scan(&id)
+		pieceWithID(player2setup[0], wichessing.Pawn, wichessing.Black, player2).encode(),
+		pieceWithID(player2setup[1], wichessing.Pawn, wichessing.Black, player2).encode(),
+		pieceWithID(player2setup[2], wichessing.Pawn, wichessing.Black, player2).encode(),
+		pieceWithID(player2setup[3], wichessing.Pawn, wichessing.Black, player2).encode(),
+		pieceWithID(player2setup[4], wichessing.Pawn, wichessing.Black, player2).encode(),
+		pieceWithID(player2setup[5], wichessing.Pawn, wichessing.Black, player2).encode(),
+		pieceWithID(player2setup[6], wichessing.Pawn, wichessing.Black, player2).encode(),
+		pieceWithID(player2setup[7], wichessing.Pawn, wichessing.Black, player2).encode(),
+		pieceWithID(player2setup[8], wichessing.Rook, wichessing.Black, player2).encode(),
+		pieceWithID(player2setup[9], wichessing.Knight, wichessing.Black, player2).encode(),
+		pieceWithID(player2setup[10], wichessing.Bishop, wichessing.Black, player2).encode(),
+		pieceWithID(player2setup[11], wichessing.Queen, wichessing.Black, player2).encode(),
+		pieceWithID(player2setup[12], wichessing.King, wichessing.Black, player2).encode(),
+		pieceWithID(player2setup[13], wichessing.Bishop, wichessing.Black, player2).encode(),
+		pieceWithID(player2setup[14], wichessing.Knight, wichessing.Black, player2).encode(),
+		pieceWithID(player2setup[15], wichessing.Rook, wichessing.Black, player2).encode()).Scan(&id)
 	if err != nil {
 		panicExit(err.Error())
 	}

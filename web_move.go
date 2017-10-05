@@ -91,11 +91,20 @@ func moveRequestHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 	}
-	if (promoting == false) && ((game.White == computer_player) || (game.Black == computer_player)) {
-		cdiff := computerMoveForGame(int(gameid))
-		if (cdiff != nil) && (len(cdiff) != 0) {
-			for addr, piece := range cdiff {
-				diff[addr] = piece
+	if promoting == false {
+		if (game.White == easy_computer_player) || (game.Black == easy_computer_player) {
+			cdiff := easyComputerMoveForGame(int(gameid))
+			if (cdiff != nil) && (len(cdiff) != 0) {
+				for addr, piece := range cdiff {
+					diff[addr] = piece
+				}
+			}
+		} else if (game.White == hard_computer_player) || (game.Black == hard_computer_player) {
+			cdiff := hardComputerMoveForGame(int(gameid))
+			if (cdiff != nil) && (len(cdiff) != 0) {
+				for addr, piece := range cdiff {
+					diff[addr] = piece
+				}
 			}
 		}
 	}

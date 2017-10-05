@@ -4,10 +4,12 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"html/template"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/websocket"
 )
@@ -35,4 +37,19 @@ func webError(w http.ResponseWriter, r *http.Request, message string, the error)
 		log.Println(message)
 	}
 	http.NotFound(w, r)
+}
+
+func gameSetupFromForm(array []string) (gameSetup, error) {
+	var s gameSetup
+	if len(array) != 16 {
+		return s, errors.New("web: array to parse is not length 16")
+	}
+	var err error
+	for i, str := range array {
+		s[i], err = strconv.Atoi(str)
+		if err != nil {
+			return s, err
+		}
+	}
+	return s, nil
 }

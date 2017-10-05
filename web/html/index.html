@@ -6,145 +6,372 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Libre+Baskerville">
     <link rel="stylesheet" type="text/css" href="/css/body.css">
     <style>
-        div {
-            text-align: center;
-            margin: 0 auto;
-            width: 100%;
-        }
-        #grid {
-            table-layout: fixed;
-            border-collapse: collapse;
-            outline: 7px outset #d4cca5;
-            margin: 0 auto;
-        }
-        #grid tr {
-            height: 50px;
-        }
-        #grid td {
-            word-wrap: break-word;
-        }
-        .point {
-            border: 1px solid #f4f4f4;
-            width: 50px;
-            background-color: white;
-            font-size: 11px;
-            /* https://stackoverflow.com/questions/826782/how-to-disable-text-selection-highlighting-using-css */
-            -webkit-touch-callout: none; /* iOS Safari */
-            -webkit-user-select: none; /* Safari */
-            -khtml-user-select: none; /* Konqueror HTML */
-            -moz-user-select: none; /* Firefox */
-            -ms-user-select: none; /* Internet Explorer/Edge */
-            user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
-            cursor: default;
-        }
-        .selected {
-            border: solid black 2px;
-        }
-        .inline {
-            display: inline;
-            padding: 10px;
-        }
-        .spacer {
-            height: 20px;
-        }
-        table {
-            border-collapse: collapse;
-        }
-        .pendingGame {
-            background-color: #d4cca5;
-            color: #cc785c;
-        }
-        .activeGame {
-            background-color: #fb835e;
-            color: #d4cca5;
-        }
-        input {
+        .ibutton {
             border-radius: 5px;
             box-shadow: 0px 1px 1px black;
         }
+        div {
+            padding: 0.5em;
+            text-align: center;
+        }
+        .inlinediv {
+            display: inline-block;
+            vertical-align: top;
+        }
+        .roundedbox {
+            border-radius: 10px;
+            border: 3px solid #d4cca5;
+            background-color: #cc785c;
+            color: #fb835e;
+            margin: 0.3em;
+        }
+        table {
+            margin: 0 auto;
+            background-color: white;
+            border-collapse: collapse;
+            /*outline: 7px outset #d4cca5;*/
+        }
+        #piecepickdiv {
+            height: 148px;
+            overflow: scroll;
+            display: inline-block;
+        }
+        #piecestable {
+            outline: 0px;
+            background-color: transparent;
+        }
+        #assignbutton {
+            display: none;
+        }
+        .gameselectrow {
+            height: 20px;
+        }
+        .gameselectpoint {
+            width: 20px;
+            outline: 1px solid #d4cca5;
+        }
+        .even {
+            background-color: #e1e1e1;
+        }
+        .odd {
+            background-color: #f3f3f3;
+        }
+        .pieceimg {
+            width: 68px;
+            height: 68px;
+        }
+        .armyselectrow {
+            height: 74px;
+        }
+        .armyselectpoint {
+            width: 74px;
+        }
+        .highlightedpiece {
+            outline: 1px solid black;
+        }
     </style>
     <script type="text/javascript" src="/js/jquery-2.2.0.min.js"></script>
+    <script type="text/javascript" src="/js/pieces.js"></script>
     <script type="text/javascript">
-    var waitingForMatch = false;
-    var ws = new WebSocket("ws://localhost:8080/indexs");
-    ws.onopen = function(event) {
-        ws.send(JSON.stringify({ States: null }));
-    }
-    ws.onmessage = function(event) {
-        var m = JSON.parse(event.data);
-        if (Array.isArray(m)) {
-            for (var i = 0; i < m.length; i++) {
-                setGameSlot(m[i]);
-                if (m[i].GameID == 0) {
-                    waitingForMatch = true;
-                }
-            }
-        } else {
-            setGameSlot(m);
-        }
-    }
-    function setGameSlot(gameInfoObject) {
-        var point = $('#point'+gameInfoObject.Slot);
-        if (gameInfoObject.GameID == 0) {
-            point.toggleClass('pendingGame').html('Waiting');
-        } else {
-            point.toggleClass('activeGame').html(gameInfoObject.Opponent);;
-        }
+    var HighlightedPiece = null;
+    var Pieces = null;
+    var Assignments = [];
 
+    for (var i = 0; i < 16; i++) {
+        Assignments[i] = 0;
     }
-    var pointselected = null;
+
+    $.get("pieces").done(function(data) {
+        Pieces = data;
+        for (var i = 0; i < Pieces.length; i++) {
+            Pieces[i].Assigned = false;
+        }
+        console.log(Pieces);
+    });
+
     $(document).ready(function() {
-        var board = '';
-        board += '<table id="grid">';
-        for (var yrr = 7; yrr >= 0; yrr--) {
-            board += '<tr>';
-            for (var xcf = 0; xcf < 8; xcf++) {
-                board += '<td id="point'+(xcf+(yrr*8))+'" class="point"></td>';
+        var friendGrid = '<table>';
+        for (var i = 0; i < 2; i++) {
+            friendGrid += '<tr class="gameselectrow">';
+            for (var j = 0; j < 4; j++) {
+                friendGrid += '<td id="friend'+((i*4)+j)+'" class="gameselectpoint"></td>';
             }
-            board += '</tr>';
+            friendGrid += '</tr>';
         }
-        board += '</table>';
-        $('#games').html(board);
+        friendGrid += '</table>';
+        $('#friendgriddiv').html(friendGrid);
+        for (var i = 0; i < 8; i++) {
+            $('#friend'+i).click({Index: i}, function(event) {
 
-        for (var i = 0; i < 64; i++) {
-            $('#point'+i).click({pointIndex: i}, function(eventData) {
-                var newpointselected = $('#point'+eventData.data.pointIndex);
-                if (newpointselected.hasClass('pendingGame')) {
-                    return;
+            });
+        }
+        
+        var matchGrid = '<table>';
+        for (var i = 0; i < 2; i++) {
+            matchGrid += '<tr class="gameselectrow">';
+            for (var j = 0; j < 4; j++) {
+                matchGrid += '<td id="match'+((i*4)+j)+'" class="gameselectpoint"></td>'; 
+            }
+            matchGrid += '</tr>';
+        }
+        matchGrid += '</table>';
+        $('#matchgriddiv').html(matchGrid);
+        for (var i = 0; i < 8; i++) {
+            $('#match'+i).click({Index: i}, function(event) {
+
+            });
+        }
+
+        var armyGrid = '<table>';
+        for (var i = 0; i < 2; i++) {
+            armyGrid += '<tr class="armyselectrow">';
+            for (var j = 0; j < 8; j++) {
+                var index = (i*8)+j;
+                if (i == 0) {
+                    if (j % 2) {
+                        armyGrid += '<td id="army'+index+'" class="armyselectpoint even"></td>';
+                    } else {
+                        armyGrid += '<td id="army'+index+'" class="armyselectpoint odd"></td>';
+                    }
+                } else {
+                    if (j % 2) {
+                        armyGrid += '<td id="army'+index+'" class="armyselectpoint odd"></td>';
+                    } else {
+                        armyGrid += '<td id="army'+index+'" class="armyselectpoint even"></td>';
+                    }
                 }
-                if ((newpointselected.hasClass('activeGame') == false) && waitingForMatch) {
-                    return;
+            }
+            armyGrid += '</tr>';
+        }
+        armyGrid += '</table>';
+        $('#armygriddiv').html(armyGrid);
+        for (var i = 0; i < 8; i++) {
+            $('#army'+i).html('<img class="pieceimg" src="img/wpawn_64.png">');
+        }
+        $('#army8').html('<img class="pieceimg" src="img/wrook_64.png">');
+        $('#army9').html('<img class="pieceimg" src="img/wknight_64.png">');
+        $('#army10').html('<img class="pieceimg" src="img/wbishop_64.png">');
+        $('#army11').html('<img class="pieceimg" src="img/wqueen_64.png">');
+        $('#army12').html('<img class="pieceimg" src="img/wking_64.png">');
+        $('#army13').html('<img class="pieceimg" src="img/wbishop_64.png">');
+        $('#army14').html('<img class="pieceimg" src="img/wknight_64.png">');
+        $('#army15').html('<img class="pieceimg" src="img/wrook_64.png">');
+        for (var i = 0; i < 16; i++) {
+            $('#army'+i).click({Index: i}, function(event) {
+                var index = event.data.Index;
+                if (HighlightedPiece != null) {
+                    $('#army'+HighlightedPiece).removeClass('highlightedpiece');
+                    if (HighlightedPiece == index) {
+                        HighlightedPiece = null;
+                        removeAvailablePieces();
+                        return;
+                    }
                 }
-                if (newpointselected.is(pointselected)) {
-                    $('#navigation').html('');
-                    pointselected.toggleClass('selected');
-                    pointselected = null;
-                    return;
-                }
-                if (pointselected != null) {
-                    pointselected.toggleClass('selected');
-                }
-                pointselected = newpointselected;
-                $('#navigation').html('<input type="button" onclick="location.href='+eventData.data.pointIndex+'" value="Go" class="travelbutton"/>');
-                pointselected.toggleClass('selected');
+                HighlightedPiece = index;
+                $('#army'+index).addClass('highlightedpiece');
+                showAvailablePieces(index);
             });
         }
     });
+    function showAvailablePieces(index) {
+        if (Pieces == null) {
+            return;
+        }
+        var table = '<table id="piecestable">';
+        var oneOrMore = false;
+        var assigned = 0;
+        for (var i = 0; i < Pieces.length; i++) {
+            if (matchesKindOfPoint(Pieces[i].Kind, index) == false) {
+                continue;
+            }
+            if (Pieces[i].Assigned) {
+                continue;
+            }
+            if ((assigned % 2) == 0) {
+                table += '<tr>';
+            }
+            table += '<td><input type="button" class="ibutton" value="Assign" onclick="assignPiece('+i+','+index+');"/></td>';
+            table += '<td><img class="pieceimg" src="img/'+imageNameForKind(Pieces[i].Kind, 64, o.WHITE)+'"></td>';
+            table += '<td>'+nameForKind(Pieces[i].Kind)+' ('+Pieces[i].GamesLeft+')</td>';
+            if ((assigned % 2) == 1) {
+                table += '</tr>';
+            }
+            assigned++;
+            oneOrMore = true;
+        }
+        if ((assigned % 2) != 1) {
+            table += '</tr>';
+        }
+        table += '</table>';
+        if (oneOrMore) {
+            if (Assignments[index] != 0) {
+                $('#assignbutton').css('display', 'block');
+            }
+            $('#piecepickdiv').html(table);
+        } else {
+            removeAvailablePieces();
+        }
+    }
+    function removeAvailablePieces() {
+        $('#assignbutton').css('display', 'none');
+        $('#piecepickdiv').html('');
+    }
+    function assignPiece(arrayIndex, gridIndex) {
+        if (Assignments[gridIndex] != 0) {
+            unassignPiece(gridIndex, Assignments[gridIndex]);
+        }
+        Pieces[arrayIndex].Assigned = true;
+        Assignments[gridIndex] = Pieces[arrayIndex].Identifier;
+        showAvailablePieces(gridIndex);
+        $('#army'+gridIndex).html('<img class="pieceimg" src="img/'+imageNameForKind(Pieces[arrayIndex].Kind, 64, o.WHITE)+'">');
+    }
+    function unassignPiece(index, identifier) {
+        for (var i = 0; i < Pieces.length; i++) {
+            if (identifier != Pieces[i].Identifier) {
+                continue;
+            }
+            Pieces[i].Assigned = false;
+            Assignments[index] = 0;
+            $('#assignbutton').css('display', 'none');
+            $('#army'+index).html('<img class="pieceimg" src="img/'+imageNameForKind(defaultKindForPoint(index), 64, o.WHITE)+'">');
+            break;
+        }
+    }
+    function unassign() {
+        if (HighlightedPiece == null) {
+            return;
+        }
+        unassignPiece(HighlightedPiece, Assignments[HighlightedPiece]);
+        showAvailablePieces(HighlightedPiece);
+    }
+    function defaultKindForPoint(index) {
+        if (index < 8) {
+            return k.PAWN;
+        }
+        if ((index == 8) || (index == 15)) {
+            return k.ROOK;
+        }
+        if ((index == 9) || (index == 14)) {
+            return k.KNIGHT;
+        }
+        if ((index == 10) || (index == 13)) {
+            return k.BISHOP;
+        }
+        if (index == 11) {
+            return k.QUEEN;
+        }
+        if (index == 12) {
+            return k.KING;
+        }
+    }
+    function matchesKindOfPoint(kind, point) {
+        if (point < 8) {
+            if (kind != k.PAWN) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+        if ((point == 8) || (point == 15)) {
+            if ((kind == k.ROOK) || (kind == k.GUARD) || (kind == k.RALLY) || (kind == k.FORTIFY)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        if ((point == 9) || (point == 14)) {
+            if ((kind == k.KNIGHT) || (kind == k.SWAP) || (kind == k.LOCK) || (kind == k.RECON)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        if ((point == 10) || (point == 13)) {
+            if ((kind == k.BISHOP) || (kind == k.DETONATE) || (kind == k.GHOST) || (kind == k.STEAL)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        if (point == 11) {
+            if (kind == k.QUEEN) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        if (point == 12) {
+            if (kind == k.KING) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+    function easycomputer() {
+        jQuery.post('easycomputerrequest', {assignments: Assignments}).done(function() {
+            window.location.pathname = '/easycomputer';
+        });
+    }
+    function hardcomputer() {
+        jQuery.post('hardcomputerrequest', {assignments: Assignments}).done(function() {
+            window.location.pathname = '/hardcomputer';
+        });
+
+    }
+    function friend() {
+
+    }
+    function matched15() {
+
+    }
+    function matched5() {
+
+    }
+    function matched48() {
+
+    }
     </script>
 </head>
 
 <body>
-    <div class="spacer"></div>
-    <div>
-        <div class="inline">{{.Name}}</div>
-        <div class="inline">+{{.Wins}} / -{{.Losses}} / ={{.Draws}}</div>
-        <!-- <div class="inline">Best Piece ({{.BestPieceName}}) has {{.BestPieceTakes}} Takes</div> -->
+
+<div>
+    <div class="inlinediv">{{.Name}}</div>
+    <div class="inlinediv">+{{.Wins}} / -{{.Losses}} / ={{.Draws}}</div>
+</div>
+
+<div>
+    <div class="inlinediv roundedbox">
+        <div>Friend</div>
+        <div id="friendgriddiv"></div>
+        <div id="friendname"></div>
+        <div><input type="text" name="name"/></div>
+        <div><input type="button" class="ibutton" value="Play Friend" onclick="friend();"/></div>
     </div>
-    <div class="spacer"></div>
-    <div>
-        <div id="games"></div>
+    <div class="inlinediv roundedbox">
+        <div>Matched And Ranked</div>
+        <div class="inlinediv">
+            <div><input type="button" class="ibutton" value="15 Minute" onclick="matched15();"/></div>
+            <div><input type="button" class="ibutton" value="5 Minute" onclick="matched5();"/></div>
+        </div>
+        <div class="inlinediv roundedbox">
+            <div id="matchgriddiv"></div>
+            <div><input type="button" class="ibutton" value="48 Hour Turn" onclick="matched48();"/></div>
+        </div>
     </div>
-    <div class="spacer"></div>
-    <div id="navigation"></div>
+    <div class="inlinediv roundedbox">
+        <div>Computer</div>
+        <div><input type="button" class="ibutton" value="Easy" onclick="easycomputer();"/></div>
+        <div><input type="button" class="ibutton" value="Hard" onclick="hardcomputer();"/></div>
+    </div>
+</div>
+
+<div>
+    <div id="armygriddiv"></div>
+    <div id="assignbutton"><input type="button" class="ibutton" value="Unassign" onclick="unassign();"/></div>
+    <div id="piecepickdiv"></div>
+</div>
+
 </body>
 </html>

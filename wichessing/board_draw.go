@@ -76,6 +76,7 @@ func (b Board) Draw(turn Orientation) bool {
 			} else {
 				bishop2 = opponent2
 			}
+			// TODO: this is the wrong way to check for bishops on the same color
 			if (b.IndexPositionOfPiece(bishop1) % 2) == (b.IndexPositionOfPiece(bishop2) % 2) {
 				return true
 			}

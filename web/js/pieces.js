@@ -19,6 +19,40 @@ var o = {
     WHITE: 0,
     BLACK: 1
 };
+function nameForKind(kind) {
+    switch (kind) {
+        case k.KING:
+            return 'King';
+        case k.QUEEN:
+            return 'Queen';
+        case k.ROOK:
+            return 'Rook';
+        case k.BISHOP:
+            return 'Bishop';
+        case k.KNIGHT:
+            return 'Knight';
+        case k.PAWN:
+            return 'Pawn';
+        case k.SWAP:
+            return 'Swap Knight';
+        case k.LOCK:
+            return 'Lock Knight';
+        case k.RECON:
+            return 'Recon Knight';
+        case k.DETONATE:
+            return 'Detonate Bishop';
+        case k.GHOST:
+            return 'Ghost Bishop';
+        case k.STEAL:
+            return 'Steal Bishop';
+        case k.GUARD:
+            return 'Guard Rook';
+        case k.RALLY:
+            return 'Rally Rook';
+        case k.FORTIFY:
+            return 'Fortify Rook';
+    }
+}
 function imageNameForKind(kind, point, orientation) {
     var name;
     if (orientation == o.WHITE) {

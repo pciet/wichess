@@ -25,26 +25,26 @@ const (
 
 func writePlayerRecordUpdateToDatabase(winner, loser string, draw bool) {
 	if draw {
-		if winner != computer_player {
+		if (winner != easy_computer_player) && (winner != hard_computer_player) {
 			_, err := database.Exec(player_record_draw_update, winner)
 			if err != nil {
 				panicExit(err.Error())
 			}
 		}
-		if loser != computer_player {
+		if (loser != easy_computer_player) && (loser != hard_computer_player) {
 			_, err := database.Exec(player_record_draw_update, loser)
 			if err != nil {
 				panicExit(err.Error())
 			}
 		}
 	} else {
-		if winner != computer_player {
+		if (winner != easy_computer_player) && (winner != hard_computer_player) {
 			_, err := database.Exec(player_record_win_update, winner)
 			if err != nil {
 				panicExit(err.Error())
 			}
 		}
-		if loser != computer_player {
+		if (loser != easy_computer_player) && (loser != hard_computer_player) {
 			_, err := database.Exec(player_record_lose_update, loser)
 			if err != nil {
 				panicExit(err.Error())

@@ -6,13 +6,6 @@ CREATE TABLE Players (
     draws INTEGER
 );
 
-CREATE TABLE Boards (
-    player VARCHAR(64),
-    slot INTEGER NOT NULL,
-    game_id INTEGER,
-    PRIMARY KEY (player, slot)
-);
-
 CREATE TABLE Games (
     game_id SERIAL PRIMARY KEY,
     white VARCHAR(64) NOT NULL,
