@@ -49,8 +49,8 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/login", http.StatusFound)
 		return
 	}
-	record := playerRecordFromDatabase(name)
-	piece := bestPieceForPlayerFromDatabase(name)
+	record := database.playerRecord(name)
+	piece := database.playersBestPiece(name)
 	executeWebTemplate(w, app_index_template, indexTemplate{
 		Name:           name,
 		Wins:           record.wins,

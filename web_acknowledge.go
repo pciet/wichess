@@ -44,7 +44,7 @@ func acknowledgeGameCompletionHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	game := gameWithIdentifier(gid)
+	game := database.gameWithIdentifier(gid)
 	if (game.White != name) && (game.Black != name) {
 		http.NotFound(w, r)
 		return

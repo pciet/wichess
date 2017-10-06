@@ -14,7 +14,11 @@ import (
 
 const database_config_file = "dbconfig.json"
 
-var database *sql.DB
+type DB struct {
+	*sql.DB
+}
+
+var database DB
 
 type databaseConfiguration struct {
 	Database string
@@ -35,7 +39,7 @@ func initializeDatabaseConnection() {
 	if err != nil {
 		panicExit(err.Error())
 	}
-	database, err = sql.Open("postgres", fmt.Sprintf("dbname=%v user=%v password=%v host=%v port=%v sslmode=%v", config.Database, config.User, config.Password, config.Host, config.Port, config.SslMode))
+	database.DB, err = sql.Open("postgres", fmt.Sprintf("dbname=%v user=%v password=%v host=%v port=%v sslmode=%v", config.Database, config.User, config.Password, config.Host, config.Port, config.SslMode))
 	if err != nil {
 		panicExit(err.Error())
 	}

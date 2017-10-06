@@ -30,10 +30,34 @@ type piece struct {
 	Takes      int
 }
 
-const free_pieces_query = "SELECT " + piece_id_key + ", " + piece_kind_key + ", " + piece_takes_key + " FROM " + piece_table + " WHERE " + piece_owner_key + "=$1 AND " + piece_ingame_key + "=$2"
+// A zero ID means use the basic piece for the specified kind.
+func (db DB) pieceWithID(id int, kind wichessing.Kind, orientation wichessing.Orientation, owner string) piece {
+	if id == 0 {
+		return piece{
+			Piece: wichessing.Piece{
+				Kind:        kind,
+				Orientation: orientation,
+			},
+		}
+	}
+	var dbowner string
+	var ki int
+	err := db.QueryRow("SELECT "+piece_owner_key+", "+piece_kind_key+" FROM "+piece_table+" WHERE "+piece_id_key+"=$1;", id).Scan(&dbowner, &ki)
+	if (err != nil) || (owner != dbowner) {
+		// an invalid ID requested results in no piece
+		return piece{}
+	}
+	return piece{
+		Identifier: id,
+		Piece: wichessing.Piece{
+			Kind:        wichessing.Kind(ki),
+			Orientation: orientation,
+		},
+	}
+}
 
-func freePiecesForPlayerFromDatabase(name string) []piece {
-	rows, err := database.Query(free_pieces_query, name, false)
+func (db DB) playersFreePieces(name string) []piece {
+	rows, err := db.Query("SELECT "+piece_id_key+", "+piece_kind_key+", "+piece_takes_key+" FROM "+piece_table+" WHERE "+piece_owner_key+"=$1 AND "+piece_ingame_key+"=$2;", name, false)
 	if err != nil {
 		panicExit(err.Error())
 	}
@@ -55,10 +79,8 @@ func freePiecesForPlayerFromDatabase(name string) []piece {
 	return pieces
 }
 
-const players_best_pieces_query = "SELECT " + piece_kind_key + ", " + piece_takes_key + " FROM " + piece_table + " WHERE " + piece_owner_key + "=$1"
-
-func bestPieceForPlayerFromDatabase(name string) piece {
-	rows, err := database.Query(players_best_pieces_query, name)
+func (db DB) playersBestPiece(name string) piece {
+	rows, err := db.Query("SELECT "+piece_kind_key+", "+piece_takes_key+" FROM "+piece_table+" WHERE "+piece_owner_key+"=$1;", name)
 	if err != nil {
 		panicExit(err.Error())
 	}
@@ -82,12 +104,10 @@ func bestPieceForPlayerFromDatabase(name string) piece {
 	return p
 }
 
-const new_piece_insert = "INSERT INTO " + piece_table + "(" + piece_kind_key + ", " + piece_owner_key + ", " + piece_takes_key + ", " + piece_ingame_key + ") VALUES ($1, $2, $3, $4)"
-
-func newPlayerPiecesIntoDatabase(name string) {
+func (db DB) createNewPlayersPieces(name string) {
 	for i := 0; i < initial_piece_count; i++ {
 		piece := randomHeroPiece()
-		_, err := database.Exec(new_piece_insert, piece.Kind, name, 0, false)
+		_, err := db.Exec("INSERT INTO "+piece_table+"("+piece_kind_key+", "+piece_owner_key+", "+piece_takes_key+", "+piece_ingame_key+") VALUES ($1, $2, $3, $4);", piece.Kind, name, 0, false)
 		if err != nil {
 			panicExit(err.Error())
 		}
@@ -115,32 +135,4 @@ func randomHeroPiece() piece {
 	//		Kind: wichessing.Swap,
 	//	},
 	//}
-}
-
-const piece_owner_query = "SELECT " + piece_owner_key + ", " + piece_kind_key + " FROM " + piece_table + " WHERE " + piece_id_key + "=$1"
-
-// A zero ID means use the basic piece for the specified kind.
-func pieceWithID(id int, kind wichessing.Kind, orientation wichessing.Orientation, owner string) piece {
-	if id == 0 {
-		return piece{
-			Piece: wichessing.Piece{
-				Kind:        kind,
-				Orientation: orientation,
-			},
-		}
-	}
-	var dbowner string
-	var ki int
-	err := database.QueryRow(piece_owner_query, id).Scan(&dbowner, &ki)
-	if (err != nil) || (owner != dbowner) {
-		// an invalid ID requested results in no piece
-		return piece{}
-	}
-	return piece{
-		Identifier: id,
-		Piece: wichessing.Piece{
-			Kind:        wichessing.Kind(ki),
-			Orientation: orientation,
-		},
-	}
 }

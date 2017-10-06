@@ -25,7 +25,7 @@ func easyComputerRequestHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/login", http.StatusFound)
 		return
 	}
-	if easyComputerGame(name) != 0 {
+	if database.easyComputerGame(name) != 0 {
 		http.Redirect(w, r, "/easycomputer", http.StatusFound)
 		return
 	}
@@ -39,7 +39,7 @@ func easyComputerRequestHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	requestEasyComputerMatch(name, setup)
+	database.requestEasyComputerMatch(name, setup)
 	// the client is responsible for triggering a GET at /easycomputer after this POST is successful
 }
 
@@ -59,12 +59,12 @@ func easyComputerHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/login", http.StatusFound)
 		return
 	}
-	id := easyComputerGame(name)
+	id := database.easyComputerGame(name)
 	if id == 0 {
 		http.Redirect(w, r, "/", http.StatusFound)
 		return
 	}
-	white, black := gamePlayers(id)
+	white, black := database.gamePlayers(id)
 	executeWebTemplate(w, game_template, gameTemplate{
 		White:  white,
 		Black:  black,

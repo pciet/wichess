@@ -70,7 +70,7 @@ func moveRequestHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	game := gameWithIdentifier(int(gameid))
+	game := database.gameWithIdentifier(int(gameid))
 	if (game.White != name) && (game.Black != name) {
 		http.NotFound(w, r)
 		return
@@ -93,14 +93,14 @@ func moveRequestHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	if promoting == false {
 		if (game.White == easy_computer_player) || (game.Black == easy_computer_player) {
-			cdiff := easyComputerMoveForGame(int(gameid))
+			cdiff := database.easyComputerMoveForGame(int(gameid))
 			if (cdiff != nil) && (len(cdiff) != 0) {
 				for addr, piece := range cdiff {
 					diff[addr] = piece
 				}
 			}
 		} else if (game.White == hard_computer_player) || (game.Black == hard_computer_player) {
-			cdiff := hardComputerMoveForGame(int(gameid))
+			cdiff := database.hardComputerMoveForGame(int(gameid))
 			if (cdiff != nil) && (len(cdiff) != 0) {
 				for addr, piece := range cdiff {
 					diff[addr] = piece

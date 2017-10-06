@@ -43,7 +43,7 @@ func loginAttempt(w http.ResponseWriter, r *http.Request) {
 		webError(w, r, "missing form field", nil)
 		return
 	}
-	key := loginOrCreate(playerName, encryptPassword(password), r.RemoteAddr)
+	key := database.loginOrCreate(playerName, encryptPassword(password), r.RemoteAddr)
 	if key == "" {
 		executeWebTemplate(w, login_template, nil)
 		return

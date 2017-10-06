@@ -8,16 +8,16 @@ import (
 )
 
 // The client code is responsible for checking the specifics of password requirements because the server behavior is the same for "wrong password" and "invalid password for new player".
-func loginOrCreate(name, crypt, remoteAddr string) string {
-	key := login(name, crypt, remoteAddr)
+func (db DB) loginOrCreate(name, crypt, remoteAddr string) string {
+	key := db.login(name, crypt, remoteAddr)
 	if key != "" {
 		return key
 	}
-	return createAndLogin(name, crypt, remoteAddr)
+	return db.createAndLogin(name, crypt, remoteAddr)
 }
 
-func login(name, crypt, remoteAddr string) string {
-	has, encrypt := playerCryptFromDatabase(name)
+func (db DB) login(name, crypt, remoteAddr string) string {
+	has, encrypt := db.playerCrypt(name)
 	if has == false {
 		return ""
 	}
@@ -30,14 +30,14 @@ func login(name, crypt, remoteAddr string) string {
 	return sessionKey
 }
 
-func createAndLogin(name, crypt, remoteAddr string) string {
-	exists, _ := playerCryptFromDatabase(name)
+func (db DB) createAndLogin(name, crypt, remoteAddr string) string {
+	exists, _ := db.playerCrypt(name)
 	if exists {
 		return ""
 	}
 	if (name == easy_computer_player) || (name == hard_computer_player) {
 		return ""
 	}
-	newPlayerInDatabase(name, crypt)
-	return login(name, crypt, remoteAddr)
+	db.newPlayer(name, crypt)
+	return db.login(name, crypt, remoteAddr)
 }
