@@ -4,8 +4,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/pciet/wichess/wichessing"
 )
 
@@ -210,43 +208,4 @@ func (g game) moves() map[string]map[string]struct{} {
 		moves[check_key] = nil
 	}
 	return moves
-}
-
-func (g *game) acknowledge(player string) bool {
-	var active wichessing.Orientation
-	if g.Active == g.Black {
-		active = wichessing.Black
-	} else {
-		active = wichessing.White
-	}
-	b := wichessingBoard(g.Points)
-	if (b.Checkmate(active) == false) && (b.Draw(active) == false) {
-		return false
-	}
-	var ackKey string
-	if player == g.Black {
-		ackKey = games_black_acknowledge
-		g.BlackAcknowledge = true
-	} else if player == g.White {
-		ackKey = games_white_acknowledge
-		g.WhiteAcknowledge = true
-	} else {
-		panicExit("player " + player + " is not " + g.Black + " (black) or " + g.White + " (white)")
-	}
-	if g.BlackAcknowledge && g.WhiteAcknowledge {
-		g.DB.deleteGame(g.ID)
-		return true
-	}
-	result, err := g.DB.Exec("UPDATE "+games_table+" SET "+ackKey+" = $1 WHERE "+games_identifier+" = $2;", true, g.ID)
-	if err != nil {
-		panicExit(err.Error())
-	}
-	count, err := result.RowsAffected()
-	if err != nil {
-		panicExit(err.Error())
-	}
-	if count != 1 {
-		panicExit(fmt.Sprintf("%v rows affected by ack update exec", count))
-	}
-	return true
 }

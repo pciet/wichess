@@ -7,8 +7,6 @@ import (
 	"net/http"
 )
 
-const request_assignments = "assignments[]"
-
 func easyComputerRequestHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.NotFound(w, r)

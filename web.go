@@ -14,6 +14,15 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+type gameTemplate struct {
+	White  string
+	Black  string
+	GameID int
+	Name   string
+}
+
+const request_assignments = "assignments[]"
+
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,

@@ -3,7 +3,12 @@ CREATE TABLE Players (
     crypt CHAR(64) UNIQUE NOT NULL,
     wins INTEGER,
     losses INTEGER,
-    draws INTEGER
+    draws INTEGER,
+    rating INTEGER,
+    c48s0 INTEGER, c48s1 INTEGER,
+    c48s2 INTEGER, c48s3 INTEGER,
+    c48s4 INTEGER, c48s5 INTEGER,
+    c48s6 INTEGER, c48s7 INTEGER
 );
 
 CREATE TABLE Games (

@@ -115,7 +115,7 @@
         makeMove(JSON.parse(event.data));
     }
     function setPieceImage(index, kind, orientation) {
-        $('#point'+index).html('<img class="pieceimg" src="img/'+imageNameForKind(kind, index, orientation)+'">');
+        $('#point'+index).html('<img class="pieceimg" src="/img/'+imageNameForKind(kind, index, orientation)+'">');
     }
     function unsetPieceImage(index) {
         $('#point'+index).html('');
@@ -369,7 +369,7 @@
         });
     });
     function acknowledge() {
-        jQuery.post('acknowledge', {
+        jQuery.post('/acknowledge', {
             player: Player,
             gameid: game_id
         }).done(function() {

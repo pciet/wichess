@@ -50,6 +50,13 @@
             width: 20px;
             outline: 1px solid #d4cca5;
         }
+        .matching {
+            background-color: #e1e1e1;
+        }
+        .matched {
+            outline: 1px dotted black;
+            background-color: #f3f3f3;
+        }
         .even {
             background-color: #e1e1e1;
         }
@@ -69,14 +76,30 @@
         .highlightedpiece {
             outline: 1px solid black;
         }
+        .highlightedgame {
+            outline: 1px solid black;
+        }
     </style>
     <script type="text/javascript" src="/js/jquery-2.2.0.min.js"></script>
     <script type="text/javascript" src="/js/pieces.js"></script>
     <script type="text/javascript">
-    var HighlightedPiece = null;
     var Pieces = null;
     var Assignments = [];
 
+    var HighlightedPiece = null;
+    var Highlighted48HourGame = null;
+
+    var Competitive48Games = [{{.C48S0}}, {{.C48S1}}, {{.C48S2}}, {{.C48S3}}, {{.C48S4}}, {{.C48S5}}, {{.C48S6}}, {{.C48S7}}];
+
+    var available = 0, matching = 1, matched = 2; // see web_index.go for these consts
+
+    var Matching = false;
+
+    var c48ws = new WebSocket('ws://localhost:8080/competitive48n');
+    c48ws.onmessage = function(event) {
+        Matching = false;
+        $('#match'+JSON.parse(event.data).Slot).removeClass('matching').addClass('matched');
+    }
     for (var i = 0; i < 16; i++) {
         Assignments[i] = 0;
     }
@@ -86,7 +109,6 @@
         for (var i = 0; i < Pieces.length; i++) {
             Pieces[i].Assigned = false;
         }
-        console.log(Pieces);
     });
 
     $(document).ready(function() {
@@ -117,8 +139,34 @@
         matchGrid += '</table>';
         $('#matchgriddiv').html(matchGrid);
         for (var i = 0; i < 8; i++) {
+            switch (Competitive48Games[i]) {
+                case available:
+                    break;
+                case matching:
+                    Matching = true;
+                    $('#match'+i).addClass('matching');
+                    break;
+                case matched:
+                    $('#match'+i).addClass('matched');
+                    break;
+            }
             $('#match'+i).click({Index: i}, function(event) {
-
+                var index = event.data.Index;
+                if ((Matching == true) && ($('#match'+index).hasClass('matched') == false)) {
+                    return;
+                }
+                if (Highlighted48HourGame != null) {
+                    $('#match'+Highlighted48HourGame).removeClass('highlightedgame');
+                    if (Highlighted48HourGame == index) {
+                        Highlighted48HourGame = null;
+                        return;
+                    }
+                }
+                if ($('#match'+index).hasClass('matching')) {
+                    return;
+                }
+                Highlighted48HourGame = index;
+                $('#match'+Highlighted48HourGame).addClass('highlightedgame');
             });
         }
 
@@ -329,7 +377,18 @@
 
     }
     function matched48() {
-
+        if (Highlighted48HourGame == null) {
+            return;
+        }
+        if ($('#match'+Highlighted48HourGame).hasClass('matched')) {
+            window.location.pathname = '/competitive48/'+Highlighted48HourGame;
+            return;
+        }
+        jQuery.post('competitive48', {index: Highlighted48HourGame, assignments: Assignments}).done(function() {
+            $('#match'+Highlighted48HourGame).removeClass('highlightedgame').addClass('matching');
+            Matching = true;
+            Highlighted48HourGame = null;
+        });
     }
     </script>
 </head>
@@ -350,7 +409,7 @@
         <div><input type="button" class="ibutton" value="Play Friend" onclick="friend();"/></div>
     </div>
     <div class="inlinediv roundedbox">
-        <div>Matched And Ranked</div>
+        <div>Competitive</div>
         <div class="inlinediv">
             <div><input type="button" class="ibutton" value="15 Minute" onclick="matched15();"/></div>
             <div><input type="button" class="ibutton" value="5 Minute" onclick="matched5();"/></div>

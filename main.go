@@ -25,6 +25,10 @@ func main() {
 	http.HandleFunc("/easycomputerrequest", easyComputerRequestHandler)
 	http.HandleFunc("/easycomputer", easyComputerHandler)
 
+	http.HandleFunc("/competitive48", competitive48RequestHandler)
+	http.HandleFunc("/competitive48n", competitive48NotificationWebsocketHandler)
+	http.HandleFunc("/competitive48/", competitive48Handler)
+
 	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("web/js"))))
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("web/css"))))
 	http.Handle("/img/", http.StripPrefix("/img/", http.FileServer(http.Dir("web/img"))))

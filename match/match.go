@@ -17,7 +17,7 @@ type Matcher struct {
 	// The function used to determine if a pairing is good or bad.
 	pairing func(int, int) bool
 	// Called when a match is made.
-	match func(string, string)
+	match func(string, interface{}, string, interface{})
 	// The list of available players and their response channels.
 	list map[string]player
 	// Indicates if this matcher is attempting to match every period.
@@ -26,7 +26,7 @@ type Matcher struct {
 }
 
 // Period is how many seconds between matching attempt, threshold is how many bad matches before the bad match is made anyway, and pairing is the function that determines if a match is good or bad. Match is a callback when a match is made.
-func NewMatcher(period uint, threshold uint, pairing func(int, int) bool, match func(string, string)) Matcher {
+func NewMatcher(period uint, threshold uint, pairing func(int, int) bool, match func(string, interface{}, string, interface{})) Matcher {
 	f := false
 	return Matcher{period: period,
 		threshold: threshold,
@@ -40,32 +40,34 @@ func NewMatcher(period uint, threshold uint, pairing func(int, int) bool, match 
 
 type player struct {
 	rating int
+	meta   interface{}
 	bad    map[string]uint
 }
 
 // This function will panic if a player is already being matched.
-func (m Matcher) Match(name string, rating int) {
+func (m Matcher) Match(name string, meta interface{}, rating int) {
 	m.Lock()
 	defer m.Unlock()
 	_, has := m.list[name]
 	if has {
 		panic(fmt.Sprintf("match: player %v has Match() called multiple times", name))
 	}
-	m.list[name] = player{rating: rating, bad: make(map[string]uint)}
+	m.list[name] = player{rating: rating, meta: meta, bad: make(map[string]uint)}
 	if (*m.matching == false) && (len(m.list) > 1) {
 		*m.matching = true
 		go m.matchmaking()
 	}
 }
 
-func (m Matcher) Matching(name string) bool {
+// If this player is matching the meta data provided in Match() will be returned here, nil otherwise.
+func (m Matcher) Matching(name string) interface{} {
 	m.RLock()
 	defer m.RUnlock()
-	_, has := m.list[name]
+	player, has := m.list[name]
 	if has {
-		return true
+		return player.meta
 	} else {
-		return false
+		return nil
 	}
 }
 
@@ -83,7 +85,7 @@ func (m Matcher) matchmaking() {
 				if m.pairing(p1.rating, p2.rating) == false {
 					p1.bad[opponent]++
 				} else {
-					m.match(name, opponent)
+					m.match(name, p1.meta, opponent, p2.meta)
 					delete(m.list, name)
 					delete(m.list, opponent)
 					continue OUTER
@@ -98,12 +100,12 @@ func (m Matcher) matchmaking() {
 		// if any bad pairings are left that meet the threshold then make them anyway
 	OUTER2:
 		for name, p1 := range m.list {
-			for opponent, _ := range m.list {
+			for opponent, p2 := range m.list {
 				if name == opponent {
 					continue
 				}
 				if p1.bad[opponent] >= m.threshold {
-					m.match(name, opponent)
+					m.match(name, p1.meta, opponent, p2.meta)
 					delete(m.list, name)
 					delete(m.list, opponent)
 					continue OUTER2
