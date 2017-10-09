@@ -140,7 +140,7 @@ func (db DB) updateGame(id int, diff map[string]piece, active string) {
 	}
 }
 
-func (g *game) acknowledge(player string) bool {
+func (g *game) acknowledgeGameComplete(player string) bool {
 	var active wichessing.Orientation
 	if g.Active == g.Black {
 		active = wichessing.Black
@@ -161,9 +161,11 @@ func (g *game) acknowledge(player string) bool {
 	} else {
 		panicExit("player " + player + " is not " + g.Black + " (black) or " + g.White + " (white)")
 	}
-	isCompetitive48, slot := g.DB.gameIsCompetitive48ForPlayer(g.ID, player)
-	if isCompetitive48 {
-		g.DB.removePlayersCompetitive48Game(player, slot)
+	if (player != easy_computer_player) && (player != hard_computer_player) {
+		isCompetitive48, slot := g.DB.gameIsCompetitive48ForPlayer(g.ID, player)
+		if isCompetitive48 {
+			g.DB.removePlayersCompetitive48Game(player, slot)
+		}
 	}
 	if g.BlackAcknowledge && g.WhiteAcknowledge {
 		g.DB.deleteGame(g.ID)

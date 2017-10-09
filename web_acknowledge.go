@@ -49,16 +49,16 @@ func acknowledgeGameCompletionHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	if (&game).acknowledge(name) == false {
+	if (&game).acknowledgeGameComplete(name) == false {
 		http.NotFound(w, r)
 		return
 	}
 	if (game.White == easy_computer_player) || (game.Black == easy_computer_player) {
-		if (&game).acknowledge(easy_computer_player) == false {
+		if (&game).acknowledgeGameComplete(easy_computer_player) == false {
 			panicExit("web_acknowledge: failed to acknowledge easy computer player")
 		}
 	} else if (game.White == hard_computer_player) || (game.Black == hard_computer_player) {
-		if (&game).acknowledge(hard_computer_player) == false {
+		if (&game).acknowledgeGameComplete(hard_computer_player) == false {
 			panicExit("web_acknowledge: failed to acknowledge hard computer  player")
 		}
 	}
