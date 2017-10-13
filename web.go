@@ -10,15 +10,17 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gorilla/websocket"
 )
 
 type gameTemplate struct {
-	White  string
-	Black  string
-	GameID int
-	Name   string
+	GameInfo
+	Name      string
+	TotalTime time.Duration
+	TurnTime  time.Duration
+	NowTime   time.Time
 }
 
 const request_assignments = "assignments[]"

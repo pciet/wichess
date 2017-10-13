@@ -4,12 +4,16 @@
     <meta charset="UTF-8">
     <title>wichess game</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Libre+Baskerville">
+    <link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/css/body.css">
     <style>
     div {
         text-align: center;
         margin: 0 auto;
-        width: 100%;
+    }
+    .inlinediv {
+        display: inline-block;
+        margin: 1em;
     }
     table {
         table-layout: fixed;
@@ -38,11 +42,8 @@
     .odd {
         background-color: #f3f3f3;
     }
-    .spacer {
-        height: 35px;
-    }
     .promotion {
-        height: 35px;
+        margin: 1em;
     }
     .promb {
         font-size: 11px;
@@ -94,22 +95,54 @@
         box-shadow: 0px 1px 1px black;
         margin: 1em;
     }
+    .clock {
+        border-radius: 10px;
+        border: 2px solid #d4cca5;
+        background-color: #cc785c;
+        color: #fb835e;
+        margin: 1em;
+        padding: 0.5em;
+        font-family: 'Inconsolata', monospace;
+    }
+    .clocking {
+        background-color: #d4cca5;
+        color: #825444;
+    }
     </style>
     <script type="text/javascript" src="/js/jquery-2.2.0.min.js"></script>
+    <script type="text/javascript" src="/js/moment.min.js"></script>
+    <script type="text/javascript" src="/js/duration.js"></script>
     <script type="text/javascript" src="/js/pieces.js"></script>
     <script type="text/javascript">
-    var game_id = {{.GameID}};
+    var game_id = {{.ID}};
     var Player = {{.Name}};
+
+    var TotalTime = Duration.parse({{.TotalTime}});
+    var TurnTime = Duration.parse({{.TurnTime}});
+    var NowTime = moment({{.NowTime}});
+
+    var WhiteLatestMove = moment({{.WhiteLatestMove}});
+    var WhiteElapsed = Duration.parse({{.WhiteElapsed}});
+    var BlackLatestMove = moment({{.BlackLatestMove}});
+    var BlackElapsed = Duration.parse({{.BlackElapsed}});
+
+    var NowDifference = moment.duration(moment().diff(NowTime));
+
     var PlayerOrientation;
     var Opponent = '';
     var White = '';
     var Black = '';
     var Turn = '';
+
     var Board = null;
     var Selected = null;
     var Moves = null;
+
     var EasyComputer = 'Easy Computer Player';
     var HardComputer = 'Hard Computer Player';
+
+    var WhiteTimer, BlackTimer;
+
     var ws = new WebSocket("ws://localhost:8080/moven/"+game_id);
     ws.onmessage = function(event) {
         makeMove(JSON.parse(event.data));
@@ -146,6 +179,25 @@
         $.post('/move/'+game_id, {From: from, Kind: kind}).done(makeMove);
     }
     function makeMove(diff) {
+        if (TurnTime.milliseconds() > 0) {
+            if (Turn == o.WHITE) {
+                clearInterval(WhiteTimer);
+                $('#whiteclock').removeClass('clocking').html(millisecondsToClock(TurnTime.valueOf()-1000));
+                $('#blackclock').addClass('clocking');
+                WhiteLatestMove = moment().subtract(NowDifference);
+                BlackTimer = setInterval(function() {
+                    updateClock(o.BLACK);
+                }, 1000);
+            } else {
+                clearInterval(BlackTimer);
+                $('#blackclock').removeClass('clocking').html(millisecondsToClock(TurnTime.valueOf()-1000));
+                $('#whiteclock').addClass('clocking');
+                BlackLatestMove = moment().subtract(NowDifference);
+                WhiteTimer = setInterval(function() {
+                    updateClock(o.WHITE);
+                }, 1000);
+            }
+        }
         for (var point in diff) {
             var index = addrStringToIndex(point);
             if (diff[point].Kind == 0) {
@@ -167,9 +219,17 @@
                 $('#check').removeClass('indicating');
             }
             if ('checkmate' in Moves) {
+                clearInterval(WhiteTimer);
+                clearInterval(BlackTimer);
+                $('#blackclock').html(millisecondsToClock(0));
+                $('#whiteclock').html(millisecondsToClock(0));
                 $('#checkmate').addClass('indicating');
                 $('#acknowledge').html('<input type="button" value="Acknowledge" onclick="acknowledge();"/>');
             } else if ('draw' in Moves) {
+                clearInterval(WhiteTimer);
+                clearInterval(BlackTimer);
+                $('#blackclock').html(millisecondsToClock(0));
+                $('#whiteclock').html(millisecondsToClock(0));
                 $('#draw').addClass('indicating');
                 $('#acknowledge').html('<input type="button" value="Acknowledge" onclick="acknowledge();"/>');
             }
@@ -203,6 +263,48 @@
     }
     function indexToAddrString(i) {
         return (i%8).toString() + '-' + (Math.floor(i/8)).toString();
+    }
+    function millisecondsToClock(m) {
+        var hours = Math.floor(m / (60*60*1000));
+        if (hours != 0) {
+            m -= hours * 60*60*1000;
+        }
+        var hourStr;
+        if (hours < 10) {
+            hourStr = '0'+hours;
+        } else {
+            hourStr = hours;
+        }
+        var minutes = Math.floor(m / (60*1000));
+        if (minutes != 0) {
+            m -= minutes * 60*1000;
+        }
+        var minuteStr;
+        if (minutes < 10) {
+            minuteStr = '0'+minutes;
+        } else {
+            minuteStr = minutes;
+        }
+        var seconds = Math.floor(m / 1000);
+        var secondStr;
+        if (seconds < 10) {
+            secondStr = '0'+seconds;
+        } else {
+            secondStr = seconds;
+        }
+        return hourStr+':'+minuteStr+':'+secondStr;
+    }
+    function updateClock(orientation) {
+        var clock, latestMove;
+        if (orientation == o.WHITE) {
+            clock = '#whiteclock';
+            latestMove = BlackLatestMove;
+        } else {
+            clock = '#blackclock';
+            latestMove = WhiteLatestMove;
+        }
+        var remaining = TurnTime.milliseconds() - moment().add(NowDifference).diff(latestMove).valueOf();
+        $(clock).html(millisecondsToClock(remaining));
     }
     $(document).ready(function() {
         var board = '';
@@ -253,6 +355,23 @@
                 Turn = o.BLACK;
                 $('#blackactive').addClass('indicating');
             }
+            if (TurnTime.milliseconds() > 0) {
+                if (Turn == o.WHITE) {
+                    $('#blackclock').html(millisecondsToClock(TurnTime.valueOf()-1000)).addClass('clock');
+                    updateClock(o.WHITE);
+                    $('#whiteclock').addClass('clock clocking');
+                    WhiteTimer = setInterval(function() {
+                        updateClock(o.WHITE);
+                    }, 1000);
+                } else {
+                    $('#whiteclock').html(millisecondsToClock(TurnTime.valueOf()-1000)).addClass('clock');
+                    updateClock(o.BLACK);
+                    $('#blackclock').addClass('clock clocking');
+                    BlackTimer = setInterval(function() {
+                        updateClock(o.BLACK);
+                    }, 1000);            
+                }
+            }
             for (var i = 0; i < Board.length; i++) {
                 if (Board[i].Kind == 0) {
                     continue;
@@ -268,9 +387,17 @@
                     $('#check').removeClass('indicating');
                 }
                 if ('checkmate' in Moves) {
+                    clearInterval(BlackTimer);
+                    clearInterval(WhiteTimer);
+                    $('#blackclock').html(millisecondsToClock(0));
+                    $('#whiteclock').html(millisecondsToClock(0));
                     $('#checkmate').addClass('indicating');
                     $('#acknowledge').html('<input type="button" value="Acknowledge" onclick="acknowledge();"/>');
                 } else if ('draw' in Moves) {
+                    clearInterval(BlackTimer);
+                    clearInterval(WhiteTimer);
+                    $('#blackclock').html(millisecondsToClock(0));
+                    $('#whiteclock').html(millisecondsToClock(0));
                     $('#draw').addClass('indicating');
                     $('#acknowledge').html('<input type="button" value="Acknowledge" onclick="acknowledge();"/>');
                 }
@@ -380,13 +507,12 @@
 </head>
 
 <body>
-    <div class="spacer"></div>
-    <table><tr>
-        <td><div><span id="youblack"></span><span>{{.Black}}</span>
-        <span class="indicator" id="blackactive">Turn</span></td>
-        <td><div id="whitepromote" class="promotion"></div></td>
-    </tr></table>
-    <div class="spacer"></div>
+    <div>
+        <div id="blackclock" class="inlinediv"></div>
+        <div class="inlinediv"><span id="youblack"></span><span>{{.Black}}</span></div>
+        <div class="inlinediv"><span class="indicator" id="blackactive">Turn</span></div>
+        <div id="whitepromote" class="promotion"></div>
+    </div>
     <div>
         <table><tr>
             <td><table><tr><td><span class="indicator" id="check">Check</span></td></tr>
@@ -400,11 +526,11 @@
             <td></td>
         </tr></table>
     </div>
-    <div class="spacer"></div>
-    <table><tr>
-        <td><div id="blackpromote" class="promotion"></div></td>
-        <td><div><span id="youwhite"></span><span>{{.White}}</span>
-            <span class="indicator" id="whiteactive">Turn</span></td>
-    </tr></table>
+    <div>
+        <div id="blackpromote" class="promotion"></div>
+        <div id="whiteclock" class="inlinediv"></div>
+        <div class="inlinediv"><span id="youwhite"></span><span>{{.White}}</span></div>
+        <div class="inlinediv"><span class="indicator" id="whiteactive">Turn</span></div>
+    </div>
 </body>
 </html>

@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/pciet/wichess/wichessing"
 )
@@ -78,13 +79,13 @@ func moveRequestHandler(w http.ResponseWriter, r *http.Request) {
 	var diff map[string]piece
 	var promoting bool
 	if kind != 0 { // promotion
-		diff = game.promote(from, name, wichessing.Kind(kind))
+		diff = game.promote(from, name, wichessing.Kind(kind), false)
 		if (diff == nil) || (len(diff) == 0) {
 			http.NotFound(w, r)
 			return
 		}
 	} else {
-		diff, promoting = game.move(from, to, name)
+		diff, promoting = game.move(from, to, name, false)
 		if (diff == nil) || (len(diff) == 0) {
 			http.NotFound(w, r)
 			return
@@ -108,6 +109,7 @@ func moveRequestHandler(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
+	game.updateGameTimesWithMove(time.Now())
 	json, err := json.Marshal(diff)
 	if err != nil {
 		panicExit(err.Error())

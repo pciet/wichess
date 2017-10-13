@@ -4,6 +4,8 @@
 package main
 
 import (
+	"time"
+
 	"github.com/pciet/wichess/wichessing"
 )
 
@@ -15,7 +17,7 @@ const (
 )
 
 // Returns address that have changed, Kind 0 piece for a now empty point, but does not update the board points. Returns true if promoting.
-func (g game) move(from, to int, mover string) (map[string]piece, bool) {
+func (g game) move(from, to int, mover string, timeoutMove bool) (map[string]piece, bool) {
 	var nextMover string
 	var orientation, nextOrientation wichessing.Orientation
 	if g.White == g.Active {
@@ -66,16 +68,30 @@ func (g game) move(from, to int, mover string) (map[string]piece, bool) {
 	} else {
 		g.DB.updateGame(g.ID, diff, nextMover)
 	}
-	if (mover != easy_computer_player) && (mover != hard_computer_player) {
-		if orientation == wichessing.White {
-			if gameListening[g.ID].black != nil {
-				gameListening[g.ID].black <- diff
+	if timeoutMove == false {
+		go func() {
+			gameMonitorsLock.RLock()
+			c, has := gameMonitors[g.ID]
+			if has {
+				c.move <- time.Now()
 			}
-		} else {
-			if gameListening[g.ID].white != nil {
-				gameListening[g.ID].white <- diff
+			gameMonitorsLock.RUnlock()
+		}()
+	}
+	if (mover != easy_computer_player) && (mover != hard_computer_player) {
+		gameListeningLock.RLock()
+		listeners, has := gameListening[g.ID]
+		if ((orientation == wichessing.White) || timeoutMove) && has {
+			if listeners.black != nil {
+				listeners.black <- diff
 			}
 		}
+		if ((orientation == wichessing.Black) || timeoutMove) && has {
+			if listeners.white != nil {
+				listeners.white <- diff
+			}
+		}
+		gameListeningLock.RUnlock()
 	}
 	if after.Checkmate(nextOrientation) {
 		if nextOrientation == wichessing.White {
@@ -89,7 +105,7 @@ func (g game) move(from, to int, mover string) (map[string]piece, bool) {
 	return diff, promoting
 }
 
-func (g game) promote(from int, player string, kind wichessing.Kind) map[string]piece {
+func (g game) promote(from int, player string, kind wichessing.Kind, timeoutMove bool) map[string]piece {
 	var nextMover string
 	var orientation wichessing.Orientation
 	if g.White == player {
@@ -134,16 +150,30 @@ func (g game) promote(from int, player string, kind wichessing.Kind) map[string]
 		return diff
 	}
 	g.DB.updateGame(g.ID, diff, nextMover)
-	if (player != easy_computer_player) && (player != hard_computer_player) {
-		if orientation == wichessing.White {
-			if gameListening[g.ID].black != nil {
-				gameListening[g.ID].black <- diff
+	if timeoutMove == false {
+		go func() {
+			gameMonitorsLock.RLock()
+			c, has := gameMonitors[g.ID]
+			if has {
+				c.move <- time.Now()
 			}
-		} else {
-			if gameListening[g.ID].white != nil {
-				gameListening[g.ID].white <- diff
+			gameMonitorsLock.RUnlock()
+		}()
+	}
+	if (player != easy_computer_player) && (player != hard_computer_player) {
+		gameListeningLock.RLock()
+		listeners, has := gameListening[g.ID]
+		if ((orientation == wichessing.White) || timeoutMove) && has {
+			if listeners.black != nil {
+				listeners.black <- diff
 			}
 		}
+		if ((orientation == wichessing.Black) || timeoutMove) && has {
+			if listeners.white != nil {
+				listeners.white <- diff
+			}
+		}
+		gameListeningLock.RUnlock()
 	}
 	var checkOrientation wichessing.Orientation
 	if orientation == wichessing.White {
@@ -167,22 +197,7 @@ func (g game) promote(from int, player string, kind wichessing.Kind) map[string]
 // The map keys are wichessing.AbsPoint converted to "x/file-y/rank" formatted string.
 // If the game is in a check or checkmate state, or a piece is to be promoted, then a corresponding key with a nil value will be set.
 func (g game) moves() map[string]map[string]struct{} {
-	var board wichessing.Board
-	for i := 0; i < 64; i++ {
-		var p *wichessing.Piece
-		if g.Points[i].Piece.Kind == 0 {
-			p = nil
-		} else {
-			p = &g.Points[i].Piece
-		}
-		board[i] = wichessing.Point{
-			Piece: p,
-			AbsPoint: wichessing.AbsPoint{
-				File: wichessing.FileFromIndex(uint8(i)),
-				Rank: wichessing.RankFromIndex(uint8(i)),
-			},
-		}
-	}
+	board := wichessingBoard(g.Points)
 	moves := make(map[string]map[string]struct{})
 	if board.HasPawnToPromote() {
 		moves[promote_key] = nil

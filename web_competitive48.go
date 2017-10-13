@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 const (
@@ -110,11 +111,11 @@ func competitive48Handler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusFound)
 		return
 	}
-	white, black := database.gamePlayers(id)
 	executeWebTemplate(w, game_template, gameTemplate{
-		White:  white,
-		Black:  black,
-		GameID: id,
-		Name:   name,
+		GameInfo:  database.updateGameTimes(id, competitive48_turn_time),
+		Name:      name,
+		TotalTime: competitive48_total_time,
+		TurnTime:  competitive48_turn_time,
+		NowTime:   time.Now(),
 	})
 }

@@ -29,7 +29,7 @@ func (db DB) easyComputerMoveForGame(id int) map[string]piece {
 	if move == nil {
 		return nil
 	}
-	diff, promoting := g.move(int(move.From.Index()), int(move.To.Index()), easy_computer_player)
+	diff, promoting := g.move(int(move.From.Index()), int(move.To.Index()), easy_computer_player, false)
 	if promoting {
 		after := wichessingBoard(g.Points).AfterMove(move.From, move.To, orientation)
 		var from int
@@ -57,7 +57,7 @@ func (db DB) easyComputerMoveForGame(id int) map[string]piece {
 			}
 		}
 		// TODO: g.move to update g with the database writes so this second query isn't necessary
-		pdiff := db.gameWithIdentifier(id).promote(from, easy_computer_player, wichessing.Queen)
+		pdiff := db.gameWithIdentifier(id).promote(from, easy_computer_player, wichessing.Queen, false)
 		for point, piece := range pdiff {
 			diff[point] = piece
 		}

@@ -64,9 +64,11 @@ func easyComputerHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	white, black := database.gamePlayers(id)
 	executeWebTemplate(w, game_template, gameTemplate{
-		White:  white,
-		Black:  black,
-		GameID: id,
-		Name:   name,
+		GameInfo: GameInfo{
+			White: white,
+			Black: black,
+			ID:    id,
+		},
+		Name: name,
 	})
 }

@@ -6,6 +6,7 @@ package main
 import (
 	"math"
 	"sync"
+	"time"
 
 	"github.com/gorilla/websocket"
 	"github.com/pciet/wichess/match"
@@ -15,7 +16,7 @@ import (
 type gameSetup [16]int
 
 func (db DB) requestEasyComputerMatch(player string, setup gameSetup) {
-	db.newGame(player, setup, easy_computer_player, gameSetup{})
+	db.newGame(player, setup, easy_computer_player, gameSetup{}, time.Duration(0), time.Duration(0))
 }
 
 type competitive48Setup struct {
@@ -35,6 +36,11 @@ const (
 	competitive48_bad_difference = 500
 )
 
+var (
+	competitive48_turn_time  = time.Duration(48 * time.Hour)
+	competitive48_total_time = time.Duration(0)
+)
+
 var competitive48Matcher = match.NewMatcher(competitive48_match_period, competitive48_threshold,
 	func(rating, opprating int) bool {
 		if math.Abs(float64(rating)-float64(opprating)) > competitive48_bad_difference {
@@ -46,7 +52,7 @@ var competitive48Matcher = match.NewMatcher(competitive48_match_period, competit
 	func(a string, am interface{}, b string, bm interface{}) {
 		ameta := am.(competitive48Setup)
 		bmeta := bm.(competitive48Setup)
-		id := database.newGame(a, ameta.gameSetup, b, bmeta.gameSetup)
+		id := database.newGame(a, ameta.gameSetup, b, bmeta.gameSetup, competitive48_total_time, competitive48_turn_time)
 		database.setPlayerCompetitive48Slot(a, int(ameta.slot), id)
 		database.setPlayerCompetitive48Slot(b, int(bmeta.slot), id)
 		competitive48ListenersLock.Lock()
