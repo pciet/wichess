@@ -219,17 +219,21 @@
                 $('#check').removeClass('indicating');
             }
             if ('checkmate' in Moves) {
-                clearInterval(WhiteTimer);
-                clearInterval(BlackTimer);
-                $('#blackclock').html(millisecondsToClock(0));
-                $('#whiteclock').html(millisecondsToClock(0));
+                if (TurnTime.milliseconds() > 0) {
+                    clearInterval(WhiteTimer);
+                    clearInterval(BlackTimer);
+                    $('#blackclock').html(millisecondsToClock(0));
+                    $('#whiteclock').html(millisecondsToClock(0));
+                }
                 $('#checkmate').addClass('indicating');
                 $('#acknowledge').html('<input type="button" value="Acknowledge" onclick="acknowledge();"/>');
             } else if ('draw' in Moves) {
-                clearInterval(WhiteTimer);
-                clearInterval(BlackTimer);
-                $('#blackclock').html(millisecondsToClock(0));
-                $('#whiteclock').html(millisecondsToClock(0));
+                if (TurnTime.milliseconds() > 0) {
+                    clearInterval(WhiteTimer);
+                    clearInterval(BlackTimer);
+                    $('#blackclock').html(millisecondsToClock(0));
+                    $('#whiteclock').html(millisecondsToClock(0));
+                }
                 $('#draw').addClass('indicating');
                 $('#acknowledge').html('<input type="button" value="Acknowledge" onclick="acknowledge();"/>');
             }
@@ -387,17 +391,21 @@
                     $('#check').removeClass('indicating');
                 }
                 if ('checkmate' in Moves) {
-                    clearInterval(BlackTimer);
-                    clearInterval(WhiteTimer);
-                    $('#blackclock').html(millisecondsToClock(0));
-                    $('#whiteclock').html(millisecondsToClock(0));
+                    if (TurnTime.milliseconds() > 0) {
+                        clearInterval(BlackTimer);
+                        clearInterval(WhiteTimer);
+                        $('#blackclock').html(millisecondsToClock(0));
+                        $('#whiteclock').html(millisecondsToClock(0));
+                    }
                     $('#checkmate').addClass('indicating');
                     $('#acknowledge').html('<input type="button" value="Acknowledge" onclick="acknowledge();"/>');
                 } else if ('draw' in Moves) {
-                    clearInterval(BlackTimer);
-                    clearInterval(WhiteTimer);
-                    $('#blackclock').html(millisecondsToClock(0));
-                    $('#whiteclock').html(millisecondsToClock(0));
+                    if (TurnTime.milliseconds() > 0) {
+                        clearInterval(BlackTimer);
+                        clearInterval(WhiteTimer);
+                        $('#blackclock').html(millisecondsToClock(0));
+                        $('#whiteclock').html(millisecondsToClock(0));
+                    }
                     $('#draw').addClass('indicating');
                     $('#acknowledge').html('<input type="button" value="Acknowledge" onclick="acknowledge();"/>');
                 }
