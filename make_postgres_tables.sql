@@ -13,6 +13,7 @@ CREATE TABLE Players (
 
 CREATE TABLE Games (
     game_id SERIAL PRIMARY KEY,
+    competitive BOOLEAN,
     white VARCHAR(64) NOT NULL,
     white_ack BOOLEAN,
     white_latestmove TIMESTAMPTZ,

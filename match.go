@@ -16,7 +16,7 @@ import (
 type gameSetup [16]int
 
 func (db DB) requestEasyComputerMatch(player string, setup gameSetup) {
-	db.newGame(player, setup, easy_computer_player, gameSetup{}, time.Duration(0), time.Duration(0))
+	db.newGame(player, setup, easy_computer_player, gameSetup{}, false)
 }
 
 type competitive48Setup struct {
@@ -52,7 +52,7 @@ var competitive48Matcher = match.NewMatcher(competitive48_match_period, competit
 	func(a string, am interface{}, b string, bm interface{}) {
 		ameta := am.(competitive48Setup)
 		bmeta := bm.(competitive48Setup)
-		id := database.newGame(a, ameta.gameSetup, b, bmeta.gameSetup, competitive48_total_time, competitive48_turn_time)
+		id := database.newGame(a, ameta.gameSetup, b, bmeta.gameSetup, true)
 		database.setPlayerCompetitive48Slot(a, int(ameta.slot), id)
 		database.setPlayerCompetitive48Slot(b, int(bmeta.slot), id)
 		competitive48ListenersLock.Lock()

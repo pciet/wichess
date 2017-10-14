@@ -93,14 +93,16 @@ func (g game) move(from, to int, mover string, timeoutMove bool) (map[string]pie
 		}
 		gameListeningLock.RUnlock()
 	}
-	if after.Checkmate(nextOrientation) {
-		if nextOrientation == wichessing.White {
-			g.DB.updatePlayerRecords(g.Black, g.White, false)
-		} else {
-			g.DB.updatePlayerRecords(g.White, g.Black, false)
+	if g.Competitive {
+		if after.Checkmate(nextOrientation) {
+			if nextOrientation == wichessing.White {
+				g.DB.updatePlayerRecords(g.Black, g.White, false)
+			} else {
+				g.DB.updatePlayerRecords(g.White, g.Black, false)
+			}
+		} else if after.Draw(nextOrientation) {
+			g.DB.updatePlayerRecords(g.White, g.Black, true)
 		}
-	} else if after.Draw(nextOrientation) {
-		g.DB.updatePlayerRecords(g.White, g.Black, true)
 	}
 	return diff, promoting
 }
@@ -175,21 +177,23 @@ func (g game) promote(from int, player string, kind wichessing.Kind, timeoutMove
 		}
 		gameListeningLock.RUnlock()
 	}
-	var checkOrientation wichessing.Orientation
-	if orientation == wichessing.White {
-		checkOrientation = wichessing.Black
-	} else {
-		checkOrientation = wichessing.White
-	}
-	after := b.AfterPromote(absPoint(from), wichessing.Kind(kind))
-	if after.Checkmate(checkOrientation) {
-		if checkOrientation == wichessing.White {
-			g.DB.updatePlayerRecords(g.Black, g.White, false)
+	if g.Competitive {
+		var checkOrientation wichessing.Orientation
+		if orientation == wichessing.White {
+			checkOrientation = wichessing.Black
 		} else {
-			g.DB.updatePlayerRecords(g.White, g.Black, false)
+			checkOrientation = wichessing.White
 		}
-	} else if after.Draw(checkOrientation) {
-		g.DB.updatePlayerRecords(g.White, g.Black, true)
+		after := b.AfterPromote(absPoint(from), wichessing.Kind(kind))
+		if after.Checkmate(checkOrientation) {
+			if checkOrientation == wichessing.White {
+				g.DB.updatePlayerRecords(g.Black, g.White, false)
+			} else {
+				g.DB.updatePlayerRecords(g.White, g.Black, false)
+			}
+		} else if after.Draw(checkOrientation) {
+			g.DB.updatePlayerRecords(g.White, g.Black, true)
+		}
 	}
 	return diff
 }

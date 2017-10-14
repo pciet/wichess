@@ -22,8 +22,11 @@
             border-radius: 10px;
             border: 3px solid #d4cca5;
             background-color: #cc785c;
-            color: #fb835e;
+            color: #d4cca5;
             margin: 0.3em;
+        }
+        #armygridtable {
+            outline: 7px outset #d4cca5;
         }
         table {
             margin: 0 auto;
@@ -74,7 +77,8 @@
             width: 74px;
         }
         .highlightedpiece {
-            outline: 1px solid black;
+            outline: 2px solid #fb835e;
+            outline-offset: -2px;
         }
         .highlightedgame {
             outline: 1px solid black;
@@ -170,7 +174,7 @@
             });
         }
 
-        var armyGrid = '<table>';
+        var armyGrid = '<table id="armygridtable">';
         for (var i = 0; i < 2; i++) {
             armyGrid += '<tr class="armyselectrow">';
             for (var j = 0; j < 8; j++) {
@@ -394,12 +398,6 @@
 </head>
 
 <body>
-
-<div>
-    <div class="inlinediv">{{.Name}}</div>
-    <div class="inlinediv">+{{.Wins}} / -{{.Losses}} / ={{.Draws}}</div>
-</div>
-
 <div>
     <div class="inlinediv roundedbox">
         <div>Friend</div>
@@ -409,7 +407,10 @@
         <div><input type="button" class="ibutton" value="Play Friend" onclick="friend();"/></div>
     </div>
     <div class="inlinediv roundedbox">
-        <div>Competitive</div>
+        <div>
+            <div class="inlinediv">Competitive</div>
+            <div class="inlinediv">+{{.Wins}} / -{{.Losses}} / ={{.Draws}}</div>
+        </div>
         <div class="inlinediv">
             <div><input type="button" class="ibutton" value="15 Minute" onclick="matched15();"/></div>
             <div><input type="button" class="ibutton" value="5 Minute" onclick="matched5();"/></div>
@@ -431,6 +432,6 @@
     <div id="assignbutton"><input type="button" class="ibutton" value="Unassign" onclick="unassign();"/></div>
     <div id="piecepickdiv"></div>
 </div>
-
+<div>{{.Name}}</div>
 </body>
 </html>

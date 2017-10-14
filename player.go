@@ -84,37 +84,42 @@ func (db DB) playerRating(name string) int {
 }
 
 const (
-	player_record_win_update  = "UPDATE " + player_table + " SET " + player_wins_key + " = " + player_wins_key + " + 1 WHERE " + player_name_key + " = $1;"
-	player_record_lose_update = "UPDATE " + player_table + " SET " + player_losses_key + " = " + player_losses_key + " + 1 WHERE " + player_name_key + " = $1;"
-	player_record_draw_update = "UPDATE " + player_table + " SET " + player_draws_key + " = " + player_draws_key + " + 1 WHERE " + player_name_key + " = $1;"
+	player_record_win_update  = "UPDATE " + player_table + " SET " + player_wins_key + " = " + player_wins_key + " + 1, " + player_rating_key + " = $1 WHERE " + player_name_key + " = $2;"
+	player_record_lose_update = "UPDATE " + player_table + " SET " + player_losses_key + " = " + player_losses_key + " + 1, " + player_rating_key + " = $1 WHERE " + player_name_key + " = $2;"
+	player_record_draw_update = "UPDATE " + player_table + " SET " + player_draws_key + " = " + player_draws_key + " + 1, " + player_rating_key + " = $1 WHERE " + player_name_key + " = $2;"
 )
 
 func (db DB) updatePlayerRecords(winner, loser string, draw bool) {
+	if (winner == easy_computer_player) || (winner == hard_computer_player) || (loser == easy_computer_player) || (loser == hard_computer_player) {
+		panicExit("updating record for computer game")
+	}
+	winnerRating := uint(db.playerRating(winner))
+	loserRating := uint(db.playerRating(loser))
+	var newWinnerRating, newLoserRating uint
 	if draw {
-		if (winner != easy_computer_player) && (winner != hard_computer_player) {
-			_, err := db.Exec(player_record_draw_update, winner)
-			if err != nil {
-				panicExit(err.Error())
-			}
+		newWinnerRating = rating.Updated(winnerRating, loserRating, rating.Draw)
+		newLoserRating = rating.Updated(loserRating, winnerRating, rating.Draw)
+	} else {
+		newWinnerRating = rating.Updated(winnerRating, loserRating, rating.Win)
+		newLoserRating = rating.Updated(loserRating, winnerRating, rating.Loss)
+	}
+	if draw {
+		_, err := db.Exec(player_record_draw_update, newWinnerRating, winner)
+		if err != nil {
+			panicExit(err.Error())
 		}
-		if (loser != easy_computer_player) && (loser != hard_computer_player) {
-			_, err := db.Exec(player_record_draw_update, loser)
-			if err != nil {
-				panicExit(err.Error())
-			}
+		_, err = db.Exec(player_record_draw_update, newLoserRating, loser)
+		if err != nil {
+			panicExit(err.Error())
 		}
 	} else {
-		if (winner != easy_computer_player) && (winner != hard_computer_player) {
-			_, err := db.Exec(player_record_win_update, winner)
-			if err != nil {
-				panicExit(err.Error())
-			}
+		_, err := db.Exec(player_record_win_update, newWinnerRating, winner)
+		if err != nil {
+			panicExit(err.Error())
 		}
-		if (loser != easy_computer_player) && (loser != hard_computer_player) {
-			_, err := db.Exec(player_record_lose_update, loser)
-			if err != nil {
-				panicExit(err.Error())
-			}
+		_, err = db.Exec(player_record_lose_update, newLoserRating, loser)
+		if err != nil {
+			panicExit(err.Error())
 		}
 	}
 }
