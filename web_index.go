@@ -50,6 +50,16 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/login", http.StatusFound)
 		return
 	}
+	id := database.playersCompetitive5HourGameID(name)
+	if id != 0 {
+		http.Redirect(w, r, "/competitive5", http.StatusFound)
+		return
+	}
+	id = database.playersCompetitive15HourGameID(name)
+	if id != 0 {
+		http.Redirect(w, r, "/competitive15", http.StatusFound)
+		return
+	}
 	record := database.playerRecord(name)
 	c48games := database.playersCompetitive48Games(name)
 	var states [8]int

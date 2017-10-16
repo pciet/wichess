@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
-	"github.com/pciet/wichess/wichessing"
 )
 
 type gameListeners struct {
@@ -29,7 +28,7 @@ var (
 	gameMonitorsLock = sync.RWMutex{}
 )
 
-func listeningToGame(name string, white string, black string, turnTime time.Duration, previousMove time.Time, id int, socket *websocket.Conn) {
+func listeningToGame(name string, white string, black string, turnTime time.Duration, totalTime time.Duration, previousMove time.Time, id int, socket *websocket.Conn) {
 	gameListeningLock.Lock()
 	defer gameListeningLock.Unlock()
 	_, has := gameListening[id]
@@ -46,12 +45,7 @@ func listeningToGame(name string, white string, black string, turnTime time.Dura
 				g := database.gameWithIdentifier(gameid)
 				for {
 					b := wichessingBoard(g.Points)
-					var active wichessing.Orientation
-					if g.Active == g.White {
-						active = wichessing.White
-					} else {
-						active = wichessing.Black
-					}
+					active := g.activeOrientation()
 					if b.Draw(active) || b.Checkmate(active) {
 						gameMonitorsLock.Lock()
 						delete(gameMonitors, gameid)
@@ -70,6 +64,47 @@ func listeningToGame(name string, white string, black string, turnTime time.Dura
 					}
 				}
 			}(gameMonitors[id], id, turnTime, previousMove)
+			gameMonitorsLock.Unlock()
+		} else if totalTime > time.Duration(0) {
+			gameMonitorsLock.Lock()
+			gameMonitors[id] = gameMonitor{
+				done: d,
+				move: make(chan time.Time),
+			}
+			go func(channels gameMonitor, gameid int, total time.Duration, move time.Time) {
+				for {
+					g := database.gameWithIdentifier(gameid)
+					b := wichessingBoard(g.Points)
+					active := g.activeOrientation()
+					if b.Draw(active) || b.Checkmate(active) || g.timeLoss(active, total) {
+						gameMonitorsLock.Lock()
+						delete(gameMonitors, gameid)
+						gameMonitorsLock.Unlock()
+						return
+					}
+					elapsed := g.orientationsElapsedTime(active)
+					select {
+					case <-channels.done:
+						return
+					case <-channels.move:
+					case <-time.After(total - elapsed):
+						_ = g.DB.updateGameTimes(id, time.Duration(0), total)
+						// by sending an empty notification the client will request /moves, which says time has expired
+						gameListeningLock.RLock()
+						cs, has := gameListening[id]
+						if has {
+							if cs.white != nil {
+								cs.white <- make(map[string]piece)
+							}
+							if cs.black != nil {
+								cs.black <- make(map[string]piece)
+							}
+						}
+						gameListeningLock.RUnlock()
+						return
+					}
+				}
+			}(gameMonitors[id], id, totalTime, previousMove)
 			gameMonitorsLock.Unlock()
 		}
 	}

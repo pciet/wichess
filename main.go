@@ -25,6 +25,12 @@ func main() {
 	http.HandleFunc("/easycomputerrequest", easyComputerRequestHandler)
 	http.HandleFunc("/easycomputer", easyComputerHandler)
 
+	http.HandleFunc("/competitive5", competitive5Handler)
+	http.HandleFunc("/cancelcompetitive5", competitive5CancelHandler)
+
+	http.HandleFunc("/competitive15", competitive15Handler)
+	http.HandleFunc("/cancelcompetitive15", competitive15CancelHandler)
+
 	http.HandleFunc("/competitive48", competitive48RequestHandler)
 	http.HandleFunc("/competitive48n", competitive48NotificationWebsocketHandler)
 	http.HandleFunc("/competitive48/", competitive48Handler)

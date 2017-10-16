@@ -112,7 +112,7 @@ func competitive48Handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	executeWebTemplate(w, game_template, gameTemplate{
-		GameInfo:  database.updateGameTimes(id, competitive48_turn_time),
+		GameInfo:  database.updateGameTimes(id, competitive48_turn_time, competitive48_total_time),
 		Name:      name,
 		TotalTime: competitive48_total_time,
 		TurnTime:  competitive48_turn_time,

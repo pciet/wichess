@@ -71,6 +71,12 @@ func (m Matcher) Matching(name string) interface{} {
 	}
 }
 
+func (m Matcher) Cancel(name string) {
+	m.Lock()
+	defer m.Unlock()
+	delete(m.list, name)
+}
+
 // This is the only place where players are removed from the matcher list.
 func (m Matcher) matchmaking() {
 	for {

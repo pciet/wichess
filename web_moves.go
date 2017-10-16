@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 func movesHandler(w http.ResponseWriter, r *http.Request) {
@@ -34,12 +35,22 @@ func movesHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
+	var totalTime time.Duration
+	c5 := database.playersCompetitive5HourGameID(name)
+	if c5 != 0 {
+		totalTime = competitive5_total_time
+	} else {
+		c15 := database.playersCompetitive15HourGameID(name)
+		if c15 != 0 {
+			totalTime = competitive15_total_time
+		}
+	}
 	game := database.gameWithIdentifier(int(gameid))
 	if (game.White != name) && (game.Black != name) {
 		http.NotFound(w, r)
 		return
 	}
-	json, err := json.Marshal(game.moves())
+	json, err := json.Marshal(game.moves(totalTime))
 	if err != nil {
 		panicExit(err.Error())
 	}

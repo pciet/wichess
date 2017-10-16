@@ -19,6 +19,74 @@ func (db DB) requestEasyComputerMatch(player string, setup gameSetup) {
 	db.newGame(player, setup, easy_computer_player, gameSetup{}, false)
 }
 
+type competitive15Setup struct {
+	gameSetup
+	ready chan struct{}
+}
+
+const (
+	competitive15_match_period   = 5
+	competitive15_threshold      = 10
+	competitive15_bad_difference = 500
+)
+
+var (
+	competitive15_turn_time  = time.Duration(0)
+	competitive15_total_time = time.Duration(15 * time.Minute)
+)
+
+var competitive15Matcher = match.NewMatcher(competitive15_match_period, competitive15_threshold,
+	func(rating, opprating int) bool {
+		if math.Abs(float64(rating)-float64(opprating)) > competitive15_bad_difference {
+			return false
+		} else {
+			return true
+		}
+	},
+	func(a string, am interface{}, b string, bm interface{}) {
+		ameta := am.(competitive15Setup)
+		bmeta := bm.(competitive15Setup)
+		id := database.newGame(a, ameta.gameSetup, b, bmeta.gameSetup, true)
+		database.setPlayerCompetitive15Game(a, id)
+		database.setPlayerCompetitive15Game(b, id)
+		ameta.ready <- struct{}{}
+		bmeta.ready <- struct{}{}
+	})
+
+type competitive5Setup struct {
+	gameSetup
+	ready chan struct{}
+}
+
+const (
+	competitive5_match_period   = 5
+	competitive5_threshold      = 10
+	competitive5_bad_difference = 500
+)
+
+var (
+	competitive5_turn_time  = time.Duration(0)
+	competitive5_total_time = time.Duration(5 * time.Minute)
+)
+
+var competitive5Matcher = match.NewMatcher(competitive5_match_period, competitive5_threshold,
+	func(rating, opprating int) bool {
+		if math.Abs(float64(rating)-float64(opprating)) > competitive5_bad_difference {
+			return false
+		} else {
+			return true
+		}
+	},
+	func(a string, am interface{}, b string, bm interface{}) {
+		ameta := am.(competitive5Setup)
+		bmeta := bm.(competitive5Setup)
+		id := database.newGame(a, ameta.gameSetup, b, bmeta.gameSetup, true)
+		database.setPlayerCompetitive5Game(a, id)
+		database.setPlayerCompetitive5Game(b, id)
+		ameta.ready <- struct{}{}
+		bmeta.ready <- struct{}{}
+	})
+
 type competitive48Setup struct {
 	gameSetup
 	slot uint8

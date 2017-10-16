@@ -5,6 +5,8 @@ CREATE TABLE Players (
     losses INTEGER,
     draws INTEGER,
     rating INTEGER,
+    c5 INTEGER,
+    c15 INTEGER,
     c48s0 INTEGER, c48s1 INTEGER,
     c48s2 INTEGER, c48s3 INTEGER,
     c48s4 INTEGER, c48s5 INTEGER,
@@ -14,6 +16,7 @@ CREATE TABLE Players (
 CREATE TABLE Games (
     game_id SERIAL PRIMARY KEY,
     competitive BOOLEAN,
+    recorded BOOLEAN,
     white VARCHAR(64) NOT NULL,
     white_ack BOOLEAN,
     white_latestmove TIMESTAMPTZ,

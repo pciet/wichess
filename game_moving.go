@@ -14,6 +14,7 @@ const (
 	checkmate_key = "checkmate"
 	promote_key   = "promote"
 	draw_key      = "draw"
+	time_key      = "time"
 )
 
 // Returns address that have changed, Kind 0 piece for a now empty point, but does not update the board points. Returns true if promoting.
@@ -198,20 +199,18 @@ func (g game) promote(from int, player string, kind wichessing.Kind, timeoutMove
 	return diff
 }
 
-// The map keys are wichessing.AbsPoint converted to "x/file-y/rank" formatted string.
-// If the game is in a check or checkmate state, or a piece is to be promoted, then a corresponding key with a nil value will be set.
-func (g game) moves() map[string]map[string]struct{} {
-	board := wichessingBoard(g.Points)
+// The map keys are wichessing.AbsPoint converted to "x/file-y/rank" formatted string. If the game is in a check or checkmate state, or a piece is to be promoted, or the active player's elapsed time has exceeded the total clock, then a corresponding key with a nil value will be set.
+func (g game) moves(total time.Duration) map[string]map[string]struct{} {
 	moves := make(map[string]map[string]struct{})
+	active := g.activeOrientation()
+	if g.timeLoss(active, total) {
+		moves[time_key] = nil
+		return moves
+	}
+	board := wichessingBoard(g.Points)
 	if board.HasPawnToPromote() {
 		moves[promote_key] = nil
 		return moves
-	}
-	var active wichessing.Orientation
-	if g.Active == g.White {
-		active = wichessing.White
-	} else {
-		active = wichessing.Black
 	}
 	if board.Draw(active) {
 		moves[draw_key] = nil

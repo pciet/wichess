@@ -13,6 +13,7 @@
         div {
             padding: 0.5em;
             text-align: center;
+            position: relative;
         }
         .inlinediv {
             display: inline-block;
@@ -24,6 +25,10 @@
             background-color: #cc785c;
             color: #d4cca5;
             margin: 0.3em;
+        }
+        .disabledbutton {
+            background-color: #cd856d;
+            color: #cc785c;
         }
         #armygridtable {
             outline: 7px outset #d4cca5;
@@ -83,6 +88,13 @@
         .highlightedgame {
             outline: 1px solid black;
         }
+        #matchingdiv {
+            background-color: #d4cca5; 
+            border-radius: 10px;
+            border: 3px solid #d4cca5;
+            color: #825444;
+            display: inline-block;
+        }
     </style>
     <script type="text/javascript" src="/js/jquery-2.2.0.min.js"></script>
     <script type="text/javascript" src="/js/pieces.js"></script>
@@ -116,6 +128,7 @@
     });
 
     $(document).ready(function() {
+        $('#matchingdiv').hide();
         var friendGrid = '<table>';
         for (var i = 0; i < 2; i++) {
             friendGrid += '<tr class="gameselectrow">';
@@ -210,6 +223,9 @@
         $('#army15').html('<img class="pieceimg" src="img/wrook_64.png">');
         for (var i = 0; i < 16; i++) {
             $('#army'+i).click({Index: i}, function(event) {
+                if (Matching) {
+                    return;
+                }
                 var index = event.data.Index;
                 if (HighlightedPiece != null) {
                     $('#army'+HighlightedPiece).removeClass('highlightedpiece');
@@ -225,6 +241,13 @@
             });
         }
     });
+    function unhighlightPiece() {
+        if (HighlightedPiece == null) {
+            return;
+        }
+        $('#army'+HighlightedPiece).removeClass('highlightedpiece');
+        HighlightedPiece = null;
+    }
     function showAvailablePieces(index) {
         if (Pieces == null) {
             return;
@@ -375,10 +398,36 @@
 
     }
     function matched15() {
-
+        Matching = true;
+        removeAvailablePieces();
+        unhighlightPiece();
+        $('#matchers').hide();
+        $('#matchingdiv').html('<div class="inlinediv"><div>Matching 15 Minute Competitive</div><div><input type="button" class="ibutton" value="Cancel" onclick="cancelmatched15();"/></div></div>').show();
+        jQuery.post('competitive15', {assignments: Assignments}).done(function() {
+            window.location.pathname = '/competitive15';
+        });
+    }
+    function cancelmatched15() {
+        jQuery.post('cancelcompetitive15');
+        Matching = false;
+        $('#matchingdiv').hide();
+        $('#matchers').show();
     }
     function matched5() {
-
+        Matching = true;
+        removeAvailablePieces();
+        unhighlightPiece();
+        $('#matchers').hide();
+        $('#matchingdiv').html('<div class="inlinediv"><div>Matching Five Minute Competitive</div><div><input type="button" class="ibutton" value="Cancel" onclick="cancelmatched5();"/></div></div>').show();
+        jQuery.post('competitive5', {assignments: Assignments}).done(function() {
+            window.location.pathname = '/competitive5';
+        });
+    }
+    function cancelmatched5() {
+        jQuery.post('cancelcompetitive5');
+        Matching = false;
+        $('#matchingdiv').hide();
+        $('#matchers').show();
     }
     function matched48() {
         if (Highlighted48HourGame == null) {
@@ -398,13 +447,15 @@
 </head>
 
 <body>
-<div>
+<div>{{.Name}}</div>
+<div><div id="matchingdiv"></div></div>
+<div id="matchers">
     <div class="inlinediv roundedbox">
         <div>Friend</div>
         <div id="friendgriddiv"></div>
         <div id="friendname"></div>
-        <div><input type="text" name="name"/></div>
-        <div><input type="button" class="ibutton" value="Play Friend" onclick="friend();"/></div>
+        <div><input id="friendinput" type="text" name="name"/></div>
+        <div><input type="button" class="ibutton" value="Play" onclick="friend();"/></div>
     </div>
     <div class="inlinediv roundedbox">
         <div>
@@ -432,6 +483,5 @@
     <div id="assignbutton"><input type="button" class="ibutton" value="Unassign" onclick="unassign();"/></div>
     <div id="piecepickdiv"></div>
 </div>
-<div>{{.Name}}</div>
 </body>
 </html>

@@ -18,14 +18,62 @@ const (
 	player_losses_key                = "losses"
 	player_draws_key                 = "draws"
 	player_rating_key                = "rating"
+	player_c5_key                    = "c5"
+	player_c15_key                   = "c15"
 	player_competitive48_slot_prefix = "c48s"
 
 	initial_piece_count = 6
 )
 
+func (db DB) playersCompetitive15HourGameID(player string) int {
+	var id int
+	err := db.QueryRow("SELECT "+player_c15_key+" FROM "+player_table+" WHERE "+player_name_key+"=$1;", player).Scan(&id)
+	if err != nil {
+		panicExit(err.Error())
+	}
+	return id
+}
+
+func (db DB) setPlayerCompetitive15Game(player string, gameID int) {
+	_, err := db.Exec("UPDATE "+player_table+" SET "+player_c15_key+" = $1 WHERE "+player_name_key+" = $2;", gameID, player)
+	if err != nil {
+		panicExit(err.Error())
+	}
+}
+
+func (db DB) removePlayersCompetitive15Game(player string) {
+	_, err := db.Exec("UPDATE "+player_table+" SET "+player_c15_key+" = $1 WHERE "+player_name_key+" = $2;", 0, player)
+	if err != nil {
+		panicExit(err.Error())
+	}
+}
+
+func (db DB) playersCompetitive5HourGameID(player string) int {
+	var id int
+	err := db.QueryRow("SELECT "+player_c5_key+" FROM "+player_table+" WHERE "+player_name_key+"=$1;", player).Scan(&id)
+	if err != nil {
+		panicExit(err.Error())
+	}
+	return id
+}
+
+func (db DB) setPlayerCompetitive5Game(player string, gameID int) {
+	_, err := db.Exec("UPDATE "+player_table+" SET "+player_c5_key+" = $1 WHERE "+player_name_key+" = $2;", gameID, player)
+	if err != nil {
+		panicExit(err.Error())
+	}
+}
+
+func (db DB) removePlayersCompetitive5Game(player string) {
+	_, err := db.Exec("UPDATE "+player_table+" SET "+player_c5_key+" = $1 WHERE "+player_name_key+" = $2;", 0, player)
+	if err != nil {
+		panicExit(err.Error())
+	}
+}
+
 func (db DB) playersCompetitive48Games(player string) [8]int {
 	var ids [8]int
-	err := database.QueryRow(" SELECT c48s0, c48s1, c48s2, c48s3, c48s4, c48s5, c48s6, c48s7 FROM "+player_table+" WHERE "+player_name_key+"=$1;", player).Scan(&ids[0], &ids[1], &ids[2], &ids[3], &ids[4], &ids[5], &ids[6], &ids[7])
+	err := db.QueryRow("SELECT c48s0, c48s1, c48s2, c48s3, c48s4, c48s5, c48s6, c48s7 FROM "+player_table+" WHERE "+player_name_key+"=$1;", player).Scan(&ids[0], &ids[1], &ids[2], &ids[3], &ids[4], &ids[5], &ids[6], &ids[7])
 	if err != nil {
 		panicExit(err.Error())
 	}
@@ -134,7 +182,7 @@ func (db DB) playerCrypt(name string) (bool, string) {
 }
 
 func (db DB) newPlayer(name, crypt string) {
-	_, err := db.Exec("INSERT INTO "+player_table+"("+player_name_key+", "+player_crypt_key+", "+player_wins_key+", "+player_losses_key+", "+player_draws_key+", "+player_rating_key+", c48s0, c48s1, c48s2, c48s3, c48s4, c48s5, c48s6, c48s7) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14);", name, crypt, 0, 0, 0, rating.Initial, 0, 0, 0, 0, 0, 0, 0, 0)
+	_, err := db.Exec("INSERT INTO "+player_table+"("+player_name_key+", "+player_crypt_key+", "+player_wins_key+", "+player_losses_key+", "+player_draws_key+", "+player_rating_key+", "+player_c5_key+", "+player_c15_key+", c48s0, c48s1, c48s2, c48s3, c48s4, c48s5, c48s6, c48s7) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16);", name, crypt, 0, 0, 0, rating.Initial, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 	if err != nil {
 		panicExit(err.Error())
 	}

@@ -109,7 +109,7 @@ func moveRequestHandler(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
-	game.updateGameTimesWithMove(time.Now())
+	(&game).updateGameTimesWithMove(time.Now())
 	json, err := json.Marshal(diff)
 	if err != nil {
 		panicExit(err.Error())

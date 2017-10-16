@@ -179,23 +179,53 @@
         $.post('/move/'+game_id, {From: from, Kind: kind}).done(makeMove);
     }
     function makeMove(diff) {
-        if (TurnTime.milliseconds() > 0) {
-            if (Turn == o.WHITE) {
-                clearInterval(WhiteTimer);
-                $('#whiteclock').removeClass('clocking').html(millisecondsToClock(TurnTime.valueOf()-1000));
-                $('#blackclock').addClass('clocking');
-                WhiteLatestMove = moment().subtract(NowDifference);
-                BlackTimer = setInterval(function() {
-                    updateClock(o.BLACK);
-                }, 1000);
-            } else {
-                clearInterval(BlackTimer);
-                $('#blackclock').removeClass('clocking').html(millisecondsToClock(TurnTime.valueOf()-1000));
-                $('#whiteclock').addClass('clocking');
-                BlackLatestMove = moment().subtract(NowDifference);
-                WhiteTimer = setInterval(function() {
-                    updateClock(o.WHITE);
-                }, 1000);
+        if (Object.keys(diff).length > 0) {
+            if (TurnTime.milliseconds() > 0) {
+                if (Turn == o.WHITE) {
+                    clearInterval(WhiteTimer);
+                    $('#whiteclock').removeClass('clocking').html(millisecondsToClock(TurnTime.valueOf()-1000));
+                    $('#blackclock').addClass('clocking');
+                    WhiteLatestMove = moment();
+                    BlackTimer = setInterval(function() {
+                        updateClock(o.BLACK);
+                    }, 1000);
+                } else {
+                    clearInterval(BlackTimer);
+                    $('#blackclock').removeClass('clocking').html(millisecondsToClock(TurnTime.valueOf()-1000));
+                    $('#whiteclock').addClass('clocking');
+                    BlackLatestMove = moment();
+                    WhiteTimer = setInterval(function() {
+                        updateClock(o.WHITE);
+                    }, 1000);
+                }
+            } else if (TotalTime.milliseconds() > 0) {
+                if (Turn == o.WHITE) {
+                    if (NowTime.isAfter(BlackLatestMove)) {
+                        WhiteElapsed = Duration.parse((WhiteElapsed.milliseconds() + moment().diff(NowTime).valueOf())+'ms');
+                    } else {
+                        WhiteElapsed = Duration.parse((WhiteElapsed.milliseconds() + moment().diff(BlackLatestMove))+'ms');
+                    }
+                    clearInterval(WhiteTimer);
+                    $('#whiteclock').removeClass('clocking');
+                    $('#blackclock').addClass('clocking');
+                    WhiteLatestMove = moment();
+                    BlackTimer = setInterval(function() {
+                        updateClock(o.BLACK);
+                    }, 1000);
+                } else {
+                    if (NowTime.isAfter(WhiteLatestMove)) {
+                        BlackElapsed = Duration.parse((BlackElapsed.milliseconds() + moment().diff(NowTime).valueOf())+'ms');
+                    } else {
+                        BlackElapsed = Duration.parse((BlackElapsed.milliseconds() + moment().diff(WhiteLatestMove).valueOf())+'ms');
+                    }
+                    clearInterval(BlackTimer);
+                    $('#blackclock').removeClass('clocking');
+                    $('#whiteclock').addClass('clocking');
+                    BlackLatestMove = moment();
+                    WhiteTimer = setInterval(function() {
+                        updateClock(o.WHITE);
+                    }, 1000);
+                }
             }
         }
         for (var point in diff) {
@@ -219,23 +249,48 @@
                 $('#check').removeClass('indicating');
             }
             if ('checkmate' in Moves) {
-                if (TurnTime.milliseconds() > 0) {
+                if ((TurnTime.milliseconds() > 0) || (TotalTime.milliseconds() > 0)) {
                     clearInterval(WhiteTimer);
                     clearInterval(BlackTimer);
-                    $('#blackclock').html(millisecondsToClock(0));
-                    $('#whiteclock').html(millisecondsToClock(0));
+                }
+                if (Turn == o.WHITE) {
+                    $('#whiteactive').removeClass('indicating');
+                    $('#blackactive').addClass('indicating');
+                } else {
+                    $('#whiteactive').addClass('indicating');
+                    $('#blackactive').removeClass('indicating');
                 }
                 $('#checkmate').addClass('indicating');
                 $('#acknowledge').html('<input type="button" value="Acknowledge" onclick="acknowledge();"/>');
+                return;
             } else if ('draw' in Moves) {
-                if (TurnTime.milliseconds() > 0) {
+                if ((TurnTime.milliseconds() > 0) || (TotalTime.milliseconds() > 0)) {
                     clearInterval(WhiteTimer);
                     clearInterval(BlackTimer);
-                    $('#blackclock').html(millisecondsToClock(0));
-                    $('#whiteclock').html(millisecondsToClock(0));
+                }
+                if (Turn == o.WHITE) {
+                    $('#whiteactive').removeClass('indicating');
+                    $('#blackactive').addClass('indicating');
+                } else {
+                    $('#whiteactive').addClass('indicating');
+                    $('#blackactive').removeClass('indicating');
                 }
                 $('#draw').addClass('indicating');
                 $('#acknowledge').html('<input type="button" value="Acknowledge" onclick="acknowledge();"/>');
+                return;
+            } else if ('time' in Moves) {
+                clearInterval(BlackTimer);
+                clearInterval(WhiteTimer);
+                if (Turn == o.WHITE) {
+                    $('#whiteactive').removeClass('indicating');
+                    $('#blackactive').addClass('indicating');
+                } else {
+                    $('#whiteactive').addClass('indicating');
+                    $('#blackactive').removeClass('indicating');
+                }
+                $('#time').addClass('indicating');
+                $('#acknowledge').html('<input type="button" value="Acknowledge" onclick="acknowledge();"/>');
+                return;
             }
             if ('promote' in Moves) {
                 if (Turn == PlayerOrientation) {
@@ -299,18 +354,34 @@
         return hourStr+':'+minuteStr+':'+secondStr;
     }
     function updateClock(orientation) {
-        var clock, latestMove;
+        var clock, latestMove, elapsed;
         if (orientation == o.WHITE) {
             clock = '#whiteclock';
             latestMove = BlackLatestMove;
+            elapsed = WhiteElapsed;
         } else {
             clock = '#blackclock';
             latestMove = WhiteLatestMove;
+            elapsed = BlackElapsed;
         }
-        var remaining = TurnTime.milliseconds() - moment().add(NowDifference).diff(latestMove).valueOf();
+        var remaining;
+        if (TurnTime.milliseconds() > 0) {
+            remaining = TurnTime.milliseconds() - moment().subtract(NowDifference).diff(latestMove).valueOf();
+        } else if (TotalTime.milliseconds() > 0) {
+            if (NowTime.isAfter(latestMove)) {
+                remaining = TotalTime.milliseconds() - (elapsed.milliseconds() + moment().diff(NowTime).valueOf());
+            } else {
+                remaining = TotalTime.milliseconds() - (elapsed.milliseconds() + moment().diff(latestMove).valueOf());
+            }
+        }
         $(clock).html(millisecondsToClock(remaining));
     }
     $(document).ready(function() {
+        if (TotalTime.milliseconds() > 0) {
+            $('#backbutton').hide();
+        } else {
+            $('#time').hide();
+        }
         var board = '';
         board += '<table id="grid">';
         for (var yrr = 7; yrr >= 0; yrr--) {
@@ -375,6 +446,28 @@
                         updateClock(o.BLACK);
                     }, 1000);            
                 }
+            } else if (TotalTime.milliseconds() > 0) {
+                var btime = TotalTime.milliseconds()-BlackElapsed.milliseconds()-1000;
+                if (btime < 0) {
+                    btime = 0;
+                }
+                var wtime = TotalTime.milliseconds()-WhiteElapsed.milliseconds()-1000;
+                if (wtime < 0) {
+                    wtime = 0;
+                }
+                $('#blackclock').html(millisecondsToClock(btime)).addClass('clock');
+                $('#whiteclock').html(millisecondsToClock(wtime)).addClass('clock');
+                if (Turn == o.WHITE) {
+                    $('#whiteclock').addClass('clock clocking');
+                    WhiteTimer = setInterval(function() {
+                        updateClock(o.WHITE);
+                    }, 1000);
+                } else {
+                    $('#blackclock').addClass('clock clocking');
+                    BlackTimer = setInterval(function() {
+                        updateClock(o.BLACK);
+                    }, 1000);
+                }
             }
             for (var i = 0; i < Board.length; i++) {
                 if (Board[i].Kind == 0) {
@@ -391,22 +484,23 @@
                     $('#check').removeClass('indicating');
                 }
                 if ('checkmate' in Moves) {
-                    if (TurnTime.milliseconds() > 0) {
+                    if ((TurnTime.milliseconds() > 0) || (TotalTime.milliseconds() > 0)) {
                         clearInterval(BlackTimer);
                         clearInterval(WhiteTimer);
-                        $('#blackclock').html(millisecondsToClock(0));
-                        $('#whiteclock').html(millisecondsToClock(0));
                     }
                     $('#checkmate').addClass('indicating');
                     $('#acknowledge').html('<input type="button" value="Acknowledge" onclick="acknowledge();"/>');
                 } else if ('draw' in Moves) {
-                    if (TurnTime.milliseconds() > 0) {
+                if ((TurnTime.milliseconds() > 0) || (TotalTime.milliseconds() > 0)) {
                         clearInterval(BlackTimer);
                         clearInterval(WhiteTimer);
-                        $('#blackclock').html(millisecondsToClock(0));
-                        $('#whiteclock').html(millisecondsToClock(0));
                     }
                     $('#draw').addClass('indicating');
+                    $('#acknowledge').html('<input type="button" value="Acknowledge" onclick="acknowledge();"/>');
+                } else if ('time' in Moves) {
+                    clearInterval(BlackTimer);
+                    clearInterval(WhiteTimer);
+                    $('#time').addClass('indicating');
                     $('#acknowledge').html('<input type="button" value="Acknowledge" onclick="acknowledge();"/>');
                 }
                 if ('promote' in Moves) {
@@ -524,11 +618,12 @@
     <div>
         <table><tr>
             <td><table><tr><td><span class="indicator" id="check">Check</span></td></tr>
-                <tr><td><input type="button" value="Back" onclick="window.location.pathname = '/';"/></td></tr></table></td>
+                <tr><td><input id="backbutton" type="button" value="Back" onclick="window.location.pathname = '/';"/></td></tr></table></td>
             <td><div id="board"></div></td>
             <td><table>
                 <tr><td><span class="indicator" id="draw">Draw</span></td></tr>
                 <tr><td><span class="indicator" id="checkmate">Checkmate</span></td></tr>
+                <tr><td><span class="indicator" id="time">Time</span></td></tr>
                 <tr><td id="acknowledge"></td></tr>
             </table></td>
             <td></td>

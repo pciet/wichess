@@ -6,10 +6,53 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"sync"
 	"time"
 
 	"github.com/pciet/wichess/wichessing"
 )
+
+func (g game) orientationsElapsedTime(active wichessing.Orientation) time.Duration {
+	if active == wichessing.White {
+		return g.WhiteElapsed
+	} else if active == wichessing.Black {
+		return g.BlackElapsed
+	}
+	panicExit(fmt.Sprintf("unexpected orientation %v", active))
+	return time.Duration(0)
+}
+
+var timeLossLock = sync.Mutex{}
+
+func (g game) timeLoss(active wichessing.Orientation, total time.Duration) bool {
+	if total == time.Duration(0) {
+		return false
+	}
+	if active == wichessing.White {
+		if g.WhiteElapsed > total {
+			timeLossLock.Lock()
+			if g.DB.gameRecorded(g.ID) == false {
+				database.updatePlayerRecords(g.Black, g.White, false)
+				database.setGameRecorded(g.ID)
+			}
+			timeLossLock.Unlock()
+			return true
+		}
+	} else if active == wichessing.Black {
+		if g.BlackElapsed > total {
+			timeLossLock.Lock()
+			if g.DB.gameRecorded(g.ID) == false {
+				database.updatePlayerRecords(g.White, g.Black, false)
+				database.setGameRecorded(g.ID)
+			}
+			timeLossLock.Unlock()
+			return true
+		}
+	} else {
+		panicExit(fmt.Sprintf("unexpected orientation %v", active))
+	}
+	return false
+}
 
 func (g game) randomMoveAtTime(at time.Time) game {
 	board := wichessingBoard(g.Points)
@@ -84,17 +127,23 @@ OUTER:
 	return g.DB.gameWithIdentifier(g.ID)
 }
 
-func (g game) updateGameTimesWithMove(at time.Time) {
+func (g *game) updateGameTimesWithMove(at time.Time) {
 	var timeKey, elapsedKey string
 	var elapsed time.Duration
 	if g.Active == g.White {
 		timeKey = games_white_latest_move
 		elapsedKey = games_white_elapsed
 		elapsed = g.WhiteElapsed + at.Sub(g.WhiteElapsedUpdated)
+		g.WhiteLatestMove = at
+		g.WhiteElapsed = elapsed
+		g.WhiteElapsedUpdated = at
 	} else {
 		timeKey = games_black_latest_move
 		elapsedKey = games_black_elapsed
 		elapsed = g.BlackElapsed + at.Sub(g.BlackElapsedUpdated)
+		g.BlackLatestMove = at
+		g.BlackElapsed = elapsed
+		g.BlackElapsedUpdated = at
 	}
 	result, err := g.DB.Exec("UPDATE "+games_table+" SET "+timeKey+" = $1, "+elapsedKey+" = $2, "+games_white_elapsed_updated+" = $3, "+games_black_elapsed_updated+" = $4 WHERE "+games_identifier+" = $5;", at, elapsed, at, at, g.ID)
 	if err != nil {
@@ -110,35 +159,29 @@ func (g game) updateGameTimesWithMove(at time.Time) {
 }
 
 // TODO: lock database access to this game while this sort of method is executing its multiple reads and writes
-func (db DB) updateGameTimes(id int, turn time.Duration) GameInfo {
+func (db DB) updateGameTimes(id int, turn time.Duration, total time.Duration) GameInfo {
 	g := db.gameWithIdentifier(id)
-	if turn == time.Duration(0) {
-		return g.GameInfo
-	}
-	var active wichessing.Orientation
-	if g.Active == g.White {
-		active = wichessing.White
-	} else {
-		active = wichessing.Black
-	}
+	active := g.activeOrientation()
 	b := wichessingBoard(g.Points)
-	if b.Draw(active) || b.Checkmate(active) {
+	if b.Draw(active) || b.Checkmate(active) || g.timeLoss(active, total) {
 		return g.GameInfo
 	}
-	sinceMove := g.sinceMove()
-	// if a turn timer is set then make a random move for every turn duration that has occurred.
-	for sinceMove > turn {
-		if g.Active == g.Black {
-			g = g.randomMoveAtTime(g.WhiteLatestMove.Add(turn))
-		} else {
-			g = g.randomMoveAtTime(g.BlackLatestMove.Add(turn))
+	if turn > time.Duration(0) {
+		sinceMove := g.sinceMove()
+		// if a turn timer is set then make a random move for every turn duration that has occurred.
+		for sinceMove > turn {
+			if active == wichessing.Black {
+				g = g.randomMoveAtTime(g.WhiteLatestMove.Add(turn))
+			} else {
+				g = g.randomMoveAtTime(g.BlackLatestMove.Add(turn))
+			}
+			sinceMove = g.sinceMove()
 		}
-		sinceMove = g.sinceMove()
 	}
 	var elapsedKey, elapsedUpdatedKey string
 	var elapsed time.Duration
 	var elapsedUpdated time.Time
-	if g.Active == g.White {
+	if active == wichessing.White {
 		elapsedKey = games_white_elapsed
 		elapsedUpdatedKey = games_white_elapsed_updated
 		elapsed = g.WhiteElapsed + time.Now().Sub(g.WhiteElapsedUpdated)

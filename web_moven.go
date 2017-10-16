@@ -37,6 +37,16 @@ func moveNotificationWebsocketHandler(w http.ResponseWriter, r *http.Request) {
 			turnTime = competitive48_turn_time
 		}
 	}
+	var totalTime time.Duration
+	c5 := database.playersCompetitive5HourGameID(name)
+	if c5 != 0 {
+		totalTime = competitive5_total_time
+	} else {
+		c15 := database.playersCompetitive15HourGameID(name)
+		if c15 != 0 {
+			totalTime = competitive15_total_time
+		}
+	}
 	var previousMove time.Time
 	if game.Active == game.White {
 		previousMove = game.BlackLatestMove
@@ -48,5 +58,5 @@ func moveNotificationWebsocketHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	listeningToGame(name, game.White, game.Black, turnTime, previousMove, game.ID, conn)
+	listeningToGame(name, game.White, game.Black, turnTime, totalTime, previousMove, game.ID, conn)
 }
