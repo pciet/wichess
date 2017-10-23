@@ -7,5 +7,6 @@
 
 object {
     Knight
+    rotate <0,180,0>
     texture { BlackT }
 }

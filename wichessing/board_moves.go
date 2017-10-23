@@ -87,7 +87,7 @@ func (b Board) MovesFromPoint(the Point) AbsPointSet {
 	}
 	for pt, _ := range b.SurroundingPoints(the) {
 		if pt.Piece != nil {
-			if (pt.Piece.Orientation != the.Piece.Orientation) && (pt.Piece.Locks) {
+			if (pt.Orientation != the.Orientation) && (pt.Locks) {
 				return AbsPointSet{}
 			}
 		}
@@ -133,7 +133,7 @@ func (b Board) MovesFromPoint(the Point) AbsPointSet {
 	set = set.Add(takeSet)
 	set = set.Add(b.ReconPointsFrom(the))
 	// castling
-	if (the.Kind == King) && (the.Moved == false) {
+	if (the.Base == King) && (the.Moved == false) {
 		if (the.File == 4) && (the.Rank == 0) {
 			if (b[1].Piece == nil) && (b[2].Piece == nil) && (b[3].Piece == nil) && (b[0].Piece != nil) {
 				if b[0].Moved == false {
@@ -179,7 +179,7 @@ func (b Board) EnPassantTakeFromPoint(the Point) AbsPointSet {
 	if the.Piece == nil {
 		return AbsPointSet{}
 	}
-	if the.Kind != Pawn {
+	if the.Base != Pawn {
 		return AbsPointSet{}
 	}
 	if ((the.Orientation == White) && (the.Rank != 4)) || ((the.Orientation == Black) && (the.Rank != 3)) {
@@ -195,7 +195,7 @@ func (b Board) EnPassantTakeFromPoint(the Point) AbsPointSet {
 			}.Index()
 			piece := b[index].Piece
 			if piece != nil {
-				if (piece.Orientation != the.Orientation) && (piece.Kind == Pawn) && (piece.Previous == AbsPoint{File: uint8(file), Rank: 6}.Index()) {
+				if (piece.Orientation != the.Orientation) && (piece.Base == Pawn) && (piece.Previous == AbsPoint{File: uint8(file), Rank: 6}.Index()) {
 					set[&AbsPoint{
 						File: uint8(file),
 						Rank: 5,
@@ -211,7 +211,7 @@ func (b Board) EnPassantTakeFromPoint(the Point) AbsPointSet {
 			}.Index()
 			piece := b[index].Piece
 			if piece != nil {
-				if (piece.Orientation != the.Orientation) && (piece.Kind == Pawn) && (piece.Previous == AbsPoint{File: uint8(file), Rank: 6}.Index()) {
+				if (piece.Orientation != the.Orientation) && (piece.Base == Pawn) && (piece.Previous == AbsPoint{File: uint8(file), Rank: 6}.Index()) {
 					set[&AbsPoint{
 						File: uint8(file),
 						Rank: 5,
@@ -228,7 +228,7 @@ func (b Board) EnPassantTakeFromPoint(the Point) AbsPointSet {
 			}.Index()
 			piece := b[index].Piece
 			if piece != nil {
-				if (piece.Orientation != the.Orientation) && (piece.Kind == Pawn) && (piece.Previous == AbsPoint{File: uint8(file), Rank: 1}.Index()) {
+				if (piece.Orientation != the.Orientation) && (piece.Base == Pawn) && (piece.Previous == AbsPoint{File: uint8(file), Rank: 1}.Index()) {
 					set[&AbsPoint{
 						File: uint8(file),
 						Rank: 2,
@@ -244,7 +244,7 @@ func (b Board) EnPassantTakeFromPoint(the Point) AbsPointSet {
 			}.Index()
 			piece := b[index].Piece
 			if piece != nil {
-				if (piece.Orientation != the.Orientation) && (piece.Kind == Pawn) && (piece.Previous == AbsPoint{File: uint8(file), Rank: 1}.Index()) {
+				if (piece.Orientation != the.Orientation) && (piece.Base == Pawn) && (piece.Previous == AbsPoint{File: uint8(file), Rank: 1}.Index()) {
 					set[&AbsPoint{
 						File: uint8(file),
 						Rank: 2,
@@ -288,7 +288,7 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 						continue
 					}
 				}
-				if the.Kind == King {
+				if the.Base == King {
 					for pt, _ := range b.SurroundingPoints(actualPoint) {
 						if pt.Piece == nil {
 							continue
@@ -296,7 +296,7 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 						if pt.Orientation == the.Orientation {
 							continue
 						}
-						if pt.Kind == Guard {
+						if pt.Guards {
 							break FIRST_PATH_OUTER
 						}
 					}
@@ -333,7 +333,7 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 						continue
 					}
 				}
-				if the.Kind == King {
+				if the.Base == King {
 					for pt, _ := range b.SurroundingPoints(actualPoint) {
 						if pt.Piece == nil {
 							continue
@@ -341,7 +341,7 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 						if pt.Orientation == the.Orientation {
 							continue
 						}
-						if pt.Kind == Guard {
+						if pt.Guards {
 							break MOVE_PATH_OUTER
 						}
 					}
@@ -372,11 +372,11 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 					}
 				}
 				if actualPoint.Orientation != the.Orientation {
-					if (the.Kind == Pawn) && actualPoint.Fortified {
+					if (the.Base == Pawn) && actualPoint.Fortified {
 						break
 					}
-					if actualPoint.Kind == Detonate {
-						if the.Kind == King {
+					if actualPoint.Detonates {
+						if the.Base == King {
 							break
 						}
 						for pt, _ := range b.SurroundingPoints(actualPoint) {
@@ -386,12 +386,12 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 							if pt.Orientation != the.Orientation {
 								continue
 							}
-							if pt.Kind == King {
+							if pt.Base == King {
 								break TAKE_PATH_OUTER
 							}
 						}
 					}
-					if the.Kind == King {
+					if the.Base == King {
 						for pt, _ := range b.SurroundingPoints(actualPoint) {
 							if pt.Piece == nil {
 								continue
@@ -399,7 +399,7 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 							if pt.Orientation == the.Orientation {
 								continue
 							}
-							if pt.Kind == Guard {
+							if pt.Guards {
 								break TAKE_PATH_OUTER
 							}
 						}
@@ -451,7 +451,7 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 						continue
 					}
 				}
-				if the.Kind == King {
+				if the.Base == King {
 					for pt, _ := range b.SurroundingPoints(actualPoint) {
 						if pt.Piece == nil {
 							continue
@@ -459,7 +459,7 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 						if pt.Orientation == the.Orientation {
 							continue
 						}
-						if pt.Kind == Guard {
+						if pt.Guards {
 							break RALLY_PATH_OUTER
 						}
 					}
@@ -474,25 +474,7 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 	return actualPaths
 }
 
-func (b Board) AdjacentPointOnPath(from AbsPoint, to AbsPoint) AbsPoint {
-	fromPoint := b[from.Index()]
-	surrounding := b.SurroundingPoints(b[to.Index()])
-	for movetype, unfilteredpaths := range TruncatedAbsPathsForKind(fromPoint.Kind, from, fromPoint.Orientation) {
-		if movetype == Take {
-			continue
-		}
-		for path, _ := range b.ActualPaths(fromPoint, movetype, unfilteredpaths) {
-			for _, pt := range path.Points {
-				for spt, _ := range surrounding {
-					if (pt.File == spt.File) && (pt.Rank == spt.Rank) {
-						return pt
-					}
-				}
-			}
-		}
-	}
-	return from
-}
+// TODO: there's an infinite loop here when two detonators are adjacent
 
 func (b Board) DetonationsFrom(the AbsPoint) AbsPointSet {
 	index := the.Index()
@@ -502,7 +484,7 @@ func (b Board) DetonationsFrom(the AbsPoint) AbsPointSet {
 	}
 
 	set[&the] = struct{}{}
-	if b[index].Piece.Detonates == false {
+	if b[index].Detonates == false {
 		return set
 	}
 	for pt, _ := range b.SurroundingPoints(b[index]) {

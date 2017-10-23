@@ -63,7 +63,7 @@ func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) PointSet {
 		return PointSet{}
 	}
 	// en passant / in passing
-	if (fromPoint.Kind == Pawn) && (toPoint.Piece == nil) {
+	if (fromPoint.Base == Pawn) && (toPoint.Piece == nil) {
 		var piece *Piece
 		var expectedToRank uint8
 		if turn == Black {
@@ -74,7 +74,7 @@ func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) PointSet {
 			expectedToRank = 5
 		}
 		if (piece != nil) && (to.Rank == expectedToRank) {
-			if (piece.Orientation != turn) && (piece.Kind == Pawn) {
+			if (piece.Orientation != turn) && (piece.Base == Pawn) {
 				if turn == Black {
 					if piece.Previous == (AbsPoint{File: to.File, Rank: 1}).Index() {
 						set[&Point{
@@ -112,7 +112,7 @@ func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) PointSet {
 		}
 	}
 	// castling can only be done when in-between points are unoccupied and check isn't entered, as verified by MovesFromPoint above
-	if (fromPoint.Kind == King) && (fromPoint.Moved == false) {
+	if (fromPoint.Base == King) && (fromPoint.Moved == false) {
 		// these to moves are only available when castling is available
 		if (to.File == 2) && (to.Rank == 0) {
 			set[&Point{
@@ -225,26 +225,6 @@ func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) PointSet {
 		}
 	}
 	if toPoint.Piece != nil {
-		if fromPoint.Steals && (toPoint.Orientation != turn) {
-			toPoint.Orientation = turn
-			set[&Point{
-				Piece:    toPoint.Piece,
-				AbsPoint: to,
-			}] = struct{}{}
-			adj := b.AdjacentPointOnPath(from, to)
-			if (adj.File != from.File) || (adj.Rank != from.Rank) {
-				set[&Point{
-					AbsPoint: from,
-				}] = struct{}{}
-			}
-			set[&Point{
-				Piece:    fromPoint.Piece,
-				AbsPoint: adj,
-			}] = struct{}{}
-			b.UpdatePiecePrevious(turn)
-			fromPoint.Piece.Previous = from.Index()
-			return set
-		}
 		if fromPoint.Swaps && (toPoint.Orientation == turn) {
 			set[&Point{
 				Piece:    toPoint.Piece,

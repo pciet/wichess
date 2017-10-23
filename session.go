@@ -16,6 +16,9 @@ const (
 	key_length = 64
 )
 
+// TODO: to support multiple instances of the logic server this will have to be stored in the database
+// TODO: locks on these session maps
+
 var (
 	// map[name]key
 	keys map[string]string

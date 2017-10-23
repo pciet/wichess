@@ -95,7 +95,7 @@ func (b Board) TotalPieceScore(player Orientation) int {
 		if point.Orientation != player {
 			continue
 		}
-		switch point.Kind {
+		switch point.Base {
 		case Pawn:
 			total += 1
 		case Knight:
@@ -105,12 +105,6 @@ func (b Board) TotalPieceScore(player Orientation) int {
 		case Rook:
 			total += 4
 		case Queen:
-			total += 5
-		case Swap, Lock, Recon:
-			total += 3
-		case Detonate, Ghost, Steal:
-			total += 4
-		case Guard, Rally, Fortify:
 			total += 5
 		}
 	}

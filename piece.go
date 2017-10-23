@@ -35,6 +35,7 @@ func (db DB) pieceWithID(id int, kind wichessing.Kind, orientation wichessing.Or
 	if id == 0 {
 		return piece{
 			Piece: wichessing.Piece{
+				Base:        wichessing.BaseForKind(kind),
 				Kind:        kind,
 				Orientation: orientation,
 			},
@@ -50,6 +51,7 @@ func (db DB) pieceWithID(id int, kind wichessing.Kind, orientation wichessing.Or
 	return piece{
 		Identifier: id,
 		Piece: wichessing.Piece{
+			Base:        wichessing.BaseForKind(wichessing.Kind(ki)),
 			Kind:        wichessing.Kind(ki),
 			Orientation: orientation,
 		},
@@ -70,6 +72,7 @@ func (db DB) playersFreePieces(name string) []piece {
 		if err != nil {
 			panicExit(err.Error())
 		}
+		pieces[i].Base = wichessing.BaseForKind(pieces[i].Kind)
 		i++
 	}
 	err = rows.Err()
@@ -127,12 +130,7 @@ func init() {
 func randomHeroPiece() piece {
 	return piece{
 		Piece: wichessing.Piece{
-			Kind: wichessing.Kind(random.Int63n(9) + 1 + 6),
+			Kind: wichessing.Kind(random.Int63n(34) + 1 + 6),
 		},
 	}
-	//return piece{
-	//	Piece: wichessing.Piece{
-	//		Kind: wichessing.Swap,
-	//	},
-	//}
 }

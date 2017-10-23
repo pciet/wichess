@@ -25,8 +25,8 @@ func (b Board) Check(turn Orientation) bool {
 		if pt.Piece == nil {
 			continue
 		}
-		if pt.Piece.Orientation == turn {
-			if pt.Piece.Kind == King {
+		if pt.Orientation == turn {
+			if pt.Base == King {
 				kingLocation = pt.AbsPoint
 			}
 			continue

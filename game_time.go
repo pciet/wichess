@@ -100,7 +100,7 @@ OUTER:
 						if p.Piece == nil {
 							continue
 						}
-						if (p.Kind == wichessing.Pawn) && (p.Orientation == wichessing.White) {
+						if (p.Base == wichessing.Pawn) && (p.Orientation == wichessing.White) {
 							from = i
 							break
 						}
@@ -111,7 +111,7 @@ OUTER:
 						if p.Piece == nil {
 							continue
 						}
-						if (p.Kind == wichessing.Pawn) && (p.Orientation == wichessing.Black) {
+						if (p.Base == wichessing.Pawn) && (p.Orientation == wichessing.Black) {
 							from = i
 							break
 						}

@@ -39,7 +39,7 @@ func (db DB) easyComputerMoveForGame(id int) map[string]piece {
 				if p.Piece == nil {
 					continue
 				}
-				if (p.Kind == wichessing.Pawn) && (p.Orientation == wichessing.White) {
+				if (p.Base == wichessing.Pawn) && (p.Orientation == wichessing.White) {
 					from = i
 					break
 				}
@@ -50,7 +50,7 @@ func (db DB) easyComputerMoveForGame(id int) map[string]piece {
 				if p.Piece == nil {
 					continue
 				}
-				if (p.Kind == wichessing.Pawn) && (p.Orientation == wichessing.Black) {
+				if (p.Base == wichessing.Pawn) && (p.Orientation == wichessing.Black) {
 					from = i
 					break
 				}

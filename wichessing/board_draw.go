@@ -51,27 +51,27 @@ func (b Board) Draw(turn Orientation) bool {
 	}
 	if friendly2 == nil {
 		// king v king+bishop
-		if ((opponent1.Kind == King) || (opponent1.Kind == Bishop) || (opponent1.Kind == Detonate) || (opponent1.Kind == Ghost) || (opponent1.Kind == Steal)) &&
-			((opponent2.Kind == King) || (opponent2.Kind == Bishop) || (opponent2.Kind == Detonate) || (opponent2.Kind == Ghost) || (opponent2.Kind == Steal)) {
+		if ((opponent1.Base == King) || (opponent1.Base == Bishop)) &&
+			((opponent2.Base == King) || (opponent2.Base == Bishop)) {
 			return true
 		}
 		// king v king+knight
-		if ((opponent1.Kind == King) || (opponent1.Kind == Knight) || (opponent1.Kind == Swap) || (opponent1.Kind == Lock) || (opponent1.Kind == Recon)) &&
-			((opponent2.Kind == King) || (opponent2.Kind == Knight) || (opponent2.Kind == Swap) || (opponent2.Kind == Lock) || (opponent2.Kind == Recon)) {
+		if ((opponent1.Base == King) || (opponent1.Base == Knight)) &&
+			((opponent2.Base == King) || (opponent2.Base == Knight)) {
 			return true
 		}
-	} else if ((friendly1.Kind == King) || (friendly1.Kind == Bishop) || (friendly1.Kind == Detonate) || (friendly1.Kind == Ghost) || (friendly1.Kind == Steal)) &&
-		((friendly2.Kind == King) || (friendly2.Kind == Bishop) || (friendly2.Kind == Detonate) || (friendly2.Kind == Ghost) || (friendly2.Kind == Steal)) {
+	} else if ((friendly1.Base == King) || (friendly1.Base == Bishop)) &&
+		((friendly2.Base == King) || (friendly2.Base == Bishop)) {
 		// king+bishop v king+bishop, where the bishops are on the same color
-		if ((opponent1.Kind == King) || (opponent1.Kind == Bishop) || (opponent1.Kind == Detonate) || (opponent1.Kind == Ghost) || (opponent1.Kind == Steal)) &&
-			((opponent2.Kind == King) || (opponent2.Kind == Bishop) || (opponent2.Kind == Detonate) || (opponent2.Kind == Ghost) || (opponent2.Kind == Steal)) {
+		if ((opponent1.Base == King) || (opponent1.Base == Bishop)) &&
+			((opponent2.Base == King) || (opponent2.Base == Bishop)) {
 			var bishop1, bishop2 *Piece
-			if (friendly1.Kind == Bishop) || (friendly1.Kind == Detonate) || (friendly1.Kind == Ghost) || (friendly1.Kind == Steal) {
+			if friendly1.Base == Bishop {
 				bishop1 = friendly1
 			} else {
 				bishop1 = friendly2
 			}
-			if (opponent1.Kind == Bishop) || (opponent1.Kind == Detonate) || (opponent1.Kind == Ghost) || (opponent1.Kind == Steal) {
+			if opponent1.Base == Bishop {
 				bishop2 = opponent1
 			} else {
 				bishop2 = opponent2

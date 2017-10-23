@@ -128,7 +128,7 @@ func (g game) promote(from int, player string, kind wichessing.Kind, timeoutMove
 	if point.Kind == 0 {
 		return nil
 	}
-	if (point.Orientation != orientation) || (point.Kind != wichessing.Pawn) {
+	if (point.Orientation != orientation) || (point.Base != wichessing.Pawn) {
 		return nil
 	}
 	b := wichessingBoard(g.Points)

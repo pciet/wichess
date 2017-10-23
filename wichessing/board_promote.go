@@ -17,7 +17,7 @@ func (b Board) HasPawnToPromote() bool {
 	for i := 0; i < 8; i++ {
 		p := b[i]
 		if p.Piece != nil {
-			if (p.Orientation == Black) && (p.Kind == Pawn) {
+			if (p.Orientation == Black) && (p.Base == Pawn) {
 				return true
 			}
 		}
@@ -25,7 +25,7 @@ func (b Board) HasPawnToPromote() bool {
 	for i := 56; i < 64; i++ {
 		p := b[i]
 		if p.Piece != nil {
-			if (p.Orientation == White) && (p.Kind == Pawn) {
+			if (p.Orientation == White) && (p.Base == Pawn) {
 				return true
 			}
 		}
@@ -42,7 +42,7 @@ func (b Board) PromotePawn(at AbsPoint, to Kind) PointSet {
 	if point.Piece == nil {
 		return nil
 	}
-	if point.Kind != Pawn {
+	if point.Base != Pawn {
 		return nil
 	}
 	if (at.Rank == 0) && (point.Orientation != Black) {

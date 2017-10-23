@@ -22,7 +22,7 @@ const (
 	player_c15_key                   = "c15"
 	player_competitive48_slot_prefix = "c48s"
 
-	initial_piece_count = 6
+	initial_piece_count = 25
 )
 
 func (db DB) playersCompetitive15HourGameID(player string) int {

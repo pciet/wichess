@@ -53,18 +53,24 @@ func RelPathMapForKind(the Kind) RelPathSetMap {
 	switch the {
 	case King:
 		return KingPathMap
-	case Guard:
-		return GuardPathMap
 	case Queen:
 		return QueenPathMap
-	case Rook, Rally, Fortify:
+	case Rook, SwapRook, LockRook, ReconRook, DetonateRook, GhostRook, GuardRook, RallyRook, FortifyRook:
 		return RookPathMap
-	case Bishop, Detonate, Ghost, Steal:
+	case Bishop, SwapBishop, LockBishop, ReconBishop, DetonateBishop, GhostBishop, GuardBishop, RallyBishop, FortifyBishop:
 		return BishopPathMap
-	case Knight, Swap, Lock, Recon:
+	case Knight, SwapKnight, LockKnight, ReconKnight, DetonateKnight, GuardKnight, RallyKnight, FortifyKnight:
 		return KnightPathMap
-	case Pawn:
+	case Pawn, SwapPawn, LockPawn, ReconPawn, DetonatePawn, GuardPawn, RallyPawn, FortifyPawn:
 		return PawnPathMap
+	case ExtendedPawn:
+		return ExtendedPawnPathMap
+	case ExtendedKnight:
+		return ExtendedKnightPathMap
+	case ExtendedBishop:
+		return ExtendedBishopPathMap
+	case ExtendedRook:
+		return ExtendedRookPathMap
 	default:
 		panic(fmt.Sprintf("wichessing: invalid kind %v", the))
 	}
@@ -87,10 +93,43 @@ func (the AbsPath) Copy() *AbsPath {
 	return &p
 }
 
+type AbsPathSet map[*AbsPath]struct{}
+
 // All relative paths for a piece, used to calculate actual paths for a board state.
 type RelPathSet map[*RelPath]struct{}
 
-type AbsPathSet map[*AbsPath]struct{}
+func (s RelPathSet) Combine(ps RelPathSet) {
+	for path, _ := range ps {
+		if s.HasPath(*path) {
+			continue
+		}
+		s[path] = struct{}{}
+	}
+}
+
+func (s RelPathSet) HasPath(p RelPath) bool {
+OUTER:
+	for path, _ := range s {
+		if len(*path) != len(p) {
+			continue
+		}
+		for index, point := range *path {
+			if (point.XOffset != p[index].XOffset) || (point.YOffset != p[index].YOffset) {
+				continue OUTER
+			}
+		}
+		return true
+	}
+	return false
+}
+
+func (s RelPathSet) Copy() RelPathSet {
+	n := make(RelPathSet)
+	for p, _ := range s {
+		n[p] = struct{}{}
+	}
+	return n
+}
 
 var (
 	KnightPathSet = RelPathSet{
@@ -155,7 +194,30 @@ var (
 		&RelPath{{-1, 0}, {-2, 0}}:   {},
 		&RelPath{{-1, 1}, {-2, 2}}:   {},
 	}
+	// set in init()
+	ExtendedBishopPathSet      RelPathSet
+	ExtendedRookPathSet        RelPathSet
+	ExtendedKnightRallyPathSet RelPathSet
+	ExtendedBishopRallyPathSet RelPathSet
+	ExtendedRookRallyPathSet   RelPathSet
 )
+
+func init() {
+	ExtendedBishopPathSet = KingPathSet.Copy()
+	ExtendedBishopPathSet.Combine(BishopPathSet)
+
+	ExtendedRookPathSet = KingPathSet.Copy()
+	ExtendedRookPathSet.Combine(RookPathSet)
+
+	ExtendedKnightRallyPathSet = TripleKnightPathSet.Copy()
+	ExtendedKnightRallyPathSet.Combine(KnightPathSet)
+
+	ExtendedBishopRallyPathSet = ExtendedBishopPathSet.Copy()
+	ExtendedBishopRallyPathSet.Combine(DoubleKingPathSet)
+
+	ExtendedRookRallyPathSet = ExtendedRookPathSet.Copy()
+	ExtendedRookRallyPathSet.Combine(DoubleKingPathSet)
+}
 
 // The PathType is used for pieces with varying moves; the pawn is the base chess example with different first move, take moves, and regular moves.
 type PathType int
@@ -216,9 +278,38 @@ var (
 		Move:  KingPathSet,
 		Take:  KingPathSet,
 	}
-	GuardPathMap = RelPathSetMap{
-		First:     KingPathSet,
-		Move:      KingPathSet,
-		RallyMove: DoubleKingPathSet,
+	ExtendedPawnPathMap = RelPathSetMap{
+		// TODO: en passant for the second passing position
+		First: RelPathSet{
+			&RelPath{{0, 1}, {0, 2}, {0, 3}}: {},
+		},
+		Move: RelPathSet{
+			&RelPath{{0, 1}, {0, 2}}: {},
+		},
+		Take: RelPathSet{
+			&RelPath{{1, 1}}:  {},
+			&RelPath{{-1, 1}}: {},
+		},
+		RallyMove: RelPathSet{
+			&RelPath{{0, 1}, {0, 2}, {0, 3}}: {},
+		},
+	}
+	ExtendedKnightPathMap = RelPathSetMap{
+		First:     TripleKnightPathSet,
+		Move:      TripleKnightPathSet,
+		Take:      TripleKnightPathSet,
+		RallyMove: ExtendedKnightRallyPathSet,
+	}
+	ExtendedBishopPathMap = RelPathSetMap{
+		First:     ExtendedBishopPathSet,
+		Move:      ExtendedBishopPathSet,
+		Take:      ExtendedBishopPathSet,
+		RallyMove: ExtendedBishopRallyPathSet,
+	}
+	ExtendedRookPathMap = RelPathSetMap{
+		First:     ExtendedRookPathSet,
+		Move:      ExtendedRookPathSet,
+		Take:      ExtendedRookPathSet,
+		RallyMove: ExtendedRookRallyPathSet,
 	}
 )

@@ -374,6 +374,6 @@
     object{Knight_Base}
     object{Knight_Mid}
     scale 0.35
-    translate <0,-1.15,0>
-    rotate <0,60,0>
+    translate <0,-1.1,0>
+    rotate <0,170,0>
 }

@@ -256,7 +256,7 @@
         var oneOrMore = false;
         var assigned = 0;
         for (var i = 0; i < Pieces.length; i++) {
-            if (matchesKindOfPoint(Pieces[i].Kind, index) == false) {
+            if (matchesKindOfPoint(Pieces[i].Base, index) == false) {
                 continue;
             }
             if (Pieces[i].Assigned) {
@@ -348,21 +348,21 @@
             }
         }
         if ((point == 8) || (point == 15)) {
-            if ((kind == k.ROOK) || (kind == k.GUARD) || (kind == k.RALLY) || (kind == k.FORTIFY)) {
+            if (kind == k.ROOK) {
                 return true;
             } else {
                 return false;
             }
         }
         if ((point == 9) || (point == 14)) {
-            if ((kind == k.KNIGHT) || (kind == k.SWAP) || (kind == k.LOCK) || (kind == k.RECON)) {
+            if (kind == k.KNIGHT) {
                 return true;
             } else {
                 return false;
             }
         }
         if ((point == 10) || (point == 13)) {
-            if ((kind == k.BISHOP) || (kind == k.DETONATE) || (kind == k.GHOST) || (kind == k.STEAL)) {
+            if (kind == k.BISHOP) {
                 return true;
             } else {
                 return false;

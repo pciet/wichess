@@ -3,7 +3,7 @@
 #include "header.inc"
 #include "camera.inc"
 #include "finishes.inc"
-#include "rook.inc"
+#include "piece.inc"
 
 object {
     Rook

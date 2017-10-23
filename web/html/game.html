@@ -162,7 +162,7 @@
         if (Player == White) {
             for (var i = 56; i < 64; i++) {
                 var piece = Board[i];
-                if ((piece.Kind == k.PAWN) && (piece.Orientation == o.WHITE)) {
+                if ((piece.Base == k.PAWN) && (piece.Orientation == o.WHITE)) {
                     from = i;
                     break;
                 }
@@ -170,7 +170,7 @@
         } else {
             for (var i = 0; i < 8; i++) {
                 var piece = Board[i];
-                if ((piece.Kind == k.PAWN) && (piece.Orientation == o.BLACK)) {
+                if ((piece.Base == k.PAWN) && (piece.Orientation == o.BLACK)) {
                     from = i;
                     break;
                 }

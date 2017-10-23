@@ -3,7 +3,7 @@
 #include "header.inc"
 #include "camera.inc"
 #include "finishes.inc"
-#include "bishop.inc"
+#include "piece.inc"
 
 object {
     Bishop

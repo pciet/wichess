@@ -317,6 +317,9 @@ func (db DB) deleteGame(id int) {
 func decodedPoints(pts [64]pieceEncoding) [64]piece {
 	var ret [64]piece
 	for i := 0; i < 64; i++ {
+		if pts[i] == 0 {
+			continue
+		}
 		ret[i] = pts[i].decode()
 		ret[i].Piece = ret[i].Piece.SetKindFlags()
 	}

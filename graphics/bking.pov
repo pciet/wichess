@@ -3,7 +3,7 @@
 #include "header.inc"
 #include "camera.inc"
 #include "finishes.inc"
-#include "king.inc"
+#include "piece.inc"
 
 object {
     King

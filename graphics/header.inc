@@ -5,5 +5,13 @@ global_settings {
 background { color rgbt <1,1,1,1> }
 
 light_source {
-    <-20,200,-20>, rgb <1,1,1>
+    <-30000,10000,10000>, rgb <1,1,1>
+}
+
+light_source {
+    <-30000,5000,15000>, rgb <0.9,0.9,0.9>
+}
+
+light_source {
+    <500000,10000,-500000>, rgb <1,1,1>
 }

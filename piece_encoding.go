@@ -45,6 +45,7 @@ func (e pieceEncoding) decode() piece {
 			Orientation: wichessing.Orientation((e >> orientation_bit) & orientation_mask),
 			Moved:       itob(int((e >> moved_bit) & moved_mask)),
 			Kind:        wichessing.Kind((e >> kind_bit) & kind_mask),
+			Base:        wichessing.BaseForKind(wichessing.Kind((e >> kind_bit) & kind_mask)),
 			Previous:    uint8(((e >> previous_point_bit) & previous_point_mask)),
 		},
 	}
