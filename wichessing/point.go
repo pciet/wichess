@@ -14,6 +14,20 @@ type Point struct {
 
 type PointSet map[*Point]struct{}
 
+func (p PointSet) Board() Board {
+	b := Board{}
+	for i := 0; i < 64; i++ {
+		b[i].AbsPoint = AbsPointFromIndex(uint8(i))
+	}
+	for point, _ := range p {
+		if point.Piece != nil {
+			piece := (*(point.Piece)).SetKindFlags()
+			b[AbsPointToIndex(point.AbsPoint)].Piece = &piece
+		}
+	}
+	return b
+}
+
 // Absolute Point represents a specific point on the board.
 type AbsPoint struct {
 	File uint8
@@ -76,6 +90,20 @@ func (s AbsPointSet) Has(the AbsPoint) bool {
 	return false
 }
 
+func (s AbsPointSet) Equal(an AbsPointSet) bool {
+	for point, _ := range s {
+		if an.Has(*point) == false {
+			return false
+		}
+	}
+	for point, _ := range an {
+		if s.Has(*point) == false {
+			return false
+		}
+	}
+	return true
+}
+
 func (s AbsPointSet) String() map[string]struct{} {
 	m := make(map[string]struct{})
 	for p, _ := range s {
@@ -118,4 +146,8 @@ func IndexFromAddressString(address string) uint8 {
 
 func IndexFromFileAndRank(file, rank uint8) uint8 {
 	return file + (rank * 8)
+}
+
+func AbsPointToIndex(the AbsPoint) uint8 {
+	return IndexFromFileAndRank(the.File, the.Rank)
 }
