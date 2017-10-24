@@ -56,6 +56,8 @@ func (o Orientation) String() string {
 
 type Kind int
 
+// TODO: detonate doesn't take fortify
+
 // add new kinds to the end because the client has to match this numbering
 const (
 	King Kind = iota + 1

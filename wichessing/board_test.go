@@ -16,6 +16,9 @@ func init() {
 	for _, c := range BasicMovesCases {
 		AvailableMovesCases = append(AvailableMovesCases, c)
 	}
+	for _, c := range CheckMovesCases {
+		AvailableMovesCases = append(AvailableMovesCases, c)
+	}
 	for _, c := range BasicAfterMoveCases {
 		AfterMoveCases = append(AfterMoveCases, c)
 	}

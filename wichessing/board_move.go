@@ -53,6 +53,28 @@ func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) PointSet {
 					Piece:    pt.Piece,
 					AbsPoint: toPoint.AbsPoint,
 				}] = struct{}{}
+				// from and guard point are empty, to has guard
+				// dpoint is an *AbsPoint, diffpoint is a *Point
+				newBoard := b.Copy()
+				newBoard[AbsPointToIndex(fromPoint.AbsPoint)].Piece = nil
+				newBoard[AbsPointToIndex(pt.AbsPoint)].Piece = nil
+				newBoard[AbsPointToIndex(toPoint.AbsPoint)].Piece = fromPoint.Piece
+				dset := newBoard.DetonationsFrom(toPoint.AbsPoint, nil)
+				// a length of 1 means its not a detonator
+				if len(dset) > 1 {
+				DETONATE:
+					for dpoint, _ := range dset {
+						for diffpoint, _ := range set {
+							if (diffpoint.File == dpoint.File) && (diffpoint.Rank == dpoint.Rank) {
+								diffpoint.Piece = nil
+								continue DETONATE
+							}
+						}
+						set[&Point{
+							AbsPoint: *dpoint,
+						}] = struct{}{}
+					}
+				}
 				b.UpdatePiecePrevious(turn)
 				pt.Piece.Previous = pt.AbsPoint.Index()
 				return set
@@ -246,7 +268,7 @@ func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) PointSet {
 	set[&Point{
 		AbsPoint: from,
 	}] = struct{}{}
-	dset := b.DetonationsFrom(to)
+	dset := b.DetonationsFrom(to, nil)
 	if len(dset) > 1 {
 		for pt, _ := range dset {
 			set[&Point{

@@ -7,6 +7,21 @@ import (
 	"fmt"
 )
 
+func (b Board) KingLocationFor(turn Orientation) (AbsPoint, bool) {
+	for _, point := range b {
+		if point.Piece == nil {
+			continue
+		}
+		if point.Orientation != turn {
+			continue
+		}
+		if point.Base == King {
+			return point.AbsPoint, true
+		}
+	}
+	return AbsPoint{}, false
+}
+
 func (b Board) IndexPositionOfPiece(the *Piece) uint8 {
 	for index, point := range b {
 		if point.Piece == the {

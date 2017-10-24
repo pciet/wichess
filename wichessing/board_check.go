@@ -19,23 +19,24 @@ func (b Board) Checkmate(turn Orientation) bool {
 // TODO: if detonate bishop is in danger next to king, then king is in check
 
 func (b Board) Check(turn Orientation) bool {
-	var kingLocation AbsPoint
-	moves := make(AbsPointSet)
-	for _, pt := range b {
-		if pt.Piece == nil {
-			continue
-		}
-		if pt.Orientation == turn {
-			if pt.Base == King {
-				kingLocation = pt.AbsPoint
-			}
-			continue
-		}
-		moves = moves.Add(b.MovesFromPoint(pt)).Reduce()
+	var orientation Orientation
+	if turn == White {
+		orientation = Black
+	} else {
+		orientation = White
 	}
-	for pt, _ := range moves {
-		if (pt.File == kingLocation.File) && (pt.Rank == kingLocation.Rank) {
-			return true
+	allMoves := b.AllMovesFor(orientation)
+	king, _ := b.KingLocationFor(turn)
+	for orig, moves := range allMoves {
+		for pt, _ := range moves {
+			if (pt.File == king.File) && (pt.Rank == king.Rank) {
+				return true
+			}
+			// some cases cause reactions that remove the King, such as an enemy detonator move and friendly guard adjacent
+			_, has := b.AfterMove(orig, *pt, orientation).KingLocationFor(turn)
+			if has == false {
+				return true
+			}
 		}
 	}
 	return false

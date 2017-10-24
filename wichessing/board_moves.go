@@ -474,21 +474,29 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 	return actualPaths
 }
 
-// TODO: there's an infinite loop here when two detonators are adjacent
+// TODO: refactor DetonationsFrom to something clearer than this recursive implementation
 
-func (b Board) DetonationsFrom(the AbsPoint) AbsPointSet {
+// if you know of no detonated points yet then provide nil for detonated
+func (b Board) DetonationsFrom(the AbsPoint, detonated AbsPointSet) AbsPointSet {
+	var set AbsPointSet
+	if detonated == nil {
+		set = make(AbsPointSet)
+	} else {
+		set = detonated
+	}
 	index := the.Index()
-	set := make(AbsPointSet)
 	if b[index].Piece == nil {
 		return set
 	}
-
 	set[&the] = struct{}{}
 	if b[index].Detonates == false {
 		return set
 	}
 	for pt, _ := range b.SurroundingPoints(b[index]) {
-		set = set.Add(b.DetonationsFrom(pt.AbsPoint))
+		if set.Has(pt.AbsPoint) {
+			continue
+		}
+		set = set.Add(b.DetonationsFrom(pt.AbsPoint, set))
 	}
 	return set.Reduce()
 }
