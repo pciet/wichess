@@ -150,4 +150,148 @@ var (
 			Previous:    AbsPointToIndex(AbsPoint{File: 5, Rank: 7}),
 		},
 	}
+	WhitePawn0Start = Point{
+		AbsPoint: AbsPoint{File: 0, Rank: 1},
+		Piece: &Piece{
+			Kind:        Pawn,
+			Orientation: White,
+			Moved:       false,
+			Previous:    AbsPointToIndex(AbsPoint{File: 0, Rank: 1}),
+		},
+	}
+	WhitePawn1Start = Point{
+		AbsPoint: AbsPoint{File: 1, Rank: 1},
+		Piece: &Piece{
+			Kind:        Pawn,
+			Orientation: White,
+			Moved:       false,
+			Previous:    AbsPointToIndex(AbsPoint{File: 1, Rank: 1}),
+		},
+	}
+	WhitePawn2Start = Point{
+		AbsPoint: AbsPoint{File: 2, Rank: 1},
+		Piece: &Piece{
+			Kind:        Pawn,
+			Orientation: White,
+			Moved:       false,
+			Previous:    AbsPointToIndex(AbsPoint{File: 2, Rank: 1}),
+		},
+	}
+	WhitePawn3Start = Point{
+		AbsPoint: AbsPoint{File: 3, Rank: 1},
+		Piece: &Piece{
+			Kind:        Pawn,
+			Orientation: White,
+			Moved:       false,
+			Previous:    AbsPointToIndex(AbsPoint{File: 3, Rank: 1}),
+		},
+	}
+	WhitePawn4Start = Point{
+		AbsPoint: AbsPoint{File: 4, Rank: 1},
+		Piece: &Piece{
+			Kind:        Pawn,
+			Orientation: White,
+			Moved:       false,
+			Previous:    AbsPointToIndex(AbsPoint{File: 4, Rank: 1}),
+		},
+	}
+	WhitePawn5Start = Point{
+		AbsPoint: AbsPoint{File: 5, Rank: 1},
+		Piece: &Piece{
+			Kind:        Pawn,
+			Orientation: White,
+			Moved:       false,
+			Previous:    AbsPointToIndex(AbsPoint{File: 5, Rank: 1}),
+		},
+	}
+	WhitePawn6Start = Point{
+		AbsPoint: AbsPoint{File: 6, Rank: 1},
+		Piece: &Piece{
+			Kind:        Pawn,
+			Orientation: White,
+			Moved:       false,
+			Previous:    AbsPointToIndex(AbsPoint{File: 6, Rank: 1}),
+		},
+	}
+	WhitePawn7Start = Point{
+		AbsPoint: AbsPoint{File: 7, Rank: 1},
+		Piece: &Piece{
+			Kind:        Pawn,
+			Orientation: White,
+			Moved:       false,
+			Previous:    AbsPointToIndex(AbsPoint{File: 7, Rank: 1}),
+		},
+	}
+	BlackPawn0Start = Point{
+		AbsPoint: AbsPoint{File: 0, Rank: 6},
+		Piece: &Piece{
+			Kind:        Pawn,
+			Orientation: Black,
+			Moved:       false,
+			Previous:    AbsPointToIndex(AbsPoint{File: 0, Rank: 6}),
+		},
+	}
+	BlackPawn1Start = Point{
+		AbsPoint: AbsPoint{File: 1, Rank: 6},
+		Piece: &Piece{
+			Kind:        Pawn,
+			Orientation: Black,
+			Moved:       false,
+			Previous:    AbsPointToIndex(AbsPoint{File: 1, Rank: 6}),
+		},
+	}
+	BlackPawn2Start = Point{
+		AbsPoint: AbsPoint{File: 2, Rank: 6},
+		Piece: &Piece{
+			Kind:        Pawn,
+			Orientation: Black,
+			Moved:       false,
+			Previous:    AbsPointToIndex(AbsPoint{File: 2, Rank: 6}),
+		},
+	}
+	BlackPawn3Start = Point{
+		AbsPoint: AbsPoint{File: 3, Rank: 6},
+		Piece: &Piece{
+			Kind:        Pawn,
+			Orientation: Black,
+			Moved:       false,
+			Previous:    AbsPointToIndex(AbsPoint{File: 3, Rank: 6}),
+		},
+	}
+	BlackPawn4Start = Point{
+		AbsPoint: AbsPoint{File: 4, Rank: 6},
+		Piece: &Piece{
+			Kind:        Pawn,
+			Orientation: Black,
+			Moved:       false,
+			Previous:    AbsPointToIndex(AbsPoint{File: 4, Rank: 6}),
+		},
+	}
+	BlackPawn5Start = Point{
+		AbsPoint: AbsPoint{File: 5, Rank: 6},
+		Piece: &Piece{
+			Kind:        Pawn,
+			Orientation: Black,
+			Moved:       false,
+			Previous:    AbsPointToIndex(AbsPoint{File: 5, Rank: 6}),
+		},
+	}
+	BlackPawn6Start = Point{
+		AbsPoint: AbsPoint{File: 6, Rank: 6},
+		Piece: &Piece{
+			Kind:        Pawn,
+			Orientation: Black,
+			Moved:       false,
+			Previous:    AbsPointToIndex(AbsPoint{File: 6, Rank: 6}),
+		},
+	}
+	BlackPawn7Start = Point{
+		AbsPoint: AbsPoint{File: 7, Rank: 6},
+		Piece: &Piece{
+			Kind:        Pawn,
+			Orientation: Black,
+			Moved:       false,
+			Previous:    AbsPointToIndex(AbsPoint{File: 7, Rank: 6}),
+		},
+	}
 )
