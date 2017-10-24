@@ -28,6 +28,10 @@ type Piece struct {
 	Fortified bool `json:"-"` // can't be taken by pawns
 }
 
+func (p Piece) String() string {
+	return fmt.Sprintf("(%v %v)", p.Kind, p.Orientation)
+}
+
 type PieceSet map[*Piece]struct{}
 
 func (the PieceSet) Add(a Piece) PieceSet {
@@ -41,6 +45,14 @@ const (
 	White Orientation = 0
 	Black Orientation = 1
 )
+
+func (o Orientation) String() string {
+	if o == White {
+		return "white"
+	} else {
+		return "black"
+	}
+}
 
 type Kind int
 

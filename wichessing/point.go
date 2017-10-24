@@ -13,7 +13,31 @@ type Point struct {
 	AbsPoint
 }
 
+func (p Point) String() string {
+	if p.Piece == nil {
+		return p.AbsPoint.String()
+	} else {
+		return fmt.Sprintf("%v:%v", p.AbsPoint, p.Piece)
+	}
+}
+
 type PointSet map[*Point]struct{}
+
+func (s PointSet) String() string {
+	var buffer bytes.Buffer
+	buffer.WriteString("(")
+	length := len(s)
+	i := 0
+	for point, _ := range s {
+		buffer.WriteString(fmt.Sprintf("%v", point))
+		i++
+		if i != length {
+			buffer.WriteString(" ")
+		}
+	}
+	buffer.WriteString(")")
+	return buffer.String()
+}
 
 func (p PointSet) Board() Board {
 	b := Board{}

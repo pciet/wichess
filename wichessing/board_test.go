@@ -7,7 +7,19 @@ import (
 	"testing"
 )
 
-// TODO: test case generator because building these by hand is tricky and tedious
+var (
+	AvailableMovesCases = make([]AvailableMovesCase, 0, 1)
+	AfterMoveCases      = make([]PositionAfterMoveCase, 0, 1)
+)
+
+func init() {
+	for _, c := range BasicMovesCases {
+		AvailableMovesCases = append(AvailableMovesCases, c)
+	}
+	for _, c := range BasicAfterMoveCases {
+		AfterMoveCases = append(AfterMoveCases, c)
+	}
+}
 
 type AvailableMovesCase struct {
 	Name      string
@@ -19,15 +31,16 @@ type AvailableMovesCase struct {
 	Moves     map[AbsPoint]AbsPointSet
 }
 
-var AvailableMovesCases = make([]AvailableMovesCase, 0, 1)
-
-func init() {
-	for _, c := range BasicMovesCases {
-		AvailableMovesCases = append(AvailableMovesCases, c)
-	}
+// The active player is inferred by which piece is being moved. The diff is checked by location and piece kind/orientation only.
+type PositionAfterMoveCase struct {
+	Name    string
+	Initial PointSet
+	From    AbsPoint
+	To      AbsPoint
+	Diff    PointSet
 }
 
-// Covers Board.Draw, Board.Moves, and PointSet.Board, depending on the quality of the test cases
+// Covers Board.Draw and Board.Moves
 func TestMovesCases(t *testing.T) {
 CASES:
 	for _, c := range AvailableMovesCases {
@@ -74,10 +87,51 @@ CASES:
 	}
 }
 
-//TODO: type PositionAfterMoveCase struct {
-//	Name            string
-//	InitialPosition PointSet
-//	From            AbsPoint
-//	To              AbsPoint
-//	FinalPosition   PointSet
-//}
+// Covers Board.Move
+func TestPositionAfterMoveCases(t *testing.T) {
+	for _, c := range AfterMoveCases {
+		b := c.Initial.Board()
+		from := b[AbsPointToIndex(c.From)]
+		if from.Piece == nil {
+			t.Errorf("\"%v\" failed: from point %v has no piece", c.Name, c.From)
+			continue
+		}
+		diff := b.Move(c.From, c.To, from.Orientation)
+		if (len(c.Diff) == 0) && (len(diff) == 0) {
+			continue
+		}
+		if len(c.Diff) != len(diff) {
+			t.Errorf("\"%v\" failed: diff has %v changes but %v changes are expected (%v expected %v found)", c.Name, len(diff), len(c.Diff), c.Diff, diff)
+			continue
+		}
+		// every expected point must have a matching point on the move diff
+	DIFFING:
+		for expected, _ := range c.Diff {
+			for actual, _ := range diff {
+				if (expected.File == actual.File) && (expected.Rank == actual.Rank) {
+					if (expected.Piece == nil) && (actual.Piece == nil) {
+						continue DIFFING
+					}
+					if expected.Piece == nil {
+						t.Errorf("\"%v\" failed: expected no piece at %v but found %v", c.Name, expected.AbsPoint, actual.Piece)
+						continue DIFFING
+					}
+					if actual.Piece == nil {
+						t.Errorf("\"%v\" failed: expected %v at %v but found none", c.Name, expected.Piece, expected.AbsPoint)
+						continue DIFFING
+					}
+					if expected.Orientation != actual.Orientation {
+						t.Errorf("\"%v\" failed: expected %v piece but found %v piece", c.Name, expected.Orientation, actual.Orientation)
+						continue DIFFING
+					}
+					if expected.Kind != actual.Kind {
+						t.Errorf("\"%v\" failed: expected %v kind but found %v kind", c.Name, expected.Kind, actual.Kind)
+						continue DIFFING
+					}
+					continue DIFFING
+				}
+			}
+			t.Errorf("\"%v\" failed: found no difference at %v", c.Name, expected.AbsPoint)
+		}
+	}
+}
