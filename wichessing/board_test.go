@@ -34,40 +34,40 @@ CASES:
 		b := c.Position.Board()
 		draw := b.Draw(c.Active)
 		if draw && (c.Draw == false) {
-			t.Errorf("\"%v\" failed (unexpected draw)", c.Name)
+			t.Errorf("\"%v\" failed: unexpected draw", c.Name)
 			continue
 		} else if (draw == false) && c.Draw {
-			t.Errorf("\"%v\" failed (determined not draw)", c.Name)
+			t.Errorf("\"%v\" failed: determined not draw", c.Name)
 			continue
 		}
 		moves, check, checkmate := b.Moves(c.Active)
 		if check && (c.Check == false) {
-			t.Errorf("\"%v\" failed (unexpected check)", c.Name)
+			t.Errorf("\"%v\" failed: unexpected check", c.Name)
 			continue
 		} else if (check == false) && c.Check {
-			t.Errorf("\"%v\" failed (determined not check)", c.Name)
+			t.Errorf("\"%v\" failed: determined not check", c.Name)
 			continue
 		}
 		if checkmate && (c.Checkmate == false) {
-			t.Errorf("\"%v\" failed (unexpected checkmate)", c.Name)
+			t.Errorf("\"%v\" failed: unexpected checkmate", c.Name)
 			continue
 		} else if (checkmate == false) && c.Checkmate {
-			t.Errorf("\"%v\" failed (determined not checkmate)", c.Name)
+			t.Errorf("\"%v\" failed: determined not checkmate", c.Name)
 			continue
 		}
 		for point, targets := range moves {
 			expected, has := c.Moves[point]
 			if has == false {
-				t.Errorf("\"%v\" failed (%v is unexpected moveable location)", c.Name, point)
+				t.Errorf("\"%v\" failed: %v is unexpected moveable location", c.Name, point)
 				continue CASES
 			}
 			// we're assuming board.Moves only shows points that can be moved
 			if len(targets) == 0 {
-				t.Errorf("\"%v\" failed (%v is marked as moveable but has no moves)", c.Name, point)
+				t.Errorf("\"%v\" failed: %v is marked as moveable but has no moves", c.Name, point)
 				continue CASES
 			}
 			if targets.Equal(expected) == false {
-				t.Errorf("\"%v\" failed (%v moves mismatch, %v found %v expected)", c.Name, point, targets, expected)
+				t.Errorf("\"%v\" failed: %v moves mismatch, %v found, %v expected, %v difference", c.Name, point, targets, expected, targets.Diff(expected))
 				continue CASES
 			}
 		}

@@ -4,6 +4,7 @@
 package wichessing
 
 import (
+	"bytes"
 	"fmt"
 )
 
@@ -104,12 +105,43 @@ func (s AbsPointSet) Equal(an AbsPointSet) bool {
 	return true
 }
 
-func (s AbsPointSet) String() map[string]struct{} {
+func (s AbsPointSet) Diff(from AbsPointSet) AbsPointSet {
+	diff := make(AbsPointSet)
+	for point, _ := range s {
+		if from.Has(*point) == false {
+			diff[point] = struct{}{}
+		}
+	}
+	for point, _ := range from {
+		if s.Has(*point) == false {
+			diff[point] = struct{}{}
+		}
+	}
+	return diff.Reduce()
+}
+
+func (s AbsPointSet) Strings() map[string]struct{} {
 	m := make(map[string]struct{})
 	for p, _ := range s {
 		m[p.String()] = struct{}{}
 	}
 	return m
+}
+
+func (s AbsPointSet) String() string {
+	var buffer bytes.Buffer
+	buffer.WriteString("(")
+	length := len(s)
+	i := 0
+	for point, _ := range s {
+		buffer.WriteString(fmt.Sprintf("%v", point))
+		i++
+		if i != length {
+			buffer.WriteString(" ")
+		}
+	}
+	buffer.WriteString(")")
+	return buffer.String()
 }
 
 func (p AbsPoint) Index() uint8 {

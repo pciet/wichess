@@ -218,7 +218,7 @@ func (g game) moves(total time.Duration) map[string]map[string]struct{} {
 	}
 	m, check, checkmate := board.Moves(active)
 	for point, set := range m {
-		moves[point.String()] = set.String()
+		moves[point.String()] = set.Strings()
 	}
 	if checkmate {
 		moves[checkmate_key] = nil
