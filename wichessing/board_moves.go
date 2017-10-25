@@ -29,7 +29,9 @@ func (b Board) Moves(active Orientation) (map[AbsPoint]AbsPointSet, bool, bool) 
 				delete(moves, move)
 			}
 		}
-		sets[point.AbsPoint] = moves
+		if len(moves) > 0 {
+			sets[point.AbsPoint] = moves
+		}
 	}
 	return sets, false, false
 }
@@ -67,7 +69,8 @@ func (b Board) CheckMoves(active Orientation) map[AbsPoint]AbsPointSet {
 	return moves
 }
 
-func (b Board) AllMovesFor(player Orientation) map[AbsPoint]AbsPointSet {
+// Naive refers to moves that may put the King in check. The caller must filter those points that do put the King in check out from legal moves.
+func (b Board) AllNaiveMovesFor(player Orientation) map[AbsPoint]AbsPointSet {
 	moves := make(map[AbsPoint]AbsPointSet)
 	for _, pt := range b {
 		if pt.Piece == nil {

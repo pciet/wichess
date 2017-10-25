@@ -41,7 +41,7 @@ func (b Board) PiecesFor(player Orientation) PieceSet {
 		if point.Orientation != player {
 			continue
 		}
-		set = set.Add(*point.Piece)
+		set = set.Add(point.Piece)
 	}
 	return set
 }
@@ -79,7 +79,7 @@ func (b Board) PiecesInDanger(player Orientation) uint8 {
 	} else {
 		opponent = White
 	}
-	moves := b.AllMovesFor(opponent)
+	moves := b.AllNaiveMovesFor(opponent)
 	count := 0
 	for _, point := range b {
 		if point.Piece == nil {

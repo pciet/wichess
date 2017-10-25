@@ -8,7 +8,22 @@ import ()
 func (b Board) Draw(turn Orientation) bool {
 	// TODO: no capture or pawn move in the last fifty moves by either player
 	// not in check but no legal move
-	moves, check, checkmate := b.Moves(turn)
+	checkmate := b.Checkmate(turn)
+	check := b.Check(turn)
+	moves := b.AllNaiveMovesFor(turn)
+	// remove all check moves for kings
+	for pt, mvs := range moves {
+		if b[pt.Index()].Base == King {
+			for mv, _ := range mvs {
+				if b.AfterMove(pt, *mv, turn).Check(turn) {
+					delete(mvs, mv)
+				}
+				if len(mvs) == 0 {
+					delete(moves, pt)
+				}
+			}
+		}
+	}
 	if (check == false) && (checkmate == false) && ((moves == nil) || (len(moves) == 0)) {
 		return true
 	}
@@ -49,6 +64,18 @@ func (b Board) Draw(turn Orientation) bool {
 		}
 		i++
 	}
+	if b.insufficientMaterial(friendly1, friendly2, opponent1, opponent2) || b.insufficientMaterial(opponent1, opponent2, friendly1, friendly2) {
+		return true
+	}
+	return false
+}
+
+// this function is called twice, it does not cover all cases in both directions
+func (b Board) insufficientMaterial(friendly1, friendly2, opponent1, opponent2 *Piece) bool {
+	// this case is covered by calling this function the second time reversed
+	if opponent2 == nil {
+		return false
+	}
 	if friendly2 == nil {
 		// king v king+bishop
 		if ((opponent1.Base == King) || (opponent1.Base == Bishop)) &&
@@ -76,8 +103,37 @@ func (b Board) Draw(turn Orientation) bool {
 			} else {
 				bishop2 = opponent2
 			}
-			// TODO: this is the wrong way to check for bishops on the same color
-			if (b.IndexPositionOfPiece(bishop1) % 2) == (b.IndexPositionOfPiece(bishop2) % 2) {
+			var bishop1Colored, bishop2Colored bool
+			b1i := b.IndexPositionOfPiece(bishop1)
+			// if on an even row then colored is if odd
+			if ((b1i / 8) % 2) == 1 {
+				if (b1i % 2) == 0 {
+					bishop1Colored = true
+				} else {
+					bishop1Colored = false
+				}
+			} else {
+				if (b1i % 2) == 0 {
+					bishop1Colored = false
+				} else {
+					bishop1Colored = true
+				}
+			}
+			b2i := b.IndexPositionOfPiece(bishop2)
+			if ((b2i / 8) % 2) == 1 {
+				if (b2i % 2) == 0 {
+					bishop2Colored = true
+				} else {
+					bishop2Colored = false
+				}
+			} else {
+				if (b2i % 2) == 0 {
+					bishop2Colored = false
+				} else {
+					bishop2Colored = true
+				}
+			}
+			if bishop1Colored == bishop2Colored {
 				return true
 			}
 		}

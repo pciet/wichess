@@ -6,7 +6,11 @@ package wichessing
 import ()
 
 func (b Board) Checkmate(turn Orientation) bool {
-	for from, set := range b.AllMovesFor(turn) {
+	// if the King is not in check then its not a checkmate - the no moves case is a stalemate
+	if b.Check(turn) == false {
+		return false
+	}
+	for from, set := range b.AllNaiveMovesFor(turn) {
 		for move, _ := range set {
 			if b.AfterMove(from, *move, turn).Check(turn) == false {
 				return false
@@ -17,6 +21,7 @@ func (b Board) Checkmate(turn Orientation) bool {
 }
 
 // TODO: if detonate bishop is in danger next to king, then king is in check
+// TODO: possible optimization may involve reducing the check checks for naive moves (into check)
 
 func (b Board) Check(turn Orientation) bool {
 	var orientation Orientation
@@ -25,7 +30,7 @@ func (b Board) Check(turn Orientation) bool {
 	} else {
 		orientation = White
 	}
-	allMoves := b.AllMovesFor(orientation)
+	allMoves := b.AllNaiveMovesFor(orientation)
 	king, _ := b.KingLocationFor(turn)
 	for orig, moves := range allMoves {
 		for pt, _ := range moves {

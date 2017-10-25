@@ -34,8 +34,8 @@ func (p Piece) String() string {
 
 type PieceSet map[*Piece]struct{}
 
-func (the PieceSet) Add(a Piece) PieceSet {
-	the[&a] = struct{}{}
+func (the PieceSet) Add(a *Piece) PieceSet {
+	the[a] = struct{}{}
 	return the
 }
 
