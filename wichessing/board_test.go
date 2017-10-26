@@ -37,6 +37,9 @@ func init() {
 	for _, c := range CastlingAfterMoveCases {
 		AfterMoveCases = append(AfterMoveCases, c)
 	}
+	for _, c := range DetonateAfterMoveCases {
+		AfterMoveCases = append(AfterMoveCases, c)
+	}
 }
 
 type AvailableMovesCase struct {

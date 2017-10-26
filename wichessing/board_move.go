@@ -49,31 +49,27 @@ func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) PointSet {
 				set[&Point{
 					AbsPoint: pt.AbsPoint,
 				}] = struct{}{}
-				set[&Point{
-					Piece:    pt.Piece,
-					AbsPoint: toPoint.AbsPoint,
-				}] = struct{}{}
-				// from and guard point are empty, to has guard
-				// dpoint is an *AbsPoint, diffpoint is a *Point
-				newBoard := b.Copy()
-				newBoard[AbsPointToIndex(fromPoint.AbsPoint)].Piece = nil
-				newBoard[AbsPointToIndex(pt.AbsPoint)].Piece = nil
-				newBoard[AbsPointToIndex(toPoint.AbsPoint)].Piece = fromPoint.Piece
-				dset := newBoard.DetonationsFrom(toPoint.AbsPoint, nil)
-				// a length of 1 means its not a detonator
-				if len(dset) > 1 {
-				DETONATE:
-					for dpoint, _ := range dset {
-						for diffpoint, _ := range set {
-							if (diffpoint.File == dpoint.File) && (diffpoint.Rank == dpoint.Rank) {
-								diffpoint.Piece = nil
-								continue DETONATE
+				if fromPoint.Detonates {
+					board := b.Copy()
+					board[fromPoint.AbsPoint.Index()].Piece = nil
+					board[pt.AbsPoint.Index()].Piece = nil
+					board[to.Index()].Piece = fromPoint.Piece
+					dset := board.DetonationsFrom(to, nil)
+					if len(dset) > 0 {
+						for dpt, _ := range dset {
+							if (dpt.File == to.File) && (dpt.Rank == to.Rank) {
+								continue
 							}
+							set[&Point{
+								AbsPoint: *dpt,
+							}] = struct{}{}
 						}
-						set[&Point{
-							AbsPoint: *dpoint,
-						}] = struct{}{}
 					}
+				} else {
+					set[&Point{
+						Piece:    pt.Piece,
+						AbsPoint: toPoint.AbsPoint,
+					}] = struct{}{}
 				}
 				b.UpdatePiecePrevious(turn)
 				pt.Piece.Previous = pt.AbsPoint.Index()
@@ -264,19 +260,28 @@ func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) PointSet {
 			toPoint.Piece.Previous = to.Index()
 			return set
 		}
+		if toPoint.Detonates && (toPoint.Orientation != turn) {
+			set[&Point{
+				AbsPoint: from,
+			}] = struct{}{}
+			dset := b.DetonationsFrom(to, nil)
+			if len(dset) > 0 {
+				for pt, _ := range dset {
+					if (pt.File == from.File) && (pt.Rank == from.Rank) {
+						continue
+					}
+					set[&Point{
+						AbsPoint: *pt,
+					}] = struct{}{}
+				}
+				b.UpdatePiecePrevious(turn)
+				return set
+			}
+		}
 	}
 	set[&Point{
 		AbsPoint: from,
 	}] = struct{}{}
-	dset := b.DetonationsFrom(to, nil)
-	if len(dset) > 1 {
-		for pt, _ := range dset {
-			set[&Point{
-				AbsPoint: *pt,
-			}] = struct{}{}
-		}
-		return set
-	}
 	fromPoint.Moved = true
 	set[&Point{
 		Piece:    fromPoint.Piece,
