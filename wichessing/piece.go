@@ -141,7 +141,6 @@ func (the Piece) SetKindFlags() Piece {
 		the.Rallies = true
 	case FortifyPawn:
 		the.Fortified = true
-	case ExtendedPawn:
 	case SwapKnight:
 		the.Ghost = true
 		the.MustEnd = true

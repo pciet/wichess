@@ -191,6 +191,10 @@ func (p AbsPoint) String() string {
 	return fmt.Sprintf("%v-%v", p.File, p.Rank)
 }
 
+func (p RelPoint) String() string {
+	return fmt.Sprintf("%v:%v", p.XOffset, p.YOffset)
+}
+
 func IndexFromAddressString(address string) uint8 {
 	var file, rank int
 	_, err := fmt.Sscanf(address, "%d-%d", &file, &rank)

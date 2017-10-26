@@ -4,6 +4,7 @@
 package wichessing
 
 import (
+	"bytes"
 	"fmt"
 )
 
@@ -131,6 +132,30 @@ func (s RelPathSet) Copy() RelPathSet {
 	return n
 }
 
+func (s RelPathSet) String() string {
+	var buffer bytes.Buffer
+	t := 0
+	l := len(s)
+	for path, _ := range s {
+		buffer.WriteString("(")
+		i := 0
+		length := len(*path)
+		for _, point := range *path {
+			buffer.WriteString(fmt.Sprintf("%v", point))
+			i++
+			if i != length {
+				buffer.WriteString(",")
+			}
+		}
+		buffer.WriteString(")")
+		t++
+		if t != l {
+			buffer.WriteString(",")
+		}
+	}
+	return buffer.String()
+}
+
 var (
 	KnightPathSet = RelPathSet{
 		&RelPath{{0, 1}, {0, 2}, {-1, 2}}:    {},
@@ -217,6 +242,19 @@ func init() {
 
 	ExtendedRookRallyPathSet = ExtendedRookPathSet.Copy()
 	ExtendedRookRallyPathSet.Combine(DoubleKingPathSet)
+
+	// have to reset these since the pointer changed with RelPathSet.Copy
+	ExtendedKnightPathMap[RallyMove] = ExtendedKnightRallyPathSet
+
+	ExtendedBishopPathMap[First] = ExtendedBishopPathSet
+	ExtendedBishopPathMap[Move] = ExtendedBishopPathSet
+	ExtendedBishopPathMap[Take] = ExtendedBishopPathSet
+	ExtendedBishopPathMap[RallyMove] = ExtendedBishopRallyPathSet
+
+	ExtendedRookPathMap[First] = ExtendedRookPathSet
+	ExtendedRookPathMap[Move] = ExtendedRookPathSet
+	ExtendedRookPathMap[Take] = ExtendedRookPathSet
+	ExtendedRookPathMap[RallyMove] = ExtendedRookRallyPathSet
 }
 
 // The PathType is used for pieces with varying moves; the pawn is the base chess example with different first move, take moves, and regular moves.
