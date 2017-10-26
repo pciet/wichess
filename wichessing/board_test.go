@@ -13,6 +13,7 @@ var (
 )
 
 func init() {
+	// available moves test cases
 	for _, c := range BasicMovesCases {
 		AvailableMovesCases = append(AvailableMovesCases, c)
 	}
@@ -25,8 +26,15 @@ func init() {
 	for _, c := range DrawMovesCases {
 		AvailableMovesCases = append(AvailableMovesCases, c)
 	}
+	for _, c := range CastlingMovesCases {
+		AvailableMovesCases = append(AvailableMovesCases, c)
+	}
 
+	// board state change with move test cases
 	for _, c := range BasicAfterMoveCases {
+		AfterMoveCases = append(AfterMoveCases, c)
+	}
+	for _, c := range CastlingAfterMoveCases {
 		AfterMoveCases = append(AfterMoveCases, c)
 	}
 }
@@ -120,7 +128,7 @@ func TestPositionAfterMoveCases(t *testing.T) {
 						t.Fatalf("\"%v\" failed: expected %v piece but found %v piece", c.Name, expected.Orientation, actual.Orientation)
 					}
 					if expected.Kind != actual.Kind {
-						t.Fatalf("\"%v\" failed: expected %v kind but found %v kind", c.Name, expected.Kind, actual.Kind)
+						t.Fatalf("\"%v\" failed: expected %v kind at %v but found %v kind", c.Name, expected.Kind, expected.AbsPoint, actual.Kind)
 					}
 					continue DIFFING
 				}

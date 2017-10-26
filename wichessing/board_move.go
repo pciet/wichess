@@ -234,7 +234,7 @@ func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) PointSet {
 			fromPoint.Moved = true
 			set[&Point{
 				AbsPoint: AbsPoint{
-					File: 6,
+					File: 5,
 					Rank: 7,
 				},
 				Piece: b[63].Piece,

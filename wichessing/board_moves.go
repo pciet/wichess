@@ -24,9 +24,53 @@ func (b Board) Moves(active Orientation) (map[AbsPoint]AbsPointSet, bool, bool) 
 		if len(moves) == 0 {
 			continue
 		}
+		piece := b[point.Index()].Piece
+		// TODO: this remove castle moves logic is duplicated in Board.CheckMoves
+		removeLeftCastle := false
+		removeRightCastle := false
+		if (piece.Kind == King) && (piece.Moved == false) {
+			// are the skipped king squares threatened?
+			if piece.Orientation == White {
+				if b.AfterMove(point.AbsPoint, AbsPoint{3, 0}, piece.Orientation).Check(piece.Orientation) {
+					removeLeftCastle = true
+				}
+				if b.AfterMove(point.AbsPoint, AbsPoint{5, 0}, active).Check(active) {
+					removeRightCastle = true
+				}
+			} else {
+				if b.AfterMove(point.AbsPoint, AbsPoint{3, 7}, piece.Orientation).Check(piece.Orientation) {
+					removeLeftCastle = true
+				}
+				if b.AfterMove(point.AbsPoint, AbsPoint{5, 7}, piece.Orientation).Check(piece.Orientation) {
+					removeRightCastle = true
+				}
+			}
+		}
 		for move, _ := range moves {
-			if b.AfterMove(point.AbsPoint, *move, b[point.Index()].Orientation).Check(b[point.Index()].Orientation) {
+			if b.AfterMove(point.AbsPoint, *move, piece.Orientation).Check(piece.Orientation) {
 				delete(moves, move)
+			}
+			if removeLeftCastle {
+				if piece.Orientation == White {
+					if (move.File == 2) && (move.Rank == 0) {
+						delete(moves, move)
+					}
+				} else {
+					if (move.File == 2) && (move.Rank == 7) {
+						delete(moves, move)
+					}
+				}
+			}
+			if removeRightCastle {
+				if piece.Orientation == White {
+					if (move.File == 6) && (move.Rank == 0) {
+						delete(moves, move)
+					}
+				} else {
+					if (move.File == 6) && (move.Rank == 7) {
+						delete(moves, move)
+					}
+				}
 			}
 		}
 		if len(moves) > 0 {
@@ -55,7 +99,62 @@ func (b Board) CheckMoves(active Orientation) map[AbsPoint]AbsPointSet {
 	}
 	for pt, set := range unfiltered {
 		allowed := make(AbsPointSet)
+		piece := b[pt.Index()]
+		removeCastling := false
+		removeLeftCastle := false
+		removeRightCastle := false
+		if (piece.Kind == King) && (piece.Moved == false) {
+			if b.Check(active) {
+				removeCastling = true
+			} else {
+				// are the skipped king squares threatened?
+				if active == White {
+					if b.AfterMove(pt, AbsPoint{3, 0}, active).Check(active) {
+						removeLeftCastle = true
+					} else if b.AfterMove(pt, AbsPoint{5, 0}, active).Check(active) {
+						removeRightCastle = true
+					}
+				} else {
+					if b.AfterMove(pt, AbsPoint{3, 7}, active).Check(active) {
+						removeLeftCastle = true
+					} else if b.AfterMove(pt, AbsPoint{5, 7}, active).Check(active) {
+						removeRightCastle = true
+					}
+				}
+			}
+		}
 		for mv, _ := range set {
+			if removeCastling || (removeLeftCastle && removeRightCastle) {
+				if active == White {
+					if ((mv.File == 2) && (mv.Rank == 0)) || ((mv.File == 6) && (mv.Rank == 0)) {
+						continue
+					}
+				} else {
+					if ((mv.File == 2) && (mv.Rank == 7)) || ((mv.File == 6) && (mv.Rank == 7)) {
+						continue
+					}
+				}
+			} else if removeLeftCastle {
+				if active == White {
+					if (mv.File == 2) && (mv.Rank == 0) {
+						continue
+					}
+				} else {
+					if (mv.File == 2) && (mv.Rank == 7) {
+						continue
+					}
+				}
+			} else if removeRightCastle {
+				if active == White {
+					if (mv.File == 6) && (mv.Rank == 0) {
+						continue
+					}
+				} else {
+					if (mv.File == 6) && (mv.Rank == 7) {
+						continue
+					}
+				}
+			}
 			if b.AfterMove(pt, *mv, active).Check(active) {
 				continue
 			}
