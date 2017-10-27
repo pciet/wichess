@@ -378,11 +378,16 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 		FIRST_PATH_OUTER:
 			for i, point := range path.Points {
 				actualPoint := b[point.Index()]
-				if (actualPoint.Piece != nil) && (the.Ghost == false) {
-					break
-				} else if actualPoint.Piece != nil {
-					if (actualPoint.Orientation != the.Orientation) || (the.Swaps == false) {
+				if actualPoint.Piece != nil {
+					// TODO: ghost and swaps interacting for a dual piece?
+					if (actualPoint.Orientation == the.Orientation) && the.Swaps {
+						filteredPath.Points = append(filteredPath.Points, point)
+						break
+					}
+					if the.Ghost {
 						continue
+					} else {
+						break
 					}
 				}
 				if the.MustEnd {
@@ -423,11 +428,15 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 		MOVE_PATH_OUTER:
 			for i, point := range path.Points {
 				actualPoint := b[point.Index()]
-				if (actualPoint.Piece != nil) && (the.Ghost == false) {
-					break
-				} else if actualPoint.Piece != nil {
-					if (actualPoint.Orientation != the.Orientation) || (the.Swaps == false) {
+				if actualPoint.Piece != nil {
+					if (actualPoint.Orientation == the.Orientation) && the.Swaps {
+						filteredPath.Points = append(filteredPath.Points, point)
+						break
+					}
+					if the.Ghost {
 						continue
+					} else {
+						break
 					}
 				}
 				if the.MustEnd {
@@ -541,11 +550,15 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 		RALLY_PATH_OUTER:
 			for i, point := range path.Points {
 				actualPoint := b[point.Index()]
-				if (actualPoint.Piece != nil) && (the.Ghost == false) {
-					break
-				} else if actualPoint.Piece != nil {
-					if (actualPoint.Orientation != the.Orientation) || (the.Swaps == false) {
+				if actualPoint.Piece != nil {
+					if (actualPoint.Orientation == the.Orientation) && the.Swaps {
+						filteredPath.Points = append(filteredPath.Points, point)
+						break
+					}
+					if the.Ghost {
 						continue
+					} else {
+						break
 					}
 				}
 				if the.MustEnd {
