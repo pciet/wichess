@@ -29,6 +29,9 @@ func init() {
 	for _, c := range CastlingMovesCases {
 		AvailableMovesCases = append(AvailableMovesCases, c)
 	}
+	for _, c := range ReconMovesCases {
+		AvailableMovesCases = append(AvailableMovesCases, c)
+	}
 
 	// board state change with move test cases
 	for _, c := range BasicAfterMoveCases {

@@ -634,7 +634,7 @@ func (b Board) ReconPointsFrom(the Point) AbsPointSet {
 			continue
 		}
 		var nrank int
-		if the.Piece.Orientation == White {
+		if the.Orientation == White {
 			nrank = int(b[index].Rank) + 1
 		} else {
 			nrank = int(b[index].Rank) - 1
