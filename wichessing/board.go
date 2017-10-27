@@ -3,7 +3,10 @@
 
 package wichessing
 
-import ()
+import (
+	"bytes"
+	"fmt"
+)
 
 type Board [64]Point
 
@@ -19,4 +22,15 @@ func (b Board) Copy() Board {
 		}
 	}
 	return board
+}
+
+func (b Board) String() string {
+	var buffer bytes.Buffer
+	for rank := 7; rank >= 0; rank-- {
+		for file := 0; file < 8; file++ {
+			buffer.WriteString(fmt.Sprintf("%v ", b[AbsPoint{uint8(file), uint8(rank)}.Index()]))
+		}
+		buffer.WriteString("\n")
+	}
+	return buffer.String()
 }

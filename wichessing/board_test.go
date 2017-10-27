@@ -52,6 +52,9 @@ func init() {
 	for _, c := range GhostAfterMoveCases {
 		AfterMoveCases = append(AfterMoveCases, c)
 	}
+	for _, c := range GuardAfterMoveCases {
+		AfterMoveCases = append(AfterMoveCases, c)
+	}
 }
 
 type AvailableMovesCase struct {

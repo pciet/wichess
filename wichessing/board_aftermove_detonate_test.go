@@ -7,6 +7,50 @@ import ()
 
 var DetonateAfterMoveCases = []PositionAfterMoveCase{
 	{
+		Name: "False Detonator Chain",
+		Initial: PointSet{
+			{
+				AbsPoint: AbsPoint{0, 0},
+				Piece: &Piece{
+					Kind:        DetonateKnight,
+					Orientation: White,
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{1, 1},
+				Piece: &Piece{
+					Kind:        DetonatePawn,
+					Orientation: Black,
+					Moved:       true,
+					Previous:    AbsPoint{1, 1}.Index(),
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{3, 2},
+				Piece: &Piece{
+					Kind:        DetonateRook,
+					Orientation: White,
+				},
+			}: {},
+			&WhiteKingStart:     {},
+			&BlackKingStart:     {},
+			&BlackLeftRookStart: {},
+		},
+		From: AbsPoint{0, 7},
+		To:   AbsPoint{0, 0},
+		Diff: PointSet{
+			{
+				AbsPoint: AbsPoint{0, 7},
+			}: {},
+			{
+				AbsPoint: AbsPoint{0, 0},
+			}: {},
+			{
+				AbsPoint: AbsPoint{1, 1},
+			}: {},
+		},
+	},
+	{
 		Name: "Detonator Chain",
 		Initial: PointSet{
 			{

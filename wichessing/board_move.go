@@ -43,12 +43,8 @@ func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) PointSet {
 	for pt, _ := range b.SurroundingPoints(toPoint) {
 		if pt.Piece != nil {
 			if (pt.Orientation != fromPoint.Orientation) && pt.Guards {
-				set[&Point{
-					AbsPoint: fromPoint.AbsPoint,
-				}] = struct{}{}
-				set[&Point{
-					AbsPoint: pt.AbsPoint,
-				}] = struct{}{}
+				set.SetPointPiece(fromPoint.AbsPoint, nil)
+				set.SetPointPiece(pt.AbsPoint, nil)
 				if fromPoint.Detonates {
 					board := b.Copy()
 					board[fromPoint.AbsPoint.Index()].Piece = nil
@@ -60,16 +56,33 @@ func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) PointSet {
 							if (dpt.File == to.File) && (dpt.Rank == to.Rank) {
 								continue
 							}
-							set[&Point{
-								AbsPoint: *dpt,
-							}] = struct{}{}
+							set.SetPointPiece(*dpt, nil)
 						}
 					}
 				} else {
-					set[&Point{
-						Piece:    pt.Piece,
-						AbsPoint: toPoint.AbsPoint,
-					}] = struct{}{}
+					// a detonator taken by a guard will remove all other possible chaining guards
+					// but in these other cases we need to chain all of the other possible guards
+					board := b.Copy()
+					board[fromPoint.AbsPoint.Index()].Piece = nil
+					board[pt.AbsPoint.Index()].Piece = nil
+					board[to.Index()].Piece = pt.Piece
+					// in the diff we'll at least have the first piece here, maybe updated if another opponent guard is around
+					set.SetPointPiece(to, pt.Piece)
+				ALLGUARDS:
+					for {
+						for gpt, _ := range board.SurroundingPoints(toPoint) {
+							if gpt.Piece != nil {
+								if (gpt.Orientation != board[to.Index()].Piece.Orientation) && gpt.Guards {
+									set.SetPointPiece(gpt.AbsPoint, nil)
+									set.SetPointPiece(to, gpt.Piece)
+									board[gpt.AbsPoint.Index()].Piece = nil
+									board[to.Index()].Piece = gpt.Piece
+									continue ALLGUARDS
+								}
+							}
+						}
+						break
+					}
 				}
 				b.UpdatePiecePrevious(turn)
 				pt.Piece.Previous = pt.AbsPoint.Index()

@@ -23,6 +23,19 @@ func (p Point) String() string {
 
 type PointSet map[*Point]struct{}
 
+func (p PointSet) SetPointPiece(at AbsPoint, piece *Piece) {
+	for point, _ := range p {
+		if (point.File == at.File) && (point.Rank == at.Rank) {
+			point.Piece = piece
+			return
+		}
+	}
+	p[&Point{
+		AbsPoint: at,
+		Piece:    piece,
+	}] = struct{}{}
+}
+
 func (s PointSet) String() string {
 	var buffer bytes.Buffer
 	buffer.WriteString("(")
