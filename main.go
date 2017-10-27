@@ -38,6 +38,7 @@ func main() {
 	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("web/js"))))
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("web/css"))))
 	http.Handle("/img/", http.StripPrefix("/img/", http.FileServer(http.Dir("web/img"))))
+	http.Handle("/sound/", http.StripPrefix("/sound/", http.FileServer(http.Dir("web/sound"))))
 
 	err := http.ListenAndServe(":8080", nil)
 	if err != nil {

@@ -114,6 +114,9 @@
     <script type="text/javascript" src="/js/duration.js"></script>
     <script type="text/javascript" src="/js/pieces.js"></script>
     <script type="text/javascript">
+    var SoundCount = 325;
+    var Muted = false;
+
     var game_id = {{.ID}};
     var Player = {{.Name}};
 
@@ -314,7 +317,9 @@
                 }
             }
         });
-
+        if (Muted == false) {
+            $('#audio'+Math.floor(Math.random()*SoundCount)).get(0).play();
+        }
     }
     function addrStringToIndex(str) {
         var address = str.split('-');
@@ -377,6 +382,18 @@
         $(clock).html(millisecondsToClock(remaining));
     }
     $(document).ready(function() {
+        for (var i = 0; i < SoundCount; i++) {
+            $('#audio').append('<audio id="audio'+i+'"><source src="/sound/click'+i+'.wav" type="audio/wav"><source src="/sound/click'+i+'.ogg" type="audio/ogg"></audio>');
+        }
+        $('#movemute').click(function() {
+            if (Muted == false) {
+                $('#movemute').html('&#x1f507;');
+                Muted = true;
+            } else {
+                $('#movemute').html('&#x1f50a;');
+                Muted = false;
+            }
+        });
         if (TotalTime.milliseconds() > 0) {
             $('#backbutton').hide();
         } else {
@@ -635,5 +652,7 @@
         <div class="inlinediv"><span id="youwhite"></span><span>{{.White}}</span></div>
         <div class="inlinediv"><span class="indicator" id="whiteactive">Turn</span></div>
     </div>
+    <div id="movemute">&#x1f50a;</div>
+    <div id="audio"></div>
 </body>
 </html>
