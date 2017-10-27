@@ -379,10 +379,15 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 			for i, point := range path.Points {
 				actualPoint := b[point.Index()]
 				if actualPoint.Piece != nil {
-					// TODO: ghost and swaps interacting for a dual piece?
+					if the.MustEnd && (len(path.Points) != i+1) {
+						if the.Ghost {
+							continue
+						} else {
+							break
+						}
+					}
 					if (actualPoint.Orientation == the.Orientation) && the.Swaps {
 						filteredPath.Points = append(filteredPath.Points, point)
-						break
 					}
 					if the.Ghost {
 						continue
@@ -390,10 +395,8 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 						break
 					}
 				}
-				if the.MustEnd {
-					if len(path.Points) != i+1 {
-						continue
-					}
+				if the.MustEnd && (len(path.Points) != i+1) {
+					continue
 				}
 				if the.Base == King {
 					for pt, _ := range b.SurroundingPoints(actualPoint) {
@@ -429,9 +432,15 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 			for i, point := range path.Points {
 				actualPoint := b[point.Index()]
 				if actualPoint.Piece != nil {
+					if the.MustEnd && (len(path.Points) != i+1) {
+						if the.Ghost {
+							continue
+						} else {
+							break
+						}
+					}
 					if (actualPoint.Orientation == the.Orientation) && the.Swaps {
 						filteredPath.Points = append(filteredPath.Points, point)
-						break
 					}
 					if the.Ghost {
 						continue
@@ -439,10 +448,8 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 						break
 					}
 				}
-				if the.MustEnd {
-					if len(path.Points) != i+1 {
-						continue
-					}
+				if the.MustEnd && (len(path.Points) != i+1) {
+					continue
 				}
 				if the.Base == King {
 					for pt, _ := range b.SurroundingPoints(actualPoint) {
@@ -551,9 +558,15 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 			for i, point := range path.Points {
 				actualPoint := b[point.Index()]
 				if actualPoint.Piece != nil {
+					if the.MustEnd && (len(path.Points) != i+1) {
+						if the.Ghost {
+							continue
+						} else {
+							break
+						}
+					}
 					if (actualPoint.Orientation == the.Orientation) && the.Swaps {
 						filteredPath.Points = append(filteredPath.Points, point)
-						break
 					}
 					if the.Ghost {
 						continue
@@ -561,10 +574,8 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 						break
 					}
 				}
-				if the.MustEnd {
-					if len(path.Points) != i+1 {
-						continue
-					}
+				if the.MustEnd && (len(path.Points) != i+1) {
+					continue
 				}
 				if the.Base == King {
 					for pt, _ := range b.SurroundingPoints(actualPoint) {
