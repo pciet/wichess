@@ -7,6 +7,68 @@ import ()
 
 var CheckMovesCases = []AvailableMovesCase{
 	{
+		Name:   "False Check, Detonate Rook Vs Guard Bishop",
+		Active: Black,
+		Position: PointSet{
+			&WhiteKingStart: {},
+			{
+				AbsPoint: AbsPoint{1, 3},
+				Piece: &Piece{
+					Kind:        GuardBishop,
+					Orientation: White,
+					Moved:       true,
+					Previous:    AbsPoint{1, 3}.Index(),
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{0, 7},
+				Piece: &Piece{
+					Kind:        DetonateRook,
+					Orientation: Black,
+					Moved:       false,
+				},
+			}: {},
+			&BlackKingStart: {},
+		},
+		Moves: map[AbsPoint]AbsPointSet{
+			{4, 0}: {
+				{3, 0}: {},
+				{3, 1}: {},
+				{4, 1}: {},
+				{5, 1}: {},
+				{5, 0}: {},
+			},
+			{1, 3}: {
+				{0, 2}: {},
+				{2, 2}: {},
+				{3, 1}: {},
+				{0, 4}: {},
+				{2, 4}: {},
+				{3, 5}: {},
+				{4, 6}: {},
+				{5, 7}: {},
+			},
+			{0, 7}: {
+				{0, 6}: {},
+				{0, 5}: {},
+				{0, 4}: {},
+				{0, 3}: {},
+				{0, 2}: {},
+				{0, 1}: {},
+				{0, 0}: {},
+				{1, 7}: {},
+				{2, 7}: {},
+				{3, 7}: {},
+			},
+			{4, 7}: {
+				{3, 7}: {},
+				{3, 6}: {},
+				{5, 6}: {},
+				{2, 7}: {},
+			},
+		},
+	},
+	{
 		Name:   "Black Detonate Pawn Versus White Guard Rook Adjacent White King",
 		Active: White,
 		Check:  true,
