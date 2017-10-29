@@ -7,6 +7,143 @@ import ()
 
 var DrawMovesCases = []AvailableMovesCase{
 	{
+		Name:   "Stalemate Not Caught",
+		Active: Black,
+		Draw:   true,
+		Position: PointSet{
+			&WhitePawn0Start: {},
+			&WhitePawn2Start: {},
+			{
+				AbsPoint: AbsPoint{2, 2},
+				Piece: &Piece{
+					Kind:        Pawn,
+					Orientation: White,
+					Moved:       true,
+					Previous:    AbsPoint{2, 2}.Index(),
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{2, 3},
+				Piece: &Piece{
+					Kind:        Pawn,
+					Orientation: Black,
+					Moved:       true,
+					Previous:    AbsPoint{2, 3}.Index(),
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{1, 4},
+				Piece: &Piece{
+					Kind:        Rook,
+					Orientation: White,
+					Moved:       true,
+					Previous:    AbsPoint{1, 4}.Index(),
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{3, 4},
+				Piece: &Piece{
+					Kind:        Pawn,
+					Orientation: White,
+					Moved:       true,
+					Previous:    AbsPoint{3, 4}.Index(),
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{6, 4},
+				Piece: &Piece{
+					Kind:        Bishop,
+					Orientation: White,
+					Moved:       true,
+					Previous:    AbsPoint{6, 4}.Index(),
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{3, 5},
+				Piece: &Piece{
+					Kind:        Pawn,
+					Orientation: Black,
+					Moved:       true,
+					Previous:    AbsPoint{3, 5}.Index(),
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{4, 5},
+				Piece: &Piece{
+					Kind:        King,
+					Orientation: White,
+					Moved:       true,
+					Previous:    AbsPoint{4, 5}.Index(),
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{2, 6},
+				Piece: &Piece{
+					Kind:        King,
+					Orientation: Black,
+					Moved:       true,
+					Previous:    AbsPoint{2, 6}.Index(),
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{6, 7},
+				Piece: &Piece{
+					Kind:        Queen,
+					Orientation: White,
+					Moved:       true,
+					Previous:    AbsPoint{6, 7}.Index(),
+				},
+			}: {},
+		},
+		Moves: map[AbsPoint]AbsPointSet{
+			{0, 1}: {
+				{0, 2}: {},
+				{0, 3}: {},
+			},
+			{1, 4}: {
+				{1, 3}: {},
+				{1, 2}: {},
+				{1, 1}: {},
+				{1, 0}: {},
+				{0, 4}: {},
+				{1, 5}: {},
+				{1, 6}: {},
+				{1, 7}: {},
+				{2, 4}: {},
+			},
+			{6, 4}: {
+				{5, 3}: {},
+				{4, 2}: {},
+				{3, 1}: {},
+				{2, 0}: {},
+				{7, 3}: {},
+				{5, 5}: {},
+				{4, 6}: {},
+				{3, 7}: {},
+				{7, 5}: {},
+			},
+			{4, 5}: {
+				{5, 4}: {},
+				{5, 5}: {},
+				{5, 6}: {},
+				{4, 6}: {},
+			},
+			{6, 7}: {
+				{6, 6}: {},
+				{6, 5}: {},
+				{7, 6}: {},
+				{7, 7}: {},
+				{5, 7}: {},
+				{4, 7}: {},
+				{3, 7}: {},
+				{2, 7}: {},
+				{1, 7}: {},
+				{0, 7}: {},
+				{5, 6}: {},
+			},
+		},
+	},
+	{
 		Name:   "False Insufficient Material Draw - Bishops Of Different Color, Different Rows 2",
 		Active: Black,
 		Draw:   false,

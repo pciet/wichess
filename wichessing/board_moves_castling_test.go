@@ -7,6 +7,140 @@ import ()
 
 var CastlingMovesCases = []AvailableMovesCase{
 	{
+		Name:   "Computer Didn't Castle",
+		Active: Black,
+		Check:  true,
+		Position: PointSet{
+			{
+				AbsPoint: AbsPoint{0, 0},
+				Piece: &Piece{
+					Kind:        Bishop,
+					Orientation: Black,
+					Moved:       true,
+					Previous:    AbsPoint{0, 0}.Index(),
+				},
+			}: {},
+			&WhiteLeftKnightStart:  {},
+			&WhiteRightKnightStart: {},
+			&WhiteRightRookStart:   {},
+			&WhitePawn0Start:       {},
+			&WhitePawn6Start:       {},
+			&WhitePawn7Start:       {},
+			{
+				AbsPoint: AbsPoint{3, 2},
+				Piece: &Piece{
+					Kind:        King,
+					Orientation: White,
+					Moved:       true,
+					Previous:    AbsPoint{3, 2}.Index(),
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{0, 5},
+				Piece: &Piece{
+					Kind:        Bishop,
+					Orientation: White,
+					Moved:       true,
+					Previous:    AbsPoint{0, 5}.Index(),
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{1, 5},
+				Piece: &Piece{
+					Kind:        Bishop,
+					Orientation: White,
+					Moved:       true,
+					Previous:    AbsPoint{1, 5}.Index(),
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{6, 5},
+				Piece: &Piece{
+					Kind:        Pawn,
+					Orientation: Black,
+					Moved:       true,
+					Previous:    AbsPoint{6, 5}.Index(),
+				},
+			}: {},
+			&BlackPawn3Start: {},
+			&BlackPawn4Start: {},
+			&BlackPawn5Start: {},
+			&BlackPawn7Start: {},
+			{
+				AbsPoint: AbsPoint{3, 7},
+				Piece: &Piece{
+					Kind:        Queen,
+					Orientation: White,
+					Moved:       true,
+					Previous:    AbsPoint{3, 7}.Index(),
+				},
+			}: {},
+			&BlackKingStart:      {},
+			&BlackRightRookStart: {},
+		},
+		Moves: map[AbsPoint]AbsPointSet{
+			{1, 0}: {
+				{0, 2}: {},
+				{2, 2}: {},
+				{3, 1}: {},
+			},
+			{6, 0}: {
+				{4, 1}: {},
+				{5, 2}: {},
+				{7, 2}: {},
+			},
+			{0, 1}: {
+				{0, 2}: {},
+				{0, 3}: {},
+			},
+			{6, 1}: {
+				{6, 2}: {},
+				{6, 3}: {},
+			},
+			{7, 1}: {
+				{7, 2}: {},
+				{7, 3}: {},
+			},
+			{3, 2}: {
+				{2, 1}: {},
+				{3, 1}: {},
+				{4, 1}: {},
+				{4, 2}: {},
+				{4, 3}: {},
+				{3, 3}: {},
+				{2, 3}: {},
+				{2, 2}: {},
+			},
+			{0, 5}: {
+				{1, 4}: {},
+				{2, 3}: {},
+				{1, 6}: {},
+				{2, 7}: {},
+			},
+			{1, 5}: {
+				{0, 6}: {},
+				{2, 6}: {},
+				{0, 4}: {},
+				{2, 4}: {},
+				{3, 3}: {},
+				{4, 2}: {},
+				{5, 1}: {},
+			},
+			{3, 7}: {
+				{2, 7}: {},
+				{1, 7}: {},
+				{0, 7}: {},
+				{2, 6}: {},
+				{3, 6}: {},
+				{4, 6}: {},
+				{4, 7}: {},
+			},
+			{4, 7}: {
+				{6, 7}: {},
+			},
+		},
+	},
+	{
 		Name:   "White Castling Moves Blocked",
 		Active: White,
 		Position: PointSet{

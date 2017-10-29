@@ -178,7 +178,10 @@ func (b Board) AllNaiveMovesFor(player Orientation) map[AbsPoint]AbsPointSet {
 		if pt.Piece.Orientation != player {
 			continue
 		}
-		moves[pt.AbsPoint] = b.MovesFromPoint(pt)
+		mfp := b.MovesFromPoint(pt)
+		if len(mfp) > 0 {
+			moves[pt.AbsPoint] = mfp
+		}
 	}
 	return moves
 }
