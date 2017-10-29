@@ -40,6 +40,27 @@ func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) PointSet {
 			}
 		}
 	}
+	// this check is here so detonations happen before guard chaining occurs
+	if toPoint.Piece != nil {
+		if toPoint.Detonates && (toPoint.Orientation != turn) {
+			set[&Point{
+				AbsPoint: from,
+			}] = struct{}{}
+			dset := b.DetonationsFrom(to, nil)
+			if len(dset) > 0 {
+				for pt, _ := range dset {
+					if (pt.File == from.File) && (pt.Rank == from.Rank) {
+						continue
+					}
+					set[&Point{
+						AbsPoint: *pt,
+					}] = struct{}{}
+				}
+				b.UpdatePiecePrevious(turn)
+				return set
+			}
+		}
+	}
 	for pt, _ := range b.SurroundingPoints(toPoint) {
 		if pt.Piece != nil {
 			if (pt.Orientation != fromPoint.Orientation) && pt.Guards {
@@ -272,24 +293,6 @@ func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) PointSet {
 			fromPoint.Piece.Previous = from.Index()
 			toPoint.Piece.Previous = to.Index()
 			return set
-		}
-		if toPoint.Detonates && (toPoint.Orientation != turn) {
-			set[&Point{
-				AbsPoint: from,
-			}] = struct{}{}
-			dset := b.DetonationsFrom(to, nil)
-			if len(dset) > 0 {
-				for pt, _ := range dset {
-					if (pt.File == from.File) && (pt.Rank == from.Rank) {
-						continue
-					}
-					set[&Point{
-						AbsPoint: *pt,
-					}] = struct{}{}
-				}
-				b.UpdatePiecePrevious(turn)
-				return set
-			}
 		}
 	}
 	set[&Point{

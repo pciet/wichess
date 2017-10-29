@@ -7,6 +7,45 @@ import ()
 
 var DetonateAfterMoveCases = []PositionAfterMoveCase{
 	{
+		Name: "Pawn Takes Detonator Adjacent To Guard",
+		Initial: PointSet{
+			&WhiteKingStart:  {},
+			&BlackKingStart:  {},
+			&WhitePawn1Start: {},
+			{
+				AbsPoint: AbsPoint{0, 2},
+				Piece: &Piece{
+					Kind:        DetonatePawn,
+					Orientation: Black,
+					Moved:       true,
+					Previous:    AbsPoint{0, 2}.Index(),
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{1, 3},
+				Piece: &Piece{
+					Kind:        GuardPawn,
+					Orientation: Black,
+					Moved:       true,
+					Previous:    AbsPoint{1, 3}.Index(),
+				},
+			}: {},
+		},
+		From: AbsPoint{1, 1},
+		To:   AbsPoint{0, 2},
+		Diff: PointSet{
+			{
+				AbsPoint: AbsPoint{0, 2},
+			}: {},
+			{
+				AbsPoint: AbsPoint{1, 1},
+			}: {},
+			{
+				AbsPoint: AbsPoint{1, 3},
+			}: {},
+		},
+	},
+	{
 		Name: "False Detonator Chain",
 		Initial: PointSet{
 			{
