@@ -7,32 +7,140 @@
     <link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/css/body.css">
     <style>
-    div {
-        text-align: center;
-        margin: 0 auto;
+    body {
+        font-size: 2vw;
+        padding: 0px;
+        margin: 0px;
+        border: 0px;
+        white-space: nowrap;
+        overflow: hidden;
     }
     .inlinediv {
         display: inline-block;
-        margin: 1em;
+        vertical-align: top;
     }
-    table {
+    .container {
+        display: inline-block;
+        height: 100vh;
+        margin: 0px auto;
+        padding: 16px;
+        border: 0px;
+    }
+    .dataline {
+        height: 54px;
+    }
+    .dataline2 {
+        height: 108px;
+    }
+    #acknowledge {
+        display: block;
+    }
+    #backandsound {
+        display: block;
+    }
+    #indicators {
+        display: table;
+        border-collapse: collapse;
+        margin: 8px;
+        width: 100%;
+    }
+    .indicatorrow {
+        display: table-row;
+    }
+    #rightcontainer {
+        vertical-align: top;
+    }
+    .playerinfo {
+        width: 100%;
+        text-align: center;
+        margin: 0px;
+        padding: 8px;
+        display: table;
+        background-color: #cc785c;
+        color: #fb835e;
+        border-radius: 10px;
+    }
+    .playerinforow {
+        margin: 0px;
+        border: 0px;
+        padding: 0px;
+        display: table-row;
+        word-wrap: break-word;
+        white-space: normal;
+        vertical-align: middle;
+    }
+    .playerinfocell {
+        display: table-cell;
+        vertical-align: middle;
+    }
+    .indicator {
+        font-size: 1.8vw;
+        border-radius: 10px;
+        text-align: center;
+        vertical-align: middle;
+        width: 50%;
+        display: table-cell;
+        margin: 4px;
+        background-color: #cc785c;
+        color: #fb835e;
+        padding: 4px;
+        /* https://stackoverflow.com/questions/826782/how-to-disable-text-selection-highlighting-using-css */
+        -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Safari */
+        -khtml-user-select: none; /* Konqueror HTML */
+        -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
+        cursor: default;
+    }
+    .indicating {
+        background-color: #d4cca5;
+        color: #825444;
+    }
+    #gainedpiece {
+        width: 50%;
+    }
+    #notificationarea {
+        display: block;
+    }
+    #acknowledge {
+        display: block;
+        vertical-align: top;
+        margin: 0.3em;
+    }
+    #backandsound {
+        display: block;
+        width: 100%;
+        margin: 0.3em;
+    }
+    #soundbuttons {
+        margin-left: 1em;
+        /* https://stackoverflow.com/questions/826782/how-to-disable-text-selection-highlighting-using-css */
+        -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Safari */
+        -khtml-user-select: none; /* Konqueror HTML */
+        -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
+        cursor: default;
+    }
+    #grid {
+        border: 0px;
+        padding: 0;
+        vertical-align: middle;
         table-layout: fixed;
         border-collapse: collapse;
         margin: 0 auto;
-    }
-    #grid {
         outline: 7px outset #d4cca5;
     }
-    #check {
-        float: left;
-    }
-    #checkmate {
-        float: right;
-    }
     tr {
+        padding: 0px;
+        margin: 0px;
         height: 54px;
     }
     .point {
+        padding: 0px;
+        margin: 0px;
         width: 54px;
         background-color: white;
     }
@@ -51,6 +159,7 @@
     .pieceimg {
         width: 48px;
         height: 48px;
+        vertical-align: top;
     }
     .hovered {
         outline: 2px solid #fb835e;
@@ -68,15 +177,15 @@
         outline: 2px dotted #fb835e;
         outline-offset: -1px;
     }
-    span {
-        padding: 1em;
+
+    input {
+        border-radius: 5px;
+        box-shadow: 0px 1px 1px black;
+        margin: 0 auto;
+        font-size: 1.7vw;
     }
-    .indicator {
-        border-radius: 10px;
-        border: 2px solid #d4cca5;
-        background-color: #cc785c;
-        color: #fb835e;
-        margin: 1em;
+    .clock {
+        font-family: 'Inconsolata', monospace;
         /* https://stackoverflow.com/questions/826782/how-to-disable-text-selection-highlighting-using-css */
         -webkit-touch-callout: none; /* iOS Safari */
         -webkit-user-select: none; /* Safari */
@@ -85,24 +194,6 @@
         -ms-user-select: none; /* Internet Explorer/Edge */
         user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
         cursor: default;
-    }
-    .indicating {
-        background-color: #d4cca5;
-        color: #825444;
-    }
-    input {
-        border-radius: 5px;
-        box-shadow: 0px 1px 1px black;
-        margin: 1em;
-    }
-    .clock {
-        border-radius: 10px;
-        border: 2px solid #d4cca5;
-        background-color: #cc785c;
-        color: #fb835e;
-        margin: 1em;
-        padding: 0.5em;
-        font-family: 'Inconsolata', monospace;
     }
     .clocking {
         background-color: #d4cca5;
@@ -240,6 +331,7 @@
             }
             Board[index] = diff[point];
         }
+        $(window).trigger('resize');
         $.get('/moves/'+game_id).done(function(data) {
             $('.selected').removeClass('selected');
             $('.hovered').removeClass('hovered');
@@ -264,7 +356,7 @@
                     $('#blackactive').removeClass('indicating');
                 }
                 $('#checkmate').addClass('indicating');
-                $('#acknowledge').html('<input type="button" value="Acknowledge" onclick="acknowledge();"/>');
+                $('#acknowledge').css('visibility', 'visible');
                 return;
             } else if ('draw' in Moves) {
                 if ((TurnTime.milliseconds() > 0) || (TotalTime.milliseconds() > 0)) {
@@ -279,7 +371,7 @@
                     $('#blackactive').removeClass('indicating');
                 }
                 $('#draw').addClass('indicating');
-                $('#acknowledge').html('<input type="button" value="Acknowledge" onclick="acknowledge();"/>');
+                $('#acknowledge').css('visibility', 'visible');
                 return;
             } else if ('time' in Moves) {
                 clearInterval(BlackTimer);
@@ -292,7 +384,7 @@
                     $('#blackactive').removeClass('indicating');
                 }
                 $('#time').addClass('indicating');
-                $('#acknowledge').html('<input type="button" value="Acknowledge" onclick="acknowledge();"/>');
+                $('#acknowledge').css('visibility', 'visible');
                 return;
             }
             if ('promote' in Moves) {
@@ -381,7 +473,26 @@
         }
         $(clock).html(millisecondsToClock(remaining));
     }
+    $(window).resize(function() {
+        // 16px padding around the board and within each container
+        var height = $(window).height();
+        var width = $(window).width();
+        var dim;
+        if (width < height) {
+            dim = width;
+        } else {
+            dim = height;
+        }
+        var squareDim = Math.floor((dim - 32) / 8);
+        $('tr').css('height', squareDim);
+        $('.point').css('width', squareDim);
+        $('.pieceimg').css('width', squareDim).css('height', squareDim);
+        $('#rightcontainer').css('width', $(window).width() - ((squareDim*8) + 100));
+        $('.dataline').css('height', squareDim - 11);
+        $('.dataline2').css('height', (squareDim - 11) * 2);
+    });
     $(document).ready(function() {
+        $('#acknowledge').css('visibility', 'hidden');
         for (var i = 0; i < SoundCount; i++) {
             $('#audio').append('<audio id="audio'+i+'"><source src="/sound/click'+i+'.wav" type="audio/wav"><source src="/sound/click'+i+'.ogg" type="audio/ogg"></audio>');
         }
@@ -395,9 +506,7 @@
             }
         });
         if (TotalTime.milliseconds() > 0) {
-            $('#backbutton').hide();
-        } else {
-            $('#time').hide();
+            $('#backbutton').css('visibility', 'hidden');
         }
         var board = '';
         board += '<table id="grid">';
@@ -434,11 +543,13 @@
             if (White == Player) {
                 Opponent = Black;
                 PlayerOrientation = o.WHITE;
-                $('#youwhite').html('> ');
+                $('#whitename').html('> '+{{.White}});
+                $('#blackname').html({{.Black}});
             } else {
                 Opponent = White;
                 PlayerOrientation = o.BLACK;
-                $('#youblack').html('> ');
+                $('#blackname').html('> '+{{.Black}});
+                $('#whitename').html({{.White}});
             }
             if (data.Active == White) {
                 Turn = o.WHITE;
@@ -485,6 +596,9 @@
                         updateClock(o.BLACK);
                     }, 1000);
                 }
+            } else {
+                $('#blackclock').html(millisecondsToClock(0)).addClass('clock');
+                $('#whiteclock').html(millisecondsToClock(0)).addClass('clock');
             }
             for (var i = 0; i < Board.length; i++) {
                 if (Board[i].Kind == 0) {
@@ -493,6 +607,7 @@
                     setPieceImage(i, Board[i].Kind, Board[i].Orientation);
                 }
             }
+            $(window).trigger('resize');
             $.get('/moves/'+game_id).done(function(data) {
                 Moves = data;
                 if ('check' in Moves) {
@@ -506,19 +621,19 @@
                         clearInterval(WhiteTimer);
                     }
                     $('#checkmate').addClass('indicating');
-                    $('#acknowledge').html('<input type="button" value="Acknowledge" onclick="acknowledge();"/>');
+                    $('#acknowledge').css('visibility', 'visible');
                 } else if ('draw' in Moves) {
                 if ((TurnTime.milliseconds() > 0) || (TotalTime.milliseconds() > 0)) {
                         clearInterval(BlackTimer);
                         clearInterval(WhiteTimer);
                     }
                     $('#draw').addClass('indicating');
-                    $('#acknowledge').html('<input type="button" value="Acknowledge" onclick="acknowledge();"/>');
+                    $('#acknowledge').css('visibility', 'visible');
                 } else if ('time' in Moves) {
                     clearInterval(BlackTimer);
                     clearInterval(WhiteTimer);
                     $('#time').addClass('indicating');
-                    $('#acknowledge').html('<input type="button" value="Acknowledge" onclick="acknowledge();"/>');
+                    $('#acknowledge').css('visibility', 'visible');
                 }
                 if ('promote' in Moves) {
                     if (Turn == PlayerOrientation) {
@@ -626,33 +741,54 @@
 </head>
 
 <body>
-    <div>
-        <div id="blackclock" class="inlinediv"></div>
-        <div class="inlinediv"><span id="youblack"></span><span>{{.Black}}</span></div>
-        <div class="inlinediv"><span class="indicator" id="blackactive">Turn</span></div>
-        <div id="whitepromote" class="promotion"></div>
+    <div id="board" class="container"></div>
+    <!-- the right container stacks black player + clock, the game state indicator (check, checkmate, draw, time), a promotion option area / gained piece notification, the Acknowledge button, the Back button inline with the two sound buttons, and white player + clock -->
+    <div id="rightcontainer" class="container">
+        <div class="playerinfo" id="blackactive">
+            <div class="playerinforow dataline">
+                <div class="playerinfocell" id="blackname"></div>
+            </div>
+            <div class="playerinforow dataline">
+                <div class="playerinfocell" id="blackclock"></div>
+            </div>
+        </div>
+        <div id="indicators">
+            <div class="indicatorrow">
+                <div class="indicator dataline" id="check">Check</div>
+                <div class="indicator dataline" id="checkmate">Checkmate</div>
+            </div>
+            <div class="indicatorrow">
+                <div class="indicator dataline" id="draw">Draw</div>
+                <div class="indicator dataline" id="time">Time</div>
+            </div>
+        </div>
+        <div>
+            <div class="inlinediv dataline2" id="gainedpiece"></div>
+            <div class="inlinediv">
+                <div id="acknowledge" class="dataline">
+                    <input type="button" value="Acknowledge" onclick="acknowledge();"/>
+                </div>
+            <!-- <div id="whitepromote" class="promotion"></div> -->
+                <div id="backandsound">
+                    <div class="inlinediv dataline">
+                        <input id="backbutton" type="button" value="Back" onclick="window.location.pathname = '/';"/>
+                    </div>
+                    <div id="soundbuttons" class="inlinediv">
+                        <div id="movemute">&#x1f50a;</div>
+                        <div id="musicmute">&#9835;</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="playerinfo" id="whiteactive">
+            <div class="playerinforow dataline">
+                <div class="playerinfocell" id="whitename"></div>
+            </div>
+            <div class="playerinforow dataline">
+                <div class="playerinfocell" id="whiteclock"></div>
+            </div>
+        </div>
     </div>
-    <div>
-        <table><tr>
-            <td><table><tr><td><span class="indicator" id="check">Check</span></td></tr>
-                <tr><td><input id="backbutton" type="button" value="Back" onclick="window.location.pathname = '/';"/></td></tr></table></td>
-            <td><div id="board"></div></td>
-            <td><table>
-                <tr><td><span class="indicator" id="draw">Draw</span></td></tr>
-                <tr><td><span class="indicator" id="checkmate">Checkmate</span></td></tr>
-                <tr><td><span class="indicator" id="time">Time</span></td></tr>
-                <tr><td id="acknowledge"></td></tr>
-            </table></td>
-            <td></td>
-        </tr></table>
-    </div>
-    <div>
-        <div id="blackpromote" class="promotion"></div>
-        <div id="whiteclock" class="inlinediv"></div>
-        <div class="inlinediv"><span id="youwhite"></span><span>{{.White}}</span></div>
-        <div class="inlinediv"><span class="indicator" id="whiteactive">Turn</span></div>
-    </div>
-    <div id="movemute">&#x1f50a;</div>
     <div id="audio"></div>
 </body>
 </html>
