@@ -30,10 +30,18 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 1024,
 }
 
+var parsedTemplates = map[string]*template.Template{}
+
 func executeWebTemplate(w http.ResponseWriter, file string, data interface{}) {
-	t, err := template.ParseFiles(file)
-	if err != nil {
-		panicExit(fmt.Sprintf("failed to parse %v: %v", file, err.Error()))
+	var t *template.Template
+	var err error
+	t, has := parsedTemplates[file]
+	if has == false {
+		t, err = template.ParseFiles(file)
+		if err != nil {
+			panicExit(fmt.Sprintf("failed to parse %v: %v", file, err.Error()))
+		}
+		parsedTemplates[file] = t
 	}
 	err = t.Execute(w, data)
 	if err != nil {
