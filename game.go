@@ -213,12 +213,15 @@ func (g *game) acknowledgeGameComplete(player string) bool {
 		return false
 	}
 	var ackKey string
+	var orientation wichessing.Orientation
 	if player == g.Black {
 		ackKey = games_black_acknowledge
 		g.BlackAcknowledge = true
+		orientation = wichessing.Black
 	} else if player == g.White {
 		ackKey = games_white_acknowledge
 		g.WhiteAcknowledge = true
+		orientation = wichessing.White
 	} else {
 		panicExit("player " + player + " is not " + g.Black + " (black) or " + g.White + " (white)")
 	}
@@ -233,6 +236,18 @@ func (g *game) acknowledgeGameComplete(player string) bool {
 				g.DB.removePlayersCompetitive48Game(player, slot)
 			}
 		}
+	}
+	for _, piece := range g.Points {
+		if piece.Kind == 0 {
+			continue
+		}
+		if piece.Identifier == 0 {
+			continue
+		}
+		if piece.Orientation != orientation {
+			continue
+		}
+		g.DB.releasePieceFromGame(piece.Identifier)
 	}
 	if g.BlackAcknowledge && g.WhiteAcknowledge {
 		g.DB.deleteGame(g.ID)
@@ -252,48 +267,100 @@ func (g *game) acknowledgeGameComplete(player string) bool {
 	return true
 }
 
+// TODO: there may be a race condition for marking pieces in-game - need mutex per-player?
+// TODO: what are the effects of an invalid setup? this function returns 0 which isn't directly handled
+
 // Returns the game identifier.
 func (db DB) newGame(player1 string, player1setup gameSetup, player2 string, player2setup gameSetup, competitive bool) int {
+	var player1Pieces, player2Pieces [16]piece
+	player1Pieces[0] = db.pieceWithID(player1setup[0], wichessing.Pawn, wichessing.White, player1)
+	player1Pieces[1] = db.pieceWithID(player1setup[1], wichessing.Pawn, wichessing.White, player1)
+	player1Pieces[2] = db.pieceWithID(player1setup[2], wichessing.Pawn, wichessing.White, player1)
+	player1Pieces[3] = db.pieceWithID(player1setup[3], wichessing.Pawn, wichessing.White, player1)
+	player1Pieces[4] = db.pieceWithID(player1setup[4], wichessing.Pawn, wichessing.White, player1)
+	player1Pieces[5] = db.pieceWithID(player1setup[5], wichessing.Pawn, wichessing.White, player1)
+	player1Pieces[6] = db.pieceWithID(player1setup[6], wichessing.Pawn, wichessing.White, player1)
+	player1Pieces[7] = db.pieceWithID(player1setup[7], wichessing.Pawn, wichessing.White, player1)
+	player1Pieces[8] = db.pieceWithID(player1setup[8], wichessing.Rook, wichessing.White, player1)
+	player1Pieces[9] = db.pieceWithID(player1setup[9], wichessing.Knight, wichessing.White, player1)
+	player1Pieces[10] = db.pieceWithID(player1setup[10], wichessing.Bishop, wichessing.White, player1)
+	player1Pieces[11] = db.pieceWithID(player1setup[11], wichessing.Queen, wichessing.White, player1)
+	player1Pieces[12] = db.pieceWithID(player1setup[12], wichessing.King, wichessing.White, player1)
+	player1Pieces[13] = db.pieceWithID(player1setup[13], wichessing.Bishop, wichessing.White, player1)
+	player1Pieces[14] = db.pieceWithID(player1setup[14], wichessing.Knight, wichessing.White, player1)
+	player1Pieces[15] = db.pieceWithID(player1setup[15], wichessing.Rook, wichessing.White, player1)
+	for _, piece := range player1Pieces {
+		if (piece.Identifier > 0) && piece.Ingame {
+			return 0
+		}
+	}
+	player2Pieces[0] = db.pieceWithID(player2setup[0], wichessing.Pawn, wichessing.Black, player2)
+	player2Pieces[1] = db.pieceWithID(player2setup[1], wichessing.Pawn, wichessing.Black, player2)
+	player2Pieces[2] = db.pieceWithID(player2setup[2], wichessing.Pawn, wichessing.Black, player2)
+	player2Pieces[3] = db.pieceWithID(player2setup[3], wichessing.Pawn, wichessing.Black, player2)
+	player2Pieces[4] = db.pieceWithID(player2setup[4], wichessing.Pawn, wichessing.Black, player2)
+	player2Pieces[5] = db.pieceWithID(player2setup[5], wichessing.Pawn, wichessing.Black, player2)
+	player2Pieces[6] = db.pieceWithID(player2setup[6], wichessing.Pawn, wichessing.Black, player2)
+	player2Pieces[7] = db.pieceWithID(player2setup[7], wichessing.Pawn, wichessing.Black, player2)
+	player2Pieces[8] = db.pieceWithID(player2setup[8], wichessing.Rook, wichessing.Black, player2)
+	player2Pieces[9] = db.pieceWithID(player2setup[9], wichessing.Knight, wichessing.Black, player2)
+	player2Pieces[10] = db.pieceWithID(player2setup[10], wichessing.Bishop, wichessing.Black, player2)
+	player2Pieces[11] = db.pieceWithID(player2setup[11], wichessing.Queen, wichessing.Black, player2)
+	player2Pieces[12] = db.pieceWithID(player2setup[12], wichessing.King, wichessing.Black, player2)
+	player2Pieces[13] = db.pieceWithID(player2setup[13], wichessing.Bishop, wichessing.Black, player2)
+	player2Pieces[14] = db.pieceWithID(player2setup[14], wichessing.Knight, wichessing.Black, player2)
+	player2Pieces[15] = db.pieceWithID(player2setup[15], wichessing.Rook, wichessing.Black, player2)
+	for _, piece := range player2Pieces {
+		if (piece.Identifier > 0) && piece.Ingame {
+			return 0
+		}
+	}
+	for _, piece := range player1Pieces {
+		db.markPieceIngame(piece.Identifier)
+	}
+	for _, piece := range player2Pieces {
+		db.markPieceIngame(piece.Identifier)
+	}
 	// https://github.com/lib/pq/issues/24
 	var id int
 	err := db.QueryRow("INSERT INTO "+games_table+" ("+games_competitive+", "+games_recorded+", "+games_white+", "+games_white_acknowledge+", "+games_white_latest_move+", "+games_white_elapsed+", "+games_white_elapsed_updated+", "+games_black+", "+games_black_acknowledge+", "+games_black_latest_move+", "+games_black_elapsed+", "+games_black_elapsed_updated+", "+games_active+", s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15, s16, s17, s18, s19, s20, s21, s22, s23, s24, s25, s26, s27, s28, s29, s30, s31, s32, s33, s34, s35, s36, s37, s38, s39, s40, s41, s42, s43, s44, s45, s46, s47, s48, s49, s50, s51, s52, s53, s54, s55, s56, s57, s58, s59, s60, s61, s62, s63) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34, $35, $36, $37, $38, $39, $40, $41, $42, $43, $44, $45, $46, $47, $48, $49, $50, $51, $52, $53, $54, $55, $56, $57, $58, $59, $60, $61, $62, $63, $64, $65, $66, $67, $68, $69, $70, $71, $72, $73, $74, $75, $76, $77) RETURNING "+games_identifier+";",
 		competitive, false, player1, false, time.Now(), time.Duration(0), time.Now(), player2, false, time.Now(), time.Duration(0), time.Now(), player1,
-		db.pieceWithID(player1setup[8], wichessing.Rook, wichessing.White, player1).encode(),
-		db.pieceWithID(player1setup[9], wichessing.Knight, wichessing.White, player1).encode(),
-		db.pieceWithID(player1setup[10], wichessing.Bishop, wichessing.White, player1).encode(),
-		db.pieceWithID(player1setup[11], wichessing.Queen, wichessing.White, player1).encode(),
-		db.pieceWithID(player1setup[12], wichessing.King, wichessing.White, player1).encode(),
-		db.pieceWithID(player1setup[13], wichessing.Bishop, wichessing.White, player1).encode(),
-		db.pieceWithID(player1setup[14], wichessing.Knight, wichessing.White, player1).encode(),
-		db.pieceWithID(player1setup[15], wichessing.Rook, wichessing.White, player1).encode(),
-		db.pieceWithID(player1setup[0], wichessing.Pawn, wichessing.White, player1).encode(),
-		db.pieceWithID(player1setup[1], wichessing.Pawn, wichessing.White, player1).encode(),
-		db.pieceWithID(player1setup[2], wichessing.Pawn, wichessing.White, player1).encode(),
-		db.pieceWithID(player1setup[3], wichessing.Pawn, wichessing.White, player1).encode(),
-		db.pieceWithID(player1setup[4], wichessing.Pawn, wichessing.White, player1).encode(),
-		db.pieceWithID(player1setup[5], wichessing.Pawn, wichessing.White, player1).encode(),
-		db.pieceWithID(player1setup[6], wichessing.Pawn, wichessing.White, player1).encode(),
-		db.pieceWithID(player1setup[7], wichessing.Pawn, wichessing.White, player1).encode(),
+		player1Pieces[8].encode(),
+		player1Pieces[9].encode(),
+		player1Pieces[10].encode(),
+		player1Pieces[11].encode(),
+		player1Pieces[12].encode(),
+		player1Pieces[13].encode(),
+		player1Pieces[14].encode(),
+		player1Pieces[15].encode(),
+		player1Pieces[0].encode(),
+		player1Pieces[1].encode(),
+		player1Pieces[2].encode(),
+		player1Pieces[3].encode(),
+		player1Pieces[4].encode(),
+		player1Pieces[5].encode(),
+		player1Pieces[6].encode(),
+		player1Pieces[7].encode(),
 		0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0,
-		db.pieceWithID(player2setup[0], wichessing.Pawn, wichessing.Black, player2).encode(),
-		db.pieceWithID(player2setup[1], wichessing.Pawn, wichessing.Black, player2).encode(),
-		db.pieceWithID(player2setup[2], wichessing.Pawn, wichessing.Black, player2).encode(),
-		db.pieceWithID(player2setup[3], wichessing.Pawn, wichessing.Black, player2).encode(),
-		db.pieceWithID(player2setup[4], wichessing.Pawn, wichessing.Black, player2).encode(),
-		db.pieceWithID(player2setup[5], wichessing.Pawn, wichessing.Black, player2).encode(),
-		db.pieceWithID(player2setup[6], wichessing.Pawn, wichessing.Black, player2).encode(),
-		db.pieceWithID(player2setup[7], wichessing.Pawn, wichessing.Black, player2).encode(),
-		db.pieceWithID(player2setup[8], wichessing.Rook, wichessing.Black, player2).encode(),
-		db.pieceWithID(player2setup[9], wichessing.Knight, wichessing.Black, player2).encode(),
-		db.pieceWithID(player2setup[10], wichessing.Bishop, wichessing.Black, player2).encode(),
-		db.pieceWithID(player2setup[11], wichessing.Queen, wichessing.Black, player2).encode(),
-		db.pieceWithID(player2setup[12], wichessing.King, wichessing.Black, player2).encode(),
-		db.pieceWithID(player2setup[13], wichessing.Bishop, wichessing.Black, player2).encode(),
-		db.pieceWithID(player2setup[14], wichessing.Knight, wichessing.Black, player2).encode(),
-		db.pieceWithID(player2setup[15], wichessing.Rook, wichessing.Black, player2).encode()).Scan(&id)
+		player2Pieces[0].encode(),
+		player2Pieces[1].encode(),
+		player2Pieces[2].encode(),
+		player2Pieces[3].encode(),
+		player2Pieces[4].encode(),
+		player2Pieces[5].encode(),
+		player2Pieces[6].encode(),
+		player2Pieces[7].encode(),
+		player2Pieces[8].encode(),
+		player2Pieces[9].encode(),
+		player2Pieces[10].encode(),
+		player2Pieces[11].encode(),
+		player2Pieces[12].encode(),
+		player2Pieces[13].encode(),
+		player2Pieces[14].encode(),
+		player2Pieces[15].encode()).Scan(&id)
 	if err != nil {
 		panicExit(err.Error())
 	}

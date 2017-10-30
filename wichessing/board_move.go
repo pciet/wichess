@@ -7,45 +7,48 @@ import ()
 
 func (b Board) AfterMove(from AbsPoint, to AbsPoint, turn Orientation) Board {
 	board := b.Copy()
-	for point, _ := range board.Move(from, to, turn) {
+	diff, _ := board.Move(from, to, turn)
+	for point, _ := range diff {
 		board[point.Index()] = *point
 	}
 	return board
 }
 
-// An empty PointSet return indicates no changes to the board - an invalid move.
+// An empty PointSet return indicates no changes to the board - an invalid move. Any taken pieces are returned as the second value.
 // The board itself is not returned so no modifications are made to the receiver Board.
-func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) PointSet {
+func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) (PointSet, map[AbsPoint]*Piece) {
 	fromPoint := b[from.Index()]
 	if fromPoint.Piece == nil {
-		return PointSet{}
+		return PointSet{}, map[AbsPoint]*Piece{}
 	}
 	if fromPoint.Orientation != turn {
-		return PointSet{}
+		return PointSet{}, map[AbsPoint]*Piece{}
 	}
 	if b.HasPawnToPromote() {
-		return PointSet{}
+		return PointSet{}, map[AbsPoint]*Piece{}
 	}
 	toPoint := b[to.Index()]
 	if toPoint.Piece != nil {
 		if (toPoint.Orientation == turn) && (fromPoint.Swaps == false) {
-			return PointSet{}
+			return PointSet{}, map[AbsPoint]*Piece{}
 		}
 	}
-	set := make(PointSet)
 	for pt, _ := range b.SurroundingPoints(fromPoint) {
 		if pt.Piece != nil {
 			if (pt.Orientation != fromPoint.Orientation) && pt.Locks {
-				return PointSet{}
+				return PointSet{}, map[AbsPoint]*Piece{}
 			}
 		}
 	}
+	set := make(PointSet)
+	pieceset := make(map[AbsPoint]*Piece)
 	// this check is here so detonations happen before guard chaining occurs
 	if toPoint.Piece != nil {
 		if toPoint.Detonates && (toPoint.Orientation != turn) {
 			set[&Point{
 				AbsPoint: from,
 			}] = struct{}{}
+			pieceset[from] = b[from.Index()].Piece
 			dset := b.DetonationsFrom(to, nil)
 			if len(dset) > 0 {
 				for pt, _ := range dset {
@@ -55,9 +58,10 @@ func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) PointSet {
 					set[&Point{
 						AbsPoint: *pt,
 					}] = struct{}{}
+					pieceset[*pt] = b[(*pt).Index()].Piece
 				}
 				b.UpdatePiecePrevious(turn)
-				return set
+				return set, pieceset
 			}
 		}
 	}
@@ -66,6 +70,7 @@ func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) PointSet {
 			if (pt.Orientation != fromPoint.Orientation) && pt.Guards {
 				set.SetPointPiece(fromPoint.AbsPoint, nil)
 				set.SetPointPiece(pt.AbsPoint, nil)
+				pieceset[from] = b[from.Index()].Piece
 				if fromPoint.Detonates {
 					board := b.Copy()
 					board[fromPoint.AbsPoint.Index()].Piece = nil
@@ -78,6 +83,7 @@ func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) PointSet {
 								continue
 							}
 							set.SetPointPiece(*dpt, nil)
+							pieceset[*dpt] = b[(*dpt).Index()].Piece
 						}
 					}
 				} else {
@@ -89,6 +95,10 @@ func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) PointSet {
 					board[to.Index()].Piece = pt.Piece
 					// in the diff we'll at least have the first piece here, maybe updated if another opponent guard is around
 					set.SetPointPiece(to, pt.Piece)
+					pieceset[from] = b[from.Index()].Piece
+					if b[to.Index()].Piece != nil {
+						pieceset[to] = b[to.Index()].Piece
+					}
 				ALLGUARDS:
 					for {
 						for gpt, _ := range board.SurroundingPoints(toPoint) {
@@ -96,6 +106,7 @@ func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) PointSet {
 								if (gpt.Orientation != board[to.Index()].Piece.Orientation) && gpt.Guards {
 									set.SetPointPiece(gpt.AbsPoint, nil)
 									set.SetPointPiece(to, gpt.Piece)
+									pieceset[to] = board[to.Index()].Piece
 									board[gpt.AbsPoint.Index()].Piece = nil
 									board[to.Index()].Piece = gpt.Piece
 									continue ALLGUARDS
@@ -107,12 +118,12 @@ func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) PointSet {
 				}
 				b.UpdatePiecePrevious(turn)
 				pt.Piece.Previous = pt.AbsPoint.Index()
-				return set
+				return set, pieceset
 			}
 		}
 	}
 	if b.MovesFromPoint(fromPoint).Has(to) == false {
-		return PointSet{}
+		return PointSet{}, pieceset
 	}
 	// en passant / in passing
 	if (fromPoint.Base == Pawn) && (toPoint.Piece == nil) {
@@ -139,9 +150,10 @@ func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) PointSet {
 							AbsPoint: to,
 							Piece:    fromPoint.Piece,
 						}] = struct{}{}
+						pieceset[to] = b[to.Index()].Piece
 						b.UpdatePiecePrevious(turn)
 						fromPoint.Piece.Previous = from.Index()
-						return set
+						return set, pieceset
 					}
 				} else {
 					if piece.Previous == (AbsPoint{File: to.File, Rank: 6}).Index() {
@@ -155,9 +167,10 @@ func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) PointSet {
 							AbsPoint: to,
 							Piece:    fromPoint.Piece,
 						}] = struct{}{}
+						pieceset[to] = b[to.Index()].Piece
 						b.UpdatePiecePrevious(turn)
 						fromPoint.Piece.Previous = from.Index()
-						return set
+						return set, pieceset
 					}
 				}
 			}
@@ -192,7 +205,7 @@ func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) PointSet {
 			b.UpdatePiecePrevious(turn)
 			b[0].Piece.Previous = AbsPoint{File: 0, Rank: 0}.Index()
 			fromPoint.Piece.Previous = from.Index()
-			return set
+			return set, pieceset
 		} else if (to.File == 6) && (to.Rank == 0) {
 			set[&Point{
 				AbsPoint: from,
@@ -219,7 +232,7 @@ func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) PointSet {
 			b.UpdatePiecePrevious(turn)
 			b[7].Piece.Previous = AbsPoint{File: 7, Rank: 0}.Index()
 			fromPoint.Piece.Previous = from.Index()
-			return set
+			return set, pieceset
 		} else if (to.File == 2) && (to.Rank == 7) {
 			set[&Point{
 				AbsPoint: from,
@@ -246,7 +259,7 @@ func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) PointSet {
 			b.UpdatePiecePrevious(turn)
 			b[56].Piece.Previous = AbsPoint{File: 0, Rank: 7}.Index()
 			fromPoint.Piece.Previous = from.Index()
-			return set
+			return set, pieceset
 		} else if (to.File == 6) && (to.Rank == 7) {
 			set[&Point{
 				AbsPoint: from,
@@ -273,7 +286,7 @@ func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) PointSet {
 			b.UpdatePiecePrevious(turn)
 			b[63].Piece.Previous = AbsPoint{File: 7, Rank: 7}.Index()
 			fromPoint.Piece.Previous = from.Index()
-			return set
+			return set, pieceset
 		}
 	}
 	if toPoint.Piece != nil {
@@ -292,7 +305,7 @@ func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) PointSet {
 			b.UpdatePiecePrevious(turn)
 			fromPoint.Piece.Previous = from.Index()
 			toPoint.Piece.Previous = to.Index()
-			return set
+			return set, pieceset
 		}
 	}
 	set[&Point{
@@ -303,7 +316,10 @@ func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) PointSet {
 		Piece:    fromPoint.Piece,
 		AbsPoint: to,
 	}] = struct{}{}
+	if toPoint.Piece != nil {
+		pieceset[to] = toPoint.Piece
+	}
 	b.UpdatePiecePrevious(turn)
 	fromPoint.Piece.Previous = from.Index()
-	return set
+	return set, pieceset
 }

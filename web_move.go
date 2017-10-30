@@ -90,7 +90,6 @@ func moveRequestHandler(w http.ResponseWriter, r *http.Request) {
 			http.NotFound(w, r)
 			return
 		}
-
 	}
 	if promoting == false {
 		if (game.White == easy_computer_player) || (game.Black == easy_computer_player) {

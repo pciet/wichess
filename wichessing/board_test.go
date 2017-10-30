@@ -121,7 +121,7 @@ func TestPositionAfterMoveCases(t *testing.T) {
 		if from.Piece == nil {
 			t.Fatalf("\"%v\" failed: from point %v has no piece", c.Name, c.From)
 		}
-		diff := b.Move(c.From, c.To, from.Orientation)
+		diff, _ := b.Move(c.From, c.To, from.Orientation)
 		if (len(c.Diff) == 0) && (len(diff) == 0) {
 			continue
 		}

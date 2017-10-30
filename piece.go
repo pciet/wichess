@@ -5,6 +5,7 @@ package main
 
 import (
 	"crypto/rand"
+	"fmt"
 	"math"
 	"math/big"
 	prand "math/rand"
@@ -18,7 +19,6 @@ const (
 	piece_id_key     = "piece_id"
 	piece_kind_key   = "kind"
 	piece_owner_key  = "owner"
-	piece_takes_key  = "takes"
 	piece_ingame_key = "ingame"
 
 	free_piece_slice_hint = 8
@@ -27,7 +27,38 @@ const (
 type piece struct {
 	wichessing.Piece
 	Identifier int
-	Takes      int
+	Ingame     bool
+}
+
+func (db DB) releasePieceFromGame(id int) {
+	_, err := db.Exec("UPDATE "+piece_table+" SET "+piece_ingame_key+" = $1 WHERE "+piece_id_key+" = $2;", false, id)
+	if err != nil {
+		panicExit(err.Error())
+	}
+}
+
+func (db DB) markPieceIngame(id int) {
+	_, err := db.Exec("UPDATE "+piece_table+" SET "+piece_ingame_key+" = $1 WHERE "+piece_id_key+" = $2;", true, id)
+	if err != nil {
+		panicExit(err.Error())
+	}
+}
+
+func (db DB) removePiece(id int) {
+	if id == 0 {
+		return
+	}
+	result, err := db.Exec("DELETE FROM "+piece_table+" WHERE "+piece_id_key+" = $1;", id)
+	if err != nil {
+		panicExit(err.Error())
+	}
+	count, err := result.RowsAffected()
+	if err != nil {
+		panicExit(err.Error())
+	}
+	if count != 1 {
+		panicExit(fmt.Sprintf("%v rows affected by piece delete exec", count))
+	}
 }
 
 // A zero ID means use the basic piece for the specified kind.
@@ -43,13 +74,15 @@ func (db DB) pieceWithID(id int, kind wichessing.Kind, orientation wichessing.Or
 	}
 	var dbowner string
 	var ki int
-	err := db.QueryRow("SELECT "+piece_owner_key+", "+piece_kind_key+" FROM "+piece_table+" WHERE "+piece_id_key+"=$1;", id).Scan(&dbowner, &ki)
+	var ig bool
+	err := db.QueryRow("SELECT "+piece_owner_key+", "+piece_kind_key+", "+piece_ingame_key+" FROM "+piece_table+" WHERE "+piece_id_key+"=$1;", id).Scan(&dbowner, &ki, &ig)
 	if (err != nil) || (owner != dbowner) {
 		// an invalid ID requested results in no piece
 		return piece{}
 	}
 	return piece{
 		Identifier: id,
+		Ingame:     ig,
 		Piece: wichessing.Piece{
 			Base:        wichessing.BaseForKind(wichessing.Kind(ki)),
 			Kind:        wichessing.Kind(ki),
@@ -59,7 +92,7 @@ func (db DB) pieceWithID(id int, kind wichessing.Kind, orientation wichessing.Or
 }
 
 func (db DB) playersFreePieces(name string) []piece {
-	rows, err := db.Query("SELECT "+piece_id_key+", "+piece_kind_key+", "+piece_takes_key+" FROM "+piece_table+" WHERE "+piece_owner_key+"=$1 AND "+piece_ingame_key+"=$2;", name, false)
+	rows, err := db.Query("SELECT "+piece_id_key+", "+piece_kind_key+" FROM "+piece_table+" WHERE "+piece_owner_key+"=$1 AND "+piece_ingame_key+"=$2;", name, false)
 	if err != nil {
 		panicExit(err.Error())
 	}
@@ -68,7 +101,7 @@ func (db DB) playersFreePieces(name string) []piece {
 	i := 0
 	for rows.Next() {
 		pieces = append(pieces, piece{})
-		err = rows.Scan(&pieces[i].Identifier, &pieces[i].Kind, &pieces[i].Takes)
+		err = rows.Scan(&pieces[i].Identifier, &pieces[i].Kind)
 		if err != nil {
 			panicExit(err.Error())
 		}
@@ -82,35 +115,10 @@ func (db DB) playersFreePieces(name string) []piece {
 	return pieces
 }
 
-func (db DB) playersBestPiece(name string) piece {
-	rows, err := db.Query("SELECT "+piece_kind_key+", "+piece_takes_key+" FROM "+piece_table+" WHERE "+piece_owner_key+"=$1;", name)
-	if err != nil {
-		panicExit(err.Error())
-	}
-	defer rows.Close()
-	p := piece{}
-	newp := piece{}
-	for rows.Next() {
-		err = rows.Scan(&newp.Kind, &newp.Takes)
-		if err != nil {
-			panicExit(err.Error())
-		}
-		if newp.Takes > p.Takes {
-			p.Takes = newp.Takes
-			p.Kind = newp.Kind
-		}
-	}
-	err = rows.Err()
-	if err != nil {
-		panicExit(err.Error())
-	}
-	return p
-}
-
 func (db DB) createNewPlayersPieces(name string) {
 	for i := 0; i < initial_piece_count; i++ {
 		piece := randomHeroPiece()
-		_, err := db.Exec("INSERT INTO "+piece_table+"("+piece_kind_key+", "+piece_owner_key+", "+piece_takes_key+", "+piece_ingame_key+") VALUES ($1, $2, $3, $4);", piece.Kind, name, 0, false)
+		_, err := db.Exec("INSERT INTO "+piece_table+"("+piece_kind_key+", "+piece_owner_key+", "+piece_ingame_key+") VALUES ($1, $2, $3);", piece.Kind, name, false)
 		if err != nil {
 			panicExit(err.Error())
 		}

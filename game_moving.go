@@ -44,7 +44,8 @@ func (g game) move(from, to int, mover string, timeoutMove bool) (map[string]pie
 		return nil, false
 	}
 	diff := make(map[string]piece)
-	for point, _ := range b.Move(absPoint(from), absPoint(to), orientation) {
+	difference, taken := b.Move(absPoint(from), absPoint(to), orientation)
+	for point, _ := range difference {
 		if point.Piece == nil {
 			diff[point.AbsPoint.String()] = piece{
 				Piece: wichessing.Piece{
@@ -52,14 +53,27 @@ func (g game) move(from, to int, mover string, timeoutMove bool) (map[string]pie
 				},
 			}
 		} else {
+			// the identifier must be set here for the game update to work correctly
+			// make taken = map[AbsPoint]Piece instead of PieceSet
+			var id int
+			for index, ppt := range b {
+				if ppt.Piece == point.Piece {
+					id = g.Points[index].Identifier
+					break
+				}
+			}
 			diff[point.AbsPoint.String()] = piece{
 				Piece:      *point.Piece,
-				Identifier: g.Points[from].Identifier, // TODO: this could be incorrect
+				Identifier: id,
 			}
 		}
 	}
 	if len(diff) == 0 {
 		return diff, false
+	}
+	takenPieces := make(map[int]struct{})
+	for point, _ := range taken {
+		takenPieces[g.Points[point.Index()].Identifier] = struct{}{}
 	}
 	after := b.AfterMove(absPoint(from), absPoint(to), orientation)
 	var promoting bool
@@ -95,6 +109,11 @@ func (g game) move(from, to int, mover string, timeoutMove bool) (map[string]pie
 		gameListeningLock.RUnlock()
 	}
 	if g.Competitive {
+		// competitively taken collectible pieces are no longer available to the owning player
+		for id, _ := range takenPieces {
+			// pieces with no ID (normal chess pieces) have no effect in this function
+			g.DB.removePiece(id)
+		}
 		if after.Checkmate(nextOrientation) {
 			if nextOrientation == wichessing.White {
 				g.DB.updatePlayerRecords(g.Black, g.White, false)

@@ -50,6 +50,5 @@ CREATE TABLE Pieces (
     piece_id SERIAL PRIMARY KEY,
     kind INTEGER,
     owner VARCHAR(64),
-    takes INTEGER,
     ingame BOOLEAN
 );
