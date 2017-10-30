@@ -2,6 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>wichess game</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Libre+Baskerville">
     <link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
@@ -153,9 +154,6 @@
     .promotion {
         margin: 1em;
     }
-    .promb {
-        font-size: 11px;
-    }
     .pieceimg {
         width: 48px;
         height: 48px;
@@ -177,12 +175,19 @@
         outline: 2px dotted #fb835e;
         outline-offset: -1px;
     }
-
     input {
         border-radius: 5px;
         box-shadow: 0px 1px 1px black;
         margin: 0 auto;
-        font-size: 1.7vw;
+        font-size: 1.5vw;
+    }
+    .prombdiv {
+        padding: 7px;
+        text-align: center;
+    }
+    .promb {
+        margin: 2px;
+        font-size: 1.2vw;
     }
     .clock {
         font-family: 'Inconsolata', monospace;
@@ -250,7 +255,6 @@
     function requestMove(from, to) {
         $.post('/move/'+game_id, {From: from, To: to}).done(makeMove);
     }
-    var promotionButtons = '<input type="button" class="promb" value="Queen" onclick="promote('+k.QUEEN+');"/> <input type="button" class="promb" value="Rook" onclick="promote('+k.ROOK+');"/> <input type="button" class="promb" value="Bishop" onclick="promote('+k.BISHOP+');"/> <input type="button" class="promb" value="Knight" onclick="promote('+k.KNIGHT+');"/>';
     function promote(kind) {
         var from = 0;
         if (Player == White) {
@@ -357,6 +361,7 @@
                 }
                 $('#checkmate').addClass('indicating');
                 $('#acknowledge').css('visibility', 'visible');
+                $('.prombdiv').css('visibility', 'hidden');
                 return;
             } else if ('draw' in Moves) {
                 if ((TurnTime.milliseconds() > 0) || (TotalTime.milliseconds() > 0)) {
@@ -372,6 +377,7 @@
                 }
                 $('#draw').addClass('indicating');
                 $('#acknowledge').css('visibility', 'visible');
+                $('.prombdiv').css('visibility', 'hidden');
                 return;
             } else if ('time' in Moves) {
                 clearInterval(BlackTimer);
@@ -385,19 +391,15 @@
                 }
                 $('#time').addClass('indicating');
                 $('#acknowledge').css('visibility', 'visible');
+                $('.prombdiv').css('visibility', 'hidden');
                 return;
             }
             if ('promote' in Moves) {
                 if (Turn == PlayerOrientation) {
-                    if (White == Player) {
-                        $('#whitepromote').html(promotionButtons);
-                    } else {
-                        $('#blackpromote').html(promotionButtons);
-                    }
+                    $('.prombdiv').css('visibility', 'visible');
                 }
             } else {
-                $('#whitepromote').html('');
-                $('#blackpromote').html('');
+                $('.prombdiv').css('visibility', 'hidden');
                 if ((Turn == o.WHITE) && (Opponent != EasyComputer) && (Opponent != HardComputer)) {
                     $('#whiteactive').removeClass('indicating');
                     $('#blackactive').addClass('indicating');
@@ -597,8 +599,8 @@
                     }, 1000);
                 }
             } else {
-                $('#blackclock').html(millisecondsToClock(0)).addClass('clock');
-                $('#whiteclock').html(millisecondsToClock(0)).addClass('clock');
+                $('.clock').css('display', 'none');
+                $('#time').css('display', 'none');
             }
             for (var i = 0; i < Board.length; i++) {
                 if (Board[i].Kind == 0) {
@@ -637,15 +639,10 @@
                 }
                 if ('promote' in Moves) {
                     if (Turn == PlayerOrientation) {
-                        if (White == Player) {
-                            $('#whitepromote').html(promotionButtons);
-                        } else {
-                            $('#blackpromote').html(promotionButtons);
-                        }
+                        $('.prombdiv').css('visibility', 'visible');
                     }
                 } else {
-                    $('#whitepromote').html('');
-                    $('#blackpromote').html('');
+                    $('.prombdiv').css('visibility', 'hidden');
                 }
                 for (var i = 0; i < 64; i++) {
                     $('#point'+i).click({Index: i}, function(event) {
@@ -763,12 +760,20 @@
             </div>
         </div>
         <div>
-            <div class="inlinediv dataline2" id="gainedpiece"></div>
+            <div class="inlinediv dataline2" id="gainedpiece">
+                <div class="prombdiv">
+                    <input type="button" class="promb" value="Queen" onclick="promote(k.QUEEN);"/>
+                    <input type="button" class="promb" value="Rook" onclick="promote(k.ROOK);"/>
+                </div>
+                <div class="prombdiv">
+                    <input type="button" class="promb" value="Bishop" onclick="promote(k.BISHOP);"/>
+                    <input type="button" class="promb" value="Knight" onclick="promote(k.KNIGHT);"/>
+                </div>
+            </div>
             <div class="inlinediv">
                 <div id="acknowledge" class="dataline">
                     <input type="button" value="Acknowledge" onclick="acknowledge();"/>
                 </div>
-            <!-- <div id="whitepromote" class="promotion"></div> -->
                 <div id="backandsound">
                     <div class="inlinediv dataline">
                         <input id="backbutton" type="button" value="Back" onclick="window.location.pathname = '/';"/>
