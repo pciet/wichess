@@ -68,6 +68,9 @@ func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) (PointSet, map
 	for pt, _ := range b.SurroundingPoints(toPoint) {
 		if pt.Piece != nil {
 			if (pt.Orientation != fromPoint.Orientation) && pt.Guards {
+				if (pt.Base == Pawn) && fromPoint.Fortified {
+					continue
+				}
 				set.SetPointPiece(fromPoint.AbsPoint, nil)
 				set.SetPointPiece(pt.AbsPoint, nil)
 				pieceset[from] = b[from.Index()].Piece
