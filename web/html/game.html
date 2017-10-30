@@ -100,6 +100,13 @@
     }
     #gainedpiece {
         width: 50%;
+        text-align: center;
+    }
+    #piecetitle {
+        font-size: 1.2vw;
+    }
+    #gainedpieceimg {
+        width: 12vw;
     }
     #notificationarea {
         display: block;
@@ -246,6 +253,10 @@
     ws.onmessage = function(event) {
         makeMove(JSON.parse(event.data));
     }
+    function setGainedPiece(kind) {
+        console.log(Moves);
+        $('#gainedpiece').html('<div><img id="gainedpieceimg" src="/img/'+imageNameForKind(kind, 64, PlayerOrientation)+'"></div><div id="piecetitle"> +'+nameForKind(kind)+'</div>');
+    }
     function setPieceImage(index, kind, orientation) {
         $('#point'+index).html('<img class="pieceimg" src="/img/'+imageNameForKind(kind, index, orientation)+'">');
     }
@@ -351,6 +362,7 @@
                 if ((TurnTime.milliseconds() > 0) || (TotalTime.milliseconds() > 0)) {
                     clearInterval(WhiteTimer);
                     clearInterval(BlackTimer);
+                    setGainedPiece(parseInt(Object.keys(Moves['checkmate'])[0]));
                 }
                 if (Turn == o.WHITE) {
                     $('#whiteactive').removeClass('indicating');
@@ -367,6 +379,7 @@
                 if ((TurnTime.milliseconds() > 0) || (TotalTime.milliseconds() > 0)) {
                     clearInterval(WhiteTimer);
                     clearInterval(BlackTimer);
+                    setGainedPiece(parseInt(Object.keys(Moves['draw'])[0]));
                 }
                 if (Turn == o.WHITE) {
                     $('#whiteactive').removeClass('indicating');
@@ -382,6 +395,7 @@
             } else if ('time' in Moves) {
                 clearInterval(BlackTimer);
                 clearInterval(WhiteTimer);
+                setGainedPiece(parseInt(Object.keys(Moves['time'])[0]));
                 if (Turn == o.WHITE) {
                     $('#whiteactive').removeClass('indicating');
                     $('#blackactive').addClass('indicating');
@@ -621,19 +635,23 @@
                     if ((TurnTime.milliseconds() > 0) || (TotalTime.milliseconds() > 0)) {
                         clearInterval(BlackTimer);
                         clearInterval(WhiteTimer);
+                        setGainedPiece(parseInt(Object.keys(Moves['checkmate'])[0]));
                     }
                     $('#checkmate').addClass('indicating');
                     $('#acknowledge').css('visibility', 'visible');
+                    
                 } else if ('draw' in Moves) {
                 if ((TurnTime.milliseconds() > 0) || (TotalTime.milliseconds() > 0)) {
                         clearInterval(BlackTimer);
                         clearInterval(WhiteTimer);
+                        setGainedPiece(parseInt(Object.keys(Moves['draw'])[0]));
                     }
                     $('#draw').addClass('indicating');
                     $('#acknowledge').css('visibility', 'visible');
                 } else if ('time' in Moves) {
                     clearInterval(BlackTimer);
                     clearInterval(WhiteTimer);
+                    setGainedPiece(parseInt(Object.keys(Moves['time'])[0]));
                     $('#time').addClass('indicating');
                     $('#acknowledge').css('visibility', 'visible');
                 }

@@ -4,6 +4,7 @@
 package main
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/pciet/wichess/wichessing"
@@ -223,7 +224,13 @@ func (g game) moves(total time.Duration) map[string]map[string]struct{} {
 	moves := make(map[string]map[string]struct{})
 	active := g.activeOrientation()
 	if g.timeLoss(active, total) {
-		moves[time_key] = nil
+		if g.Competitive {
+			moves[time_key] = map[string]struct{}{
+				fmt.Sprintf("%d", g.Piece): {},
+			}
+		} else {
+			moves[time_key] = nil
+		}
 		return moves
 	}
 	board := wichessingBoard(g.Points)
@@ -232,7 +239,13 @@ func (g game) moves(total time.Duration) map[string]map[string]struct{} {
 		return moves
 	}
 	if board.Draw(active) {
-		moves[draw_key] = nil
+		if g.Competitive {
+			moves[draw_key] = map[string]struct{}{
+				fmt.Sprintf("%d", g.Piece): {},
+			}
+		} else {
+			moves[draw_key] = nil
+		}
 		return moves
 	}
 	m, check, checkmate := board.Moves(active)
@@ -240,7 +253,13 @@ func (g game) moves(total time.Duration) map[string]map[string]struct{} {
 		moves[point.String()] = set.Strings()
 	}
 	if checkmate {
-		moves[checkmate_key] = nil
+		if g.Competitive {
+			moves[checkmate_key] = map[string]struct{}{
+				fmt.Sprintf("%d", g.Piece): {},
+			}
+		} else {
+			moves[checkmate_key] = nil
+		}
 	} else if check {
 		moves[check_key] = nil
 	}

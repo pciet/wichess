@@ -15,6 +15,7 @@ CREATE TABLE Players (
 
 CREATE TABLE Games (
     game_id SERIAL PRIMARY KEY,
+    piece INTEGER,
     competitive BOOLEAN,
     recorded BOOLEAN,
     white VARCHAR(64) NOT NULL,

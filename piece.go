@@ -115,13 +115,10 @@ func (db DB) playersFreePieces(name string) []piece {
 	return pieces
 }
 
-func (db DB) createNewPlayersPieces(name string) {
-	for i := 0; i < initial_piece_count; i++ {
-		piece := randomHeroPiece()
-		_, err := db.Exec("INSERT INTO "+piece_table+"("+piece_kind_key+", "+piece_owner_key+", "+piece_ingame_key+") VALUES ($1, $2, $3);", piece.Kind, name, false)
-		if err != nil {
-			panicExit(err.Error())
-		}
+func (db DB) newPiece(kind int, player string) {
+	_, err := db.Exec("INSERT INTO "+piece_table+"("+piece_kind_key+", "+piece_owner_key+", "+piece_ingame_key+") VALUES ($1, $2, $3);", kind, player, false)
+	if err != nil {
+		panicExit(err.Error())
 	}
 }
 
