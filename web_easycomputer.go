@@ -4,6 +4,7 @@
 package main
 
 import (
+	"encoding/json"
 	"net/http"
 )
 
@@ -27,12 +28,14 @@ func easyComputerRequestHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/easycomputer", http.StatusFound)
 		return
 	}
-	err := r.ParseForm()
+	var assignments BoardAssignments
+	err := json.NewDecoder(r.Body).Decode(&assignments)
 	if err != nil {
 		http.NotFound(w, r)
 		return
 	}
-	setup, err := gameSetupFromForm(r.PostForm[request_assignments])
+	defer r.Body.Close()
+	setup, err := gameSetupFromRequest(assignments.Assignments)
 	if err != nil {
 		http.NotFound(w, r)
 		return

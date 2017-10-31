@@ -32,17 +32,17 @@ const (
 )
 
 type GameInfo struct {
-	ID                  int
-	Piece               int
-	Competitive         bool
-	Recorded            bool
+	ID                  int  `json:"-"`
+	Piece               int  `json:"-"`
+	Competitive         bool `json:"-"`
+	Recorded            bool `json:"-"`
 	White               string
-	WhiteAcknowledge    bool
+	WhiteAcknowledge    bool `json:"-"`
 	WhiteLatestMove     time.Time
 	WhiteElapsed        time.Duration
 	WhiteElapsedUpdated time.Time
 	Black               string
-	BlackAcknowledge    bool
+	BlackAcknowledge    bool `json:"-"`
 	BlackLatestMove     time.Time
 	BlackElapsed        time.Duration
 	BlackElapsedUpdated time.Time

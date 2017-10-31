@@ -217,6 +217,15 @@ func IndexFromAddressString(address string) uint8 {
 	return IndexFromFileAndRank(uint8(file), uint8(rank))
 }
 
+func AbsPointFromAddressString(address string) AbsPoint {
+	var file, rank int
+	_, err := fmt.Sscanf(address, "%d-%d", &file, &rank)
+	if err != nil {
+		panic(err.Error())
+	}
+	return AbsPoint{uint8(file), uint8(rank)}
+}
+
 func IndexFromFileAndRank(file, rank uint8) uint8 {
 	return file + (rank * 8)
 }

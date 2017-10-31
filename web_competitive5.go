@@ -4,6 +4,7 @@
 package main
 
 import (
+	"encoding/json"
 	"net/http"
 	"sync"
 	"time"
@@ -58,11 +59,6 @@ func competitive5Handler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/login", http.StatusFound)
 		return
 	}
-	err := r.ParseForm()
-	if err != nil {
-		http.NotFound(w, r)
-		return
-	}
 	id := database.playersCompetitive5HourGameID(name)
 	if r.Method == "POST" {
 		if id != 0 {
@@ -73,7 +69,14 @@ func competitive5Handler(w http.ResponseWriter, r *http.Request) {
 			http.NotFound(w, r)
 			return
 		}
-		setup, err := gameSetupFromForm(r.PostForm[request_assignments])
+		var assignments BoardAssignments
+		err := json.NewDecoder(r.Body).Decode(&assignments)
+		if err != nil {
+			http.NotFound(w, r)
+			return
+		}
+		defer r.Body.Close()
+		setup, err := gameSetupFromRequest(assignments.Assignments)
 		if err != nil {
 			http.NotFound(w, r)
 			return

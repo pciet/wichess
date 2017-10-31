@@ -26,8 +26,8 @@ const (
 
 type piece struct {
 	wichessing.Piece
-	Identifier int
-	Ingame     bool
+	Identifier int  `json:"-"`
+	Ingame     bool `json:"-"`
 }
 
 func (db DB) releasePieceFromGame(id int) {

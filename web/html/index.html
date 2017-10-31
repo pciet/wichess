@@ -385,12 +385,12 @@
         }
     }
     function easycomputer() {
-        jQuery.post('easycomputerrequest', {assignments: Assignments}).done(function() {
+        jQuery.post('easycomputerrequest', JSON.stringify({assignments: Assignments})).done(function() {
             window.location.pathname = '/easycomputer';
         });
     }
     function hardcomputer() {
-        jQuery.post('hardcomputerrequest', {assignments: Assignments}).done(function() {
+        jQuery.post('hardcomputerrequest', JSON.stringify({assignments: Assignments})).done(function() {
             window.location.pathname = '/hardcomputer';
         });
 
@@ -404,7 +404,7 @@
         unhighlightPiece();
         $('#matchers').hide();
         $('#matchingdiv').html('<div class="inlinediv"><div>Matching 15 Minute Competitive</div><div><input type="button" class="ibutton" value="Cancel" onclick="cancelmatched15();"/></div></div>').show();
-        jQuery.post('competitive15', {assignments: Assignments}).done(function() {
+        jQuery.post('competitive15', JSON.stringify({assignments: Assignments})).done(function() {
             window.location.pathname = '/competitive15';
         });
     }
@@ -420,7 +420,7 @@
         unhighlightPiece();
         $('#matchers').hide();
         $('#matchingdiv').html('<div class="inlinediv"><div>Matching Five Minute Competitive</div><div><input type="button" class="ibutton" value="Cancel" onclick="cancelmatched5();"/></div></div>').show();
-        jQuery.post('competitive5', {assignments: Assignments}).done(function() {
+        jQuery.post('competitive5', JSON.stringify({assignments: Assignments})).done(function() {
             window.location.pathname = '/competitive5';
         });
     }
@@ -438,7 +438,7 @@
             window.location.pathname = '/competitive48/'+Highlighted48HourGame;
             return;
         }
-        jQuery.post('competitive48', {index: Highlighted48HourGame, assignments: Assignments}).done(function() {
+        jQuery.post('competitive48', JSON.stringify({index: Highlighted48HourGame, assignments: Assignments})).done(function() {
             $('#match'+Highlighted48HourGame).removeClass('highlightedgame').addClass('matching');
             Matching = true;
             Highlighted48HourGame = null;

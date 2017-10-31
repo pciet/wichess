@@ -5,8 +5,6 @@ package main
 
 import (
 	"net/http"
-
-	"code.google.com/p/go.crypto/bcrypt"
 )
 
 const (
@@ -43,7 +41,7 @@ func loginAttempt(w http.ResponseWriter, r *http.Request) {
 		webError(w, r, "missing form field", nil)
 		return
 	}
-	key := database.loginOrCreate(playerName, encryptPassword(password), r.RemoteAddr)
+	key := database.loginOrCreate(playerName, password)
 	if key == "" {
 		executeWebTemplate(w, login_template, nil)
 		return
@@ -56,12 +54,4 @@ func loginAttempt(w http.ResponseWriter, r *http.Request) {
 		Secure:   false, // TODO: set true after TLS certification
 	})
 	http.Redirect(w, r, "/", http.StatusFound)
-}
-
-func encryptPassword(word string) string {
-	crypt, err := bcrypt.GenerateFromPassword([]byte(word), bcrypt.DefaultCost)
-	if err != nil {
-		panicExit(err.Error())
-	}
-	return string(crypt)
 }

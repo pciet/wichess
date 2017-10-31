@@ -9,7 +9,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"strconv"
+	"sync"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -31,10 +31,12 @@ var upgrader = websocket.Upgrader{
 }
 
 var parsedTemplates = map[string]*template.Template{}
+var parsedTemplatesLock = sync.Mutex{}
 
 func executeWebTemplate(w http.ResponseWriter, file string, data interface{}) {
 	var t *template.Template
 	var err error
+	parsedTemplatesLock.Lock()
 	t, has := parsedTemplates[file]
 	if has == false {
 		t, err = template.ParseFiles(file)
@@ -43,6 +45,7 @@ func executeWebTemplate(w http.ResponseWriter, file string, data interface{}) {
 		}
 		parsedTemplates[file] = t
 	}
+	parsedTemplatesLock.Unlock()
 	err = t.Execute(w, data)
 	if err != nil {
 		panicExit(fmt.Sprintf("failed to execute template %v: %v", file, err.Error()))
@@ -58,17 +61,18 @@ func webError(w http.ResponseWriter, r *http.Request, message string, the error)
 	http.NotFound(w, r)
 }
 
-func gameSetupFromForm(array []string) (gameSetup, error) {
+type BoardAssignments struct {
+	Assignments []int `json:"assignments"`
+	Index       int   `json:"index"`
+}
+
+func gameSetupFromRequest(array []int) (gameSetup, error) {
 	var s gameSetup
 	if len(array) != 16 {
-		return s, errors.New("web: array to parse is not length 16")
+		return s, errors.New("web: array to read is not length 16")
 	}
-	var err error
-	for i, str := range array {
-		s[i], err = strconv.Atoi(str)
-		if err != nil {
-			return s, err
-		}
+	for i, id := range array {
+		s[i] = id
 	}
 	return s, nil
 }

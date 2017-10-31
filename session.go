@@ -8,6 +8,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"net/http"
+	"sync"
 )
 
 const (
@@ -17,25 +18,23 @@ const (
 )
 
 // TODO: to support multiple instances of the logic server this will have to be stored in the database
-// TODO: locks on these session maps
 
 var (
 	// map[name]key
-	keys map[string]string
+	keys = map[string]string{}
 	// map[key]name
-	names map[string]string
-)
+	names = map[string]string{}
 
-func init() {
-	keys = make(map[string]string)
-	names = make(map[string]string)
-}
+	sessionLock = sync.RWMutex{}
+)
 
 func validSession(r *http.Request) string {
 	keyCookie, err := r.Cookie(key_cookie)
 	if err != nil {
 		return ""
 	}
+	sessionLock.RLock()
+	defer sessionLock.RUnlock()
 	_, has := names[keyCookie.Value]
 	if has {
 		return keyCookie.Value
@@ -54,6 +53,8 @@ func clearClientSession(w http.ResponseWriter) {
 }
 
 func newSession(name, key string) {
+	sessionLock.Lock()
+	defer sessionLock.Unlock()
 	oldkey, has := keys[name]
 	if has {
 		delete(names, oldkey)
@@ -75,5 +76,7 @@ func newSessionKey() string {
 }
 
 func nameFromSessionKey(key string) string {
+	sessionLock.RLock()
+	defer sessionLock.RUnlock()
 	return names[key]
 }

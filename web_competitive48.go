@@ -4,6 +4,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -30,39 +31,31 @@ func competitive48RequestHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/login", http.StatusFound)
 		return
 	}
-	err := r.ParseForm()
+	var assignments BoardAssignments
+	err := json.NewDecoder(r.Body).Decode(&assignments)
 	if err != nil {
 		http.NotFound(w, r)
 		return
 	}
-	istr, has := r.PostForm[competitive_48_index_key]
-	if has == false {
+	defer r.Body.Close()
+	if (assignments.Index < 0) || (assignments.Index > 7) {
 		http.NotFound(w, r)
 		return
 	}
-	index, err := strconv.Atoi(istr[0])
-	if err != nil {
-		http.NotFound(w, r)
-		return
-	}
-	if (index < 0) || (index > 7) {
-		http.NotFound(w, r)
-		return
-	}
-	if database.playersCompetitive48HourGameID(name, index) != 0 {
-		http.Redirect(w, r, fmt.Sprintf("/competitive48/%v", index), http.StatusFound)
+	if database.playersCompetitive48HourGameID(name, assignments.Index) != 0 {
+		http.Redirect(w, r, fmt.Sprintf("/competitive48/%v", assignments.Index), http.StatusFound)
 		return
 	}
 	if competitive48Matcher.Matching(name) != nil {
 		http.NotFound(w, r)
 		return
 	}
-	setup, err := gameSetupFromForm(r.PostForm[request_assignments])
+	setup, err := gameSetupFromRequest(assignments.Assignments)
 	if err != nil {
 		http.NotFound(w, r)
 		return
 	}
-	competitive48Matcher.Match(name, competitive48Setup{gameSetup: setup, slot: uint8(index)}, database.playerRating(name))
+	competitive48Matcher.Match(name, competitive48Setup{gameSetup: setup, slot: uint8(assignments.Index)}, database.playerRating(name))
 }
 
 func competitive48NotificationWebsocketHandler(w http.ResponseWriter, r *http.Request) {

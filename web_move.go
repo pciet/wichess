@@ -49,7 +49,6 @@ func moveRequestHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-
 	var kind int
 	if r.FormValue(request_promote_kind) != "" {
 		kind, err = strconv.Atoi(r.FormValue(request_promote_kind))
