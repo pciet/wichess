@@ -11,16 +11,14 @@ func (b Board) Draw(turn Orientation) bool {
 	checkmate := b.Checkmate(turn)
 	check := b.Check(turn)
 	moves := b.AllNaiveMovesFor(turn)
-	// remove all check moves for kings
+	// remove all check moves
 	for pt, mvs := range moves {
-		if b[pt.Index()].Base == King {
-			for mv, _ := range mvs {
-				if b.AfterMove(pt, *mv, turn).Check(turn) {
-					delete(mvs, mv)
-				}
-				if len(mvs) == 0 {
-					delete(moves, pt)
-				}
+		for mv, _ := range mvs {
+			if b.AfterMove(pt, *mv, turn).Check(turn) {
+				delete(mvs, mv)
+			}
+			if len(mvs) == 0 {
+				delete(moves, pt)
 			}
 		}
 	}

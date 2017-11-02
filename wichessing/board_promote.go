@@ -55,6 +55,7 @@ func (b Board) PromotePawn(at AbsPoint, to Kind) PointSet {
 		return nil
 	}
 	point.Kind = to
+	point.Base = BaseForKind(to)
 	set := make(PointSet)
 	set[&point] = struct{}{}
 	return set

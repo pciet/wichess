@@ -7,6 +7,226 @@ import ()
 
 var BasicMovesCases = []AvailableMovesCase{
 	{
+		Name:   "Failed Random Test",
+		Active: Black,
+		Position: PointSet{
+			{
+				AbsPoint: AbsPoint{5, 0},
+				Piece: &Piece{
+					Kind:        Rook,
+					Orientation: White,
+					Moved:       true,
+					Previous:    AbsPoint{5, 0}.Index(),
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{6, 0},
+				Piece: &Piece{
+					Kind:        Rook,
+					Orientation: White,
+					Moved:       true,
+					Previous:    AbsPoint{6, 0}.Index(),
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{2, 1},
+				Piece: &Piece{
+					Kind:        Pawn,
+					Orientation: Black,
+					Moved:       true,
+					Previous:    AbsPoint{2, 1}.Index(),
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{6, 1},
+				Piece: &Piece{
+					Kind:        Pawn,
+					Orientation: Black,
+					Moved:       true,
+					Previous:    AbsPoint{6, 1}.Index(),
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{7, 1},
+				Piece: &Piece{
+					Kind:        Knight,
+					Orientation: White,
+					Moved:       true,
+					Previous:    AbsPoint{7, 1}.Index(),
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{1, 2},
+				Piece: &Piece{
+					Kind:        Pawn,
+					Orientation: White,
+					Moved:       true,
+					Previous:    AbsPoint{1, 2}.Index(),
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{3, 2},
+				Piece: &Piece{
+					Kind:        King,
+					Orientation: White,
+					Moved:       true,
+					Previous:    AbsPoint{3, 2}.Index(),
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{4, 4},
+				Piece: &Piece{
+					Kind:        King,
+					Orientation: Black,
+					Moved:       true,
+					Previous:    AbsPoint{4, 4}.Index(),
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{6, 4},
+				Piece: &Piece{
+					Kind:        Pawn,
+					Orientation: White,
+					Moved:       true,
+					Previous:    AbsPoint{6, 4}.Index(),
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{3, 5},
+				Piece: &Piece{
+					Kind:        Pawn,
+					Orientation: White,
+					Moved:       true,
+					Previous:    AbsPoint{3, 5}.Index(),
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{5, 5},
+				Piece: &Piece{
+					Kind:        Rook,
+					Orientation: Black,
+					Moved:       true,
+					Previous:    AbsPoint{5, 5}.Index(),
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{6, 6},
+				Piece: &Piece{
+					Kind:        Bishop,
+					Orientation: White,
+					Moved:       true,
+					Previous:    AbsPoint{6, 6}.Index(),
+				},
+			}: {},
+			&BlackLeftRookStart: {},
+			{
+				AbsPoint: AbsPoint{3, 7},
+				Piece: &Piece{
+					Kind:        Queen,
+					Orientation: White,
+					Moved:       true,
+					Previous:    AbsPoint{3, 7}.Index(),
+				},
+			}: {},
+		},
+		Moves: map[AbsPoint]AbsPointSet{
+			{5, 0}: {
+				{4, 0}: {},
+				{3, 0}: {},
+				{2, 0}: {},
+				{1, 0}: {},
+				{0, 0}: {},
+				{5, 1}: {},
+				{5, 2}: {},
+				{5, 3}: {},
+				{5, 4}: {},
+				{5, 5}: {},
+			},
+			{6, 0}: {
+				{7, 0}: {},
+				{6, 1}: {},
+			},
+			{2, 1}: {
+				{2, 0}: {},
+			},
+			{6, 1}: {
+				{5, 0}: {},
+			},
+			{7, 1}: {
+				{6, 3}: {},
+				{5, 2}: {},
+			},
+			{1, 2}: {
+				{1, 3}: {},
+			},
+			{3, 2}: {
+				{2, 1}: {},
+				{2, 2}: {},
+				{2, 3}: {},
+				{4, 2}: {},
+				{4, 1}: {},
+				{3, 1}: {},
+			},
+			{4, 4}: {
+				{3, 4}: {},
+				{4, 5}: {},
+			},
+			{6, 4}: {
+				{5, 5}: {},
+				{6, 5}: {},
+			},
+			{3, 5}: {
+				{3, 6}: {},
+			},
+			{5, 5}: {
+				{5, 4}: {},
+				{5, 3}: {},
+				{5, 2}: {},
+				{5, 1}: {},
+				{5, 0}: {},
+				{6, 5}: {},
+				{7, 5}: {},
+				{5, 6}: {},
+				{5, 7}: {},
+				{4, 5}: {},
+				{3, 5}: {},
+			},
+			{6, 6}: {
+				{7, 7}: {},
+				{7, 5}: {},
+				{5, 7}: {},
+				{5, 5}: {},
+			},
+			{0, 7}: {
+				{0, 6}: {},
+				{0, 5}: {},
+				{0, 4}: {},
+				{0, 3}: {},
+				{0, 2}: {},
+				{0, 1}: {},
+				{0, 0}: {},
+				{1, 7}: {},
+				{2, 7}: {},
+				{3, 7}: {},
+			},
+			{3, 7}: {
+				{2, 7}: {},
+				{1, 7}: {},
+				{0, 7}: {},
+				{4, 7}: {},
+				{5, 7}: {},
+				{6, 7}: {},
+				{7, 7}: {},
+				{2, 6}: {},
+				{1, 5}: {},
+				{0, 4}: {},
+				{3, 6}: {},
+				{4, 6}: {},
+				{5, 5}: {},
+			},
+		},
+	},
+	{
 		Name:   "Chess Initial Position No Pawns",
 		Active: White,
 		Position: PointSet{

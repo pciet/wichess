@@ -9,15 +9,26 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
+	"math/rand"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/gorilla/websocket"
 	"github.com/pciet/wichess/wichessing"
+)
+
+const (
+	debug         = false
+	client_count  = 20
+	delay_seconds = 1
+	// [0,1), if random number in that range is less than this value then no special pieces will be used for this round
+	special_piece_probability = 0.5
 )
 
 const (
@@ -77,6 +88,7 @@ type game struct {
 }
 
 type piece struct {
+	Identifier int
 	wichessing.Piece
 }
 
@@ -88,20 +100,29 @@ type encodedMoves map[string]map[string]struct{}
 
 type movesMap map[wichessing.AbsPoint]wichessing.AbsPointSet
 
-var clients = []client{
-	{"client1", "passwordclient1"},
-	{"client2", "passwordclient2"},
-	{"client3", "passwordclient3"},
-	{"client4", "passwordclient4"},
-	{"client5", "passwordclient5"},
-	{"client6", "passwordclient6"},
-	{"client7", "passwordclient7"},
-	{"client8", "passwordclient8"},
-	{"client9", "passwordclient9"},
-	{"client10", "passwordclient10"},
+func (g game) promoting() bool {
+	for i := 56; i < 64; i++ {
+		if (g.Points[i].Base == wichessing.Pawn) && (g.Points[i].Orientation == wichessing.White) {
+			return true
+		}
+	}
+	for i := 0; i < 8; i++ {
+		if (g.Points[i].Base == wichessing.Pawn) && (g.Points[i].Orientation == wichessing.Black) {
+			return true
+		}
+	}
+	return false
 }
 
 func main() {
+	rand.Seed(42)
+	clients := make([]client, client_count)
+	for i := 0; i < client_count; i++ {
+		clients[i] = client{
+			name:     fmt.Sprintf("client%v", i),
+			password: fmt.Sprintf("passwordclient%v", i),
+		}
+	}
 	wait := sync.WaitGroup{}
 	for _, cl := range clients {
 		jar, err := cookiejar.New(nil)
@@ -110,6 +131,11 @@ func main() {
 		}
 		wait.Add(1)
 		go func(client *http.Client, meta client) {
+			// set an initial time offset
+			<-time.After(time.Second * time.Duration(20*rand.Float64()))
+			if debug {
+				fmt.Printf("(%v) GET %v\n", meta.name, server)
+			}
 			r, err := client.Get(server)
 			if err != nil {
 				panic(err.Error())
@@ -121,9 +147,13 @@ func main() {
 			if r.StatusCode != http.StatusOK {
 				panic(fmt.Sprintf("unexpected error code on /: %v", r.StatusCode))
 			}
+			<-time.After(time.Second * delay_seconds)
 			l := url.Values{}
 			l.Add(nameKey, meta.name)
 			l.Add(passwordKey, meta.password)
+			if debug {
+				fmt.Printf("(%v) POST %v: %v %v\n", meta.name, login, meta.name, meta.password)
+			}
 			r, err = client.PostForm(login, l)
 			if err != nil {
 				panic(err.Error())
@@ -153,13 +183,17 @@ func main() {
 			}
 		NEWGAME:
 			for {
+				<-time.After(time.Second * delay_seconds)
 				// TODO: open ws://localhost:8080/competitive48n
-				// get available pieces
+				if debug {
+					fmt.Printf("(%v) GET %v\n", meta.name, pieces)
+				}
 				r, err = client.Get(pieces)
 				if err != nil {
 					panic(err.Error())
 				}
-				bodyBytes, err := ioutil.ReadAll(r.Body)
+				var pcs []piece
+				err = json.NewDecoder(r.Body).Decode(&pcs)
 				if err != nil {
 					panic(err.Error())
 				}
@@ -167,15 +201,19 @@ func main() {
 				if err != nil {
 					panic(err.Error())
 				}
-				// TODO: assign pieces here
 				if r.StatusCode != http.StatusOK {
 					panic(fmt.Sprintf("unexpected error code on GET /pieces: %v", r.StatusCode))
 				}
+				assignments := assignRandomPieces(pcs)
+				<-time.After(time.Second * delay_seconds)
 				// TODO: test cancel
 				// TODO: test competitive48, competitive5, friend, easy/hard computer, and hotseat
 				// request a match
 				// this post returns when a match is made
-				r, err = client.Post(competitive15, "application/json", bytes.NewBuffer(assignRandomPieces(bodyBytes)))
+				if debug {
+					fmt.Printf("(%v) POST %v: %v\n", meta.name, competitive15, string(assignments))
+				}
+				r, err = client.Post(competitive15, "application/json", bytes.NewBuffer(assignments))
 				if err != nil {
 					panic(err.Error())
 				}
@@ -185,6 +223,9 @@ func main() {
 				}
 				if r.StatusCode != http.StatusOK {
 					panic(fmt.Sprintf("unexpected error code on POST /competitive15: %v", r.StatusCode))
+				}
+				if debug {
+					fmt.Printf("(%v) GET %v\n", meta.name, competitive15)
 				}
 				r, err = client.Get(competitive15)
 				if err != nil {
@@ -209,6 +250,11 @@ func main() {
 				if gameid == 0 {
 					panic("zero value game identifier")
 				}
+				// read out the rest of the connection
+				_, err = io.Copy(ioutil.Discard, r.Body)
+				if err != nil {
+					panic(err.Error())
+				}
 				err = r.Body.Close()
 				if err != nil {
 					panic(err.Error())
@@ -216,11 +262,17 @@ func main() {
 				if r.StatusCode != http.StatusOK {
 					panic(fmt.Sprintf("unexpected error code on GET /competitive15: %v", r.StatusCode))
 				}
+				if debug {
+					fmt.Printf("(%v) DIAL %v\n", meta.name, moven+"/"+fmt.Sprintf("%v", gameid))
+				}
 				conn, _, err := (&websocket.Dialer{
 					Jar: client.Jar,
 				}).Dial(moven+"/"+fmt.Sprintf("%v", gameid), nil)
 				if err != nil {
 					panic(err.Error())
+				}
+				if debug {
+					fmt.Printf("(%v) GET %v\n", meta.name, games+"/"+fmt.Sprintf("%d", gameid))
 				}
 				r, err = client.Get(games + "/" + fmt.Sprintf("%d", gameid))
 				if err != nil {
@@ -244,11 +296,16 @@ func main() {
 				var orientation wichessing.Orientation
 				if meta.name == g.White {
 					orientation = wichessing.White
-				} else {
+				} else if meta.name == g.Black {
 					orientation = wichessing.Black
+				} else {
+					panic(fmt.Sprintf("game expects white (%v) or black (%v) but player is %v\n", g.White, g.Black, meta.name))
 				}
 			PLAYGAME:
 				for {
+					if debug {
+						fmt.Printf("(%v) GET %v\n", meta.name, moves+"/"+fmt.Sprintf("%d", gameid))
+					}
 					r, err = client.Get(moves + "/" + fmt.Sprintf("%d", gameid))
 					if err != nil {
 						panic(err.Error())
@@ -265,12 +322,19 @@ func main() {
 					if err != nil {
 						panic(err.Error())
 					}
+					if len(em) == 0 {
+						panic(fmt.Sprintf("(%v) recieved zero length response to GET %v\n", meta.name, moves+"/"+fmt.Sprintf("%d", gameid)))
+					}
 					availableMoves := movesMap{}
 					for point, mvs := range em {
 						if (point == "checkmate") || (point == "draw") || (point == "time") {
+							<-time.After(time.Second * delay_seconds)
 							l = url.Values{}
 							l.Add(playerKey, meta.name)
 							l.Add(idKey, fmt.Sprintf("%d", gameid))
+							if debug {
+								fmt.Printf("(%v) POST %v: %v %v\n", meta.name, acknowledge, meta.name, gameid)
+							}
 							r, err = client.PostForm(acknowledge, l)
 							if err != nil {
 								panic(err.Error())
@@ -282,6 +346,9 @@ func main() {
 							if err != nil {
 								panic(err.Error())
 							}
+							if debug {
+								fmt.Printf("(%v) CLOSE %v\n", meta.name, moven+"/"+fmt.Sprintf("%v", gameid))
+							}
 							err = conn.Close()
 							if err != nil {
 								panic(err.Error())
@@ -289,38 +356,46 @@ func main() {
 							continue NEWGAME
 						}
 						if point == "promote" {
-							if g.Active == meta.name {
-								if orientation == wichessing.White {
-									g.Active = g.Black
-								} else {
-									g.Active = g.White
-								}
+							if g.Active != meta.name {
 								break // wait for opponent to promote
 							}
 							from := 0
 							if orientation == wichessing.White {
-								for i := 56; i < 64; i++ {
-									if (g.Points[i].Base == wichessing.Pawn) && (g.Points[i].Orientation == wichessing.White) {
-										from = i
-										break
+							WHITEPROMOTE:
+								for {
+									for i := 56; i < 64; i++ {
+										if (g.Points[i].Base == wichessing.Pawn) && (g.Points[i].Orientation == wichessing.White) {
+											from = i
+											break WHITEPROMOTE
+										}
 									}
+									panic(fmt.Sprintf("(%v) found no promotion\n", meta.name))
 								}
 							} else {
-								for i := 0; i < 8; i++ {
-									if (g.Points[i].Base == wichessing.Pawn) && (g.Points[i].Orientation == wichessing.Black) {
-										from = i
-										break
+							BLACKPROMOTE:
+								for {
+									for i := 0; i < 8; i++ {
+										if (g.Points[i].Base == wichessing.Pawn) && (g.Points[i].Orientation == wichessing.Black) {
+											from = i
+											break BLACKPROMOTE
+										}
 									}
+									panic(fmt.Sprintf("(%v) found no promotion\n", meta.name))
 								}
 							}
+							<-time.After(time.Second * delay_seconds)
 							l = url.Values{}
 							l.Add(fromKey, fmt.Sprintf("%d", from))
 							l.Add(kindKey, fmt.Sprintf("%d", wichessing.Queen))
+							if debug {
+								fmt.Printf("(%v) POST %v %v %v\n", meta.name, wichessing.AbsPointFromIndex(uint8(from)), "Queen", makeMove+"/"+fmt.Sprintf("%v", gameid))
+							}
 							r, err = client.PostForm(makeMove+"/"+fmt.Sprintf("%v", gameid), l)
 							if err != nil {
 								panic(err.Error())
 							}
 							if r.StatusCode != http.StatusOK {
+								fmt.Println(g.Points)
 								panic(fmt.Sprintf("unexpected error code on POST /move/%v: %v", gameid, r.StatusCode))
 							}
 							diff := map[string]piece{}
@@ -354,27 +429,43 @@ func main() {
 					}
 					if g.Active != meta.name {
 						diff := map[string]piece{}
+						if debug {
+							fmt.Printf("(%v) WAIT DIFF\n", meta.name)
+						}
 						err = conn.ReadJSON(&diff)
 						if err != nil {
 							panic(err.Error())
 						}
+						if debug {
+							fmt.Printf("(%v) RECV DIFF\n", meta.name)
+						}
+						if len(diff) == 0 {
+							panic(fmt.Sprintf("(%v) received zero length diff\n", meta.name))
+						}
 						for point, p := range diff {
 							g.Points[wichessing.IndexFromAddressString(point)] = p
 						}
-						g.Active = meta.name
+						if g.promoting() == false {
+							g.Active = meta.name
+						}
+						<-time.After(time.Second * delay_seconds)
 						continue
 					}
-				MAKEMOVE:
 					for pt, mvs := range availableMoves {
 						if g.Points[pt.Index()].Orientation != orientation {
 							continue
 						}
 						for mv, _ := range mvs {
+							<-time.After(time.Second * delay_seconds)
 							l = url.Values{}
 							l.Add(fromKey, fmt.Sprintf("%d", pt.Index()))
 							l.Add(toKey, fmt.Sprintf("%d", mv.Index()))
+							if debug {
+								fmt.Printf("(%v) POST %v %v %v\n", meta.name, pt, mv, makeMove+"/"+fmt.Sprintf("%v", gameid))
+							}
 							r, err = client.PostForm(makeMove+"/"+fmt.Sprintf("%v", gameid), l)
 							if err != nil {
+								fmt.Println(g.Points)
 								panic(err.Error())
 							}
 							if r.StatusCode != http.StatusOK {
@@ -395,14 +486,21 @@ func main() {
 							for point, p := range diff {
 								g.Points[wichessing.IndexFromAddressString(point)] = p
 							}
-							if orientation == wichessing.White {
-								g.Active = g.Black
-							} else {
-								g.Active = g.White
+							if g.promoting() == false {
+								if orientation == wichessing.White {
+									g.Active = g.Black
+								} else {
+									g.Active = g.White
+								}
 							}
-							break MAKEMOVE
+							continue PLAYGAME
 						}
+						fmt.Println(availableMoves)
+						panic(fmt.Sprintf("(%v) has no move at %v\n", meta.name, pt))
 					}
+					fmt.Println(availableMoves)
+					fmt.Println(g.Points)
+					panic(fmt.Sprintf("(%v) has no available moves\n", meta.name))
 				}
 			}
 			wait.Done()
@@ -413,12 +511,73 @@ func main() {
 	wait.Wait()
 }
 
-// returns a JSON string with the piece assignments
-func assignRandomPieces(piecesBody []byte) []byte {
-	var pieces = map[string][]int{
-		"assignments": []int{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+func pieceSliceHas(slice []piece, p piece) bool {
+	for _, pc := range slice {
+		if pc == p {
+			return true
+		}
 	}
-	jsonm, err := json.Marshal(pieces)
+	return false
+}
+
+// returns a JSON string with the piece assignments
+func assignRandomPieces(pieces []piece) []byte {
+	used := make([]piece, 0, 16)
+	assignments := [16]int{}
+	for i := 0; i < 16; i++ {
+		if (i == 0) || (i == 7) {
+			for _, pc := range pieces {
+				if pieceSliceHas(used, pc) {
+					continue
+				}
+				if pc.Base == wichessing.Rook {
+					assignments[i] = pc.Identifier
+					used = append(used, pc)
+					break
+				}
+			}
+		} else if (i == 1) || (i == 6) {
+			for _, pc := range pieces {
+				if pieceSliceHas(used, pc) {
+					continue
+				}
+				if pc.Base == wichessing.Knight {
+					assignments[i] = pc.Identifier
+					used = append(used, pc)
+					break
+				}
+			}
+		} else if (i == 2) || (i == 5) {
+			for _, pc := range pieces {
+				if pieceSliceHas(used, pc) {
+					continue
+				}
+				if pc.Base == wichessing.Bishop {
+					assignments[i] = pc.Identifier
+					used = append(used, pc)
+					break
+				}
+			}
+			// no kings or queens for now
+		} else if i > 7 {
+			for _, pc := range pieces {
+				if pieceSliceHas(used, pc) {
+					continue
+				}
+				if pc.Base == wichessing.Pawn {
+					assignments[i] = pc.Identifier
+					used = append(used, pc)
+					break
+				}
+			}
+		}
+	}
+	if rand.Float32() < special_piece_probability {
+		assignments = [16]int{}
+	}
+	jsonm, err := json.Marshal(map[string][16]int{
+		"assignments": assignments,
+	})
 	if err != nil {
 		panic(err.Error())
 	}

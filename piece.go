@@ -26,7 +26,7 @@ const (
 
 type piece struct {
 	wichessing.Piece
-	Identifier int  `json:"-"`
+	Identifier int
 	Ingame     bool `json:"-"`
 }
 

@@ -48,7 +48,7 @@ func executeWebTemplate(w http.ResponseWriter, file string, data interface{}) {
 	parsedTemplatesLock.Unlock()
 	err = t.Execute(w, data)
 	if err != nil {
-		panicExit(fmt.Sprintf("failed to execute template %v: %v", file, err.Error()))
+		log.Printf("failed to execute template %v: %v\n", file, err.Error())
 	}
 }
 

@@ -254,7 +254,6 @@
         makeMove(JSON.parse(event.data));
     }
     function setGainedPiece(kind) {
-        console.log(Moves);
         $('#gainedpiece').html('<div><img id="gainedpieceimg" src="/img/'+imageNameForKind(kind, 64, PlayerOrientation)+'"></div><div id="piecetitle"> +'+nameForKind(kind)+'</div>');
     }
     function setPieceImage(index, kind, orientation) {

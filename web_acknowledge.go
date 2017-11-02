@@ -6,12 +6,15 @@ package main
 import (
 	"net/http"
 	"strconv"
+	"sync"
 )
 
 const (
 	request_player = "player"
 	request_gameid = "gameid"
 )
+
+var acknowledgingLock = sync.Mutex{}
 
 func acknowledgeGameCompletionHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
@@ -44,6 +47,7 @@ func acknowledgeGameCompletionHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
+	acknowledgingLock.Lock()
 	game := database.gameWithIdentifier(gid)
 	if (game.White != name) && (game.Black != name) {
 		http.NotFound(w, r)
@@ -62,4 +66,5 @@ func acknowledgeGameCompletionHandler(w http.ResponseWriter, r *http.Request) {
 			panicExit("web_acknowledge: failed to acknowledge hard computer  player")
 		}
 	}
+	acknowledgingLock.Unlock()
 }

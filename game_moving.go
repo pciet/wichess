@@ -20,19 +20,16 @@ const (
 
 // Returns address that have changed, Kind 0 piece for a now empty point, but does not update the board points. Returns true if promoting.
 func (g game) move(from, to int, mover string, timeoutMove bool) (map[string]piece, bool) {
+	if g.Active != mover {
+		return nil, false
+	}
 	var nextMover string
 	var orientation, nextOrientation wichessing.Orientation
 	if g.White == g.Active {
-		if g.White != mover {
-			return nil, false
-		}
 		orientation = wichessing.White
 		nextOrientation = wichessing.Black
 		nextMover = g.Black
 	} else {
-		if g.Black != mover {
-			return nil, false
-		}
 		orientation = wichessing.Black
 		nextOrientation = wichessing.White
 		nextMover = g.White
@@ -129,6 +126,9 @@ func (g game) move(from, to int, mover string, timeoutMove bool) (map[string]pie
 }
 
 func (g game) promote(from int, player string, kind wichessing.Kind, timeoutMove bool) map[string]piece {
+	if g.Active != player {
+		return nil
+	}
 	var nextMover string
 	var orientation wichessing.Orientation
 	if g.White == player {
