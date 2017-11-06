@@ -70,44 +70,60 @@ func moveRequestHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+	var totalTime time.Duration
+	c5 := database.playersCompetitive5HourGameID(name)
+	if c5 != 0 {
+		totalTime = competitive5_total_time
+	} else {
+		c15 := database.playersCompetitive15HourGameID(name)
+		if c15 != 0 {
+			totalTime = competitive15_total_time
+		}
+	}
+	lockGame(int(gameid))
+	defer unlockGame(int(gameid))
 	game := database.gameWithIdentifier(int(gameid))
 	if (game.White != name) && (game.Black != name) {
 		http.NotFound(w, r)
 		return
 	}
-	var diff map[string]piece
-	var promoting bool
-	if kind != 0 { // promotion
-		diff = game.promote(from, name, wichessing.Kind(kind), false)
-		if (diff == nil) || (len(diff) == 0) {
-			http.NotFound(w, r)
-			return
-		}
-	} else {
-		diff, promoting = game.move(from, to, name, false)
-		if (diff == nil) || (len(diff) == 0) {
-			http.NotFound(w, r)
-			return
-		}
-	}
-	if promoting == false {
-		if (game.White == easy_computer_player) || (game.Black == easy_computer_player) {
-			cdiff := database.easyComputerMoveForGame(int(gameid))
-			if (cdiff != nil) && (len(cdiff) != 0) {
-				for addr, piece := range cdiff {
-					diff[addr] = piece
-				}
-			}
-		} else if (game.White == hard_computer_player) || (game.Black == hard_computer_player) {
-			cdiff := database.hardComputerMoveForGame(int(gameid))
-			if (cdiff != nil) && (len(cdiff) != 0) {
-				for addr, piece := range cdiff {
-					diff[addr] = piece
-				}
-			}
-		}
-	}
 	(&game).updateGameTimesWithMove(time.Now())
+	var diff map[string]piece
+	if game.timeLoss(game.activeOrientation(), totalTime) {
+		diff = map[string]piece{}
+	} else {
+		var promoting bool
+		if kind != 0 { // promotion
+			diff = game.promote(from, name, wichessing.Kind(kind), false)
+			if (diff == nil) || (len(diff) == 0) {
+				http.NotFound(w, r)
+				return
+			}
+		} else {
+			diff, promoting = game.move(from, to, name, false)
+			if (diff == nil) || (len(diff) == 0) {
+				http.NotFound(w, r)
+				return
+			}
+		}
+		if promoting == false {
+			if (game.White == easy_computer_player) || (game.Black == easy_computer_player) {
+				cdiff := database.easyComputerMoveForGame(int(gameid))
+				if (cdiff != nil) && (len(cdiff) != 0) {
+					for addr, piece := range cdiff {
+						diff[addr] = piece
+					}
+				}
+			} else if (game.White == hard_computer_player) || (game.Black == hard_computer_player) {
+				cdiff := database.hardComputerMoveForGame(int(gameid))
+				if (cdiff != nil) && (len(cdiff) != 0) {
+					for addr, piece := range cdiff {
+						diff[addr] = piece
+					}
+				}
+			}
+		}
+	}
 	json, err := json.Marshal(diff)
 	if err != nil {
 		panicExit(err.Error())

@@ -7,7 +7,11 @@ import ()
 
 func (b Board) AfterPromote(from AbsPoint, kind Kind) Board {
 	board := b.Copy()
-	for point, _ := range board.PromotePawn(from, kind) {
+	diff := board.PromotePawn(from, kind)
+	if (diff == nil) || (len(diff) == 0) {
+		panic("failed to promote pawn")
+	}
+	for point, _ := range diff {
 		board[point.Index()] = *point
 	}
 	return board
@@ -42,6 +46,8 @@ func (b Board) PromotePawn(at AbsPoint, to Kind) PointSet {
 	if point.Piece == nil {
 		return nil
 	}
+	// don't affect the input
+	point.Piece = point.Piece.Copy()
 	if point.Base != Pawn {
 		return nil
 	}

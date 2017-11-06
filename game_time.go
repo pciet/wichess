@@ -32,8 +32,8 @@ func (g game) timeLoss(active wichessing.Orientation, total time.Duration) bool 
 		if g.WhiteElapsed > total {
 			timeLossLock.Lock()
 			if g.DB.gameRecorded(g.ID) == false {
-				database.updatePlayerRecords(g.Black, g.White, false)
-				database.setGameRecorded(g.ID)
+				g.DB.updatePlayerRecords(g.Black, g.White, false)
+				g.DB.setGameRecorded(g.ID)
 			}
 			timeLossLock.Unlock()
 			return true
@@ -42,8 +42,8 @@ func (g game) timeLoss(active wichessing.Orientation, total time.Duration) bool 
 		if g.BlackElapsed > total {
 			timeLossLock.Lock()
 			if g.DB.gameRecorded(g.ID) == false {
-				database.updatePlayerRecords(g.White, g.Black, false)
-				database.setGameRecorded(g.ID)
+				g.DB.updatePlayerRecords(g.White, g.Black, false)
+				g.DB.setGameRecorded(g.ID)
 			}
 			timeLossLock.Unlock()
 			return true
@@ -158,11 +158,11 @@ func (g *game) updateGameTimesWithMove(at time.Time) {
 	}
 }
 
-// TODO: lock database access to this game while this sort of method is executing its multiple reads and writes
 func (db DB) updateGameTimes(id int, turn time.Duration, total time.Duration) GameInfo {
 	g := db.gameWithIdentifier(id)
 	active := g.activeOrientation()
 	b := wichessingBoard(g.Points)
+	// if the database contains a timeLoss state then the game is already over and recorded by the listening routine or page load logic
 	if b.Draw(active) || b.Checkmate(active) || g.timeLoss(active, total) {
 		return g.GameInfo
 	}

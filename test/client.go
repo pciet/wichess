@@ -129,6 +129,16 @@ func main() {
 		if err != nil {
 			panic(err.Error())
 		}
+		// let the client hold onto more connections
+		// http://tleyden.github.io/blog/2016/11/21/tuning-the-go-http-client-library-for-load-testing/
+		dtp, ok := http.DefaultTransport.(*http.Transport)
+		if ok == false {
+			panic("failed to assert http.DefaultTransport to *http.Transport")
+		}
+		dt := *dtp
+		dt.MaxIdleConns = client_count
+		dt.MaxIdleConnsPerHost = client_count
+		// dt set as client Transport on the go func call below
 		wait.Add(1)
 		go func(client *http.Client, meta client) {
 			// set an initial time offset
@@ -301,6 +311,7 @@ func main() {
 				} else {
 					panic(fmt.Sprintf("game expects white (%v) or black (%v) but player is %v\n", g.White, g.Black, meta.name))
 				}
+				timeLoss := false
 			PLAYGAME:
 				for {
 					if debug {
@@ -369,7 +380,8 @@ func main() {
 											break WHITEPROMOTE
 										}
 									}
-									panic(fmt.Sprintf("(%v) found no promotion\n", meta.name))
+									fmt.Println(g.Points)
+									panic(fmt.Sprintf("(%v) found no promotion (white)\n", meta.name))
 								}
 							} else {
 							BLACKPROMOTE:
@@ -380,7 +392,8 @@ func main() {
 											break BLACKPROMOTE
 										}
 									}
-									panic(fmt.Sprintf("(%v) found no promotion\n", meta.name))
+									fmt.Println(g.Points)
+									panic(fmt.Sprintf("(%v) found no promotion (black)\n", meta.name))
 								}
 							}
 							<-time.After(time.Second * delay_seconds)
@@ -427,6 +440,11 @@ func main() {
 						}
 						availableMoves[wichessing.AbsPointFromAddressString(point)] = set
 					}
+					if timeLoss == true {
+						fmt.Println(em)
+						fmt.Println(g.Points)
+						panic(fmt.Sprintf("%v recieved zero length diff but the game is not a time loss", meta.name))
+					}
 					if g.Active != meta.name {
 						diff := map[string]piece{}
 						if debug {
@@ -440,7 +458,8 @@ func main() {
 							fmt.Printf("(%v) RECV DIFF\n", meta.name)
 						}
 						if len(diff) == 0 {
-							panic(fmt.Sprintf("(%v) received zero length diff\n", meta.name))
+							timeLoss = true
+							continue
 						}
 						for point, p := range diff {
 							g.Points[wichessing.IndexFromAddressString(point)] = p
@@ -483,6 +502,10 @@ func main() {
 							if err != nil {
 								panic(err.Error())
 							}
+							if len(diff) == 0 {
+								timeLoss = true
+								continue PLAYGAME
+							}
 							for point, p := range diff {
 								g.Points[wichessing.IndexFromAddressString(point)] = p
 							}
@@ -505,7 +528,8 @@ func main() {
 			}
 			wait.Done()
 		}(&http.Client{
-			Jar: jar,
+			Jar:       jar,
+			Transport: &dt,
 		}, cl)
 	}
 	wait.Wait()

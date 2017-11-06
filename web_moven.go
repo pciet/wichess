@@ -26,7 +26,9 @@ func moveNotificationWebsocketHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
+	rLockGame(int(gameid))
 	game := database.gameWithIdentifier(int(gameid))
+	rUnlockGame(int(gameid))
 	if (game.White != name) && (game.Black != name) {
 		http.NotFound(w, r)
 		return

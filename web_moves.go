@@ -45,6 +45,8 @@ func movesHandler(w http.ResponseWriter, r *http.Request) {
 			totalTime = competitive15_total_time
 		}
 	}
+	lockGame(int(gameid))
+	defer unlockGame(int(gameid))
 	game := database.gameWithIdentifier(int(gameid))
 	if (game.White != name) && (game.Black != name) {
 		http.NotFound(w, r)

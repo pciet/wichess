@@ -48,7 +48,9 @@ func acknowledgeGameCompletionHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	acknowledgingLock.Lock()
+	rLockGame(gid)
 	game := database.gameWithIdentifier(gid)
+	rUnlockGame(gid)
 	if (game.White != name) && (game.Black != name) {
 		http.NotFound(w, r)
 		return
@@ -67,4 +69,5 @@ func acknowledgeGameCompletionHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	acknowledgingLock.Unlock()
+	r.Body.Close()
 }

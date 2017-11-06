@@ -200,14 +200,8 @@ func (g *game) acknowledgeGameComplete(player string) bool {
 	}
 	timeLoss := false
 	if totalTime > time.Duration(0) {
-		if active == wichessing.White {
-			if g.WhiteElapsed > totalTime {
-				timeLoss = true
-			}
-		} else {
-			if g.BlackElapsed > totalTime {
-				timeLoss = true
-			}
+		if (g.WhiteElapsed > totalTime) || (g.BlackElapsed > totalTime) {
+			timeLoss = true
 		}
 	}
 	b := wichessingBoard(g.Points)
@@ -375,6 +369,7 @@ func (db DB) newGame(player1 string, player1setup gameSetup, player2 string, pla
 }
 
 func (db DB) deleteGame(id int) {
+	go func(gid int) { deleteGameLock(gid) }(id)
 	result, err := db.Exec("DELETE FROM "+games_table+" WHERE "+games_identifier+" = $1;", id)
 	if err != nil {
 		panicExit(err.Error())

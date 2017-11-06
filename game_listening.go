@@ -43,7 +43,9 @@ func listeningToGame(name string, white string, black string, turnTime time.Dura
 				move: make(chan time.Time),
 			}
 			go func(channels gameMonitor, gameid int, turn time.Duration, move time.Time) {
+				rLockGame(gameid)
 				g := database.gameWithIdentifier(gameid)
+				rUnlockGame(gameid)
 				for {
 					b := wichessingBoard(g.Points)
 					active := g.activeOrientation()
@@ -58,10 +60,14 @@ func listeningToGame(name string, white string, black string, turnTime time.Dura
 					case <-channels.done:
 						return
 					case move = <-channels.move:
+						rLockGame(gameid)
 						g = database.gameWithIdentifier(gameid)
+						rUnlockGame(gameid)
 					case <-time.After(timeout.Sub(time.Now())):
+						lockGame(gameid)
 						move = time.Now()
 						g = database.gameWithIdentifier(gameid).randomMoveAtTime(move)
+						unlockGame(gameid)
 					}
 				}
 			}(gameMonitors[id], id, turnTime, previousMove)
@@ -74,25 +80,30 @@ func listeningToGame(name string, white string, black string, turnTime time.Dura
 			}
 			go func(channels gameMonitor, gameid int, total time.Duration, move time.Time) {
 				for {
+					lockGame(gameid)
 					g := database.gameWithIdentifier(gameid)
 					b := wichessingBoard(g.Points)
 					active := g.activeOrientation()
 					if b.Draw(active) || b.Checkmate(active) || g.timeLoss(active, total) {
+						unlockGame(gameid)
 						gameMonitorsLock.Lock()
 						delete(gameMonitors, gameid)
 						gameMonitorsLock.Unlock()
 						return
 					}
+					unlockGame(gameid)
 					elapsed := g.orientationsElapsedTime(active)
 					select {
 					case <-channels.done:
 						return
 					case <-channels.move:
 					case <-time.After(total - elapsed):
-						_ = g.DB.updateGameTimes(id, time.Duration(0), total)
+						lockGame(gameid)
+						_ = g.DB.updateGameTimes(gameid, time.Duration(0), total)
+						unlockGame(gameid)
 						// by sending an empty notification the client will request /moves, which says time has expired
 						gameListeningLock.RLock()
-						cs, has := gameListening[id]
+						cs, has := gameListening[gameid]
 						if has {
 							if cs.white != nil {
 								cs.white <- make(map[string]piece)

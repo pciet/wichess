@@ -156,7 +156,11 @@ func (g game) promote(from int, player string, kind wichessing.Kind, timeoutMove
 		return nil
 	}
 	diff := make(map[string]piece)
-	for point, _ := range b.PromotePawn(wichessing.AbsPointFromIndex(uint8(from)), wichessing.Kind(kind)) {
+	promdiff := b.PromotePawn(wichessing.AbsPointFromIndex(uint8(from)), wichessing.Kind(kind))
+	if (promdiff == nil) || (len(promdiff) == 0) {
+		return diff
+	}
+	for point, _ := range promdiff {
 		if point.Piece == nil {
 			diff[point.AbsPoint.String()] = piece{
 				Piece: wichessing.Piece{
@@ -168,9 +172,6 @@ func (g game) promote(from int, player string, kind wichessing.Kind, timeoutMove
 				Piece: *point.Piece,
 			}
 		}
-	}
-	if (diff == nil) || (len(diff) == 0) {
-		return diff
 	}
 	g.DB.updateGame(g.ID, diff, nextMover)
 	if timeoutMove == false {

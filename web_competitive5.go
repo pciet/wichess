@@ -105,8 +105,11 @@ func competitive5Handler(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "/", http.StatusFound)
 			return
 		}
+		lockGame(id)
+		info := database.updateGameTimes(id, competitive5_turn_time, competitive5_total_time)
+		unlockGame(id)
 		executeWebTemplate(w, game_template, gameTemplate{
-			GameInfo:  database.updateGameTimes(id, competitive5_turn_time, competitive5_total_time),
+			GameInfo:  info,
 			Name:      name,
 			TotalTime: competitive5_total_time,
 			TurnTime:  competitive5_turn_time,
