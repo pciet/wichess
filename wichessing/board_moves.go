@@ -358,6 +358,12 @@ func (b Board) EnPassantTakeFromPoint(the Point) AbsPointSet {
 			}
 		}
 	}
+	// remove cases where another piece is at the en passant capture point
+	for point, _ := range set {
+		if b[point.Index()].Piece != nil {
+			delete(set, point)
+		}
+	}
 	return set
 }
 

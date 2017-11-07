@@ -89,9 +89,9 @@ OUTER:
 				i++
 				continue
 			}
-			_, promoting := g.move(int(addr.Index()), int(point.Index()), g.Active, true)
+			_, promoting, promotingOrientation := g.move(int(addr.Index()), int(point.Index()), g.Active, true)
 			// TODO: this logic is duplicated in easyComputerMoveForGame
-			if promoting {
+			if promoting && (active == promotingOrientation) {
 				after := board.AfterMove(addr, *point, active)
 				var from int
 				if active == wichessing.White {

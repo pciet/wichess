@@ -33,6 +33,17 @@ func moveNotificationWebsocketHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
+	if game.White == name {
+		if game.WhiteAcknowledge {
+			http.NotFound(w, r)
+			return
+		}
+	} else {
+		if game.BlackAcknowledge {
+			http.NotFound(w, r)
+			return
+		}
+	}
 	var turnTime time.Duration
 	for _, id := range game.DB.playersCompetitive48Games(name) {
 		if id == int(gameid) {

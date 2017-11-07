@@ -100,18 +100,18 @@ type encodedMoves map[string]map[string]struct{}
 
 type movesMap map[wichessing.AbsPoint]wichessing.AbsPointSet
 
-func (g game) promoting() bool {
+func (g game) promoting() (bool, wichessing.Orientation) {
 	for i := 56; i < 64; i++ {
 		if (g.Points[i].Base == wichessing.Pawn) && (g.Points[i].Orientation == wichessing.White) {
-			return true
+			return true, wichessing.White
 		}
 	}
 	for i := 0; i < 8; i++ {
 		if (g.Points[i].Base == wichessing.Pawn) && (g.Points[i].Orientation == wichessing.Black) {
-			return true
+			return true, wichessing.Black
 		}
 	}
-	return false
+	return false, wichessing.White
 }
 
 func main() {
@@ -141,12 +141,19 @@ func main() {
 		// dt set as client Transport on the go func call below
 		wait.Add(1)
 		go func(client *http.Client, meta client) {
+			dialer := &websocket.Dialer{
+				Jar: client.Jar,
+			}
 			// set an initial time offset
 			<-time.After(time.Second * time.Duration(20*rand.Float64()))
 			if debug {
 				fmt.Printf("(%v) GET %v\n", meta.name, server)
 			}
 			r, err := client.Get(server)
+			if err != nil {
+				panic(err.Error())
+			}
+			_, err = io.Copy(ioutil.Discard, r.Body)
 			if err != nil {
 				panic(err.Error())
 			}
@@ -165,6 +172,10 @@ func main() {
 				fmt.Printf("(%v) POST %v: %v %v\n", meta.name, login, meta.name, meta.password)
 			}
 			r, err = client.PostForm(login, l)
+			if err != nil {
+				panic(err.Error())
+			}
+			_, err = io.Copy(ioutil.Discard, r.Body)
 			if err != nil {
 				panic(err.Error())
 			}
@@ -227,6 +238,10 @@ func main() {
 				if err != nil {
 					panic(err.Error())
 				}
+				_, err = io.Copy(ioutil.Discard, r.Body)
+				if err != nil {
+					panic(err.Error())
+				}
 				err = r.Body.Close()
 				if err != nil {
 					panic(err.Error())
@@ -260,7 +275,6 @@ func main() {
 				if gameid == 0 {
 					panic("zero value game identifier")
 				}
-				// read out the rest of the connection
 				_, err = io.Copy(ioutil.Discard, r.Body)
 				if err != nil {
 					panic(err.Error())
@@ -275,11 +289,10 @@ func main() {
 				if debug {
 					fmt.Printf("(%v) DIAL %v\n", meta.name, moven+"/"+fmt.Sprintf("%v", gameid))
 				}
-				conn, _, err := (&websocket.Dialer{
-					Jar: client.Jar,
-				}).Dial(moven+"/"+fmt.Sprintf("%v", gameid), nil)
+				conn, r, err := dialer.Dial(moven+"/"+fmt.Sprintf("%v", gameid), nil)
 				if err != nil {
-					panic(err.Error())
+					fmt.Println(r)
+					panic(fmt.Sprintf("%v: error code %v\n", err.Error(), r.StatusCode))
 				}
 				if debug {
 					fmt.Printf("(%v) GET %v\n", meta.name, games+"/"+fmt.Sprintf("%d", gameid))
@@ -352,6 +365,10 @@ func main() {
 							}
 							if r.StatusCode != http.StatusOK {
 								panic(fmt.Sprintf("unexpected error code on POST /acknowledge: %v", r.StatusCode))
+							}
+							_, err = io.Copy(ioutil.Discard, r.Body)
+							if err != nil {
+								panic(err.Error())
 							}
 							err = r.Body.Close()
 							if err != nil {
@@ -464,7 +481,8 @@ func main() {
 						for point, p := range diff {
 							g.Points[wichessing.IndexFromAddressString(point)] = p
 						}
-						if g.promoting() == false {
+						promoting, promotingOrientation := g.promoting()
+						if (promoting == false) || (promoting && (promotingOrientation == orientation)) {
 							g.Active = meta.name
 						}
 						<-time.After(time.Second * delay_seconds)
@@ -509,7 +527,8 @@ func main() {
 							for point, p := range diff {
 								g.Points[wichessing.IndexFromAddressString(point)] = p
 							}
-							if g.promoting() == false {
+							promoting, promotingOrientation := g.promoting()
+							if (promoting == false) || (promoting && (promotingOrientation != orientation)) {
 								if orientation == wichessing.White {
 									g.Active = g.Black
 								} else {

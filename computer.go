@@ -29,8 +29,8 @@ func (db DB) easyComputerMoveForGame(id int) map[string]piece {
 	if move == nil {
 		return nil
 	}
-	diff, promoting := g.move(int(move.From.Index()), int(move.To.Index()), easy_computer_player, false)
-	if promoting {
+	diff, promoting, promotingOrientation := g.move(int(move.From.Index()), int(move.To.Index()), easy_computer_player, false)
+	if promoting && (promotingOrientation == orientation) {
 		after := wichessingBoard(g.Points).AfterMove(move.From, move.To, orientation)
 		var from int
 		if orientation == wichessing.White {
@@ -66,9 +66,8 @@ func (db DB) easyComputerMoveForGame(id int) map[string]piece {
 }
 
 func (db DB) easyComputerGame(player string) int {
-	row := db.QueryRow("SELECT "+games_identifier+" FROM "+games_table+" WHERE ("+games_white+" = $1 AND "+games_black+" = $2) OR ("+games_white+" = $3 AND "+games_black+" = $4);", player, easy_computer_player, easy_computer_player, player)
 	var id int
-	err := row.Scan(&id)
+	err := db.QueryRow("SELECT "+games_identifier+" FROM "+games_table+" WHERE ("+games_white+" = $1 AND "+games_black+" = $2) OR ("+games_white+" = $3 AND "+games_black+" = $4);", player, easy_computer_player, easy_computer_player, player).Scan(&id)
 	if err != nil {
 		return 0
 	}

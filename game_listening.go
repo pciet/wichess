@@ -46,6 +46,12 @@ func listeningToGame(name string, white string, black string, turnTime time.Dura
 				rLockGame(gameid)
 				g := database.gameWithIdentifier(gameid)
 				rUnlockGame(gameid)
+				if (g.White != name) && (g.Black != name) {
+					gameMonitorsLock.Lock()
+					delete(gameMonitors, gameid)
+					gameMonitorsLock.Unlock()
+					return
+				}
 				for {
 					b := wichessingBoard(g.Points)
 					active := g.activeOrientation()
@@ -63,11 +69,23 @@ func listeningToGame(name string, white string, black string, turnTime time.Dura
 						rLockGame(gameid)
 						g = database.gameWithIdentifier(gameid)
 						rUnlockGame(gameid)
+						if (g.White != name) && (g.Black != name) {
+							gameMonitorsLock.Lock()
+							delete(gameMonitors, gameid)
+							gameMonitorsLock.Unlock()
+							return
+						}
 					case <-time.After(timeout.Sub(time.Now())):
 						lockGame(gameid)
 						move = time.Now()
 						g = database.gameWithIdentifier(gameid).randomMoveAtTime(move)
 						unlockGame(gameid)
+						if (g.White != name) && (g.Black != name) {
+							gameMonitorsLock.Lock()
+							delete(gameMonitors, gameid)
+							gameMonitorsLock.Unlock()
+							return
+						}
 					}
 				}
 			}(gameMonitors[id], id, turnTime, previousMove)
@@ -82,6 +100,13 @@ func listeningToGame(name string, white string, black string, turnTime time.Dura
 				for {
 					lockGame(gameid)
 					g := database.gameWithIdentifier(gameid)
+					if (g.White != name) && (g.Black != name) {
+						unlockGame(gameid)
+						gameMonitorsLock.Lock()
+						delete(gameMonitors, gameid)
+						gameMonitorsLock.Unlock()
+						return
+					}
 					b := wichessingBoard(g.Points)
 					active := g.activeOrientation()
 					if b.Draw(active) || b.Checkmate(active) || g.timeLoss(active, total) {
@@ -112,6 +137,9 @@ func listeningToGame(name string, white string, black string, turnTime time.Dura
 								cs.black <- make(map[string]piece)
 							}
 						}
+						gameMonitorsLock.Lock()
+						delete(gameMonitors, gameid)
+						gameMonitorsLock.Unlock()
 						gameListeningLock.RUnlock()
 						return
 					}
@@ -132,15 +160,49 @@ func listeningToGame(name string, white string, black string, turnTime time.Dura
 	}
 	go func(listenTo chan map[string]piece, conn *websocket.Conn) {
 		for {
-			err := conn.WriteJSON(<-listenTo)
-			if err != nil {
+			diff, ok := <-listenTo
+			if ok == false {
+				_ = conn.Close()
+				// TODO: logic duplicated below for a connection error/close
 				gameListeningLock.Lock()
-				if name == white {
-					gameListening[id].white = nil
-				} else {
-					gameListening[id].black = nil
+				cs, has := gameListening[id]
+				if has == false {
+					gameListeningLock.Unlock()
+					return
 				}
-				if (gameListening[id].white == nil) && (gameListening[id].black == nil) {
+				if name == white {
+					cs.white = nil
+				} else {
+					cs.black = nil
+				}
+				if (cs.white == nil) && (cs.black == nil) {
+					delete(gameListening, id)
+					gameMonitorsLock.Lock()
+					monitor, has := gameMonitors[id]
+					if has {
+						monitor.done <- struct{}{}
+						delete(gameMonitors, id)
+					}
+					gameMonitorsLock.Unlock()
+				}
+				gameListeningLock.Unlock()
+				return
+			}
+			err := conn.WriteJSON(diff)
+			if err != nil {
+				_ = conn.Close()
+				gameListeningLock.Lock()
+				cs, has := gameListening[id]
+				if has == false {
+					gameListeningLock.Unlock()
+					return
+				}
+				if name == white {
+					cs.white = nil
+				} else {
+					cs.black = nil
+				}
+				if (cs.white == nil) && (cs.black == nil) {
 					delete(gameListening, id)
 					gameMonitorsLock.Lock()
 					monitor, has := gameMonitors[id]

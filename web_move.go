@@ -93,6 +93,7 @@ func moveRequestHandler(w http.ResponseWriter, r *http.Request) {
 		diff = map[string]piece{}
 	} else {
 		var promoting bool
+		var promotingOrientation wichessing.Orientation
 		if kind != 0 { // promotion
 			diff = game.promote(from, name, wichessing.Kind(kind), false)
 			if (diff == nil) || (len(diff) == 0) {
@@ -100,13 +101,19 @@ func moveRequestHandler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 		} else {
-			diff, promoting = game.move(from, to, name, false)
+			diff, promoting, promotingOrientation = game.move(from, to, name, false)
 			if (diff == nil) || (len(diff) == 0) {
 				http.NotFound(w, r)
 				return
 			}
 		}
-		if promoting == false {
+		var orientation wichessing.Orientation
+		if game.White == name {
+			orientation = wichessing.White
+		} else {
+			orientation = wichessing.Black
+		}
+		if (promoting == false) || (promotingOrientation != orientation) {
 			if (game.White == easy_computer_player) || (game.Black == easy_computer_player) {
 				cdiff := database.easyComputerMoveForGame(int(gameid))
 				if (cdiff != nil) && (len(cdiff) != 0) {

@@ -18,10 +18,10 @@ const (
 	time_key      = "time"
 )
 
-// Returns address that have changed, Kind 0 piece for a now empty point, but does not update the board points. Returns true if promoting.
-func (g game) move(from, to int, mover string, timeoutMove bool) (map[string]piece, bool) {
+// Returns address that have changed, Kind 0 piece for a now empty point, but does not update the board points. Returns true and an orientation of the promoter if promoting.
+func (g game) move(from, to int, mover string, timeoutMove bool) (map[string]piece, bool, wichessing.Orientation) {
 	if g.Active != mover {
-		return nil, false
+		return nil, false, wichessing.White
 	}
 	var nextMover string
 	var orientation, nextOrientation wichessing.Orientation
@@ -35,11 +35,13 @@ func (g game) move(from, to int, mover string, timeoutMove bool) (map[string]pie
 		nextMover = g.White
 	}
 	b := wichessingBoard(g.Points)
-	if b.HasPawnToPromote() {
-		return nil, false
+	// TODO: check for cases of double-checking
+	pring, _ := b.HasPawnToPromote()
+	if pring {
+		return nil, false, wichessing.White
 	}
 	if b.Draw(orientation) {
-		return nil, false
+		return nil, false, wichessing.White
 	}
 	diff := make(map[string]piece)
 	difference, taken := b.Move(absPoint(from), absPoint(to), orientation)
@@ -67,17 +69,16 @@ func (g game) move(from, to int, mover string, timeoutMove bool) (map[string]pie
 		}
 	}
 	if len(diff) == 0 {
-		return diff, false
+		return diff, false, wichessing.White
 	}
 	takenPieces := make(map[int]struct{})
 	for point, _ := range taken {
 		takenPieces[g.Points[point.Index()].Identifier] = struct{}{}
 	}
 	after := b.AfterMove(absPoint(from), absPoint(to), orientation)
-	var promoting bool
-	if after.HasPawnToPromote() {
+	promoting, promotingOrientation := after.HasPawnToPromote()
+	if promoting && (promotingOrientation == orientation) {
 		g.DB.updateGame(g.ID, diff, mover)
-		promoting = true
 	} else {
 		g.DB.updateGame(g.ID, diff, nextMover)
 	}
@@ -122,7 +123,7 @@ func (g game) move(from, to int, mover string, timeoutMove bool) (map[string]pie
 			g.DB.updatePlayerRecords(g.White, g.Black, true)
 		}
 	}
-	return diff, promoting
+	return diff, promoting, promotingOrientation
 }
 
 func (g game) promote(from int, player string, kind wichessing.Kind, timeoutMove bool) map[string]piece {
@@ -235,7 +236,8 @@ func (g game) moves(total time.Duration) map[string]map[string]struct{} {
 		return moves
 	}
 	board := wichessingBoard(g.Points)
-	if board.HasPawnToPromote() {
+	promoting, _ := board.HasPawnToPromote()
+	if promoting {
 		moves[promote_key] = nil
 		return moves
 	}

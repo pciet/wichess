@@ -5,7 +5,13 @@ package main
 
 import (
 	"net/http"
+	"time"
 	//_ "net/http/pprof"
+)
+
+const (
+	http_max_idle_conns    = 50
+	http_idle_conn_timeout = time.Duration(time.Minute * 5)
 )
 
 func main() {
@@ -40,6 +46,14 @@ func main() {
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("web/css"))))
 	http.Handle("/img/", http.StripPrefix("/img/", http.FileServer(http.Dir("web/img"))))
 	http.Handle("/sound/", http.StripPrefix("/sound/", http.FileServer(http.Dir("web/sound"))))
+
+	// https://github.com/pciet/wichess/issues/9 - 100 http + 100 postgres should be under macOS 256 limit
+	dt, ok := http.DefaultTransport.(*http.Transport)
+	if ok == false {
+		panicExit("http.DefaultTransport.(*http.Transport) failed")
+	}
+	dt.MaxIdleConns = http_max_idle_conns
+	dt.IdleConnTimeout = http_idle_conn_timeout
 
 	err := http.ListenAndServe(":8080", nil)
 	if err != nil {

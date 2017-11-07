@@ -17,12 +17,12 @@ func (b Board) AfterPromote(from AbsPoint, kind Kind) Board {
 	return board
 }
 
-func (b Board) HasPawnToPromote() bool {
+func (b Board) HasPawnToPromote() (bool, Orientation) {
 	for i := 0; i < 8; i++ {
 		p := b[i]
 		if p.Piece != nil {
 			if (p.Orientation == Black) && (p.Base == Pawn) {
-				return true
+				return true, Black
 			}
 		}
 	}
@@ -30,11 +30,11 @@ func (b Board) HasPawnToPromote() bool {
 		p := b[i]
 		if p.Piece != nil {
 			if (p.Orientation == White) && (p.Base == Pawn) {
-				return true
+				return true, White
 			}
 		}
 	}
-	return false
+	return false, White
 }
 
 // The caller is responsible for verifying the correct orientation for the requester of the request.
