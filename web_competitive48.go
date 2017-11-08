@@ -94,7 +94,7 @@ func competitive48Handler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/login", http.StatusFound)
 		return
 	}
-	index, err := strconv.ParseInt(r.URL.Path[15:len(r.URL.Path)], 10, 8)
+	index, err := strconv.ParseInt(r.URL.Path[15:len(r.URL.Path)], 10, 0)
 	if err != nil {
 		http.NotFound(w, r)
 		return

@@ -38,7 +38,7 @@ func moveRequestHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/login", http.StatusFound)
 		return
 	}
-	gameid, err := strconv.ParseInt(r.URL.Path[6:len(r.URL.Path)], 10, 8)
+	gameid, err := strconv.ParseInt(r.URL.Path[6:len(r.URL.Path)], 10, 0)
 	if err != nil {
 		http.NotFound(w, r)
 		return

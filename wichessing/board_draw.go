@@ -23,7 +23,10 @@ func (b Board) Draw(turn Orientation) bool {
 		}
 	}
 	if (check == false) && (checkmate == false) && ((moves == nil) || (len(moves) == 0)) {
-		return true
+		promoting, promotingOrientation := b.HasPawnToPromote()
+		if (promoting == false) || (promotingOrientation != turn) {
+			return true
+		}
 	}
 	// TODO: same board position has occurred three times
 	// insufficient material: king v king, king v king+bishop, king v king+knight, king+bishop v king+bishop of the same bishop color
