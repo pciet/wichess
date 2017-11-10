@@ -4,113 +4,153 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>wichess index</title>
+    <!-- Copyright 2017 Matthew Juran -->
+    <!-- All Rights Reserved -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Libre+Baskerville">
-    <link rel="stylesheet" type="text/css" href="/css/body.css">
+    <link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
     <style>
-        .ibutton {
-            border-radius: 5px;
-            box-shadow: 0px 1px 1px black;
-        }
-        div {
-            padding: 0.5em;
-            text-align: center;
-            position: relative;
-        }
-        .inlinediv {
-            display: inline-block;
-            vertical-align: top;
-        }
-        .roundedbox {
-            border-radius: 10px;
-            border: 3px solid #d4cca5;
-            background-color: #cc785c;
-            color: #d4cca5;
-            margin: 0.3em;
-        }
-        .disabledbutton {
-            background-color: #cd856d;
-            color: #cc785c;
-        }
-        #armygridtable {
-            outline: 7px outset #d4cca5;
-        }
-        table {
-            margin: 0 auto;
-            background-color: white;
-            border-collapse: collapse;
-            /*outline: 7px outset #d4cca5;*/
-        }
-        #piecepickdiv {
-            height: 148px;
-            overflow: scroll;
-            display: inline-block;
-        }
-        #piecestable {
-            outline: 0px;
-            background-color: transparent;
-        }
-        #assignbutton {
-            display: none;
-        }
-        .gameselectrow {
-            height: 20px;
-        }
-        .gameselectpoint {
-            width: 20px;
-            outline: 1px solid #d4cca5;
-        }
-        .matching {
-            background-color: #e1e1e1;
-        }
-        .matched {
-            outline: 1px dotted black;
-            background-color: #f3f3f3;
-        }
-        .even {
-            background-color: #e1e1e1;
-        }
-        .odd {
-            background-color: #f3f3f3;
-        }
-        .pieceimg {
-            width: 68px;
-            height: 68px;
-        }
-        .armyselectrow {
-            height: 74px;
-        }
-        .armyselectpoint {
-            width: 74px;
-        }
-        .highlightedpiece {
-            outline: 2px solid #fb835e;
-            outline-offset: -2px;
-        }
-        .highlightedgame {
-            outline: 1px solid black;
-        }
-        #matchingdiv {
-            background-color: #d4cca5; 
-            border-radius: 10px;
-            border: 3px solid #d4cca5;
-            color: #825444;
-            display: inline-block;
-        }
+    body {
+        background-color: #cc785c;
+        margin: 0px;
+        border: 0px;
+        padding: 0px;
+        font-family: 'Libre Baskerville', serif;
+        color: #d4cca5;
+    }
+    .inline {
+        display: inline-block;
+        vertical-align: top;
+    }
+    #army, #mode, #games {
+        vertical-align: top;
+        padding: 5px;
+    }
+    #record {
+        width: 100%;
+        text-align: center;
+        font-family: 'Inconsolata', monospace;
+        color: #d4cca5;
+    }
+    .modebuttondiv, .gamebuttondiv {
+        text-align: center;
+    }
+    .modebutton, .gamebutton {
+        /* mode buttons are always within a container, the inline-block is a hack to shrink around the contained text */
+        display: inline-block;
+        border-radius: 10px;
+        border: none;
+        background-color: #fb835e;
+        color: #d4cca5;
+        box-shadow: 0px 1px 1px black;
+        -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Safari */
+        -khtml-user-select: none; /* Konqueror HTML */
+        -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
+        cursor: default;
+    }
+    .disabled {
+        color: #e1e1e1;
+        background-color: #f3f3f3;
+    }
+    .modebuttonselected {
+        border: 2px outset #d4cca5;
+    }
+    .armyrow {
+        border: 7px outset #d4cca5;
+        margin: 1px auto;
+    }
+    .armyselect {
+        margin: 3px auto;
+    }
+    .armycell {
+        float: left;
+    }
+    .selectcell {
+        border-radius: 5px;
+        border: 1px solid #d4cca5;
+        overflow-y: scroll;
+    }
+    .even {
+        background-color: #e1e1e1;
+    }
+    .odd {
+        background-color: #f3f3f3;
+    }
+    .pieceimg {
+        width: 100%;
+        height: 100%;
+    }
+    table {
+        margin: 0 auto;
+        background-color: white;
+        border-collapse: collapse;
+    }
+    table td {
+        padding: 0px;
+        vertical-align: top;
+    }
+    #friendname, #friendinput {
+        margin: 0 auto;
+        display: block;
+    }
+    .gameselectpoint {
+        outline: 1px solid #d4cca5;
+    }
+    .matching {
+        background-color: #e1e1e1;
+    }
+    .matched {
+        outline: 1px dotted black;
+        background-color: #f3f3f3;
+    }
+    .highlightedgame {
+        outline: 1px solid black;
+    }
+    .selectpiece {
+        height: 100%;
+    }
+    .selectpieceimg {
+        height: 100%;
+        width: 100%;
+    }
+    .noselect {
+        background-color: #e1e1e1;
+    }
     </style>
     <script type="text/javascript" src="/js/jquery-2.2.0.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.fittext.js"></script>
     <script type="text/javascript" src="/js/pieces.js"></script>
     <script type="text/javascript">
-    var Pieces = null;
-    var Assignments = [];
-
-    var HighlightedPiece = null;
-    var Highlighted48HourGame = null;
+    // match the css for #army, #mode, #games, assumes zero border and zero margin
+    var BoxPadding = 5;
+    // space around the army rows
+    var ArmyPadding = 8;
+    // space around a select cell
+    var SelectCellPadding = 2;
+    // space around a game cell
+    var GameCellPadding = 1;
 
     var Competitive48Games = [{{.C48S0}}, {{.C48S1}}, {{.C48S2}}, {{.C48S3}}, {{.C48S4}}, {{.C48S5}}, {{.C48S6}}, {{.C48S7}}];
-
     var available = 0, matching = 1, matched = 2; // see web_index.go for these consts
 
+    var Modes = {
+        COMPUTER: 0,
+        FRIEND: 1,
+        COMPETITIVE: 2,
+        HOTSEAT: 3
+    };
+    var Clicked = null;
+
+    var Highlighted48HourGame = null;
+
     var Matching = false;
+    var Matching5 = false;
+    var Matching15 = false;
+
+    var Pieces = null;
+    var Assignments = [];
 
     var c48ws = new WebSocket('ws://localhost:8080/competitive48n');
     c48ws.onmessage = function(event) {
@@ -120,369 +160,688 @@
     for (var i = 0; i < 16; i++) {
         Assignments[i] = 0;
     }
-
-    $.get("pieces").done(function(data) {
-        Pieces = data;
-        for (var i = 0; i < Pieces.length; i++) {
-            Pieces[i].Assigned = false;
-        }
-    });
-
-    $(document).ready(function() {
-        $('#matchingdiv').hide();
-        var friendGrid = '<table>';
-        for (var i = 0; i < 2; i++) {
-            friendGrid += '<tr class="gameselectrow">';
-            for (var j = 0; j < 4; j++) {
-                friendGrid += '<td id="friend'+((i*4)+j)+'" class="gameselectpoint"></td>';
+    function layout(width, height) {
+        var fitFactor = 1;
+        var armyDim;
+        if (width > height) { // horizontal
+            var page = `
+                <div class="inline" id="mode"><!--
+                    --><div class="modebuttondiv"><!--
+                        --><div class="modebutton" id="computermode">Computer</div><!--
+                    --></div><!--
+                    --><div class="modebuttondiv"><!--
+                        --><div class="modebutton" id="friendmode">Friend</div><!--
+                    --></div><!--
+                    --><div class="modebuttondiv"><!--
+                        --><div class="modebutton" id="competitivemode">Competitive</div><!--
+                    --></div><!--
+                    --><div class="modebuttondiv"><!--
+                        --><div class="modebutton" id="hotseatmode">Hotseat</div><!--
+                    --></div><!--
+                --></div><!--
+                --><div class="inline"><!--
+                    --><div id="army"></div><!--
+                    --><div id="games"></div><!--
+                --></div>
+            `;
+            $(document.body).html(page);
+            var onesWidth = (width / 6) - (BoxPadding * 2);
+            var fivesWidth = ((width / 6) * 5) - (BoxPadding * 2);
+            var twosHeight = ((height / 6) * 2) - (BoxPadding * 2);
+            var foursHeight = ((height / 6) * 4) - (BoxPadding * 2);
+            armyDim = (fivesWidth / 8) - ArmyPadding - SelectCellPadding;
+            if ((((armyDim+(ArmyPadding*2))*2)+((armyDim+(SelectCellPadding*2))*2)) > foursHeight) {
+                armyDim = (foursHeight / 4) - (ArmyPadding * 2);
+            } 
+            $('#army').width(fivesWidth).height(foursHeight);
+            $('#games').width(fivesWidth).height(twosHeight);
+            $('#mode').width(onesWidth).height(height - (BoxPadding * 2));
+            $('.modebuttondiv').css('height', '25%').css('width', '100%');
+            $('.modebutton').css('height', '94%').css('width', '100%');
+            fitFactor = 0.7;
+        } else if (height >= width) { // vertical
+            var page = `
+                <div id="games"></div><!--
+                --><div id="army"></div><!--
+                --><div id="mode"><!--
+                    --><div style="height: 50%;"><!--
+                        --><div class="modebuttondiv inline"><!--
+                            --><div class="modebutton" id="computermode">Computer</div><!--
+                        --></div><!--
+                        --><div class="modebuttondiv inline"><!--
+                            --><div class="modebutton" id="friendmode">Friend</div><!--
+                        --></div><!--
+                    --></div><!--
+                    --><div style="height: 50%;"><!--
+                        --><div class="modebuttondiv inline"><!--
+                            --><div class="modebutton" id="competitivemode">Competitive</div><!--
+                        --></div><!--
+                        --><div class="modebuttondiv inline"><!--
+                            --><div class="modebutton" id="hotseatmode">Hotseat</div><!--
+                        --></div><!--
+                    --></div><!--
+                --></div>
+            `;
+            $(document.body).html(page);
+            var onesHeight = (height / 6) - (BoxPadding * 2);
+            var threesHeight = ((height / 6) * 3) - (BoxPadding * 2);
+            var twosHeight = ((height / 6) * 2) - (BoxPadding * 2);
+            armyDim = (threesHeight / 4) - ArmyPadding - SelectCellPadding;
+            if ((width - (BoxPadding * 2)) < ((armyDim *8)+(2*ArmyPadding))) {
+                armyDim = ((width - (BoxPadding * 2) - (SelectCellPadding * 2)) / 8) - (ArmyPadding/4);
             }
-            friendGrid += '</tr>';
+            $('#army').width(width - (BoxPadding * 2)).height(threesHeight);
+            $('#games').width(width - (BoxPadding * 2)).height(twosHeight);
+            $('#mode').width(width - (BoxPadding * 2)).height(onesHeight);
+            $('.modebuttondiv').css('height', '100%').css('width', '50%');
+            $('.modebutton').css('height', '86%').css('width', '98%');
+            fitFactor = 1.2;
         }
-        friendGrid += '</table>';
-        $('#friendgriddiv').html(friendGrid);
+        $('.modebutton').fitText(fitFactor);
+        $('.modebutton').css('line-height', $('.modebutton').height() + 'px');
+        if (Clicked != null) {
+            var toClick = Clicked;
+            Clicked = null;
+            clickMode(toClick);
+        }
+        $('#computermode').click(function() {
+            clickMode(Modes.COMPUTER);
+        });
+        $('#friendmode').click(function() {
+            // TODO
+            //clickMode(Modes.FRIEND);
+        });
+        $('#competitivemode').click(function() {
+            clickMode(Modes.COMPETITIVE);
+        });
+        $('#hotseatmode').click(function() {
+            // TODO
+            //clickMode(Modes.HOTSEAT);
+        });
+        // TODO
+        $('#hotseatmode').addClass('disabled');
+        $('#friendmode').addClass('disabled');
+        var army = `
+            <div class="armyrow" id="pawnrow"></div>
+            <div class="armyselect" id="pawnselect"></div>
+            <div class="armyrow" id="specialrow"></div>
+            <div class="armyselect" id="specialselect"></div>
+        `;
+        $('#army').html(army);
+        var pawnrow = '';
+        var pawnselect = '';
+        var specialrow = '';
+        var specialselect = '';
         for (var i = 0; i < 8; i++) {
-            $('#friend'+i).click({Index: i}, function(event) {
-
-            });
+            pawnrow += '<div class="inline armycell" id="pawn'+(i+8)+'"><img class="pieceimg" src="/img/wpawn_64.png"></div>';
+            pawnselect += '<div class="inline selectcell" id="pickpawn'+(i+8)+'"></div>';
+            specialrow += '<div class="inline armycell" id="back'+i+'"></div>';
+            specialselect += '<div class="inline selectcell" id="pickback'+i+'"></div>';
         }
-        
-        var matchGrid = '<table>';
+        $('#pawnrow').html(pawnrow);
+        $('#pawnselect').html(pawnselect);
+        $('#specialrow').html(specialrow);
+        $('#specialselect').html(specialselect);
         for (var i = 0; i < 2; i++) {
-            matchGrid += '<tr class="gameselectrow">';
-            for (var j = 0; j < 4; j++) {
-                matchGrid += '<td id="match'+((i*4)+j)+'" class="gameselectpoint"></td>'; 
-            }
-            matchGrid += '</tr>';
-        }
-        matchGrid += '</table>';
-        $('#matchgriddiv').html(matchGrid);
-        for (var i = 0; i < 8; i++) {
-            switch (Competitive48Games[i]) {
-                case available:
-                    break;
-                case matching:
-                    Matching = true;
-                    $('#match'+i).addClass('matching');
-                    break;
-                case matched:
-                    $('#match'+i).addClass('matched');
-                    break;
-            }
-            $('#match'+i).click({Index: i}, function(event) {
-                var index = event.data.Index;
-                if ((Matching == true) && ($('#match'+index).hasClass('matched') == false)) {
-                    return;
-                }
-                if (Highlighted48HourGame != null) {
-                    $('#match'+Highlighted48HourGame).removeClass('highlightedgame');
-                    if (Highlighted48HourGame == index) {
-                        Highlighted48HourGame = null;
-                        return;
-                    }
-                }
-                if ($('#match'+index).hasClass('matching')) {
-                    return;
-                }
-                Highlighted48HourGame = index;
-                $('#match'+Highlighted48HourGame).addClass('highlightedgame');
-            });
-        }
-
-        var armyGrid = '<table id="armygridtable">';
-        for (var i = 0; i < 2; i++) {
-            armyGrid += '<tr class="armyselectrow">';
             for (var j = 0; j < 8; j++) {
-                var index = (i*8)+j;
                 if (i == 0) {
                     if (j % 2) {
-                        armyGrid += '<td id="army'+index+'" class="armyselectpoint even"></td>';
+                        $('#back'+j).addClass('odd');
                     } else {
-                        armyGrid += '<td id="army'+index+'" class="armyselectpoint odd"></td>';
+                        $('#back'+j).addClass('even');
                     }
                 } else {
                     if (j % 2) {
-                        armyGrid += '<td id="army'+index+'" class="armyselectpoint odd"></td>';
+                        $('#pawn'+(j+8)).addClass('even');
                     } else {
-                        armyGrid += '<td id="army'+index+'" class="armyselectpoint even"></td>';
+                        $('#pawn'+(j+8)).addClass('odd');
                     }
                 }
             }
-            armyGrid += '</tr>';
         }
-        armyGrid += '</table>';
-        $('#armygriddiv').html(armyGrid);
-        for (var i = 0; i < 8; i++) {
-            $('#army'+i).html('<img class="pieceimg" src="img/wpawn_64.png">');
+        $('#back0').html('<img class="pieceimg" src="/img/wrook_64.png">');
+        $('#back1').html('<img class="pieceimg" src="/img/wknight_64.png">');
+        $('#back2').html('<img class="pieceimg" src="/img/wbishop_64.png">');
+        $('#back3').html('<img class="pieceimg" src="/img/wqueen_64.png">');
+        $('#back4').html('<img class="pieceimg" src="/img/wking_64.png">');
+        $('#back5').html('<img class="pieceimg" src="/img/wbishop_64.png">');
+        $('#back6').html('<img class="pieceimg" src="/img/wknight_64.png">');
+        $('#back7').html('<img class="pieceimg" src="/img/wrook_64.png">');
+        $('.armycell').css('width', armyDim+'px').css('height', armyDim+'px');
+        $('.armyrow').css('height', armyDim+'px').css('width', (armyDim*8)+'px');
+        $('.selectcell').css('width', (armyDim-SelectCellPadding)+'px').css('height', (armyDim-SelectCellPadding)+'px');
+        $('.armyselect').css('height', (armyDim+(2*SelectCellPadding))+'px').css('width', (((armyDim-(2*SelectCellPadding))*8)+(16*SelectCellPadding))+'px');
+        $('#pawnrow').css('margin-top', (($('#army').height() - ($('.armyrow').height() * 2) - ($('.armyselect').height() * 2)) / 4) + 'px');
+    }
+    function clickMode(mode) {
+        if (Clicked != null) {
+            switch (Clicked) {
+                case Modes.COMPUTER:
+                    $('#computermode').removeClass('modebuttonselected');
+                    break;
+                case Modes.FRIEND:
+                    $('#friendmode').removeClass('modebuttonselected');
+                    break;
+                case Modes.COMPETITIVE:
+                    $('#competitivemode').removeClass('modebuttonselected');
+                    break;
+                case Modes.HOTSEAT:
+                    $('#hotseatmode').removeClass('modebuttonselected');
+                    break;
+            }
         }
-        $('#army8').html('<img class="pieceimg" src="img/wrook_64.png">');
-        $('#army9').html('<img class="pieceimg" src="img/wknight_64.png">');
-        $('#army10').html('<img class="pieceimg" src="img/wbishop_64.png">');
-        $('#army11').html('<img class="pieceimg" src="img/wqueen_64.png">');
-        $('#army12').html('<img class="pieceimg" src="img/wking_64.png">');
-        $('#army13').html('<img class="pieceimg" src="img/wbishop_64.png">');
-        $('#army14').html('<img class="pieceimg" src="img/wknight_64.png">');
-        $('#army15').html('<img class="pieceimg" src="img/wrook_64.png">');
-        for (var i = 0; i < 16; i++) {
-            $('#army'+i).click({Index: i}, function(event) {
-                if (Matching) {
-                    return;
+        if (Clicked == mode) {
+            Clicked = null;
+            $('#games').html('');
+            return;
+        }
+        switch (mode) {
+            case Modes.COMPUTER:
+                $('#computermode').addClass('modebuttonselected');
+                var layout = `
+                    <div class="inline gamebuttondiv">
+                        <div class="gamebutton" id="easycomputer">Easy</div>
+                    </div>
+                    <div class="inline gamebuttondiv">
+                        <div class="gamebutton" id="hardcomputer">Hard</div>
+                    </div>
+                `;
+                $('#games').html(layout);
+                $('.gamebuttondiv').css('width', (($('#games').width() / 2) - BoxPadding) + 'px').css('height', '100%');
+                $('.gamebutton').css('width', '90%').css('height', '60%');
+                $('.gamebutton').fitText(0.9);
+                $('.gamebutton').css('margin-top', (($('.gamebuttondiv').height() - $('.gamebutton').height()) / 2) + 'px');
+                $('#easycomputer').click(function() {
+                    jQuery.post('easycomputerrequest', JSON.stringify({assignments: Assignments})).done(function() {
+                        window.location.pathname = '/easycomputer';
+                    });
+                });
+                $('#hardcomputer').click(function() {
+                    // TODO
+                    //jQuery.post('hardcomputerrequest', JSON.stringify({assignments: Assignments})).done(function() {
+                    //    window.location.pathname = '/hardcomputer';
+                    //});
+                });
+                $('#hardcomputer').addClass('disabled');
+                break;
+            case Modes.FRIEND:
+                $('#friendmode').addClass('modebuttonselected');
+                var layout = `
+                    <div class="inline frienddiv">
+                        <div id="friendgrid"></div>
+                        <div id="friendname"></div>
+                    </div>
+                    <div class="inline frienddiv" style="height: 100%;">
+                        <div style="height: 50%;"><input id="friendinput" type="text" name="name" style="height: 80%;"/></div>
+                        <div class="gamebuttondiv">
+                            <div class="gamebutton" id="friend">Play</div>
+                        </div>
+                    </div>
+                `;
+                $('#games').html(layout);
+                $('.frienddiv').css('width', (($('#games').width() - (BoxPadding * 2)) / 2) + 'px');
+                $('.gamebuttondiv').css('width', '100%').css('height', '50%');
+                $('.gamebutton').css('width', '90%').css('height', '90%');
+                $('#friendinput').fitText();
+                if ($(window).height() > $(window).width()) {
+                    $('.gamebutton').fitText();
+                } else { 
+                    $('.gamebutton').fitText(1.4);
                 }
-                var index = event.data.Index;
-                if (HighlightedPiece != null) {
-                    $('#army'+HighlightedPiece).removeClass('highlightedpiece');
-                    if (HighlightedPiece == index) {
-                        HighlightedPiece = null;
-                        removeAvailablePieces();
+                var friendGrid = '<table>';
+                for (var i = 0; i < 2; i++) {
+                    friendGrid += '<tr class="gameselectrow">';
+                    for (var j = 0; j < 4; j++) {
+                        friendGrid += '<td id="friend'+((i*4)+j)+'" class="gameselectpoint"></td>';
+                    }
+                    friendGrid += '</tr>';
+                }
+                friendGrid += '</table>';
+                $('#friendgrid').html(friendGrid);
+                // border-collapse with two rows = three borders
+                var dim = (($('#games').height() / 2) - (GameCellPadding * 3)) / 2; 
+                $('.gameselectrow').css('height', dim + 'px');
+                $('.gameselectpoint').css('width', dim + 'px');
+                for (var i = 0; i < 8; i++) {
+                    $('#friend'+i).click({Index: i}, function(event) {
+                        // TODO
+                    });
+                }
+                // TODO: friend games
+                $('#friend').click(function() {});
+                break;
+            case Modes.COMPETITIVE:
+                $('#competitivemode').addClass('modebuttonselected');
+                var layout = `
+                    <div id="record" style="height: 25%;">+{{.Wins}} / -{{.Losses}} / ={{.Draws}}</div>
+                    <div style="height: 3%;"></div>
+                    <div id="competitivebuttons" style="height: 72%;">
+                        <div class="inline competitivebuttondiv">
+                            <div class="gamebuttondiv">
+                                <div class="gamebutton" id="matched15">15 Minute</div>
+                            </div>
+                            <div class="gamebuttondiv">
+                                <div class="gamebutton" id="matched5">5 Minute</div>
+                            </div>
+                        </div>
+                        <div class="inline competitivebuttondiv">
+                            <div id="matchgrid"></div>
+                            <div class="gamebuttondiv">
+                                <div style="height: 10%;"></div>
+                                <div class="gamebutton" id="matched48">48 Hour Turn</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                $('#games').html(layout);
+                $('.competitivebuttondiv').css('width', (($('#games').width() / 2) - BoxPadding) + 'px').css('height', '100%');
+                $('#record').fitText(2.1);
+                $('.gamebuttondiv').css('width', '100%').css('height', '50%');
+                $('.gamebutton').css('width', '90%').css('height', '90%');
+                if ($(window).height() > $(window).width()) {
+                    $('.gamebutton').fitText();
+                } else { 
+                    $('.gamebutton').fitText(1.4);
+                }
+                var matchGrid = '<table>';
+                for (var i = 0; i < 2; i++) {
+                    matchGrid += '<tr class="gameselectrow">';
+                    for (var j = 0; j < 4; j++) {
+                        matchGrid += '<td id="match'+((i*4)+j)+'" class="gameselectpoint"></td>';
+                    }
+                    matchGrid += '</tr>';
+                }
+                matchGrid += '</table>';
+                $('#matchgrid').html(matchGrid);
+                // border-collapse with two rows = three borders
+                var dim = (($('#competitivebuttons').height() / 2) - (GameCellPadding * 3)) / 2; 
+                $('.gameselectrow').css('height', dim + 'px');
+                $('.gameselectpoint').css('width', dim + 'px');
+                for (var i = 0; i < 8; i++) {
+                    switch (Competitive48Games[i]) {
+                        case available:
+                            break;
+                        case matching:
+                            Matching = true;
+                            $('#match'+i).addClass('matching');
+                            break;
+                        case matched:
+                            $('#match'+i).addClass('matched');
+                            break;
+                    }
+                    $('#match'+i).click({Index: i}, function(event) {
+                        var index = event.data.Index;
+                        if ((Matching == true) && ($('#match'+index).hasClass('matched') == false)) {
+                            return;
+                        }
+                        if (Highlighted48HourGame != null) {
+                            $('#match'+Highlighted48HourGame).removeClass('highlightedgame');
+                            if (Highlighted48HourGame == index) {
+                                Highlighted48HourGame = null;
+                                return;
+                            }
+                        }
+                        if ($('#match'+index).hasClass('matching')) {
+                            return;
+                        }
+                        Highlighted48HourGame = index;
+                        $('#match'+Highlighted48HourGame).addClass('highlightedgame');
+                    });
+                }
+                $('#matched15').click(function() {
+                    Clicked = null;
+                    jQuery.post('competitive15', JSON.stringify({assignments: Assignments})).done(function() {
+                        window.location.pathname = '/competitive15';
+                    }).fail(function() {}); // fails on cancel
+                    Matching15 = true;
+                    match15Competitive();
+
+                });
+                $('#matched5').click(function() {
+                    Clicked = null;
+                    jQuery.post('competitive5', JSON.stringify({assignments: Assignments})).done(function() {
+                        window.location.pathname = '/competitive5';
+                    }).fail(function() {}); // fails on cancel
+                    Matching5 = true;
+                    match5Competitive();
+
+                });
+                $('#matched48').click(function() {
+                    if (Highlighted48HourGame == null) {
                         return;
                     }
+                    if ($('#match'+Highlighted48HourGame).hasClass('matched')) {
+                        window.location.pathname = '/competitive48/'+Highlighted48HourGame;
+                        return;
+                    }
+                    jQuery.post('competitive48', JSON.stringify({index: Highlighted48HourGame, assignments: Assignments})).done(function() {
+                        $('#match'+Highlighted48HourGame).removeClass('highlighted').addClass('matching');
+                        Matching = true;
+                        Highlighted48HourGame = null;
+                    });
+                });
+                break;
+            case Modes.HOTSEAT:
+                $('#hotseatmode').addClass('modebuttonselected');
+                var layout = `
+                    <div class="inline hotseatdiv">
+                        <div class="gamebuttondiv">
+                            <div class="gamebutton" id="hotwhite">White Army</div>
+                        </div>
+                        <div class="gamebuttondiv">
+                            <div class="gamebutton" id="hotblack">Black Army</div>
+                        </div>
+                    </div>
+                    <div class="inline hotseatdiv">
+                        <div id="hotseatcenterer"></div>
+                        <div class="gamebuttondiv">
+                            <div class="gamebutton" id="playhot">Play</div>
+                        </div>
+                    </div>
+                `;
+                $('#games').html(layout);
+                $('.hotseatdiv').css('width', (($('#games').width() - (BoxPadding * 2)) / 2) + 'px').css('height', '100%');
+                $('.gamebuttondiv').css('width', '100%').css('height', '50%');
+                $('.gamebutton').css('width', '90%').css('height', '90%');
+                if ($(window).height() > $(window).width()) {
+                    $('.gamebutton').fitText();
+                } else { 
+                    $('.gamebutton').fitText(1.4);
                 }
-                HighlightedPiece = index;
-                $('#army'+index).addClass('highlightedpiece');
-                showAvailablePieces(index);
+                $('#hotseatcenterer').css('height', (($('#games').height() - (BoxPadding * 2)) / 4) + 'px');
+                break;
+        }
+        $('.gamebutton').css('line-height', $('.gamebutton').height() + 'px');        
+        Clicked = mode;
+    }
+    function match15Competitive() {
+            var l = `
+                <div id="spacer"></div>
+                <div id="cmp">Matching 15 Minute Competitive</div>
+                <div class="gamebuttondiv">
+                    <div class="gamebutton" id="cancelmatched15" style="height: 100%; width: 100%;">Cancel</div>
+                </div>
+            `;
+            $('body').html(l);
+            $('#spacer').css('height', ($(window).height() / 6) + 'px');
+            var margin = $(window).width() / 6;
+            $('#cmp').css('height', ($(window).height() / 4) + 'px').css('width', ($(window).width() - (2 * margin)) + 'px').css('margin-left', margin + 'px').css('margin-right', margin + 'px').fitText(2).css('line-height', $('#cmp').height() + 'px').css('text-align', 'center').css('vertical-align', 'middle');
+            $('.gamebuttondiv').css('margin-left', margin + 'px').css('margin-right', margin + 'px').css('width', ($(window).width() - (2 * margin)) + 'px').css('height', ($(window).height() / 6) + 'px').css('line-height', $('.gamebuttondiv').height() + 'px').css('text-align', 'center').css('vertical-align', 'middle');
+            $('.gamebutton').css('width', '100%').css('height', '100%').fitText(2);
+            $('#cancelmatched15').click(function() {
+                jQuery.post('cancelcompetitive15');
+                Matching15 = false;
+                layout($(window).width(), $(window).height());
+                clickMode(Modes.COMPETITIVE);
+                populateAvailablePieces();
             });
+    }
+    function match5Competitive() {
+        var l = `
+            <div id="spacer"></div>
+            <div id="cmp">Matching 5 Minute Competitive</div>
+            <div class="gamebuttondiv">
+                <div class="gamebutton" id="cancelmatched5" style="height: 100%; width: 100%;">Cancel</div>
+            </div>
+        `;
+        $('body').html(l);
+        $('#spacer').css('height', ($(window).height() / 6) + 'px');
+        var margin = $(window).width() / 6;
+        $('#cmp').css('height', ($(window).height() / 4) + 'px').css('width', ($(window).width() - (2 * margin)) + 'px').css('margin-left', margin + 'px').css('margin-right', margin + 'px').fitText(2).css('line-height', $('#cmp').height() + 'px').css('text-align', 'center').css('vertical-align', 'middle');
+        $('.gamebuttondiv').css('margin-left', margin + 'px').css('margin-right', margin + 'px').css('width', ($(window).width() - (2 * margin)) + 'px').css('height', ($(window).height() / 6) + 'px').css('line-height', $('.gamebuttondiv').height() + 'px').css('text-align', 'center').css('vertical-align', 'middle');
+        $('.gamebutton').css('width', '100%').css('height', '100%').fitText(2);
+        $('#cancelmatched5').click(function() {
+            jQuery.post('cancelcompetitive5');
+            Matching5 = false;
+            layout($(window).width(), $(window).height());
+            clickMode(Modes.COMPETITIVE);
+            populateAvailablePieces();
+        });
+    }
+    $(window).resize(function() {
+        if (Matching15) {
+            match15Competitive();
+        } else if (Matching5) {
+            match5Competitive();
+        } else {
+            layout($(window).width(), $(window).height());
+            populateAvailablePieces();
         }
     });
-    function unhighlightPiece() {
-        if (HighlightedPiece == null) {
-            return;
+    function populateAvailablePieces() {
+        for (var i = 0; i < Assignments.length; i++) {
+            var piece = null;
+            for (var j = 0; j < Pieces.length; j++) {
+                if (Pieces[j].Identifier == Assignments[i]) {
+                    piece = Pieces[j];
+                    break;
+                }
+            }
+            if (piece == null) {
+                if (i < 8) {
+                    $('#pawn'+(i+8)).html('<img class="pieceimg" src="/img/wpawn_64.png">');
+                } else if ((i == 8) || (i == 15)) {
+                    $('#back'+(i-8)).html('<img class="pieceimg" src="/img/wrook_64.png">');
+                } else if ((i == 9) || (i == 14)) {
+                    $('#back'+(i-8)).html('<img class="pieceimg" src="/img/wknight_64.png">');
+                } else if ((i == 10) || (i == 13)) {
+                    $('#back'+(i-8)).html('<img class="pieceimg" src="/img/wbishop_64.png">');
+                } else if (i == 11) {
+                    $('#back'+(i-8)).html('<img class="pieceimg" src="/img/wqueen_64.png">');
+                } else if (i == 12) {
+                    $('#back'+(i-8)).html('<img class="pieceimg" src="/img/wking_64.png">');
+                }
+                continue;
+            }
+            if (i < 8) {
+                $('#pawn'+(i+8)).html('<img class="pieceimg" src="/img/'+imageNameForKind(piece.Kind, 64, o.WHITE)+'">');
+            } else {
+                $('#back'+(i-8)).html('<img class="pieceimg" src="/img/'+imageNameForKind(piece.Kind, 64, o.WHITE)+'">');
+            }
         }
-        $('#army'+HighlightedPiece).removeClass('highlightedpiece');
-        HighlightedPiece = null;
-    }
-    function showAvailablePieces(index) {
-        if (Pieces == null) {
-            return;
-        }
-        var table = '<table id="piecestable">';
-        var oneOrMore = false;
-        var assigned = 0;
+        var pawnList = [];
+        var rookList = [];
+        var knightList = [];
+        var bishopList = [];
         for (var i = 0; i < Pieces.length; i++) {
-            if (matchesKindOfPoint(Pieces[i].Base, index) == false) {
+            if (Pieces[i].assigned) {
                 continue;
             }
-            if (Pieces[i].Assigned) {
-                continue;
+            switch(Pieces[i].Base) {
+                case k.PAWN:
+                    pawnList.push(Pieces[i]);
+                    break;
+                case k.ROOK:
+                    rookList.push(Pieces[i]);
+                    break;
+                case k.KNIGHT:
+                    knightList.push(Pieces[i]);
+                    break;
+                case k.BISHOP:
+                    bishopList.push(Pieces[i]);
+                    break;
             }
-            if ((assigned % 2) == 0) {
-                table += '<tr>';
+        }
+        for (var i = 0; i < 8; i++) {
+            var layout = '';
+            for (var j = 0; j < pawnList.length; j++) {
+                layout += '<div class="selectpiece" id="sp'+i+'-'+j+'"><img class="selectpieceimg" src="/img/'+imageNameForKind(pawnList[j].Kind, 64, o.WHITE)+'"></div>';
             }
-            table += '<td><input type="button" class="ibutton" value="Assign" onclick="assignPiece('+i+','+index+');"/></td>';
-            table += '<td><img class="pieceimg" src="img/'+imageNameForKind(Pieces[i].Kind, 64, o.WHITE)+'"></td>';
-            table += '<td>'+nameForKind(Pieces[i].Kind)+'</td>';
-            if ((assigned % 2) == 1) {
-                table += '</tr>';
-            }
-            assigned++;
-            oneOrMore = true;
-        }
-        if ((assigned % 2) != 1) {
-            table += '</tr>';
-        }
-        table += '</table>';
-        if (oneOrMore) {
-            if (Assignments[index] != 0) {
-                $('#assignbutton').css('display', 'block');
-            }
-            $('#piecepickdiv').html(table);
-        } else {
-            removeAvailablePieces();
-        }
-    }
-    function removeAvailablePieces() {
-        $('#assignbutton').css('display', 'none');
-        $('#piecepickdiv').html('');
-    }
-    function assignPiece(arrayIndex, gridIndex) {
-        if (Assignments[gridIndex] != 0) {
-            unassignPiece(gridIndex, Assignments[gridIndex]);
-        }
-        Pieces[arrayIndex].Assigned = true;
-        Assignments[gridIndex] = Pieces[arrayIndex].Identifier;
-        showAvailablePieces(gridIndex);
-        $('#army'+gridIndex).html('<img class="pieceimg" src="img/'+imageNameForKind(Pieces[arrayIndex].Kind, 64, o.WHITE)+'">');
-    }
-    function unassignPiece(index, identifier) {
-        for (var i = 0; i < Pieces.length; i++) {
-            if (identifier != Pieces[i].Identifier) {
-                continue;
-            }
-            Pieces[i].Assigned = false;
-            Assignments[index] = 0;
-            $('#assignbutton').css('display', 'none');
-            $('#army'+index).html('<img class="pieceimg" src="img/'+imageNameForKind(defaultKindForPoint(index), 64, o.WHITE)+'">');
-            break;
-        }
-    }
-    function unassign() {
-        if (HighlightedPiece == null) {
-            return;
-        }
-        unassignPiece(HighlightedPiece, Assignments[HighlightedPiece]);
-        showAvailablePieces(HighlightedPiece);
-    }
-    function defaultKindForPoint(index) {
-        if (index < 8) {
-            return k.PAWN;
-        }
-        if ((index == 8) || (index == 15)) {
-            return k.ROOK;
-        }
-        if ((index == 9) || (index == 14)) {
-            return k.KNIGHT;
-        }
-        if ((index == 10) || (index == 13)) {
-            return k.BISHOP;
-        }
-        if (index == 11) {
-            return k.QUEEN;
-        }
-        if (index == 12) {
-            return k.KING;
-        }
-    }
-    function matchesKindOfPoint(kind, point) {
-        if (point < 8) {
-            if (kind != k.PAWN) {
-                return false;
+            if (pawnList.length == 0) {
+                $('#pickpawn'+(8+i)).html('').addClass('noselect');
             } else {
-                return true;
+                $('#pickpawn'+(8+i)).html(layout).removeClass('noselect');
+            }
+            for (var j = 0; j < pawnList.length; j++) {
+                $('#sp'+i+'-'+j).click({Index: j, File: i}, function(event) {
+                    for (var k = 0; k < Pieces.length; k++) {
+                        if (Pieces[k].Identifier != pawnList[event.data.Index].Identifier) {
+                            continue;
+                        }
+                        if (Assignments[event.data.File] != 0) {
+                            for (var l = 0; l < Pieces.length; l++) {
+                                if (Assignments[event.data.File] == Pieces[l].Identifier) {
+                                    Pieces[l].assigned = false;
+                                    break;
+                                }
+                            }
+                        }
+                        Assignments[event.data.File] = Pieces[k].Identifier;
+                        Pieces[k].assigned = true;
+                        populateAvailablePieces();
+                        break;
+                    }
+                });
             }
         }
-        if ((point == 8) || (point == 15)) {
-            if (kind == k.ROOK) {
-                return true;
+        for (var i = 0; i < 2; i++) {
+            var layout = '';
+            for (var j = 0; j < rookList.length; j++) {
+                layout += '<div class="selectpiece" id="sr'+i+'-'+j+'"><img class="selectpieceimg" src="/img/'+imageNameForKind(rookList[j].Kind, 64, o.WHITE)+'"></div>';
+            }
+            var pick;
+            if (i == 0) {
+                pick = 0;
             } else {
-                return false;
+                pick = 7;
+            }
+            if (rookList.length == 0) {
+                $('#pickback'+pick).html('').addClass('noselect');
+            } else {
+                $('#pickback'+pick).html(layout).removeClass('noselect');
+            }
+            for (var j = 0; j < rookList.length; j++) {
+                $('#sr'+i+'-'+j).click({Index: j, File: (pick+8)}, function(event) {
+                    for (var k = 0; k < Pieces.length; k++) {
+                        if (Pieces[k].Identifier != rookList[event.data.Index].Identifier) {
+                            continue;
+                        }
+                        if (Assignments[event.data.File] != 0) {
+                            for (var l = 0; l < Pieces.length; l++) {
+                                if (Assignments[event.data.File] == Pieces[l].Identifier) {
+                                    Pieces[l].assigned = false;
+                                    break;
+                                }
+                            }
+                        }
+                        Assignments[event.data.File] = Pieces[k].Identifier;
+                        Pieces[k].assigned = true;
+                        populateAvailablePieces();
+                        break;
+                    }
+                });
             }
         }
-        if ((point == 9) || (point == 14)) {
-            if (kind == k.KNIGHT) {
-                return true;
+        for (var i = 0; i < 2; i++) {
+            var layout = '';
+            for (var j = 0; j < knightList.length; j++) {
+                layout += '<div class="selectpiece" id="sk'+i+'-'+j+'"><img class="selectpieceimg" src="/img/'+imageNameForKind(knightList[j].Kind, 64, o.WHITE)+'"></div>';
+            }
+            var pick;
+            if (i == 0) {
+                pick = 1;
             } else {
-                return false;
+                pick = 6;
+            }
+            if (knightList.length == 0) {
+                $('#pickback'+pick).html('').addClass('noselect');
+            } else {
+                $('#pickback'+pick).html(layout).removeClass('noselect');
+            }
+            for (var j = 0; j < knightList.length; j++) {
+                $('#sk'+i+'-'+j).click({Index: j, File: (pick+8)}, function(event) {
+                    for (var k = 0; k < Pieces.length; k++) {
+                        if (Pieces[k].Identifier != knightList[event.data.Index].Identifier) {
+                            continue;
+                        }
+                        if (Assignments[event.data.File] != 0) {
+                            for (var l = 0; l < Pieces.length; l++) {
+                                if (Assignments[event.data.File] == Pieces[l].Identifier) {
+                                    Pieces[l].assigned = false;
+                                    break;
+                                }
+                            }
+                        }
+                        Assignments[event.data.File] = Pieces[k].Identifier;
+                        Pieces[k].assigned = true;
+                        populateAvailablePieces();
+                        break;
+                    }
+                });
             }
         }
-        if ((point == 10) || (point == 13)) {
-            if (kind == k.BISHOP) {
-                return true;
+        for (var i = 0; i < 2; i++) {
+            var layout = '';
+            for (var j = 0; j < bishopList.length; j++) {
+                layout += '<div class="selectpiece" id="sb'+i+'-'+j+'"><img class="selectpieceimg" src="/img/'+imageNameForKind(bishopList[j].Kind, 64, o.WHITE)+'"></div>';
+            }
+            var pick;
+            if (i == 0) {
+                pick = 2;
             } else {
-                return false;
+                pick = 5;
+            }
+            if (bishopList.length == 0) {
+                $('#pickback'+pick).html('').addClass('noselect');
+            } else {
+                $('#pickback'+pick).html(layout).removeClass('noselect');
+            }
+            for (var j = 0; j < bishopList.length; j++) {
+                $('#sb'+i+'-'+j).click({Index: j, File: (pick+8)}, function(event) {
+                    for (var k = 0; k < Pieces.length; k++) {
+                        if (Pieces[k].Identifier != bishopList[event.data.Index].Identifier) {
+                            continue;
+                        }
+                        Assignments[event.data.File] = Pieces[k].Identifier;
+                        Pieces[k].assigned = true;
+                        populateAvailablePieces();
+                        break;
+                    }
+                });
             }
         }
-        if (point == 11) {
-            if (kind == k.QUEEN) {
-                return true;
-            } else {
-                return false;
+        // no kings or queens yet
+        $('#pickback3').addClass('noselect');
+        $('#pickback4').addClass('noselect');
+        for (var i = 0; i < 8; i++) {
+            if (Assignments[i] != 0) {
+                $('#pawn'+(i+8)).click({Index: i, Piece: Assignments[i]}, function(event) {
+                    for (var j = 0; j < Pieces.length; j++) {
+                        if (Pieces[j].Identifier == event.data.Piece) {
+                            Assignments[event.data.Index] = 0;
+                            Pieces[j].assigned = false;
+                            populateAvailablePieces();
+                            break;
+                        }
+                    }
+                });
             }
-        }
-        if (point == 12) {
-            if (kind == k.KING) {
-                return true;
-            } else {
-                return false;
+            if (Assignments[i+8] != 0) {
+                $('#back'+i).click({Index: i+8, Piece: Assignments[i+8]}, function(event) {
+                    for (var j = 0; j < Pieces.length; j++) {
+                        if (Pieces[j].Identifier == event.data.Piece) {
+                            Assignments[event.data.Index] = 0;
+                            Pieces[j].assigned = false;
+                            populateAvailablePieces();
+                            break;
+                        }
+                    }
+                });
             }
         }
     }
-    function easycomputer() {
-        jQuery.post('easycomputerrequest', JSON.stringify({assignments: Assignments})).done(function() {
-            window.location.pathname = '/easycomputer';
+    $(document).ready(function() {
+        layout($(window).width(), $(window).height());
+        clickMode(Modes.COMPETITIVE);
+        jQuery.get('pieces').done(function(data) {
+            Pieces = data;
+            for (var i = 0; i < Pieces.length; i++) {
+                Pieces[i].assigned = false;
+            }
+            populateAvailablePieces();
         });
-    }
-    function hardcomputer() {
-        jQuery.post('hardcomputerrequest', JSON.stringify({assignments: Assignments})).done(function() {
-            window.location.pathname = '/hardcomputer';
-        });
-
-    }
-    function friend() {
-
-    }
-    function matched15() {
-        Matching = true;
-        removeAvailablePieces();
-        unhighlightPiece();
-        $('#matchers').hide();
-        $('#matchingdiv').html('<div class="inlinediv"><div>Matching 15 Minute Competitive</div><div><input type="button" class="ibutton" value="Cancel" onclick="cancelmatched15();"/></div></div>').show();
-        jQuery.post('competitive15', JSON.stringify({assignments: Assignments})).done(function() {
-            window.location.pathname = '/competitive15';
-        });
-    }
-    function cancelmatched15() {
-        jQuery.post('cancelcompetitive15');
-        Matching = false;
-        $('#matchingdiv').hide();
-        $('#matchers').show();
-    }
-    function matched5() {
-        Matching = true;
-        removeAvailablePieces();
-        unhighlightPiece();
-        $('#matchers').hide();
-        $('#matchingdiv').html('<div class="inlinediv"><div>Matching Five Minute Competitive</div><div><input type="button" class="ibutton" value="Cancel" onclick="cancelmatched5();"/></div></div>').show();
-        jQuery.post('competitive5', JSON.stringify({assignments: Assignments})).done(function() {
-            window.location.pathname = '/competitive5';
-        });
-    }
-    function cancelmatched5() {
-        jQuery.post('cancelcompetitive5');
-        Matching = false;
-        $('#matchingdiv').hide();
-        $('#matchers').show();
-    }
-    function matched48() {
-        if (Highlighted48HourGame == null) {
-            return;
-        }
-        if ($('#match'+Highlighted48HourGame).hasClass('matched')) {
-            window.location.pathname = '/competitive48/'+Highlighted48HourGame;
-            return;
-        }
-        jQuery.post('competitive48', JSON.stringify({index: Highlighted48HourGame, assignments: Assignments})).done(function() {
-            $('#match'+Highlighted48HourGame).removeClass('highlightedgame').addClass('matching');
-            Matching = true;
-            Highlighted48HourGame = null;
-        });
-    }
+    });
     </script>
 </head>
-
-<body>
-<div>{{.Name}}</div>
-<div><div id="matchingdiv"></div></div>
-<div id="matchers">
-    <div class="inlinediv roundedbox">
-        <div>Friend</div>
-        <div id="friendgriddiv"></div>
-        <div id="friendname"></div>
-        <div><input id="friendinput" type="text" name="name"/></div>
-        <div><input type="button" class="ibutton" value="Play" onclick="friend();"/></div>
-    </div>
-    <div class="inlinediv roundedbox">
-        <div>
-            <div class="inlinediv">Competitive</div>
-            <div class="inlinediv">+{{.Wins}} / -{{.Losses}} / ={{.Draws}}</div>
-        </div>
-        <div class="inlinediv">
-            <div><input type="button" class="ibutton" value="15 Minute" onclick="matched15();"/></div>
-            <div><input type="button" class="ibutton" value="5 Minute" onclick="matched5();"/></div>
-        </div>
-        <div class="inlinediv roundedbox">
-            <div id="matchgriddiv"></div>
-            <div><input type="button" class="ibutton" value="48 Hour Turn" onclick="matched48();"/></div>
-        </div>
-    </div>
-    <div class="inlinediv roundedbox">
-        <div>Computer</div>
-        <div><input type="button" class="ibutton" value="Easy" onclick="easycomputer();"/></div>
-        <div><input type="button" class="ibutton" value="Hard" onclick="hardcomputer();"/></div>
-    </div>
-</div>
-
-<div>
-    <div id="armygriddiv"></div>
-    <div id="assignbutton"><input type="button" class="ibutton" value="Unassign" onclick="unassign();"/></div>
-    <div id="piecepickdiv"></div>
-</div>
-</body>
+<body></body>
 </html>
