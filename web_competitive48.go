@@ -105,7 +105,7 @@ func competitive48Handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	lockGame(id)
-	info := database.updateGameTimes(id, competitive48_turn_time, competitive48_total_time)
+	info := database.updateGameTimes(id, competitive48_turn_time, competitive48_total_time, "")
 	unlockGame(id)
 	executeWebTemplate(w, game_template, gameTemplate{
 		GameInfo:  info,

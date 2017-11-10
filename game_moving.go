@@ -225,7 +225,13 @@ func (g game) promote(from int, player string, kind wichessing.Kind, timeoutMove
 func (g game) moves(total time.Duration) map[string]map[string]struct{} {
 	moves := make(map[string]map[string]struct{})
 	active := g.activeOrientation()
-	if g.timeLoss(active, total) {
+	var opponent wichessing.Orientation
+	if active == wichessing.White {
+		opponent = wichessing.Black
+	} else {
+		opponent = wichessing.White
+	}
+	if g.timeLoss(active, total) || g.timeLoss(opponent, total) {
 		if g.Competitive {
 			moves[time_key] = map[string]struct{}{
 				fmt.Sprintf("%d", g.Piece): {},

@@ -109,6 +109,7 @@ func listeningToGame(name string, white string, black string, turnTime time.Dura
 					}
 					b := wichessingBoard(g.Points)
 					active := g.activeOrientation()
+					activePlayer := g.Active
 					if b.Draw(active) || b.Checkmate(active) || g.timeLoss(active, total) {
 						unlockGame(gameid)
 						gameMonitorsLock.Lock()
@@ -123,8 +124,9 @@ func listeningToGame(name string, white string, black string, turnTime time.Dura
 						return
 					case <-channels.move:
 					case <-time.After(total - elapsed):
+						// between hitting this case and reading the game in updateGameTimes the active player may have switched
 						lockGame(gameid)
-						_ = g.DB.updateGameTimes(gameid, time.Duration(0), total)
+						_ = g.DB.updateGameTimes(gameid, time.Duration(0), total, activePlayer)
 						unlockGame(gameid)
 						// by sending an empty notification the client will request /moves, which says time has expired
 						gameListeningLock.RLock()

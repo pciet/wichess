@@ -97,6 +97,16 @@ func (b Board) CheckMoves(active Orientation) map[AbsPoint]AbsPointSet {
 			moves[point.AbsPoint] = m
 		}
 	}
+	for pt, set := range moves {
+		for mv, _ := range set {
+			if b.AfterMove(pt, *mv, b[pt.Index()].Orientation).Check(b[pt.Index()].Orientation) {
+				delete(set, mv)
+				if len(set) == 0 {
+					delete(moves, pt)
+				}
+			}
+		}
+	}
 	for pt, set := range unfiltered {
 		allowed := make(AbsPointSet)
 		piece := b[pt.Index()]

@@ -24,9 +24,9 @@ import (
 )
 
 const (
-	debug         = false
-	client_count  = 20
-	delay_seconds = 1
+	debug         = true
+	client_count  = 40
+	delay_seconds = 0
 	// [0,1), if random number in that range is less than this value then no special pieces will be used for this round
 	special_piece_probability = 0.5
 )
@@ -350,7 +350,7 @@ func main() {
 						panic(fmt.Sprintf("(%v) recieved zero length response to GET %v\n", meta.name, moves+"/"+fmt.Sprintf("%d", gameid)))
 					}
 					availableMoves := movesMap{}
-					for point, mvs := range em {
+					for point, _ := range em {
 						if (point == "checkmate") || (point == "draw") || (point == "time") {
 							<-time.After(time.Second * delay_seconds)
 							l = url.Values{}
@@ -383,6 +383,8 @@ func main() {
 							}
 							continue NEWGAME
 						}
+					}
+					for point, mvs := range em {
 						if point == "promote" {
 							if g.Active != meta.name {
 								break // wait for opponent to promote

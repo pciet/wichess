@@ -7,6 +7,146 @@ import ()
 
 var CastlingMovesCases = []AvailableMovesCase{
 	{
+		Name:   "Random Testing: Undetected Castle",
+		Active: Black,
+		Check:  true,
+		Position: PointSet{
+			{
+				AbsPoint: AbsPoint{6, 1},
+				Piece: &Piece{
+					Kind:        King,
+					Orientation: White,
+					Moved:       true,
+					Previous:    AbsPoint{6, 1}.Index(),
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{0, 2},
+				Piece: &Piece{
+					Kind:        GuardRook,
+					Orientation: Black,
+					Moved:       true,
+					Previous:    AbsPoint{0, 2}.Index(),
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{4, 2},
+				Piece: &Piece{
+					Kind:        Queen,
+					Orientation: Black,
+					Moved:       true,
+					Previous:    AbsPoint{4, 2}.Index(),
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{5, 3},
+				Piece: &Piece{
+					Kind:        Bishop,
+					Orientation: White,
+					Moved:       true,
+					Previous:    AbsPoint{5, 3}.Index(),
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{6, 3},
+				Piece: &Piece{
+					Kind:        Pawn,
+					Orientation: Black,
+					Moved:       true,
+					Previous:    AbsPoint{5, 3}.Index(),
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{3, 4},
+				Piece: &Piece{
+					Kind:        Pawn,
+					Orientation: Black,
+					Moved:       true,
+					Previous:    AbsPoint{3, 4}.Index(),
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{5, 5},
+				Piece: &Piece{
+					Kind:        Pawn,
+					Orientation: Black,
+					Moved:       true,
+					Previous:    AbsPoint{5, 5}.Index(),
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{7, 6},
+				Piece: &Piece{
+					Kind:        Rook,
+					Orientation: White,
+					Moved:       true,
+					Previous:    AbsPoint{7, 6}.Index(),
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{2, 7},
+				Piece: &Piece{
+					Kind:        Rook,
+					Orientation: White,
+					Moved:       true,
+					Previous:    AbsPoint{2, 7}.Index(),
+				},
+			}: {},
+			&BlackKingStart:      {},
+			&BlackRightRookStart: {},
+		},
+		Moves: map[AbsPoint]AbsPointSet{
+			{6, 1}: {
+				{5, 0}: {},
+				{7, 0}: {},
+				{7, 1}: {},
+			},
+			{5, 3}: {
+				{4, 2}: {},
+				{6, 2}: {},
+				{7, 1}: {},
+				{6, 4}: {},
+				{7, 5}: {},
+				{4, 4}: {},
+				{3, 5}: {},
+				{2, 6}: {},
+				{1, 7}: {},
+			},
+			{2, 7}: {
+				{1, 7}: {},
+				{0, 7}: {},
+				{2, 6}: {},
+				{2, 5}: {},
+				{2, 4}: {},
+				{2, 3}: {},
+				{2, 2}: {},
+				{2, 1}: {},
+				{2, 0}: {},
+				{3, 7}: {},
+				{4, 7}: {},
+			},
+			{7, 6}: {
+				{7, 5}: {},
+				{7, 4}: {},
+				{7, 3}: {},
+				{7, 2}: {},
+				{7, 1}: {},
+				{7, 0}: {},
+				{7, 7}: {},
+				{6, 6}: {},
+				{5, 6}: {},
+				{4, 6}: {},
+				{3, 6}: {},
+				{2, 6}: {},
+				{1, 6}: {},
+				{0, 6}: {},
+			},
+			{4, 7}: {
+				{6, 7}: {},
+			},
+		},
+	},
+	{
 		Name:   "Computer Didn't Castle",
 		Active: Black,
 		Check:  true,
@@ -107,9 +247,7 @@ var CastlingMovesCases = []AvailableMovesCase{
 				{4, 1}: {},
 				{4, 2}: {},
 				{4, 3}: {},
-				{3, 3}: {},
 				{2, 3}: {},
-				{2, 2}: {},
 			},
 			{0, 5}: {
 				{1, 4}: {},

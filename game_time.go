@@ -158,19 +158,40 @@ func (g *game) updateGameTimesWithMove(at time.Time) {
 	}
 }
 
-func (db DB) updateGameTimes(id int, turn time.Duration, total time.Duration) GameInfo {
+func (db DB) updateGameTimes(id int, turn time.Duration, total time.Duration, activePlayer string) GameInfo {
+	// there is a case where the game listening goroutine can determine a time loss but before the lock can be acquired a move is made - if the move signal cannot be sent in time to reset that routine then the game is considered a loss for the original player even though the database shows the opponent as the active player
+	var active wichessing.Orientation
 	g := db.gameWithIdentifier(id)
-	active := g.activeOrientation()
-	b := wichessingBoard(g.Points)
+	if activePlayer == "" {
+		if g.Active == g.White {
+			active = wichessing.White
+		} else {
+			active = wichessing.Black
+		}
+	} else {
+		if activePlayer == g.White {
+			active = wichessing.White
+		} else if activePlayer == g.Black {
+			active = wichessing.Black
+		} else {
+			panicExit(fmt.Sprintf("unknown player %v", activePlayer))
+		}
+	}
+	var opponent wichessing.Orientation
+	if active == wichessing.White {
+		opponent = wichessing.Black
+	} else {
+		opponent = wichessing.White
+	}
 	// if the database contains a timeLoss state then the game is already over and recorded by the listening routine or page load logic
-	if b.Draw(active) || b.Checkmate(active) || g.timeLoss(active, total) {
+	if g.timeLoss(active, total) || g.timeLoss(opponent, total) {
 		return g.GameInfo
 	}
 	if turn > time.Duration(0) {
 		sinceMove := g.sinceMove()
 		// if a turn timer is set then make a random move for every turn duration that has occurred.
 		for sinceMove > turn {
-			if active == wichessing.Black {
+			if g.activeOrientation() == wichessing.Black {
 				g = g.randomMoveAtTime(g.WhiteLatestMove.Add(turn))
 			} else {
 				g = g.randomMoveAtTime(g.BlackLatestMove.Add(turn))
