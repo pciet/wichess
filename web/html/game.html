@@ -43,7 +43,6 @@
         border-radius: 10px;
         background-color: #cc785c;
         color: #fb835e;
-        /* https://stackoverflow.com/questions/826782/how-to-disable-text-selection-highlighting-using-css */
         -webkit-touch-callout: none; /* iOS Safari */
         -webkit-user-select: none; /* Safari */
         -khtml-user-select: none; /* Konqueror HTML */
@@ -68,10 +67,16 @@
         border-radius: 10px;
         box-shadow: 0px 1px 1px black;
         margin: 0 auto;
+        -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Safari */
+        -khtml-user-select: none; /* Konqueror HTML */
+        -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
+        cursor: default;
     }
     #movesound, #music {
         text-align: center;
-        /* https://stackoverflow.com/questions/826782/how-to-disable-text-selection-highlighting-using-css */
         -webkit-touch-callout: none; /* iOS Safari */
         -webkit-user-select: none; /* Safari */
         -khtml-user-select: none; /* Konqueror HTML */
@@ -268,7 +273,7 @@
             }
             if ('promote' in Moves) {
                 // makeMove switched Turn to the other player
-                if (Turn != PlayerOrientation) {
+                if ((Turn != PlayerOrientation) || (Opponent == EasyComputer) || (Opponent == HardComputer)) {
                     setPromoting();
                     Turn = PlayerOrientation;
                     if (Turn == o.WHITE) {
@@ -337,14 +342,16 @@
     }
     function makeMove(diff) {
         if (Object.keys(diff).length > 0) {
-            if (Turn == o.WHITE) {
-                $('#white').removeClass('indicating');
-                $('#black').addClass('indicating');
-                Turn = o.BLACK;
-            } else {
-                $('#white').addClass('indicating');
-                $('#black').removeClass('indicating');
-                Turn = o.WHITE;
+            if ((Opponent != EasyComputer) && (Opponent != HardComputer)) {
+                if (Turn == o.WHITE) {
+                    $('#white').removeClass('indicating');
+                    $('#black').addClass('indicating');
+                    Turn = o.BLACK;
+                } else {
+                    $('#white').addClass('indicating');
+                    $('#black').removeClass('indicating');
+                    Turn = o.WHITE;
+                }
             }
             if (TurnTime.milliseconds() > 0) {
                 if (Turn == o.BLACK) {
@@ -803,18 +810,18 @@
         }
         if (TurnTime.milliseconds() > 0) {
             if (Turn == o.WHITE) {
-                $('#blackclock').html(millisecondsToClock(TurnTime.valueOf()-1000)).addClass('clock');
+                $('#blackclock').html(millisecondsToClock(TurnTime.valueOf()-1000)).addClass('clock').fitText();
                 updateClock(o.WHITE);
-                $('#whiteclock').addClass('clock');
+                $('#whiteclock').addClass('clock').fitText();
                 if (Acknowledging == false) {
                     WhiteTimer = setInterval(function() {
                         updateClock(o.WHITE);
                     }, 1000);
                 }
             } else {
-                $('#whiteclock').html(millisecondsToClock(TurnTime.valueOf()-1000)).addClass('clock');
+                $('#whiteclock').html(millisecondsToClock(TurnTime.valueOf()-1000)).addClass('clock').fitText();
                 updateClock(o.BLACK);
-                $('#blackclock').addClass('clock');
+                $('#blackclock').addClass('clock').fitText();
                 if (Acknowledging == false) {
                     BlackTimer = setInterval(function() {
                         updateClock(o.BLACK);
@@ -831,11 +838,11 @@
                 wtime = 0;
             }
             if (typeof whiteTime === 'undefined') {
-                $('#blackclock').html(millisecondsToClock(btime)).addClass('clock');
-                $('#whiteclock').html(millisecondsToClock(wtime)).addClass('clock');
+                $('#blackclock').html(millisecondsToClock(btime)).addClass('clock').fitText();
+                $('#whiteclock').html(millisecondsToClock(wtime)).addClass('clock').fitText();
             } else {
-                $('#whiteclock').html(whiteTime).addClass('clock');
-                $('#blackclock').html(blackTime).addClass('clock');
+                $('#whiteclock').html(whiteTime).addClass('clock').fitText();
+                $('#blackclock').html(blackTime).addClass('clock').fitText();
             }
             if (Acknowledging == false) {
                 if (Turn == o.WHITE) {
