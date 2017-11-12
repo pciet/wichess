@@ -4,87 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>wichess game</title>
+    <!-- Copyright 2017 Matthew Juran -->
+    <!-- All Rights Reserved -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Libre+Baskerville">
     <link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="/css/body.css">
     <style>
     body {
-        font-size: 2vw;
-        padding: 0px;
-        margin: 0px;
-        border: 0px;
-        white-space: nowrap;
-        overflow: hidden;
-    }
-    .inlinediv {
-        display: inline-block;
-        vertical-align: top;
-    }
-    .container {
-        display: inline-block;
-        height: 100vh;
-        margin: 0px auto;
-        padding: 16px;
-        border: 0px;
-    }
-    .dataline {
-        height: 54px;
-    }
-    .dataline2 {
-        height: 108px;
-    }
-    #acknowledge {
-        display: block;
-    }
-    #backandsound {
-        display: block;
-    }
-    #indicators {
-        display: table;
-        border-collapse: collapse;
-        margin: 8px;
-        width: 100%;
-    }
-    .indicatorrow {
-        display: table-row;
-    }
-    #rightcontainer {
-        vertical-align: top;
-    }
-    .playerinfo {
-        width: 100%;
-        text-align: center;
-        margin: 0px;
-        padding: 8px;
-        display: table;
         background-color: #cc785c;
-        color: #fb835e;
-        border-radius: 10px;
-    }
-    .playerinforow {
         margin: 0px;
         border: 0px;
         padding: 0px;
-        display: table-row;
-        word-wrap: break-word;
-        white-space: normal;
-        vertical-align: middle;
+        font-family: 'Libre Baskerville', serif;
+        color: #d4cca5;
     }
-    .playerinfocell {
-        display: table-cell;
-        vertical-align: middle;
+    .inline {
+        display: inline-block;
+        vertical-align: top;
     }
-    .indicator {
-        font-size: 1.8vw;
-        border-radius: 10px;
+    table {
+        border: 7px outset #d4cca5;
+        border-spacing: 0px;
+    }
+    tr {
+        border: 0px;
+    }
+    td {
+        padding: 0px;
+    }
+    .even {
+        background-color: #e1e1e1;
+    }
+    .odd {
+        background-color: #f3f3f3;
+    }
+    #state {
+        border: 5px solid #cc785c;
         text-align: center;
-        vertical-align: middle;
-        width: 50%;
-        display: table-cell;
-        margin: 4px;
+        border-radius: 10px;
         background-color: #cc785c;
         color: #fb835e;
-        padding: 4px;
         /* https://stackoverflow.com/questions/826782/how-to-disable-text-selection-highlighting-using-css */
         -webkit-touch-callout: none; /* iOS Safari */
         -webkit-user-select: none; /* Safari */
@@ -95,34 +53,24 @@
         cursor: default;
     }
     .indicating {
-        background-color: #d4cca5;
-        color: #825444;
+        background-color: #d4cca5 !important;
+        color: #825444 !important;
     }
-    #gainedpiece {
-        width: 50%;
+    .player {
+        border: 10px solid #cc785c;
+        border-radius: 30px;
         text-align: center;
     }
-    #piecetitle {
-        font-size: 1.2vw;
+    .button {
+        background-color: #fb835e;
+        color: #d4cca5;
+        text-align: center;
+        border-radius: 10px;
+        box-shadow: 0px 1px 1px black;
+        margin: 0 auto;
     }
-    #gainedpieceimg {
-        width: 12vw;
-    }
-    #notificationarea {
-        display: block;
-    }
-    #acknowledge {
-        display: block;
-        vertical-align: top;
-        margin: 0.3em;
-    }
-    #backandsound {
-        display: block;
-        width: 100%;
-        margin: 0.3em;
-    }
-    #soundbuttons {
-        margin-left: 1em;
+    #movesound, #music {
+        text-align: center;
         /* https://stackoverflow.com/questions/826782/how-to-disable-text-selection-highlighting-using-css */
         -webkit-touch-callout: none; /* iOS Safari */
         -webkit-user-select: none; /* Safari */
@@ -132,39 +80,16 @@
         user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
         cursor: default;
     }
-    #grid {
-        border: 0px;
-        padding: 0;
-        vertical-align: middle;
-        table-layout: fixed;
-        border-collapse: collapse;
-        margin: 0 auto;
-        outline: 7px outset #d4cca5;
-    }
-    tr {
-        padding: 0px;
-        margin: 0px;
-        height: 54px;
-    }
-    .point {
-        padding: 0px;
-        margin: 0px;
-        width: 54px;
-        background-color: white;
-    }
-    .even {
-        background-color: #e1e1e1;
-    }
-    .odd {
-        background-color: #f3f3f3;
-    }
-    .promotion {
-        margin: 1em;
-    }
-    .pieceimg {
-        width: 48px;
-        height: 48px;
-        vertical-align: top;
+    .clock {
+        font-family: 'Inconsolata', monospace;
+        /* https://stackoverflow.com/questions/826782/how-to-disable-text-selection-highlighting-using-css */
+        -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Safari */
+        -khtml-user-select: none; /* Konqueror HTML */
+        -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
+        cursor: default;
     }
     .hovered {
         outline: 2px solid #fb835e;
@@ -182,46 +107,50 @@
         outline: 2px dotted #fb835e;
         outline-offset: -1px;
     }
-    input {
-        border-radius: 5px;
-        box-shadow: 0px 1px 1px black;
-        margin: 0 auto;
-        font-size: 1.5vw;
-    }
-    .prombdiv {
-        padding: 7px;
-        text-align: center;
-    }
-    .promb {
-        margin: 2px;
-        font-size: 1.2vw;
-    }
-    .clock {
-        font-family: 'Inconsolata', monospace;
-        /* https://stackoverflow.com/questions/826782/how-to-disable-text-selection-highlighting-using-css */
-        -webkit-touch-callout: none; /* iOS Safari */
-        -webkit-user-select: none; /* Safari */
-        -khtml-user-select: none; /* Konqueror HTML */
-        -moz-user-select: none; /* Firefox */
-        -ms-user-select: none; /* Internet Explorer/Edge */
-        user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
-        cursor: default;
-    }
-    .clocking {
-        background-color: #d4cca5;
-        color: #825444;
+    .pieceimg, .gainedpieceimg {
+        vertical-align: top;
+        width: 100%;
+        height: 100%;
     }
     </style>
-    <script type="text/javascript" src="/js/jquery-2.2.0.min.js"></script>
+    <script type="text/javascript" src="/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.fittext.js"></script>
     <script type="text/javascript" src="/js/moment.min.js"></script>
     <script type="text/javascript" src="/js/duration.js"></script>
     <script type="text/javascript" src="/js/pieces.js"></script>
     <script type="text/javascript">
-    var SoundCount = 325;
-    var Muted = false;
+    // if (width/height) - 1 is within these ratio threshold then the square layout is used, below is vertical, above is horizontal
+    var SquareRatioThreshold = 0.3;
+    var BottomSquareRatioThreshold = -0.219;
+    // space around the board, set as table in the css above
+    var BoardPadding = 7;
+    var StatePadding = 5;
+    var PlayerPadding = 10;
+
+    var states = {
+        NONE: 0,
+        CHECK: 1,
+        DRAW: 2,
+        TIME: 3,
+        CHECKMATE: 4
+    };
+
+    // used to keep the same state on redraw of interface (like on a resize)
+    var GameState = states.NONE;
+
+    // client representation of the current board state
+    var Board = null;
+    var Selected = null;
+    var Moves = null;
 
     var game_id = {{.ID}};
     var Player = {{.Name}};
+
+    var PlayerOrientation;
+    var Opponent = '';
+    var White = '';
+    var Black = '';
+    var Turn;
 
     var TotalTime = Duration.parse({{.TotalTime}});
     var TurnTime = Duration.parse({{.TurnTime}});
@@ -234,27 +163,22 @@
 
     var NowDifference = moment.duration(moment().diff(NowTime));
 
-    var PlayerOrientation;
-    var Opponent = '';
-    var White = '';
-    var Black = '';
-    var Turn = '';
+    var Promoting = false;
+    var GainedPiece = null;
+    var Acknowledging = false;
 
-    var Board = null;
-    var Selected = null;
-    var Moves = null;
+    var SoundCount = 325;
+    var Muted = false;
 
     var EasyComputer = 'Easy Computer Player';
     var HardComputer = 'Hard Computer Player';
 
-    var WhiteTimer, BlackTimer;
+    var WhiteTimer = null;
+    var BlackTimer = null;
 
     var ws = new WebSocket("ws://localhost:8080/moven/"+game_id);
     ws.onmessage = function(event) {
         makeMove(JSON.parse(event.data));
-    }
-    function setGainedPiece(kind) {
-        $('#gainedpiece').html('<div><img id="gainedpieceimg" src="/img/'+imageNameForKind(kind, 64, PlayerOrientation)+'"></div><div id="piecetitle"> +'+nameForKind(kind)+'</div>');
     }
     function setPieceImage(index, kind, orientation) {
         $('#point'+index).html('<img class="pieceimg" src="/img/'+imageNameForKind(kind, index, orientation)+'">');
@@ -284,38 +208,168 @@
                 }
             }
         }
+        unsetPromoting();
         $.post('/move/'+game_id, {From: from, Kind: kind}).done(makeMove);
+    }
+    function getMoves() {
+        $.get('/moves/'+game_id).done(function(data) {
+            $('.selected').removeClass('selected');
+            $('.hovered').removeClass('hovered');
+            $('.hoveredopp').removeClass('hoveredopp');
+            Selected = null;
+            Moves = data;
+            if ('check' in Moves) {
+                setState(states.CHECK);
+            } else {
+                setState(states.NONE);
+            }
+            if ('checkmate' in Moves) {
+                if ((TurnTime.milliseconds() > 0) || (TotalTime.milliseconds() > 0)) {
+                    if (Turn == o.BLACK) {
+                        clearInterval(BlackTimer);
+                    } else {
+                        clearInterval(WhiteTimer);
+                    }
+                    GainedPiece = parseInt(Object.keys(Moves['checkmate'])[0]);
+                    setGainedPiece();
+                }
+                setState(states.CHECKMATE);
+                Acknowledging = true;
+                setAcknowledge();
+                return;
+            } else if ('draw' in Moves) {
+                if ((TurnTime.milliseconds() > 0) || (TotalTime.milliseconds() > 0)) {
+                    if (Turn == o.BLACK) {
+                        clearInterval(BlackTimer);
+                    } else {
+                        clearInterval(WhiteTimer);
+                    }
+                    GainedPiece = parseInt(Object.keys(Moves['draw'])[0]);
+                    setGainedPiece();
+                }
+                setState(states.DRAW);
+                Acknowledging = true;
+                setAcknowledge();
+                return;
+            } else if ('time' in Moves) {
+                if (Turn == o.BLACK) {
+                    clearInterval(BlackTimer);
+                    $('#blackclock').html(millisecondsToClock(0));
+                } else {
+                    clearInterval(WhiteTimer);
+                    $('#whiteclock').html(millisecondsToClock(0));
+                }
+                GainedPiece = parseInt(Object.keys(Moves['time'])[0]);
+                setGainedPiece();
+                setState(states.TIME);
+                Acknowledging = true;
+                setAcknowledge();
+                return;
+            }
+            if ('promote' in Moves) {
+                // makeMove switched Turn to the other player
+                if (Turn != PlayerOrientation) {
+                    setPromoting();
+                    Turn = PlayerOrientation;
+                    if (Turn == o.WHITE) {
+                        $('#white').addClass('indicating');
+                        $('#black').removeClass('indicating');
+                    } else {
+                        $('#black').addClass('indicating');
+                        $('#white').removeClass('indicating');
+                    }
+                } else {
+                    if (PlayerOrientation == o.WHITE) {
+                        Turn = o.BLACK;
+                        $('#white').removeClass('indicating');
+                        $('#black').addClass('indicating');
+                    } else {
+                        Turn = o.WHITE;
+                        $('#white').addClass('indicating');
+                        $('#black').removeClass('indicating');
+                    }
+                }
+                if (TurnTime.milliseconds() > 0) {
+                    if (Turn == o.BLACK) {
+                        clearInterval(WhiteTimer);
+                        $('#whiteclock').html(millisecondsToClock(TurnTime.valueOf()-1000));
+                        WhiteLatestMove = moment();
+                        BlackTimer = setInterval(function() {
+                            updateClock(o.BLACK);
+                        }, 1000);
+                    } else {
+                        clearInterval(BlackTimer);
+                        $('#blackclock').html(millisecondsToClock(TurnTime.valueOf()-1000));
+                        BlackLatestMove = moment();
+                        WhiteTimer = setInterval(function() {
+                            updateClock(o.WHITE);
+                        }, 1000);
+                    }
+                } else if (TotalTime.milliseconds() > 0) {
+                    if (Turn == o.BLACK) {
+                        if (NowTime.isAfter(BlackLatestMove)) {
+                            WhiteElapsed = Duration.parse((WhiteElapsed.milliseconds() + moment().diff(NowTime).valueOf())+'ms');
+                        } else {
+                            WhiteElapsed = Duration.parse((WhiteElapsed.milliseconds() + moment().diff(BlackLatestMove))+'ms');
+                        }
+                        clearInterval(WhiteTimer);
+                        WhiteLatestMove = moment();
+                        BlackTimer = setInterval(function() {
+                            updateClock(o.BLACK);
+                        }, 1000);
+                    } else {
+                        if (NowTime.isAfter(WhiteLatestMove)) {
+                            BlackElapsed = Duration.parse((BlackElapsed.milliseconds() + moment().diff(NowTime).valueOf())+'ms');
+                        } else {
+                            BlackElapsed = Duration.parse((BlackElapsed.milliseconds() + moment().diff(WhiteLatestMove).valueOf())+'ms');
+                        }
+                        clearInterval(BlackTimer);
+                        BlackLatestMove = moment();
+                        WhiteTimer = setInterval(function() {
+                            updateClock(o.WHITE);
+                        }, 1000);
+                    }
+                }
+            } else {
+                unsetPromoting();
+            }
+        });
     }
     function makeMove(diff) {
         if (Object.keys(diff).length > 0) {
+            if (Turn == o.WHITE) {
+                $('#white').removeClass('indicating');
+                $('#black').addClass('indicating');
+                Turn = o.BLACK;
+            } else {
+                $('#white').addClass('indicating');
+                $('#black').removeClass('indicating');
+                Turn = o.WHITE;
+            }
             if (TurnTime.milliseconds() > 0) {
-                if (Turn == o.WHITE) {
+                if (Turn == o.BLACK) {
                     clearInterval(WhiteTimer);
-                    $('#whiteclock').removeClass('clocking').html(millisecondsToClock(TurnTime.valueOf()-1000));
-                    $('#blackclock').addClass('clocking');
+                    $('#whiteclock').html(millisecondsToClock(TurnTime.valueOf()-1000));
                     WhiteLatestMove = moment();
                     BlackTimer = setInterval(function() {
                         updateClock(o.BLACK);
                     }, 1000);
                 } else {
                     clearInterval(BlackTimer);
-                    $('#blackclock').removeClass('clocking').html(millisecondsToClock(TurnTime.valueOf()-1000));
-                    $('#whiteclock').addClass('clocking');
+                    $('#blackclock').html(millisecondsToClock(TurnTime.valueOf()-1000));
                     BlackLatestMove = moment();
                     WhiteTimer = setInterval(function() {
                         updateClock(o.WHITE);
                     }, 1000);
                 }
             } else if (TotalTime.milliseconds() > 0) {
-                if (Turn == o.WHITE) {
+                if (Turn == o.BLACK) {
                     if (NowTime.isAfter(BlackLatestMove)) {
                         WhiteElapsed = Duration.parse((WhiteElapsed.milliseconds() + moment().diff(NowTime).valueOf())+'ms');
                     } else {
                         WhiteElapsed = Duration.parse((WhiteElapsed.milliseconds() + moment().diff(BlackLatestMove))+'ms');
                     }
                     clearInterval(WhiteTimer);
-                    $('#whiteclock').removeClass('clocking');
-                    $('#blackclock').addClass('clocking');
                     WhiteLatestMove = moment();
                     BlackTimer = setInterval(function() {
                         updateClock(o.BLACK);
@@ -327,8 +381,6 @@
                         BlackElapsed = Duration.parse((BlackElapsed.milliseconds() + moment().diff(WhiteLatestMove).valueOf())+'ms');
                     }
                     clearInterval(BlackTimer);
-                    $('#blackclock').removeClass('clocking');
-                    $('#whiteclock').addClass('clocking');
                     BlackLatestMove = moment();
                     WhiteTimer = setInterval(function() {
                         updateClock(o.WHITE);
@@ -342,88 +394,12 @@
                 unsetPieceImage(index);
             } else {
                 setPieceImage(index, diff[point].Kind, diff[point].Orientation);
+                var dim = Math.floor(($('#board').height() - (2 * BoardPadding)) / 8);
+                $('.pieceimg').css('height', dim + 'px').css('width', dim + 'px');
             }
             Board[index] = diff[point];
         }
-        $(window).trigger('resize');
-        $.get('/moves/'+game_id).done(function(data) {
-            $('.selected').removeClass('selected');
-            $('.hovered').removeClass('hovered');
-            $('.hoveredopp').removeClass('hoveredopp');
-            Selected = null;
-            Moves = data;
-            if ('check' in Moves) {
-                $('#check').addClass('indicating');
-            } else {
-                $('#check').removeClass('indicating');
-            }
-            if ('checkmate' in Moves) {
-                if ((TurnTime.milliseconds() > 0) || (TotalTime.milliseconds() > 0)) {
-                    clearInterval(WhiteTimer);
-                    clearInterval(BlackTimer);
-                    setGainedPiece(parseInt(Object.keys(Moves['checkmate'])[0]));
-                }
-                if (Turn == o.WHITE) {
-                    $('#whiteactive').removeClass('indicating');
-                    $('#blackactive').addClass('indicating');
-                } else {
-                    $('#whiteactive').addClass('indicating');
-                    $('#blackactive').removeClass('indicating');
-                }
-                $('#checkmate').addClass('indicating');
-                $('#acknowledge').css('visibility', 'visible');
-                $('.prombdiv').css('visibility', 'hidden');
-                return;
-            } else if ('draw' in Moves) {
-                if ((TurnTime.milliseconds() > 0) || (TotalTime.milliseconds() > 0)) {
-                    clearInterval(WhiteTimer);
-                    clearInterval(BlackTimer);
-                    setGainedPiece(parseInt(Object.keys(Moves['draw'])[0]));
-                }
-                if (Turn == o.WHITE) {
-                    $('#whiteactive').removeClass('indicating');
-                    $('#blackactive').addClass('indicating');
-                } else {
-                    $('#whiteactive').addClass('indicating');
-                    $('#blackactive').removeClass('indicating');
-                }
-                $('#draw').addClass('indicating');
-                $('#acknowledge').css('visibility', 'visible');
-                $('.prombdiv').css('visibility', 'hidden');
-                return;
-            } else if ('time' in Moves) {
-                clearInterval(BlackTimer);
-                clearInterval(WhiteTimer);
-                setGainedPiece(parseInt(Object.keys(Moves['time'])[0]));
-                if (Turn == o.WHITE) {
-                    $('#whiteactive').removeClass('indicating');
-                    $('#blackactive').addClass('indicating');
-                } else {
-                    $('#whiteactive').addClass('indicating');
-                    $('#blackactive').removeClass('indicating');
-                }
-                $('#time').addClass('indicating');
-                $('#acknowledge').css('visibility', 'visible');
-                $('.prombdiv').css('visibility', 'hidden');
-                return;
-            }
-            if ('promote' in Moves) {
-                if (Turn == PlayerOrientation) {
-                    $('.prombdiv').css('visibility', 'visible');
-                }
-            } else {
-                $('.prombdiv').css('visibility', 'hidden');
-                if ((Turn == o.WHITE) && (Opponent != EasyComputer) && (Opponent != HardComputer)) {
-                    $('#whiteactive').removeClass('indicating');
-                    $('#blackactive').addClass('indicating');
-                    Turn = o.BLACK;
-                } else {
-                    $('#whiteactive').addClass('indicating');
-                    $('#blackactive').removeClass('indicating');
-                    Turn = o.WHITE;
-                }
-            }
-        });
+        getMoves();
         if (Muted == false) {
             $('#audio'+Math.floor(Math.random()*SoundCount)).get(0).play();
         }
@@ -488,43 +464,405 @@
         }
         $(clock).html(millisecondsToClock(remaining));
     }
-    $(window).resize(function() {
-        // 16px padding around the board and within each container
-        var height = $(window).height();
-        var width = $(window).width();
+    function setAcknowledge() {
+        if (Acknowledging == false) {
+            return;
+        }
+        $('#acknowledge').html('<div id="aspacer"></div><div class="button" id="ackbutton">Acknowledge</div>');
+        $('#aspacer').css('height', '10%');
+        $('#ackbutton').css('width', '90%').css('height', '80%').css('line-height', $('#ackbutton').height() + 'px').fitText();
+        $('#ackbutton').click(function() {
+            jQuery.post('/acknowledge', {
+                player: Player,
+                gameid: game_id
+            }).done(function() {
+                window.location.pathname = '/';
+            });
+        });
+    }
+    function setGainedPiece() {
+        if (GainedPiece == null) {
+            return;
+        }
+        $('#promote').html(`
+            <div id="gainimg"><img id="gainedpieceimg" src="/img/`+imageNameForKind(GainedPiece, 64, PlayerOrientation)+`"></div><!--
+            --><div id="gaintext">+`+nameForKind(GainedPiece)+`</div>
+        `);
+        $('#gainimg').css('height', ($('#promote').height() * (5/6)) + 'px').css('width', '100%');
         var dim;
-        if (width < height) {
-            dim = width;
+        if ($('#gainimg').height() < $('#gainimg').width()) {
+            dim = $('#gainimg').height();
         } else {
-            dim = height;
+            dim = $('#gainimg').width();
         }
-        var squareDim = Math.floor((dim - 32) / 8);
-        $('tr').css('height', squareDim);
-        $('.point').css('width', squareDim);
-        $('.pieceimg').css('width', squareDim).css('height', squareDim);
-        $('#rightcontainer').css('width', $(window).width() - ((squareDim*8) + 100));
-        $('.dataline').css('height', squareDim - 11);
-        $('.dataline2').css('height', (squareDim - 11) * 2);
-    });
-    $(document).ready(function() {
-        $('#acknowledge').css('visibility', 'hidden');
-        for (var i = 0; i < SoundCount; i++) {
-            $('#audio').append('<audio id="audio'+i+'"><source src="/sound/click'+i+'.wav" type="audio/wav"><source src="/sound/click'+i+'.ogg" type="audio/ogg"></audio>');
+        $('#gainedpieceimg').css('height', dim + 'px').css('width', dim + 'px').css('margin', '0 auto').css('display', 'block');
+        $('#gaintext').css('height', ($('#promote').height() * (1/6)) + 'px').css('width', '100%').css('text-align', 'center').fitText(2);
+    }
+    function unsetPromoting() {
+        Promoting = false;
+        $('#promote').html('');
+    }
+    function setPromoting() {
+        Promoting = true;
+        $('#promote').html(`
+            <div class="inline"><!--
+                --><div class="promotediv"><!--
+                    --><div class="prspacer"></div><!--
+                    --><div class="button" id="queenpromote">Queen</div><!--
+                --></div><!--
+                --><div class="promotediv"><!--
+                    --><div class="prspacer"></div><!--
+                    --><div class="button" id="bishoppromote">Bishop</div><!--
+                --></div><!--
+            --></div><!--
+            --><div class="inline"><!--
+                --><div class="promotediv"><!--
+                    --><div class="prspacer"></div><!--
+                    --><div class="button" id="rookpromote">Rook</div><!--
+                --></div><!--
+                --><div class="promotediv"><!--
+                    --><div class="prspacer"></div><!--
+                    --><div class="button" id="knightpromote">Knight</div><!--
+                --></div><!--
+            --></div>
+        `);
+        $('.promotediv').css('width', ($('#promote').width() / 2) + 'px').css('height', ($('#promote').height() / 2) + 'px');
+        $('.prspacer').css('height', '10%');
+        $('#queenpromote, #bishoppromote, #rookpromote, #knightpromote').css('width', '80%').css('height', '80%').css('line-height', $('#queenpromote').height() + 'px').fitText(0.5);
+        $('#queenpromote').click(function() {promote(k.QUEEN)});
+        $('#bishoppromote').click(function() {promote(k.BISHOP)});
+        $('#rookpromote').click(function() {promote(k.ROOK)});
+        $('#knightpromote').click(function() {promote(k.KNIGHT)});
+    }
+    function setState(state) {
+        GameState = state;
+        switch (state) {
+            case states.NONE:
+                $('#state').html('wichess!').removeClass('indicating');
+                break;
+            case states.CHECK:
+                $('#state').html('Check').addClass('indicating');
+                break;
+            case states.DRAW:
+                $('#state').html('Draw').addClass('indicating');
+                break;
+            case states.TIME:
+                $('#state').html('Time').addClass('indicating');
+                break;
+            case states.CHECKMATE:
+                $('#state').html('Checkmate').addClass('indicating');
+                break;
         }
-        $('#movemute').click(function() {
+        $('#state').fitText();
+        $('#state').css('line-height', $('#state').height()  + 'px');
+    }
+    function layout(width, height) {
+        if (WhiteTimer != null) {
+            clearInterval(WhiteTimer);
+        }
+        if (BlackTimer != null) {
+            clearInterval(BlackTimer);
+        }
+        var blackTime = '';
+        var whiteTime = '';
+        if ((TurnTime.milliseconds() > 0) || (TotalTime.milliseconds() > 0)) {
+            blackTime = $('#blackclock').html();
+            whiteTime = $('#whiteclock').html();
+        }
+        // square layout
+        if ((((width/height)-1) < SquareRatioThreshold) && (((width/height) - 1) > BottomSquareRatioThreshold)) {
+            var page = `
+                <div class="inline"><!--
+                    --><div id="promote"></div><!--
+                    --><div id="players"></div><!--
+                    --><div id="state"></div><!--
+                --></div><!--
+                --><div class="inline"><!--
+                    --><div><!--
+                        --><div class="inline" id="acknowledge"></div><!--
+                        --><div class="inline" id="soundback"></div><!--
+                    --></div><!--
+                    --><div id="board"></div><!--
+                --></div>
+            `;
+            $('#body').html(page);
+            var boardDim;
+            if (width > height) {
+                boardDim = height * (5/6);
+            } else {
+                boardDim = width * (5/6);
+            }
+            $('#board').css('width', boardDim + 'px').css('height', boardDim + 'px');
+            var remainingWidth = width - boardDim;
+            var remainingHeight = height - boardDim;
+            $('#state').css('width', (remainingWidth - (2 * StatePadding)) + 'px').css('height', ((height / 4) - (2 * StatePadding)) + 'px');
+            $('#players').css('width', remainingWidth + 'px').css('height', (height / 2) + 'px');
+            $('#promote').css('width', remainingWidth + 'px').css('height', (height / 4) + 'px');
+            $('#acknowledge').css('width', (boardDim / 2) + 'px').css('height', remainingHeight + 'px');
+            $('#soundback').css('width', (boardDim / 2) + 'px').css('height', remainingHeight + 'px');
+            if ((TotalTime.milliseconds() > 0) || (TurnTime.milliseconds() > 0)) {
+                $('#players').html(`
+                    <div id="black" class="player">
+                        <div id="blackname"></div>
+                        <div id="blackclock" class="clock"></div>
+                    </div>
+                    <div id="white" class="player">
+                        <div id="whitename"></div>
+                        <div id="whiteclock" class="clock"></div>
+                    </div>
+                `);
+
+            } else {
+                $('#players').html(`
+                    <div id="black" class="player"></div>
+                    <div id="white" class="player"></div>
+                `);
+            }
+            $('.player').css('height', (($('#players').height() / 2) - (PlayerPadding * 2)) + 'px').css('width', ($('#players').width() - (PlayerPadding * 2)) + 'px');
+            if (TotalTime.milliseconds() > 0) {
+                $('#soundback').html(`
+                    <div class="inline" id="movesound">&#x1f50a;</div><!--
+                    --><div class="inline" id="music">&#9835;</div>
+                `);
+                $('#movesound, #music').css('width', ($('#soundback').width() / 2) + 'px').css('height', $('#soundback').height() + 'px').css('line-height', $('#movesound').height() + 'px').fitText(0.4);
+            } else {
+                $('#soundback').html(`
+                    <div class="inline" id="backdiv"><!--
+                        --><div id="bspacer"></div><!--
+                        --><div class="button" id="back">Back</div><!--
+                    --></div><!--
+                    --><div class="inline" id="sound"><!--
+                        --><div id="movesound">&#x1f50a;</div><!--
+                        --><div id="music">&#9835;</div><!--
+                    --></div>
+                `);
+                $('#backdiv').css('width', ($('#soundback').width() * (3/4)) + 'px').css('height', $('#soundback').height() + 'px');
+                $('#bspacer').css('height', ($('#soundback').height() * (1/8)) + 'px');
+                $('#sound').css('width', ($('#soundback').width() * (1/4)) + 'px').css('height', $('#soundback').height() + 'px');
+                $('#movesound, #music').css('width', $('#sound').width() + 'px').css('height', ($('#sound').height() / 2) + 'px').css('line-height', $('#movesound').height() + 'px').fitText(0.3);
+                $('#back').css('width', '80%').css('height', '80%').css('line-height', $('#back').height() + 'px').fitText(0.6);
+            }
+        } else if (width > height) { // horizontal layout
+            var page = `
+                <div class="inline"><!--
+                    --><div id="state"></div><!--
+                    --><div id="players"></div><!--
+                    --><div id="buttons"><!--
+                        --><div class="inline"><!--
+                            --><div id="soundback"></div><!--
+                            --><div id="acknowledge"></div><!--
+                        --></div><!--
+                        --><div class="inline" id="promote"></div><!--
+                    --></div><!--
+                --></div><!--
+                --><div class="inline" id="board"></div>
+            `;
+            $('#body').html(page);
+            $('#board').css('width', height + 'px').css('height', height + 'px');
+            $('#state').css('width', ((width - height) - (2 * StatePadding)) + 'px').css('height', ((height / 4) - (2 * StatePadding)) + 'px');
+            $('#players').css('width', (width - height) + 'px').css('height', (height / 2) + 'px');
+            $('#soundback').css('width', ((width - height) / 2) + 'px').css('height', (height / 8) + 'px');
+            $('#acknowledge').css('width', ((width - height) / 2) + 'px').css('height', (height / 8) + 'px');
+            $('#promote').css('width', ((width - height) / 2) + 'px').css('height', (height / 4) + 'px');
+            $('#buttons').css('height', (height / 4) + 'px');
+            if ((TotalTime.milliseconds() > 0) || (TurnTime.milliseconds() > 0)) {
+                $('#players').html(`
+                    <div id="black" class="player"><!--
+                        --><div id="blackname"></div><!--
+                        --><div id="blackclock" class="clock"></div><!--
+                    --></div><!--
+                    --><div id="white" class="player"><!--
+                        --><div id="whitename"></div><!--
+                        --><div id="whiteclock" class="clock"></div><!--
+                    --></div>
+                `);
+            } else {
+                $('#players').html(`
+                    <div id="black" class="player"></div><!--
+                    --><div id="white" class="player"></div>
+                `);
+            }
+            $('.player').css('height', (($('#players').height() / 2) - (PlayerPadding * 2)) + 'px').css('width', ($('#players').width() - (PlayerPadding * 2)) + 'px');
+            if (TotalTime.milliseconds() > 0) {
+                $('#soundback').html(`
+                    <div class="inline" id="movesound">&#x1f50a;</div><!--
+                    --><div class="inline" id="music">&#9835;</div>
+                `);
+                $('#movesound, #music').css('width', ($('#soundback').width() / 2) + 'px').css('height', $('#soundback').height() + 'px').css('line-height', $('#movesound').height() + 'px').fitText(0.4);
+            } else {
+                $('#soundback').html(`
+                    <div class="inline" id="backdiv"><!--
+                        --><div class="button" id="back">Back</div><!--
+                    --></div><!--
+                    --><div class="inline" id="sound"><!--
+                        --><div id="movesound">&#x1f50a;</div><!--
+                        --><div id="music">&#9835;</div><!--
+                    --></div>
+                `);
+                $('#backdiv').css('width', ($('#soundback').width() * (3/4)) + 'px').css('height', $('#soundback').height() + 'px');
+                $('#sound').css('width', ($('#soundback').width() * (1/4)) + 'px').css('height', $('#soundback').height() + 'px');
+                $('#movesound, #music').css('width', $('#sound').width() + 'px').css('height', ($('#sound').height() / 2) + 'px').css('line-height', $('#movesound').height() + 'px').fitText(0.3);
+                $('#back').css('width', '80%').css('height', '80%').css('line-height', $('#back').height() + 'px').fitText(0.6);
+            }
+        } else { // vertical layout
+            var page = `
+                <div><!--
+                    --><div id="top"><!--
+                        --><div class="inline" id="state"></div><!--
+                        --><div class="inline"><!--
+                            --><div id="acknowledge"></div><!--
+                            --><div><!--
+                                --><div class="inline" id="promote"></div><!--
+                                --><div class="inline" id="soundback"></div><!--
+                            --></div><!--
+                        --></div><!--
+                    --></div><!--
+                    --><div id="players"></div><!--
+                --></div><!--
+                --><div id="board"></div>
+            `;
+            $('#body').html(page);
+            $('#board').css('width', width + 'px').css('height', width + 'px');
+            $('#state').css('width', ((width / 2) - (2 * StatePadding)) + 'px').css('height', (((height - width) / 2) - (2 * StatePadding)) + 'px');
+            $('#top').css('height', ((height - width) / 2) + 'px');
+            $('#acknowledge').css('width', (width / 2) + 'px').css('height', ((height - width) / 4) + 'px');
+            $('#promote').css('width', (width / 4) + 'px').css('height', ((height - width) / 4) + 'px');
+            $('#soundback').css('width', (width / 4) + 'px').css('height', ((height - width) / 4) + 'px');
+            $('#players').css('width', width + 'px').css('height', ((height - width) / 2) + 'px');
+            if ((TotalTime.milliseconds() > 0) || (TurnTime.milliseconds() > 0)) {
+                $('#players').html(`
+                    <div id="black" class="player inline"><!--
+                        --><div id="blackname"></div><!--
+                        --><div id="blackclock" class="clock"></div><!--
+                    --></div><!--
+                    --><div id="white" class="player inline"><!--
+                        --><div id="whitename"></div><!--
+                        --><div id="whiteclock" class="clock"></div><!--
+                    --></div>
+                `);
+            } else {
+                $('#players').html(`
+                    <div id="black" class="player inline"></div><!--
+                    --><div id="white" class="player inline"></div>
+                `);
+            }
+            $('.player').css('height', ($('#players').height() - (PlayerPadding * 2)) + 'px').css('width', (($('#players').width() / 2) - (PlayerPadding * 2)) + 'px');
+            if (TotalTime.milliseconds() > 0) {
+                $('#soundback').html(`
+                    <div class="inline" id="movesound">&#x1f50a;</div><!--
+                    --><div class="inline" id="music">&#9835;</div>
+                `);
+                $('#movesound, #music').css('width', ($('#soundback').width() / 2) + 'px').css('height', $('#soundback').height() + 'px').css('line-height', $('#movesound').height() + 'px').fitText(0.3);
+            } else {
+                $('#soundback').html(`
+                    <div class="inline" id="backdiv"><!--
+                        --><div class="button" id="back">Back</div><!--
+                    --></div><!--
+                    --><div class="inline" id="sound"><!--
+                        --><div id="movesound">&#x1f50a;</div><!--
+                        --><div id="music">&#9835;</div><!--
+                    --></div>
+                `);
+                $('#backdiv').css('width', ($('#soundback').width() * (3/4)) + 'px').css('height', $('#soundback').height() + 'px');
+                $('#sound').css('width', ($('#soundback').width() * (1/4)) + 'px').css('height', $('#soundback').height() + 'px');
+                $('#movesound, #music').css('width', $('#sound').width() + 'px').css('height', ($('#sound').height() / 2) + 'px').css('line-height', $('#movesound').height() + 'px').fitText(0.2);
+                $('#back').css('width', '80%').css('height', '80%').css('line-height', $('#back').height() + 'px').fitText(0.4);
+            }
+        }
+        if (Turn == o.WHITE) {
+            $('#white').addClass('indicating');
+            $('#black').removeClass('indicating');
+        } else {
+            $('#white').removeClass('indicating');
+            $('#black').addClass('indicating');
+        }
+        if ((TotalTime.milliseconds() > 0) || (TurnTime.milliseconds() > 0)) {
+            $('#blackname').css('height', '50%').css('width', '100%').css('line-height', $('#blackname').height() + 'px');
+            $('#whitename').css('height', '50%').css('width', '100%').css('line-height', $('#whitename').height() + 'px');
+            $('#blackclock').css('height', '50%').css('width', '100%').css('line-height', $('#blackclock').height() + 'px');
+            $('#whiteclock').css('height', '50%').css('width', '100%').css('line-height', $('#whiteclock').height() + 'px');
+            if (White == Player) {
+                $('#whitename').html('> '+{{.White}});
+                $('#blackname').html({{.Black}});
+            } else {
+                $('#blackname').html('> '+{{.Black}});
+                $('#whitename').html({{.White}});
+            }
+            $('#whitename, #blackname').fitText();
+        } else {
+            $('#black').css('line-height', $('#black').height() + 'px');
+            $('#white').css('line-height', $('#white').height() + 'px');
+            if (White == Player) {
+                $('#white').html('> '+{{.White}});
+                $('#black').html({{.Black}});
+            } else {
+                $('#black').html('> '+{{.Black}});
+                $('#white').html({{.White}});
+            }
+            $('#white, #black').fitText(1.5);
+        }
+        if (TurnTime.milliseconds() > 0) {
+            if (Turn == o.WHITE) {
+                $('#blackclock').html(millisecondsToClock(TurnTime.valueOf()-1000)).addClass('clock');
+                updateClock(o.WHITE);
+                $('#whiteclock').addClass('clock');
+                if (Acknowledging == false) {
+                    WhiteTimer = setInterval(function() {
+                        updateClock(o.WHITE);
+                    }, 1000);
+                }
+            } else {
+                $('#whiteclock').html(millisecondsToClock(TurnTime.valueOf()-1000)).addClass('clock');
+                updateClock(o.BLACK);
+                $('#blackclock').addClass('clock');
+                if (Acknowledging == false) {
+                    BlackTimer = setInterval(function() {
+                        updateClock(o.BLACK);
+                    }, 1000);            
+                }
+            }
+        } else if (TotalTime.milliseconds() > 0) {
+            var btime = TotalTime.milliseconds()-BlackElapsed.milliseconds()-1000;
+            if (btime < 0) {
+                btime = 0;
+            }
+            var wtime = TotalTime.milliseconds()-WhiteElapsed.milliseconds()-1000;
+            if (wtime < 0) {
+                wtime = 0;
+            }
+            if (typeof whiteTime === 'undefined') {
+                $('#blackclock').html(millisecondsToClock(btime)).addClass('clock');
+                $('#whiteclock').html(millisecondsToClock(wtime)).addClass('clock');
+            } else {
+                $('#whiteclock').html(whiteTime).addClass('clock');
+                $('#blackclock').html(blackTime).addClass('clock');
+            }
+            if (Acknowledging == false) {
+                if (Turn == o.WHITE) {
+                    WhiteTimer = setInterval(function() {
+                        updateClock(o.WHITE);
+                    }, 1000);
+                } else {
+                    BlackTimer = setInterval(function() {
+                        updateClock(o.BLACK);
+                    }, 1000);
+                }
+            }
+        }
+        $('#back').click(function() {
+            window.location.pathname = '/';
+        });
+        $('#movesound').click(function() {
             if (Muted == false) {
-                $('#movemute').html('&#x1f507;');
+                $('#movesound').html('&#x1f507;');
                 Muted = true;
             } else {
-                $('#movemute').html('&#x1f50a;');
+                $('#movesound').html('&#x1f50a;');
                 Muted = false;
             }
         });
-        if (TotalTime.milliseconds() > 0) {
-            $('#backbutton').css('visibility', 'hidden');
-        }
         var board = '';
-        board += '<table id="grid">';
+        board += '<table>';
         for (var yrr = 7; yrr >= 0; yrr--) {
             board += '<tr>';
             for (var xcf = 0; xcf < 8; xcf++) {
@@ -551,70 +889,101 @@
                 }
             }
         }
-        $.get('/games/'+game_id).done(function(data) {
-            Board = data.Points;
-            White = data.White;
-            Black = data.Black;
-            if (White == Player) {
-                Opponent = Black;
-                PlayerOrientation = o.WHITE;
-                $('#whitename').html('> '+{{.White}});
-                $('#blackname').html({{.Black}});
-            } else {
-                Opponent = White;
-                PlayerOrientation = o.BLACK;
-                $('#blackname').html('> '+{{.Black}});
-                $('#whitename').html({{.White}});
-            }
-            if (data.Active == White) {
-                Turn = o.WHITE;
-                $('#whiteactive').addClass('indicating');
-            } else {
-                Turn = o.BLACK;
-                $('#blackactive').addClass('indicating');
-            }
-            if (TurnTime.milliseconds() > 0) {
-                if (Turn == o.WHITE) {
-                    $('#blackclock').html(millisecondsToClock(TurnTime.valueOf()-1000)).addClass('clock');
-                    updateClock(o.WHITE);
-                    $('#whiteclock').addClass('clock clocking');
-                    WhiteTimer = setInterval(function() {
-                        updateClock(o.WHITE);
-                    }, 1000);
+        var dim = Math.floor(($('#board').height() - (2 * BoardPadding)) / 8);
+        $('tr').css('height', dim + 'px');
+        $('.point').css('width', dim + 'px');
+        assignPieceImages(dim);
+        for (var i = 0; i < 64; i++) {
+            $('#point'+i).click({Index: i}, function(event) {
+                var index = event.data.Index;
+                var className = '';
+                if ((Selected != index) && ($('#point'+index).hasClass('selected'))) {
+                    if (Turn == PlayerOrientation) {
+                        requestMove(Selected, index);
+                    }
+                    return;
+                }
+                if (Board[index].Kind == 0) {
+                    return;
+                }
+                if (Moves[indexToAddrString(index)] == null) {
+                    return;
+                }
+                if (Selected != null) {
+                    if (Board[Selected].Orientation == PlayerOrientation) {
+                        className = 'selected';
+                    } else {
+                        className = 'selectedopp';
+                    }
+                    $('#point'+Selected).removeClass(className);
+                    for (var point in Moves[indexToAddrString(Selected)]) {
+                        $('#point'+addrStringToIndex(point)).removeClass(className);
+                    }
+                    if (Selected == index) {
+                        Selected = null;
+                        return;
+                    }
+                }
+                if (Board[index].Orientation == PlayerOrientation) {
+                    className = 'selected';
                 } else {
-                    $('#whiteclock').html(millisecondsToClock(TurnTime.valueOf()-1000)).addClass('clock');
-                    updateClock(o.BLACK);
-                    $('#blackclock').addClass('clock clocking');
-                    BlackTimer = setInterval(function() {
-                        updateClock(o.BLACK);
-                    }, 1000);            
+                    className = 'selectedopp';
                 }
-            } else if (TotalTime.milliseconds() > 0) {
-                var btime = TotalTime.milliseconds()-BlackElapsed.milliseconds()-1000;
-                if (btime < 0) {
-                    btime = 0;
+                $('#point'+index).addClass(className);
+                for (var point in Moves[indexToAddrString(index)]) {
+                    $('#point'+addrStringToIndex(point)).addClass(className);
                 }
-                var wtime = TotalTime.milliseconds()-WhiteElapsed.milliseconds()-1000;
-                if (wtime < 0) {
-                    wtime = 0;
+                Selected = index;
+            }).mouseenter({Index: i}, function(event) {
+                var index = event.data.Index;
+                var className;
+                if (Board[index].Kind == 0) {
+                    return;
                 }
-                $('#blackclock').html(millisecondsToClock(btime)).addClass('clock');
-                $('#whiteclock').html(millisecondsToClock(wtime)).addClass('clock');
-                if (Turn == o.WHITE) {
-                    $('#whiteclock').addClass('clock clocking');
-                    WhiteTimer = setInterval(function() {
-                        updateClock(o.WHITE);
-                    }, 1000);
+                if (Moves[indexToAddrString(index)] == null) {
+                    return;
+                }
+                if (Board[index].Orientation == PlayerOrientation) {
+                    className = 'hovered';
                 } else {
-                    $('#blackclock').addClass('clock clocking');
-                    BlackTimer = setInterval(function() {
-                        updateClock(o.BLACK);
-                    }, 1000);
+                    className = 'hoveredopp';
                 }
-            } else {
-                $('.clock').css('display', 'none');
-                $('#time').css('display', 'none');
-            }
+                $('#point'+index).addClass(className);
+                for (var point in Moves[indexToAddrString(index)]) {
+                    $('#point'+addrStringToIndex(point)).addClass(className);
+                }
+            }).mouseleave({Index: i}, function(event) {
+                var index = event.data.Index;
+                var className;
+                if (Board[index].Kind == 0) {
+                    return;
+                }
+                if (Moves[indexToAddrString(index)] == null) {
+                    return;
+                }
+                if (Board[index].Orientation == PlayerOrientation) {
+                    className = 'hovered';
+                } else {
+                    className = 'hoveredopp';
+                }
+                $('#point'+index).removeClass(className);
+                for (var point in Moves[indexToAddrString(index)]) {
+                    $('#point'+addrStringToIndex(point)).removeClass(className);
+                }
+            });
+        }
+        setState(GameState);
+        if (Acknowledging) {
+            setAcknowledge();
+        }
+        if (GainedPiece != null) {
+            setGainedPiece();
+        } else if (Promoting) {
+            setPromoting();
+        }
+    }
+    function assignPieceImages(dimension) {
+        if (Board != null) {
             for (var i = 0; i < Board.length; i++) {
                 if (Board[i].Kind == 0) {
                     continue;
@@ -622,195 +991,50 @@
                     setPieceImage(i, Board[i].Kind, Board[i].Orientation);
                 }
             }
-            $(window).trigger('resize');
-            $.get('/moves/'+game_id).done(function(data) {
-                Moves = data;
-                if ('check' in Moves) {
-                    $('#check').addClass('indicating');
+            $('.pieceimg').css('width', dimension + 'px').css('height', dimension + 'px');
+        }
+    }
+    $(window).resize(function() {
+        layout($(window).width(), $(window).height());
+    });
+    $(document).ready(function() {
+        for (var i = 0; i < SoundCount; i++) {
+            $('#audio').append('<audio id="audio'+i+'"><source src="/sound/click'+i+'.wav" type="audio/wav"><source src="/sound/click'+i+'.ogg" type="audio/ogg"></audio>');
+        }
+        $.get('/games/'+game_id).done(function(data) {
+            Board = data.Points;
+            White = data.White;
+            Black = data.Black;
+            if ((TotalTime.milliseconds() > 0) || (TurnTime.milliseconds() > 0)) {
+                if (White == Player) {
+                    Opponent = Black;
+                    PlayerOrientation = o.WHITE;
                 } else {
-                    $('#check').removeClass('indicating');
+                    Opponent = White;
+                    PlayerOrientation = o.BLACK;
                 }
-                if ('checkmate' in Moves) {
-                    if ((TurnTime.milliseconds() > 0) || (TotalTime.milliseconds() > 0)) {
-                        clearInterval(BlackTimer);
-                        clearInterval(WhiteTimer);
-                        setGainedPiece(parseInt(Object.keys(Moves['checkmate'])[0]));
-                    }
-                    $('#checkmate').addClass('indicating');
-                    $('#acknowledge').css('visibility', 'visible');
-                    
-                } else if ('draw' in Moves) {
-                if ((TurnTime.milliseconds() > 0) || (TotalTime.milliseconds() > 0)) {
-                        clearInterval(BlackTimer);
-                        clearInterval(WhiteTimer);
-                        setGainedPiece(parseInt(Object.keys(Moves['draw'])[0]));
-                    }
-                    $('#draw').addClass('indicating');
-                    $('#acknowledge').css('visibility', 'visible');
-                } else if ('time' in Moves) {
-                    clearInterval(BlackTimer);
-                    clearInterval(WhiteTimer);
-                    setGainedPiece(parseInt(Object.keys(Moves['time'])[0]));
-                    $('#time').addClass('indicating');
-                    $('#acknowledge').css('visibility', 'visible');
-                }
-                if ('promote' in Moves) {
-                    if (Turn == PlayerOrientation) {
-                        $('.prombdiv').css('visibility', 'visible');
-                    }
+            } else {
+                if (White == Player) {
+                    Opponent = Black;
+                    PlayerOrientation = o.WHITE;
                 } else {
-                    $('.prombdiv').css('visibility', 'hidden');
+                    Opponent = White;
+                    PlayerOrientation = o.BLACK;
                 }
-                for (var i = 0; i < 64; i++) {
-                    $('#point'+i).click({Index: i}, function(event) {
-                        var index = event.data.Index;
-                        var className = '';
-                        if ((Selected != index) && ($('#point'+index).hasClass('selected'))) {
-                            if (Turn == PlayerOrientation) {
-                                requestMove(Selected, index);
-                            }
-                            return;
-                        }
-                        if (Board[index].Kind == 0) {
-                            return;
-                        }
-                        if (Moves[indexToAddrString(index)] == null) {
-                            return;
-                        }
-                        if (Selected != null) {
-                            if (Board[Selected].Orientation == PlayerOrientation) {
-                                className = 'selected';
-                            } else {
-                                className = 'selectedopp';
-                            }
-                            $('#point'+Selected).removeClass(className);
-                            for (var point in Moves[indexToAddrString(Selected)]) {
-                                $('#point'+addrStringToIndex(point)).removeClass(className);
-                            }
-                            if (Selected == index) {
-                                Selected = null;
-                                return;
-                            }
-                        }
-                        if (Board[index].Orientation == PlayerOrientation) {
-                            className = 'selected';
-                        } else {
-                            className = 'selectedopp';
-                        }
-                        $('#point'+index).addClass(className);
-                        for (var point in Moves[indexToAddrString(index)]) {
-                            $('#point'+addrStringToIndex(point)).addClass(className);
-                        }
-                        Selected = index;
-                    }).mouseenter({Index: i}, function(event) {
-                        var index = event.data.Index;
-                        var className;
-                        if (Board[index].Kind == 0) {
-                            return;
-                        }
-                        if (Moves[indexToAddrString(index)] == null) {
-                            return;
-                        }
-                        if (Board[index].Orientation == PlayerOrientation) {
-                            className = 'hovered';
-                        } else {
-                            className = 'hoveredopp';
-                        }
-                        $('#point'+index).addClass(className);
-                        for (var point in Moves[indexToAddrString(index)]) {
-                            $('#point'+addrStringToIndex(point)).addClass(className);
-                        }
-                    }).mouseleave({Index: i}, function(event) {
-                        var index = event.data.Index;
-                        var className;
-                        if (Board[index].Kind == 0) {
-                            return;
-                        }
-                        if (Moves[indexToAddrString(index)] == null) {
-                            return;
-                        }
-                        if (Board[index].Orientation == PlayerOrientation) {
-                            className = 'hovered';
-                        } else {
-                            className = 'hoveredopp';
-                        }
-                        $('#point'+index).removeClass(className);
-                        for (var point in Moves[indexToAddrString(index)]) {
-                            $('#point'+addrStringToIndex(point)).removeClass(className);
-                        }
-                    });
-                }
-            });
+            }
+            if (data.Active == White) {
+                Turn = o.WHITE;
+            } else {
+                Turn = o.BLACK;
+            }
+            layout($(window).width(), $(window).height());
+            getMoves();
         });
     });
-    function acknowledge() {
-        jQuery.post('/acknowledge', {
-            player: Player,
-            gameid: game_id
-        }).done(function() {
-            window.location.pathname = '/';
-        });
-    }
     </script>
 </head>
-
 <body>
-    <div id="board" class="container"></div>
-    <!-- the right container stacks black player + clock, the game state indicator (check, checkmate, draw, time), a promotion option area / gained piece notification, the Acknowledge button, the Back button inline with the two sound buttons, and white player + clock -->
-    <div id="rightcontainer" class="container">
-        <div class="playerinfo" id="blackactive">
-            <div class="playerinforow dataline">
-                <div class="playerinfocell" id="blackname"></div>
-            </div>
-            <div class="playerinforow dataline">
-                <div class="playerinfocell" id="blackclock"></div>
-            </div>
-        </div>
-        <div id="indicators">
-            <div class="indicatorrow">
-                <div class="indicator dataline" id="check">Check</div>
-                <div class="indicator dataline" id="checkmate">Checkmate</div>
-            </div>
-            <div class="indicatorrow">
-                <div class="indicator dataline" id="draw">Draw</div>
-                <div class="indicator dataline" id="time">Time</div>
-            </div>
-        </div>
-        <div>
-            <div class="inlinediv dataline2" id="gainedpiece">
-                <div class="prombdiv">
-                    <input type="button" class="promb" value="Queen" onclick="promote(k.QUEEN);"/>
-                    <input type="button" class="promb" value="Rook" onclick="promote(k.ROOK);"/>
-                </div>
-                <div class="prombdiv">
-                    <input type="button" class="promb" value="Bishop" onclick="promote(k.BISHOP);"/>
-                    <input type="button" class="promb" value="Knight" onclick="promote(k.KNIGHT);"/>
-                </div>
-            </div>
-            <div class="inlinediv">
-                <div id="acknowledge" class="dataline">
-                    <input type="button" value="Acknowledge" onclick="acknowledge();"/>
-                </div>
-                <div id="backandsound">
-                    <div class="inlinediv dataline">
-                        <input id="backbutton" type="button" value="Back" onclick="window.location.pathname = '/';"/>
-                    </div>
-                    <div id="soundbuttons" class="inlinediv">
-                        <div id="movemute">&#x1f50a;</div>
-                        <div id="musicmute">&#9835;</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="playerinfo" id="whiteactive">
-            <div class="playerinforow dataline">
-                <div class="playerinfocell" id="whitename"></div>
-            </div>
-            <div class="playerinforow dataline">
-                <div class="playerinfocell" id="whiteclock"></div>
-            </div>
-        </div>
-    </div>
     <div id="audio"></div>
+    <div id="body"></div>
 </body>
 </html>
