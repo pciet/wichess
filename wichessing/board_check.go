@@ -12,6 +12,12 @@ func (b Board) Checkmate(turn Orientation) bool {
 	}
 	for from, set := range b.AllNaiveMovesFor(turn) {
 		for move, _ := range set {
+			if (b[from.Index()].Kind == King) && (b[from.Index()].Moved == false) {
+				// castle isn't allowed when king in check
+				if (move.File == 1) || (move.File == 6) {
+					continue
+				}
+			}
 			if b.AfterMove(from, *move, turn).Check(turn) == false {
 				return false
 			}
