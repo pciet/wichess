@@ -17,7 +17,6 @@ var CheckMovesCases = []AvailableMovesCase{
 					Kind:        GuardBishop,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{1, 3}.Index(),
 				},
 			}: {},
 			{
@@ -25,11 +24,12 @@ var CheckMovesCases = []AvailableMovesCase{
 				Piece: &Piece{
 					Kind:        DetonateRook,
 					Orientation: Black,
-					Moved:       false,
 				},
 			}: {},
 			&BlackKingStart: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			{4, 0}: {
 				{3, 0}: {},
@@ -79,7 +79,6 @@ var CheckMovesCases = []AvailableMovesCase{
 					Kind:        King,
 					Orientation: White,
 					Moved:       true,
-					Previous:    4,
 				},
 			}: {},
 			&Point{
@@ -88,7 +87,6 @@ var CheckMovesCases = []AvailableMovesCase{
 					Kind:        GuardRook,
 					Orientation: White,
 					Moved:       true,
-					Previous:    0,
 				},
 			}: {},
 			&WhitePawn6Start: {},
@@ -99,10 +97,11 @@ var CheckMovesCases = []AvailableMovesCase{
 					Kind:        DetonatePawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{File: 3, Rank: 3}),
 				},
 			}: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			AbsPoint{File: 2, Rank: 0}: AbsPointSet{
 				&AbsPoint{File: 1, Rank: 0}: {},
@@ -139,7 +138,6 @@ var CheckMovesCases = []AvailableMovesCase{
 					Kind:        King,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{File: 3, Rank: 2}),
 				},
 			}: {},
 			&Point{
@@ -148,7 +146,6 @@ var CheckMovesCases = []AvailableMovesCase{
 					Kind:        Bishop,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{File: 5, Rank: 1}),
 				},
 			}: {},
 			&WhitePawn6Start: {},
@@ -158,11 +155,12 @@ var CheckMovesCases = []AvailableMovesCase{
 					Kind:        DetonatePawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{File: 3, Rank: 4}),
 				},
 			}: {},
 			&BlackKingStart: {},
 		},
+		PreviousFrom: AbsPoint{3, 5},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			AbsPoint{File: 3, Rank: 2}: AbsPointSet{
 				&AbsPoint{File: 2, Rank: 3}: {},
@@ -202,7 +200,6 @@ var CheckMovesCases = []AvailableMovesCase{
 					Kind:        King,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{File: 2, Rank: 2}),
 				},
 			}: {},
 			&Point{
@@ -211,7 +208,6 @@ var CheckMovesCases = []AvailableMovesCase{
 					Kind:        Bishop,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{File: 5, Rank: 1}),
 				},
 			}: {},
 			&WhitePawn6Start: {},
@@ -221,11 +217,12 @@ var CheckMovesCases = []AvailableMovesCase{
 					Kind:        DetonatePawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{File: 3, Rank: 4}),
 				},
 			}: {},
 			&BlackKingStart: {},
 		},
+		PreviousFrom: AbsPoint{5, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			AbsPoint{File: 2, Rank: 2}: AbsPointSet{
 				&AbsPoint{File: 2, Rank: 3}: {},
@@ -263,10 +260,11 @@ var CheckMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{File: 3, Rank: 2}),
 				},
 			}: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			AbsPoint{File: 4, Rank: 0}: AbsPointSet{
 				&AbsPoint{File: 3, Rank: 0}: {},
@@ -301,7 +299,6 @@ var CheckMovesCases = []AvailableMovesCase{
 					Kind:        Queen,
 					Orientation: White,
 					Moved:       true,
-					Previous:    3,
 				},
 			}: {},
 			&WhiteKingStart:        {},
@@ -317,6 +314,8 @@ var CheckMovesCases = []AvailableMovesCase{
 			&BlackRightKnightStart: {},
 			&BlackRightRookStart:   {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			AbsPoint{File: 0, Rank: 0}: AbsPointSet{
 				&AbsPoint{File: 0, Rank: 1}: {},

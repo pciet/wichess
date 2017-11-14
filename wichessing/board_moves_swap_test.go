@@ -26,6 +26,8 @@ var SwapMovesCases = []AvailableMovesCase{
 			&WhitePawn7Start: {},
 			&BlackKingStart:  {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			{4, 0}: {
 				{3, 0}: {},

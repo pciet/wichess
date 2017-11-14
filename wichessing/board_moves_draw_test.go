@@ -17,7 +17,6 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        Queen,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{5, 0}.Index(),
 				},
 			}: {},
 			{
@@ -26,7 +25,6 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        Queen,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{2, 1}.Index(),
 				},
 			}: {},
 			{
@@ -35,7 +33,6 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        Rook,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{4, 4}.Index(),
 				},
 			}: {},
 			{
@@ -44,7 +41,6 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        King,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{1, 3}.Index(),
 				},
 			}: {},
 			{
@@ -53,7 +49,6 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        Rook,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{2, 4}.Index(),
 				},
 			}: {},
 			{
@@ -62,7 +57,6 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        King,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{0, 5}.Index(),
 				},
 			}: {},
 			{
@@ -71,10 +65,11 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        Bishop,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{3, 5}.Index(),
 				},
 			}: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			{5, 0}: {
 				{4, 0}: {},
@@ -167,7 +162,6 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{2, 2}.Index(),
 				},
 			}: {},
 			{
@@ -176,7 +170,6 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{2, 3}.Index(),
 				},
 			}: {},
 			{
@@ -185,7 +178,6 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        Rook,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{1, 4}.Index(),
 				},
 			}: {},
 			{
@@ -194,7 +186,6 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{3, 4}.Index(),
 				},
 			}: {},
 			{
@@ -203,7 +194,6 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        Bishop,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{6, 4}.Index(),
 				},
 			}: {},
 			{
@@ -212,7 +202,6 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{3, 5}.Index(),
 				},
 			}: {},
 			{
@@ -221,7 +210,6 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        King,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{4, 5}.Index(),
 				},
 			}: {},
 			{
@@ -230,7 +218,6 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        King,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{2, 6}.Index(),
 				},
 			}: {},
 			{
@@ -239,10 +226,11 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        Queen,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{6, 7}.Index(),
 				},
 			}: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 2},
 		Moves: map[AbsPoint]AbsPointSet{
 			{0, 1}: {
 				{0, 2}: {},
@@ -303,7 +291,6 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        Bishop,
 					Orientation: White,
 					Moved:       true,
-					Previous:    0,
 				},
 			}: {},
 			&BlackKingStart: {},
@@ -313,10 +300,11 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        Bishop,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    7,
 				},
 			}: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			AbsPoint{File: 4, Rank: 0}: AbsPointSet{
 				&AbsPoint{File: 3, Rank: 1}: {},
@@ -366,7 +354,6 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        Bishop,
 					Orientation: White,
 					Moved:       true,
-					Previous:    0,
 				},
 			}: {},
 			&BlackKingStart: {},
@@ -376,10 +363,11 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        Bishop,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{File: 6, Rank: 1}),
 				},
 			}: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			AbsPoint{File: 4, Rank: 0}: AbsPointSet{
 				&AbsPoint{File: 3, Rank: 0}: {},
@@ -428,7 +416,6 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        Bishop,
 					Orientation: White,
 					Moved:       true,
-					Previous:    0,
 				},
 			}: {},
 			&BlackKingStart: {},
@@ -438,10 +425,11 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        Bishop,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    7,
 				},
 			}: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			AbsPoint{File: 4, Rank: 0}: AbsPointSet{
 				&AbsPoint{File: 3, Rank: 0}: {},
@@ -489,7 +477,6 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        Bishop,
 					Orientation: White,
 					Moved:       true,
-					Previous:    0,
 				},
 			}: {},
 			&BlackKingStart: {},
@@ -499,10 +486,11 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        Bishop,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    63,
 				},
 			}: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			AbsPoint{File: 4, Rank: 0}: AbsPointSet{
 				&AbsPoint{File: 3, Rank: 0}: {},
@@ -552,7 +540,6 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        Bishop,
 					Orientation: White,
 					Moved:       true,
-					Previous:    0,
 				},
 			}: {},
 			&BlackKingStart: {},
@@ -562,10 +549,11 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        Bishop,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    63,
 				},
 			}: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			AbsPoint{File: 4, Rank: 0}: AbsPointSet{
 				&AbsPoint{File: 3, Rank: 0}: {},
@@ -614,7 +602,6 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        Bishop,
 					Orientation: White,
 					Moved:       true,
-					Previous:    0,
 				},
 			}: {},
 			&BlackKingStart: {},
@@ -624,10 +611,11 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        Bishop,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{File: 5, Rank: 1}),
 				},
 			}: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			AbsPoint{File: 4, Rank: 0}: AbsPointSet{
 				&AbsPoint{File: 3, Rank: 0}: {},
@@ -673,7 +661,6 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        King,
 					Orientation: White,
 					Moved:       true,
-					Previous:    1,
 				},
 			}: {},
 			&Point{
@@ -682,7 +669,6 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        Knight,
 					Orientation: White,
 					Moved:       true,
-					Previous:    0,
 				},
 			}: {},
 			&Point{
@@ -691,10 +677,11 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        King,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{File: 6, Rank: 6}),
 				},
 			}: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			AbsPoint{File: 1, Rank: 2}: AbsPointSet{
 				&AbsPoint{File: 0, Rank: 1}: {},
@@ -732,7 +719,6 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        King,
 					Orientation: White,
 					Moved:       true,
-					Previous:    0,
 				},
 			}: {},
 			&Point{
@@ -741,7 +727,6 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        King,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    63,
 				},
 			}: {},
 			&Point{
@@ -750,10 +735,11 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        Bishop,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    7,
 				},
 			}: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			AbsPoint{File: 1, Rank: 1}: AbsPointSet{
 				&AbsPoint{File: 0, Rank: 0}: {},
@@ -792,7 +778,6 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        King,
 					Orientation: White,
 					Moved:       true,
-					Previous:    1,
 				},
 			}: {},
 			&Point{
@@ -801,10 +786,11 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        King,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    63,
 				},
 			}: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			AbsPoint{File: 0, Rank: 0}: AbsPointSet{
 				&AbsPoint{File: 0, Rank: 1}: {},
@@ -829,7 +815,6 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        King,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{File: 2, Rank: 5}),
 				},
 			}: {},
 			&Point{
@@ -838,7 +823,6 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        Bishop,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{File: 2, Rank: 6}),
 				},
 			}: {},
 			&Point{
@@ -847,7 +831,6 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        Bishop,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{File: 2, Rank: 3}),
 				},
 			}: {},
 			&Point{
@@ -856,10 +839,11 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        King,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{File: 0, Rank: 7}),
 				},
 			}: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			AbsPoint{File: 1, Rank: 5}: AbsPointSet{
 				&AbsPoint{File: 0, Rank: 5}: {},
@@ -903,7 +887,6 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        King,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{File: 0, Rank: 7}),
 				},
 			}: {},
 			&Point{
@@ -912,7 +895,6 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        King,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{File: 3, Rank: 7}),
 				},
 			}: {},
 			&Point{
@@ -921,10 +903,11 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        Rook,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{File: 7, Rank: 6}),
 				},
 			}: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			AbsPoint{File: 2, Rank: 7}: AbsPointSet{
 				&AbsPoint{File: 2, Rank: 6}: {},
@@ -960,7 +943,6 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        King,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{File: 3, Rank: 4}),
 				},
 			}: {},
 			&Point{
@@ -969,7 +951,6 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        Rook,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{File: 1, Rank: 6}),
 				},
 			}: {},
 			&Point{
@@ -978,10 +959,11 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        King,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{File: 0, Rank: 7}),
 				},
 			}: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			AbsPoint{File: 2, Rank: 5}: AbsPointSet{
 				&AbsPoint{File: 2, Rank: 4}: {},
@@ -1021,7 +1003,6 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        King,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{File: 0, Rank: 5}),
 				},
 			}: {},
 			&Point{
@@ -1030,7 +1011,6 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        King,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{File: 2, Rank: 3}),
 				},
 			}: {},
 			&Point{
@@ -1039,10 +1019,11 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        Queen,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{File: 2, Rank: 3}),
 				},
 			}: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			AbsPoint{File: 2, Rank: 4}: AbsPointSet{
 				&AbsPoint{File: 2, Rank: 3}: {},
@@ -1086,7 +1067,6 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        Queen,
 					Orientation: White,
 					Moved:       true,
-					Previous:    2,
 				},
 			}: {},
 			&Point{
@@ -1095,10 +1075,11 @@ var DrawMovesCases = []AvailableMovesCase{
 					Kind:        King,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{File: 0, Rank: 7}),
 				},
 			}: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			AbsPoint{File: 4, Rank: 0}: AbsPointSet{
 				&AbsPoint{File: 3, Rank: 0}: {},

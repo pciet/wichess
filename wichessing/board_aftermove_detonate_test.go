@@ -18,7 +18,6 @@ var DetonateAfterMoveCases = []PositionAfterMoveCase{
 					Kind:        DetonatePawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{0, 2}.Index(),
 				},
 			}: {},
 			{
@@ -27,12 +26,13 @@ var DetonateAfterMoveCases = []PositionAfterMoveCase{
 					Kind:        GuardPawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{1, 3}.Index(),
 				},
 			}: {},
 		},
-		From: AbsPoint{1, 1},
-		To:   AbsPoint{0, 2},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
+		From:         AbsPoint{1, 1},
+		To:           AbsPoint{0, 2},
 		Diff: PointSet{
 			{
 				AbsPoint: AbsPoint{0, 2},
@@ -61,7 +61,6 @@ var DetonateAfterMoveCases = []PositionAfterMoveCase{
 					Kind:        DetonatePawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{1, 1}.Index(),
 				},
 			}: {},
 			{
@@ -75,8 +74,10 @@ var DetonateAfterMoveCases = []PositionAfterMoveCase{
 			&BlackKingStart:     {},
 			&BlackLeftRookStart: {},
 		},
-		From: AbsPoint{0, 7},
-		To:   AbsPoint{0, 0},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
+		From:         AbsPoint{0, 7},
+		To:           AbsPoint{0, 0},
 		Diff: PointSet{
 			{
 				AbsPoint: AbsPoint{0, 7},
@@ -106,7 +107,6 @@ var DetonateAfterMoveCases = []PositionAfterMoveCase{
 					Kind:        DetonateRook,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{1, 1}.Index(),
 				},
 			}: {},
 			{
@@ -115,7 +115,6 @@ var DetonateAfterMoveCases = []PositionAfterMoveCase{
 					Kind:        DetonateKnight,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{1, 2}.Index(),
 				},
 			}: {},
 			{
@@ -124,7 +123,6 @@ var DetonateAfterMoveCases = []PositionAfterMoveCase{
 					Kind:        Pawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{1, 3}.Index(),
 				},
 			}: {},
 			{
@@ -133,7 +131,6 @@ var DetonateAfterMoveCases = []PositionAfterMoveCase{
 					Kind:        Bishop,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{2, 1}.Index(),
 				},
 			}: {},
 			{
@@ -142,7 +139,6 @@ var DetonateAfterMoveCases = []PositionAfterMoveCase{
 					Kind:        Bishop,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{2, 2}.Index(),
 				},
 			}: {},
 			{
@@ -151,7 +147,6 @@ var DetonateAfterMoveCases = []PositionAfterMoveCase{
 					Kind:        Rook,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{0, 4}.Index(),
 				},
 			}: {},
 			{
@@ -160,7 +155,6 @@ var DetonateAfterMoveCases = []PositionAfterMoveCase{
 					Kind:        Pawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{2, 4}.Index(),
 				},
 			}: {},
 			{
@@ -169,14 +163,15 @@ var DetonateAfterMoveCases = []PositionAfterMoveCase{
 					Kind:        Pawn,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{3, 2}.Index(),
 				},
 			}: {},
 			&WhiteKingStart: {},
 			&BlackKingStart: {},
 		},
-		From: AbsPoint{0, 4},
-		To:   AbsPoint{0, 0},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
+		From:         AbsPoint{0, 4},
+		To:           AbsPoint{0, 0},
 		Diff: PointSet{
 			{
 				AbsPoint: AbsPoint{0, 4},
@@ -212,7 +207,6 @@ var DetonateAfterMoveCases = []PositionAfterMoveCase{
 					Kind:        DetonatePawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{0, 3}),
 				},
 			}: {},
 			{
@@ -221,12 +215,13 @@ var DetonateAfterMoveCases = []PositionAfterMoveCase{
 					Kind:        DetonateBishop,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{1, 3}.Index(),
 				},
 			}: {},
 		},
-		From: AbsPoint{1, 1},
-		To:   AbsPoint{0, 2},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
+		From:         AbsPoint{1, 1},
+		To:           AbsPoint{0, 2},
 		Diff: PointSet{
 			{
 				AbsPoint: AbsPoint{1, 1},
@@ -260,7 +255,6 @@ var DetonateAfterMoveCases = []PositionAfterMoveCase{
 					Kind:        DetonatePawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{0, 3}),
 				},
 			}: {},
 			{
@@ -269,7 +263,6 @@ var DetonateAfterMoveCases = []PositionAfterMoveCase{
 					Kind:        Rook,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{1, 2}),
 				},
 			}: {},
 			{
@@ -278,7 +271,6 @@ var DetonateAfterMoveCases = []PositionAfterMoveCase{
 					Kind:        Pawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{0, 3}),
 				},
 			}: {},
 			{
@@ -287,12 +279,13 @@ var DetonateAfterMoveCases = []PositionAfterMoveCase{
 					Kind:        Pawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{2, 1}),
 				},
 			}: {},
 		},
-		From: AbsPoint{0, 2},
-		To:   AbsPoint{0, 1},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
+		From:         AbsPoint{0, 2},
+		To:           AbsPoint{0, 1},
 		Diff: PointSet{
 			{
 				AbsPoint: AbsPoint{0, 2},
@@ -327,12 +320,13 @@ var DetonateAfterMoveCases = []PositionAfterMoveCase{
 					Kind:        DetonatePawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{0, 3}),
 				},
 			}: {},
 		},
-		From: AbsPoint{0, 2},
-		To:   AbsPoint{0, 1},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
+		From:         AbsPoint{0, 2},
+		To:           AbsPoint{0, 1},
 		Diff: PointSet{
 			{
 				AbsPoint: AbsPoint{0, 2},
@@ -357,8 +351,10 @@ var DetonateAfterMoveCases = []PositionAfterMoveCase{
 				},
 			}: {},
 		},
-		From: AbsPoint{0, 0},
-		To:   AbsPoint{0, 6},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
+		From:         AbsPoint{0, 0},
+		To:           AbsPoint{0, 6},
 		Diff: PointSet{
 			{
 				AbsPoint: AbsPoint{0, 0},

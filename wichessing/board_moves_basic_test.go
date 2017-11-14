@@ -21,7 +21,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Knight,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{4, 1}.Index(),
 				},
 			}: {},
 			{
@@ -30,7 +29,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Bishop,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{6, 1}.Index(),
 				},
 			}: {},
 			{
@@ -39,7 +37,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Knight,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{0, 2}.Index(),
 				},
 			}: {},
 			{
@@ -48,7 +45,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{5, 2}.Index(),
 				},
 			}: {},
 			{
@@ -57,7 +53,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{7, 2}.Index(),
 				},
 			}: {},
 			{
@@ -66,7 +61,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{5, 3}.Index(),
 				},
 			}: {},
 			{
@@ -75,7 +69,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{7, 3}.Index(),
 				},
 			}: {},
 			{
@@ -84,7 +77,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{7, 3}.Index(),
 				},
 			}: {},
 			{
@@ -93,7 +85,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{4, 4}.Index(),
 				},
 			}: {},
 			{
@@ -102,7 +93,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{5, 4}.Index(),
 				},
 			}: {},
 			{
@@ -111,7 +101,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Knight,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{0, 5}.Index(),
 				},
 			}: {},
 			{
@@ -120,7 +109,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Queen,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{1, 5}.Index(),
 				},
 			}: {},
 			{
@@ -129,7 +117,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{3, 5}.Index(),
 				},
 			}: {},
 			{
@@ -138,7 +125,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{4, 5}.Index(),
 				},
 			}: {},
 			{
@@ -147,7 +133,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Bishop,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{5, 5}.Index(),
 				},
 			}: {},
 			&BlackPawn1Start: {},
@@ -158,7 +143,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Bishop,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{4, 6}.Index(),
 				},
 			}: {},
 			{
@@ -167,7 +151,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Rook,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{1, 7}.Index(),
 				},
 			}: {},
 			&BlackLeftBishopStart: {},
@@ -177,11 +160,12 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        King,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{5, 7}.Index(),
 				},
 			}: {},
 			&BlackRightRookStart: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 2},
 		Moves: map[AbsPoint]AbsPointSet{
 			{0, 0}: {
 				{1, 0}: {},
@@ -281,7 +265,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Rook,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{5, 0}.Index(),
 				},
 			}: {},
 			{
@@ -290,7 +273,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Rook,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{6, 0}.Index(),
 				},
 			}: {},
 			{
@@ -299,7 +281,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{2, 1}.Index(),
 				},
 			}: {},
 			{
@@ -308,7 +289,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{6, 1}.Index(),
 				},
 			}: {},
 			{
@@ -317,7 +297,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Knight,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{7, 1}.Index(),
 				},
 			}: {},
 			{
@@ -326,7 +305,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{1, 2}.Index(),
 				},
 			}: {},
 			{
@@ -335,7 +313,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        King,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{3, 2}.Index(),
 				},
 			}: {},
 			{
@@ -344,7 +321,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        King,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{4, 4}.Index(),
 				},
 			}: {},
 			{
@@ -353,7 +329,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{6, 4}.Index(),
 				},
 			}: {},
 			{
@@ -362,7 +337,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{3, 5}.Index(),
 				},
 			}: {},
 			{
@@ -371,7 +345,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Rook,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{5, 5}.Index(),
 				},
 			}: {},
 			{
@@ -380,7 +353,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Bishop,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{6, 6}.Index(),
 				},
 			}: {},
 			&BlackLeftRookStart: {},
@@ -390,10 +362,11 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Queen,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{3, 7}.Index(),
 				},
 			}: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			{5, 0}: {
 				{4, 0}: {},
@@ -512,6 +485,8 @@ var BasicMovesCases = []AvailableMovesCase{
 			&BlackRightKnightStart: {},
 			&BlackRightRookStart:   {},
 		},
+		PreviousFrom: AbsPoint{0, 8},
+		PreviousTo:   AbsPoint{0, 8},
 		Moves: map[AbsPoint]AbsPointSet{
 			AbsPoint{File: 0, Rank: 0}: AbsPointSet{
 				&AbsPoint{File: 0, Rank: 1}: {},
@@ -684,6 +659,8 @@ var BasicMovesCases = []AvailableMovesCase{
 			&BlackPawn6Start:       {},
 			&BlackPawn7Start:       {},
 		},
+		PreviousFrom: AbsPoint{0, 8},
+		PreviousTo:   AbsPoint{0, 8},
 		Moves: map[AbsPoint]AbsPointSet{
 			AbsPoint{File: 1, Rank: 0}: AbsPointSet{
 				&AbsPoint{File: 0, Rank: 2}: {},
@@ -777,7 +754,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        King,
 					Orientation: White,
 					Moved:       true,
-					Previous:    4,
 				},
 			}: {},
 			&WhiteLeftBishopStart: {},
@@ -787,7 +763,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Bishop,
 					Orientation: White,
 					Moved:       true,
-					Previous:    5,
 				},
 			}: {},
 			&Point{
@@ -796,7 +771,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        King,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{File: 4, Rank: 6}),
 				},
 			}: {},
 			&Point{
@@ -805,11 +779,12 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Bishop,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{File: 2, Rank: 7}),
 				},
 			}: {},
 			&BlackRightBishopStart: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			AbsPoint{File: 4, Rank: 1}: AbsPointSet{
 				&AbsPoint{File: 4, Rank: 0}: {},
@@ -869,7 +844,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Rook,
 					Orientation: White,
 					Moved:       true,
-					Previous:    2,
 				},
 			}: {},
 			&Point{
@@ -878,7 +852,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Rook,
 					Orientation: White,
 					Moved:       true,
-					Previous:    7,
 				},
 			}: {},
 			&BlackKingStart: {},
@@ -888,7 +861,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Rook,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{File: 6, Rank: 7}),
 				},
 			}: {},
 			&Point{
@@ -897,10 +869,11 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Rook,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    63,
 				},
 			}: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			AbsPoint{File: 4, Rank: 0}: AbsPointSet{
 				&AbsPoint{File: 3, Rank: 0}: {},
@@ -985,7 +958,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{File: 0, Rank: 1}),
 				},
 			}: {},
 			&BlackKingStart: {},
@@ -995,10 +967,11 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{File: 1, Rank: 6}),
 				},
 			}: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			AbsPoint{File: 4, Rank: 0}: AbsPointSet{
 				&AbsPoint{File: 3, Rank: 0}: {},
@@ -1040,10 +1013,11 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{File: 7, Rank: 6}),
 				},
 			}: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			AbsPoint{File: 4, Rank: 0}: AbsPointSet{
 				&AbsPoint{File: 3, Rank: 0}: {},
@@ -1091,7 +1065,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Knight,
 					Orientation: White,
 					Moved:       true,
-					Previous:    1,
 				},
 			}: {},
 			&WhiteRightKnightStart: {},
@@ -1102,7 +1075,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Knight,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{File: 1, Rank: 4}),
 				},
 			}: {},
 			&Point{
@@ -1111,10 +1083,11 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Knight,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{File: 7, Rank: 2}),
 				},
 			}: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			AbsPoint{File: 4, Rank: 0}: AbsPointSet{
 				&AbsPoint{File: 3, Rank: 0}: {},
@@ -1171,7 +1144,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        King,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{File: 1, Rank: 1}),
 				},
 			}: {},
 			&Point{
@@ -1180,7 +1152,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Queen,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{File: 2, Rank: 2}),
 				},
 			}: {},
 			&Point{
@@ -1189,7 +1160,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Queen,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{File: 3, Rank: 3}),
 				},
 			}: {},
 			&Point{
@@ -1198,10 +1168,11 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        King,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{File: 4, Rank: 4}),
 				},
 			}: {},
 		},
+		PreviousFrom: AbsPoint{4, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			AbsPoint{File: 1, Rank: 1}: AbsPointSet{
 				&AbsPoint{File: 0, Rank: 0}: {},
@@ -1242,7 +1213,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        King,
 					Orientation: White,
 					Moved:       true,
-					Previous:    0,
 				},
 			}: {},
 			&Point{
@@ -1251,7 +1221,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{File: 3, Rank: 2}),
 				},
 			}: {},
 			&Point{
@@ -1260,7 +1229,6 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        King,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    63,
 				},
 			}: {},
 			&Point{
@@ -1269,10 +1237,11 @@ var BasicMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{File: 5, Rank: 4}),
 				},
 			}: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			AbsPoint{File: 0, Rank: 0}: AbsPointSet{
 				&AbsPoint{File: 1, Rank: 0}: {},

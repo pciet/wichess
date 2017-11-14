@@ -5,16 +5,16 @@ package wichessing
 
 import ()
 
-func (b Board) Draw(turn Orientation) bool {
+func (b Board) Draw(turn Orientation, previousFrom AbsPoint, previousTo AbsPoint) bool {
 	// TODO: no capture or pawn move in the last fifty moves by either player
 	// not in check but no legal move
-	checkmate := b.Checkmate(turn)
-	check := b.Check(turn)
-	moves := b.AllNaiveMovesFor(turn)
+	checkmate := b.Checkmate(turn, previousFrom, previousTo)
+	check := b.Check(turn, previousFrom, previousTo)
+	moves := b.AllNaiveMovesFor(turn, previousFrom, previousTo)
 	// remove all check moves
 	for pt, mvs := range moves {
 		for mv, _ := range mvs {
-			if b.AfterMove(pt, *mv, turn).Check(turn) {
+			if b.AfterMove(pt, *mv, turn, previousFrom, previousTo).Check(turn, pt, *mv) {
 				delete(mvs, mv)
 			}
 			if len(mvs) == 0 {

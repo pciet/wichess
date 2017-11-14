@@ -46,18 +46,6 @@ func (b Board) PiecesFor(player Orientation) PieceSet {
 	return set
 }
 
-func (b Board) UpdatePiecePrevious(turn Orientation) {
-	for index, point := range b {
-		if point.Piece == nil {
-			continue
-		}
-		if point.Orientation != turn {
-			continue
-		}
-		point.Piece.Previous = uint8(index)
-	}
-}
-
 func (b Board) PieceCount(player Orientation) uint8 {
 	count := 0
 	for _, point := range b {
@@ -72,14 +60,14 @@ func (b Board) PieceCount(player Orientation) uint8 {
 	return uint8(count)
 }
 
-func (b Board) PiecesInDanger(player Orientation) uint8 {
+func (b Board) PiecesInDanger(player Orientation, previousFrom AbsPoint, previousTo AbsPoint) uint8 {
 	var opponent Orientation
 	if player == White {
 		opponent = Black
 	} else {
 		opponent = White
 	}
-	moves := b.AllNaiveMovesFor(opponent)
+	moves := b.AllNaiveMovesFor(opponent, previousFrom, previousTo)
 	count := 0
 	for _, point := range b {
 		if point.Piece == nil {

@@ -62,10 +62,10 @@ func (g game) randomMoveAtTime(at time.Time) game {
 	} else {
 		active = wichessing.Black
 	}
-	if board.Draw(active) {
+	if board.Draw(active, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To))) {
 		return g
 	}
-	m, _, checkmate := board.Moves(active)
+	m, _, checkmate := board.Moves(active, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To)))
 	if checkmate {
 		return g
 	}
@@ -92,7 +92,7 @@ OUTER:
 			_, promoting, promotingOrientation := g.move(int(addr.Index()), int(point.Index()), g.Active, true)
 			// TODO: this logic is duplicated in easyComputerMoveForGame
 			if promoting && (active == promotingOrientation) {
-				after := board.AfterMove(addr, *point, active)
+				after := board.AfterMove(addr, *point, active, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To)))
 				var from int
 				if active == wichessing.White {
 					for i := 56; i < 64; i++ {

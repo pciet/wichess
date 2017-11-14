@@ -16,8 +16,10 @@ var CastlingAfterMoveCases = []PositionAfterMoveCase{
 			&BlackKingStart:      {},
 			&BlackRightRookStart: {},
 		},
-		From: AbsPoint{File: 4, Rank: 0},
-		To:   AbsPoint{File: 2, Rank: 0},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
+		From:         AbsPoint{File: 4, Rank: 0},
+		To:           AbsPoint{File: 2, Rank: 0},
 		Diff: PointSet{
 			&Point{
 				AbsPoint: AbsPoint{File: 0, Rank: 0},
@@ -51,8 +53,10 @@ var CastlingAfterMoveCases = []PositionAfterMoveCase{
 			&BlackKingStart:      {},
 			&BlackRightRookStart: {},
 		},
-		From: AbsPoint{File: 4, Rank: 0},
-		To:   AbsPoint{File: 6, Rank: 0},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
+		From:         AbsPoint{File: 4, Rank: 0},
+		To:           AbsPoint{File: 6, Rank: 0},
 		Diff: PointSet{
 			&Point{
 				AbsPoint: AbsPoint{File: 7, Rank: 0},
@@ -86,8 +90,10 @@ var CastlingAfterMoveCases = []PositionAfterMoveCase{
 			&BlackKingStart:      {},
 			&BlackRightRookStart: {},
 		},
-		From: AbsPoint{File: 4, Rank: 7},
-		To:   AbsPoint{File: 2, Rank: 7},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
+		From:         AbsPoint{File: 4, Rank: 7},
+		To:           AbsPoint{File: 2, Rank: 7},
 		Diff: PointSet{
 			&Point{
 				AbsPoint: AbsPoint{File: 0, Rank: 7},
@@ -121,8 +127,10 @@ var CastlingAfterMoveCases = []PositionAfterMoveCase{
 			&BlackKingStart:      {},
 			&BlackRightRookStart: {},
 		},
-		From: AbsPoint{File: 4, Rank: 7},
-		To:   AbsPoint{File: 6, Rank: 7},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
+		From:         AbsPoint{File: 4, Rank: 7},
+		To:           AbsPoint{File: 6, Rank: 7},
 		Diff: PointSet{
 			&Point{
 				AbsPoint: AbsPoint{File: 7, Rank: 7},

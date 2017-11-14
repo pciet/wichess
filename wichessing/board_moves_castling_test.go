@@ -28,11 +28,12 @@ var CastlingMovesCases = []AvailableMovesCase{
 					Kind:        Rook,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{0, 7}.Index(),
 				},
 			}: {},
 		},
-		Moves: map[AbsPoint]AbsPointSet{},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
+		Moves:        map[AbsPoint]AbsPointSet{},
 	},
 	{
 		Name:      "Random Testing: No Castle, In Check",
@@ -46,7 +47,6 @@ var CastlingMovesCases = []AvailableMovesCase{
 					Kind:        King,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{6, 1}.Index(),
 				},
 			}: {},
 			{
@@ -55,7 +55,6 @@ var CastlingMovesCases = []AvailableMovesCase{
 					Kind:        GuardRook,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{0, 2}.Index(),
 				},
 			}: {},
 			{
@@ -64,7 +63,6 @@ var CastlingMovesCases = []AvailableMovesCase{
 					Kind:        Queen,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{4, 2}.Index(),
 				},
 			}: {},
 			{
@@ -73,7 +71,6 @@ var CastlingMovesCases = []AvailableMovesCase{
 					Kind:        Bishop,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{5, 3}.Index(),
 				},
 			}: {},
 			{
@@ -82,7 +79,6 @@ var CastlingMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{5, 3}.Index(),
 				},
 			}: {},
 			{
@@ -91,7 +87,6 @@ var CastlingMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{3, 4}.Index(),
 				},
 			}: {},
 			{
@@ -100,7 +95,6 @@ var CastlingMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{5, 5}.Index(),
 				},
 			}: {},
 			{
@@ -109,7 +103,6 @@ var CastlingMovesCases = []AvailableMovesCase{
 					Kind:        Rook,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{7, 6}.Index(),
 				},
 			}: {},
 			{
@@ -118,13 +111,14 @@ var CastlingMovesCases = []AvailableMovesCase{
 					Kind:        Rook,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{2, 7}.Index(),
 				},
 			}: {},
 			&BlackKingStart:      {},
 			&BlackRightRookStart: {},
 		},
-		Moves: map[AbsPoint]AbsPointSet{},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 2},
+		Moves:        map[AbsPoint]AbsPointSet{},
 	},
 	{
 		Name:      "Computer Didn't Castle",
@@ -138,7 +132,6 @@ var CastlingMovesCases = []AvailableMovesCase{
 					Kind:        Bishop,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{0, 0}.Index(),
 				},
 			}: {},
 			&WhiteLeftKnightStart:  {},
@@ -153,7 +146,6 @@ var CastlingMovesCases = []AvailableMovesCase{
 					Kind:        King,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{3, 2}.Index(),
 				},
 			}: {},
 			{
@@ -162,7 +154,6 @@ var CastlingMovesCases = []AvailableMovesCase{
 					Kind:        Bishop,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{0, 5}.Index(),
 				},
 			}: {},
 			{
@@ -171,7 +162,6 @@ var CastlingMovesCases = []AvailableMovesCase{
 					Kind:        Bishop,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{1, 5}.Index(),
 				},
 			}: {},
 			{
@@ -180,7 +170,6 @@ var CastlingMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{6, 5}.Index(),
 				},
 			}: {},
 			&BlackPawn3Start: {},
@@ -193,12 +182,13 @@ var CastlingMovesCases = []AvailableMovesCase{
 					Kind:        Queen,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{3, 7}.Index(),
 				},
 			}: {},
 			&BlackKingStart:      {},
 			&BlackRightRookStart: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			{1, 0}: {
 				{0, 2}: {},
@@ -271,6 +261,8 @@ var CastlingMovesCases = []AvailableMovesCase{
 			&BlackLeftRookStart:    {},
 			&BlackKingStart:        {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			{0, 0}: {
 				{0, 1}: {},
@@ -362,6 +354,8 @@ var CastlingMovesCases = []AvailableMovesCase{
 			&BlackRightBishopStart: {},
 			&BlackRightRookStart:   {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			{0, 0}: {
 				{0, 1}: {},
@@ -457,10 +451,11 @@ var CastlingMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{6, 6}),
 				},
 			}: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			{0, 0}: {
 				{0, 1}: {},
@@ -546,10 +541,11 @@ var CastlingMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{2, 6}),
 				},
 			}: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			{0, 0}: {
 				{0, 1}: {},
@@ -634,10 +630,11 @@ var CastlingMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{6, 1}),
 				},
 			}: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			{0, 0}: {
 				{0, 1}: {},
@@ -723,10 +720,11 @@ var CastlingMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{2, 1}),
 				},
 			}: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			{0, 0}: {
 				{0, 1}: {},
@@ -811,7 +809,6 @@ var CastlingMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{2, 1}),
 				},
 			}: {},
 			&Point{
@@ -820,7 +817,6 @@ var CastlingMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{6, 1}),
 				},
 			}: {},
 			&Point{
@@ -829,7 +825,6 @@ var CastlingMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{2, 6}),
 				},
 			}: {},
 			&Point{
@@ -838,10 +833,11 @@ var CastlingMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{6, 6}),
 				},
 			}: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			{0, 0}: {
 				{0, 1}: {},
@@ -931,7 +927,6 @@ var CastlingMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{0, 1}),
 				},
 			}: {},
 			&Point{
@@ -940,7 +935,6 @@ var CastlingMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{7, 1}),
 				},
 			}: {},
 			&Point{
@@ -949,7 +943,6 @@ var CastlingMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{0, 6}),
 				},
 			}: {},
 			&Point{
@@ -958,10 +951,11 @@ var CastlingMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{7, 6}),
 				},
 			}: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			{0, 0}: {
 				{0, 1}: {},
@@ -1018,12 +1012,13 @@ var CastlingMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{3, 6}),
 				},
 			}: {},
 			&BlackKingStart:      {},
 			&BlackRightRookStart: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			{0, 0}: {
 				{0, 1}: {},
@@ -1082,7 +1077,6 @@ var CastlingMovesCases = []AvailableMovesCase{
 					Kind:        Pawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{3, 2}),
 				},
 			}: {},
 			&WhiteKingStart:      {},
@@ -1091,6 +1085,8 @@ var CastlingMovesCases = []AvailableMovesCase{
 			&BlackKingStart:      {},
 			&BlackRightRookStart: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			{4, 0}: {
 				{3, 0}: {},
@@ -1147,7 +1143,6 @@ var CastlingMovesCases = []AvailableMovesCase{
 					Kind:        Rook,
 					Orientation: White,
 					Moved:       true,
-					Previous:    0,
 				},
 			}: {},
 			&WhiteKingStart: {},
@@ -1157,7 +1152,6 @@ var CastlingMovesCases = []AvailableMovesCase{
 					Kind:        Rook,
 					Orientation: White,
 					Moved:       true,
-					Previous:    7,
 				},
 			}: {},
 			{
@@ -1166,7 +1160,6 @@ var CastlingMovesCases = []AvailableMovesCase{
 					Kind:        Rook,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{0, 7}),
 				},
 			}: {},
 			{
@@ -1175,7 +1168,6 @@ var CastlingMovesCases = []AvailableMovesCase{
 					Kind:        King,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{4, 7}),
 				},
 			}: {},
 			{
@@ -1184,10 +1176,11 @@ var CastlingMovesCases = []AvailableMovesCase{
 					Kind:        Rook,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{7, 7}),
 				},
 			}: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			{0, 0}: {
 				{0, 1}: {},
@@ -1262,7 +1255,6 @@ var CastlingMovesCases = []AvailableMovesCase{
 					Kind:        King,
 					Orientation: White,
 					Moved:       true,
-					Previous:    4,
 				},
 			}: {},
 			&WhiteRightRookStart: {},
@@ -1273,11 +1265,12 @@ var CastlingMovesCases = []AvailableMovesCase{
 					Kind:        King,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPointToIndex(AbsPoint{4, 7}),
 				},
 			}: {},
 			&BlackRightRookStart: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			{0, 0}: {
 				{0, 1}: {},
@@ -1352,6 +1345,8 @@ var CastlingMovesCases = []AvailableMovesCase{
 			&BlackKingStart:      {},
 			&BlackRightRookStart: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			{0, 0}: {
 				{0, 1}: {},
@@ -1428,6 +1423,8 @@ var CastlingMovesCases = []AvailableMovesCase{
 			&BlackKingStart:      {},
 			&BlackRightRookStart: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			{4, 0}: {
 				{3, 0}: {},
@@ -1478,6 +1475,8 @@ var CastlingMovesCases = []AvailableMovesCase{
 			&BlackLeftRookStart: {},
 			&BlackKingStart:     {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			{0, 0}: {
 				{0, 1}: {},

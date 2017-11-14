@@ -26,8 +26,10 @@ var FortifyAfterMoveCases = []PositionAfterMoveCase{
 				},
 			}: {},
 		},
-		From: AbsPoint{0, 1},
-		To:   AbsPoint{0, 2},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
+		From:         AbsPoint{0, 1},
+		To:           AbsPoint{0, 2},
 		Diff: PointSet{
 			{
 				AbsPoint: AbsPoint{0, 1},

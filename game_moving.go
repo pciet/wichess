@@ -40,11 +40,11 @@ func (g game) move(from, to int, mover string, timeoutMove bool) (map[string]pie
 	if pring {
 		return nil, false, wichessing.White
 	}
-	if b.Draw(orientation) {
+	if b.Draw(orientation, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To))) {
 		return nil, false, wichessing.White
 	}
 	diff := make(map[string]piece)
-	difference, taken := b.Move(absPoint(from), absPoint(to), orientation)
+	difference, taken := b.Move(absPoint(from), absPoint(to), orientation, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To)))
 	for point, _ := range difference {
 		if point.Piece == nil {
 			diff[point.AbsPoint.String()] = piece{
@@ -75,12 +75,12 @@ func (g game) move(from, to int, mover string, timeoutMove bool) (map[string]pie
 	for point, _ := range taken {
 		takenPieces[g.Points[point.Index()].Identifier] = struct{}{}
 	}
-	after := b.AfterMove(absPoint(from), absPoint(to), orientation)
+	after := b.AfterMove(absPoint(from), absPoint(to), orientation, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To)))
 	promoting, promotingOrientation := after.HasPawnToPromote()
 	if promoting && (promotingOrientation == orientation) {
-		g.DB.updateGame(g.ID, diff, mover)
+		g.DB.updateGame(g.ID, diff, mover, from, to)
 	} else {
-		g.DB.updateGame(g.ID, diff, nextMover)
+		g.DB.updateGame(g.ID, diff, nextMover, from, to)
 	}
 	if timeoutMove == false {
 		go func() {
@@ -113,13 +113,13 @@ func (g game) move(from, to int, mover string, timeoutMove bool) (map[string]pie
 			// pieces with no ID (normal chess pieces) have no effect in this function
 			g.DB.removePiece(id)
 		}
-		if after.Checkmate(nextOrientation) {
+		if after.Checkmate(nextOrientation, wichessing.AbsPointFromIndex(uint8(from)), wichessing.AbsPointFromIndex(uint8(to))) {
 			if nextOrientation == wichessing.White {
 				g.DB.updatePlayerRecords(g.Black, g.White, false)
 			} else {
 				g.DB.updatePlayerRecords(g.White, g.Black, false)
 			}
-		} else if after.Draw(nextOrientation) {
+		} else if after.Draw(nextOrientation, wichessing.AbsPointFromIndex(uint8(from)), wichessing.AbsPointFromIndex(uint8(to))) {
 			g.DB.updatePlayerRecords(g.White, g.Black, true)
 		}
 	}
@@ -153,7 +153,7 @@ func (g game) promote(from int, player string, kind wichessing.Kind, timeoutMove
 		return nil
 	}
 	b := wichessingBoard(g.Points)
-	if b.Draw(orientation) {
+	if b.Draw(orientation, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To))) {
 		return nil
 	}
 	diff := make(map[string]piece)
@@ -174,7 +174,7 @@ func (g game) promote(from int, player string, kind wichessing.Kind, timeoutMove
 			}
 		}
 	}
-	g.DB.updateGame(g.ID, diff, nextMover)
+	g.DB.updateGame(g.ID, diff, nextMover, from, from)
 	if timeoutMove == false {
 		go func() {
 			gameMonitorsLock.RLock()
@@ -208,13 +208,13 @@ func (g game) promote(from int, player string, kind wichessing.Kind, timeoutMove
 			checkOrientation = wichessing.White
 		}
 		after := b.AfterPromote(absPoint(from), wichessing.Kind(kind))
-		if after.Checkmate(checkOrientation) {
+		if after.Checkmate(checkOrientation, wichessing.AbsPointFromIndex(uint8(from)), wichessing.AbsPointFromIndex(uint8(from))) {
 			if checkOrientation == wichessing.White {
 				g.DB.updatePlayerRecords(g.Black, g.White, false)
 			} else {
 				g.DB.updatePlayerRecords(g.White, g.Black, false)
 			}
-		} else if after.Draw(checkOrientation) {
+		} else if after.Draw(checkOrientation, wichessing.AbsPointFromIndex(uint8(from)), wichessing.AbsPointFromIndex(uint8(from))) {
 			g.DB.updatePlayerRecords(g.White, g.Black, true)
 		}
 	}
@@ -247,7 +247,7 @@ func (g game) moves(total time.Duration) map[string]map[string]struct{} {
 		moves[promote_key] = nil
 		return moves
 	}
-	if board.Draw(active) {
+	if board.Draw(active, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To))) {
 		if g.Competitive {
 			moves[draw_key] = map[string]struct{}{
 				fmt.Sprintf("%d", g.Piece): {},
@@ -257,7 +257,7 @@ func (g game) moves(total time.Duration) map[string]map[string]struct{} {
 		}
 		return moves
 	}
-	m, check, checkmate := board.Moves(active)
+	m, check, checkmate := board.Moves(active, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To)))
 	for point, set := range m {
 		moves[point.String()] = set.Strings()
 	}

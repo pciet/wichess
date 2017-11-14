@@ -17,7 +17,6 @@ var SwapAfterMoveCases = []PositionAfterMoveCase{
 					Kind:        SwapBishop,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{1, 1}.Index(),
 				},
 			}: {},
 			{
@@ -26,12 +25,13 @@ var SwapAfterMoveCases = []PositionAfterMoveCase{
 					Kind:        Pawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{7, 7}.Index(),
 				},
 			}: {},
 		},
-		From: AbsPoint{1, 1},
-		To:   AbsPoint{7, 7},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
+		From:         AbsPoint{1, 1},
+		To:           AbsPoint{7, 7},
 		Diff: PointSet{
 			{
 				AbsPoint: AbsPoint{1, 1},
@@ -67,12 +67,13 @@ var SwapAfterMoveCases = []PositionAfterMoveCase{
 					Kind:        Pawn,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{0, 2}.Index(),
 				},
 			}: {},
 		},
-		From: AbsPoint{0, 1},
-		To:   AbsPoint{0, 2},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
+		From:         AbsPoint{0, 1},
+		To:           AbsPoint{0, 2},
 		Diff: PointSet{
 			{
 				AbsPoint: AbsPoint{0, 1},

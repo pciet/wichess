@@ -19,8 +19,10 @@ var GhostAfterMoveCases = []PositionAfterMoveCase{
 				},
 			}: {},
 		},
-		From: AbsPoint{0, 0},
-		To:   AbsPoint{7, 0},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
+		From:         AbsPoint{0, 0},
+		To:           AbsPoint{7, 0},
 		Diff: PointSet{
 			{
 				AbsPoint: AbsPoint{0, 0},

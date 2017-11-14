@@ -41,6 +41,8 @@ var ReconMovesCases = []AvailableMovesCase{
 				},
 			}: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			{4, 0}: {
 				{3, 0}: {},
@@ -95,6 +97,8 @@ var ReconMovesCases = []AvailableMovesCase{
 				},
 			}: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			{4, 0}: {
 				{3, 0}: {},
@@ -158,6 +162,8 @@ var ReconMovesCases = []AvailableMovesCase{
 				},
 			}: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			{4, 0}: {
 				{3, 0}: {},
@@ -204,6 +210,8 @@ var ReconMovesCases = []AvailableMovesCase{
 				},
 			}: {},
 		},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
 		Moves: map[AbsPoint]AbsPointSet{
 			{4, 0}: {
 				{3, 0}: {},

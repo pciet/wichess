@@ -25,13 +25,13 @@ func (db DB) easyComputerMoveForGame(id int) map[string]piece {
 	} else {
 		orientation = wichessing.Black
 	}
-	move := wichessingBoard(g.Points).ComputerMove(orientation)
+	move := wichessingBoard(g.Points).ComputerMove(orientation, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To)))
 	if move == nil {
 		return nil
 	}
 	diff, promoting, promotingOrientation := g.move(int(move.From.Index()), int(move.To.Index()), easy_computer_player, false)
 	if promoting && (promotingOrientation == orientation) {
-		after := wichessingBoard(g.Points).AfterMove(move.From, move.To, orientation)
+		after := wichessingBoard(g.Points).AfterMove(move.From, move.To, orientation, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To)))
 		var from int
 		if orientation == wichessing.White {
 			for i := 56; i < 64; i++ {

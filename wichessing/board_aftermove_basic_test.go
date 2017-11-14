@@ -42,8 +42,10 @@ var BasicAfterMoveCases = []PositionAfterMoveCase{
 			&BlackPawn6Start:       {},
 			&BlackPawn7Start:       {},
 		},
-		From: AbsPoint{File: 1, Rank: 0},
-		To:   AbsPoint{File: 0, Rank: 2},
+		PreviousFrom: AbsPoint{0, 8},
+		PreviousTo:   AbsPoint{0, 8},
+		From:         AbsPoint{File: 1, Rank: 0},
+		To:           AbsPoint{File: 0, Rank: 2},
 		Diff: PointSet{
 			&Point{
 				AbsPoint: AbsPoint{File: 1, Rank: 0},
@@ -77,8 +79,10 @@ var BasicAfterMoveCases = []PositionAfterMoveCase{
 			&BlackRightKnightStart: {},
 			&BlackRightRookStart:   {},
 		},
-		From: AbsPoint{File: 3, Rank: 0},
-		To:   AbsPoint{File: 3, Rank: 7},
+		PreviousFrom: AbsPoint{0, 8},
+		PreviousTo:   AbsPoint{0, 8},
+		From:         AbsPoint{File: 3, Rank: 0},
+		To:           AbsPoint{File: 3, Rank: 7},
 		Diff: PointSet{
 			&Point{
 				AbsPoint: AbsPoint{File: 3, Rank: 0},
@@ -100,8 +104,10 @@ var BasicAfterMoveCases = []PositionAfterMoveCase{
 			&BlackKingStart:  {},
 			&BlackPawn7Start: {},
 		},
-		From: AbsPoint{File: 2, Rank: 1},
-		To:   AbsPoint{File: 2, Rank: 3},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{4, 3},
+		From:         AbsPoint{File: 2, Rank: 1},
+		To:           AbsPoint{File: 2, Rank: 3},
 		Diff: PointSet{
 			&Point{
 				AbsPoint: AbsPoint{File: 2, Rank: 1},
@@ -137,8 +143,10 @@ var BasicAfterMoveCases = []PositionAfterMoveCase{
 			&BlackPawn6Start: {},
 			&BlackPawn7Start: {},
 		},
-		From: AbsPoint{File: 5, Rank: 6},
-		To:   AbsPoint{File: 5, Rank: 5},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{4, 3},
+		From:         AbsPoint{File: 5, Rank: 6},
+		To:           AbsPoint{File: 5, Rank: 5},
 		Diff: PointSet{
 			&Point{
 				AbsPoint: AbsPoint{File: 5, Rank: 6},
@@ -160,8 +168,10 @@ var BasicAfterMoveCases = []PositionAfterMoveCase{
 			&BlackKingStart:  {},
 			&BlackQueenStart: {},
 		},
-		From: AbsPoint{File: 3, Rank: 0},
-		To:   AbsPoint{File: 3, Rank: 5},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
+		From:         AbsPoint{File: 3, Rank: 0},
+		To:           AbsPoint{File: 3, Rank: 5},
 		Diff: PointSet{
 			&Point{
 				AbsPoint: AbsPoint{File: 3, Rank: 0},
@@ -185,8 +195,10 @@ var BasicAfterMoveCases = []PositionAfterMoveCase{
 			&BlackLeftBishopStart:  {},
 			&BlackRightBishopStart: {},
 		},
-		From: AbsPoint{File: 2, Rank: 7},
-		To:   AbsPoint{File: 0, Rank: 5},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
+		From:         AbsPoint{File: 2, Rank: 7},
+		To:           AbsPoint{File: 0, Rank: 5},
 		Diff: PointSet{
 			&Point{
 				AbsPoint: AbsPoint{File: 2, Rank: 7},
@@ -210,8 +222,10 @@ var BasicAfterMoveCases = []PositionAfterMoveCase{
 			&BlackLeftKnightStart:  {},
 			&BlackRightKnightStart: {},
 		},
-		From: AbsPoint{File: 6, Rank: 0},
-		To:   AbsPoint{File: 7, Rank: 2},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
+		From:         AbsPoint{File: 6, Rank: 0},
+		To:           AbsPoint{File: 7, Rank: 2},
 		Diff: PointSet{
 			&Point{
 				AbsPoint: AbsPoint{File: 6, Rank: 0},
@@ -235,8 +249,10 @@ var BasicAfterMoveCases = []PositionAfterMoveCase{
 			&BlackLeftRookStart:  {},
 			&BlackRightRookStart: {},
 		},
-		From: AbsPoint{File: 7, Rank: 7},
-		To:   AbsPoint{File: 7, Rank: 3},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
+		From:         AbsPoint{File: 7, Rank: 7},
+		To:           AbsPoint{File: 7, Rank: 3},
 		Diff: PointSet{
 			&Point{
 				AbsPoint: AbsPoint{File: 7, Rank: 7},
@@ -260,7 +276,6 @@ var BasicAfterMoveCases = []PositionAfterMoveCase{
 					Kind:        Pawn,
 					Orientation: White,
 					Moved:       false,
-					Previous:    AbsPointToIndex(AbsPoint{File: 0, Rank: 1}),
 				},
 			}: {},
 			&BlackKingStart: {},
@@ -270,12 +285,13 @@ var BasicAfterMoveCases = []PositionAfterMoveCase{
 					Kind:        Pawn,
 					Orientation: Black,
 					Moved:       false,
-					Previous:    AbsPointToIndex(AbsPoint{File: 4, Rank: 6}),
 				},
 			}: {},
 		},
-		From: AbsPoint{File: 4, Rank: 7},
-		To:   AbsPoint{File: 5, Rank: 7},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
+		From:         AbsPoint{File: 4, Rank: 7},
+		To:           AbsPoint{File: 5, Rank: 7},
 		Diff: PointSet{
 			&Point{
 				AbsPoint: AbsPoint{File: 4, Rank: 7},

@@ -17,8 +17,8 @@ type MoveRating int
 const MaxMoveRating MoveRating = 100
 
 // Returns nil if the indicated player is in checkmate.
-func (b Board) ComputerMove(player Orientation) *PlayerMove {
-	moves, _, checkmate := b.Moves(player)
+func (b Board) ComputerMove(player Orientation, previousFrom AbsPoint, previousTo AbsPoint) *PlayerMove {
+	moves, _, checkmate := b.Moves(player, previousFrom, previousTo)
 	if checkmate {
 		return nil
 	}
@@ -31,7 +31,7 @@ func (b Board) ComputerMove(player Orientation) *PlayerMove {
 			ratings[&PlayerMove{
 				From: point,
 				To:   *to,
-			}] = b.ComputerRating(point, *to, player)
+			}] = b.ComputerRating(point, *to, player, previousFrom, previousTo)
 		}
 	}
 	var best *PlayerMove
@@ -50,7 +50,7 @@ func (b Board) ComputerMove(player Orientation) *PlayerMove {
 	return best
 }
 
-func (b Board) ComputerRating(from AbsPoint, to AbsPoint, player Orientation) MoveRating {
+func (b Board) ComputerRating(from AbsPoint, to AbsPoint, player Orientation, previousFrom AbsPoint, previousTo AbsPoint) MoveRating {
 	fromPoint := b[from.Index()]
 	if fromPoint.Piece == nil {
 		panic("wichessing: no piece in specified from point")
@@ -65,8 +65,8 @@ func (b Board) ComputerRating(from AbsPoint, to AbsPoint, player Orientation) Mo
 		opponent = White
 	}
 	rating := MoveRating(0)
-	state := b.AfterMove(from, to, player)
-	if state.Checkmate(opponent) {
+	state := b.AfterMove(from, to, player, previousFrom, previousTo)
+	if state.Checkmate(opponent, from, to) {
 		rating = MaxMoveRating
 		return rating
 	}
@@ -76,13 +76,13 @@ func (b Board) ComputerRating(from AbsPoint, to AbsPoint, player Orientation) Mo
 	if state.PieceCount(opponent) < b.PieceCount(opponent) {
 		rating++
 	}
-	if state.Check(opponent) {
+	if state.Check(opponent, from, to) {
 		rating++
 	}
-	if state.PiecesInDanger(player) > b.PiecesInDanger(player) {
+	if state.PiecesInDanger(player, from, to) > b.PiecesInDanger(player, previousFrom, previousTo) {
 		rating--
 	}
-	if state.PiecesInDanger(opponent) > b.PiecesInDanger(opponent) {
+	if state.PiecesInDanger(opponent, from, to) > b.PiecesInDanger(opponent, previousFrom, previousTo) {
 		rating++
 	}
 	npScore := state.TotalPieceScore(player)

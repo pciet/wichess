@@ -19,9 +19,6 @@ const (
 	moved_bit  = 33
 	moved_mask = 0x1
 
-	previous_point_bit  = 34
-	previous_point_mask = 0x3F
-
 	kind_bit  = 47
 	kind_mask = 0xFFFF
 )
@@ -34,7 +31,6 @@ func (p piece) encode() pieceEncoding {
 	enc |= (uint64(p.Orientation) & orientation_mask) << orientation_bit
 	enc |= (uint64(btoi(p.Moved)) & moved_mask) << moved_bit
 	enc |= (uint64(p.Kind) & kind_mask) << kind_bit
-	enc |= (uint64(p.Previous) & previous_point_mask) << previous_point_bit
 	return pieceEncoding(enc)
 }
 
@@ -46,7 +42,6 @@ func (e pieceEncoding) decode() piece {
 			Moved:       itob(int((e >> moved_bit) & moved_mask)),
 			Kind:        wichessing.Kind((e >> kind_bit) & kind_mask),
 			Base:        wichessing.BaseForKind(wichessing.Kind((e >> kind_bit) & kind_mask)),
-			Previous:    uint8(((e >> previous_point_bit) & previous_point_mask)),
 		},
 	}
 }

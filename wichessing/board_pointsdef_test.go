@@ -12,7 +12,6 @@ var (
 			Kind:        King,
 			Orientation: White,
 			Moved:       false,
-			Previous:    4,
 		},
 	}
 	BlackKingStart = Point{
@@ -21,7 +20,6 @@ var (
 			Kind:        King,
 			Orientation: Black,
 			Moved:       false,
-			Previous:    AbsPointToIndex(AbsPoint{File: 4, Rank: 7}),
 		},
 	}
 	WhiteQueenStart = Point{
@@ -30,7 +28,6 @@ var (
 			Kind:        Queen,
 			Orientation: White,
 			Moved:       false,
-			Previous:    3,
 		},
 	}
 	BlackQueenStart = Point{
@@ -39,7 +36,6 @@ var (
 			Kind:        Queen,
 			Orientation: Black,
 			Moved:       false,
-			Previous:    AbsPointToIndex(AbsPoint{File: 3, Rank: 7}),
 		},
 	}
 	WhiteLeftRookStart = Point{
@@ -48,7 +44,6 @@ var (
 			Kind:        Rook,
 			Orientation: White,
 			Moved:       false,
-			Previous:    0,
 		},
 	}
 	WhiteRightRookStart = Point{
@@ -57,7 +52,6 @@ var (
 			Kind:        Rook,
 			Orientation: White,
 			Moved:       false,
-			Previous:    7,
 		},
 	}
 	BlackLeftRookStart = Point{
@@ -66,7 +60,6 @@ var (
 			Kind:        Rook,
 			Orientation: Black,
 			Moved:       false,
-			Previous:    AbsPointToIndex(AbsPoint{File: 0, Rank: 7}),
 		},
 	}
 	BlackRightRookStart = Point{
@@ -75,7 +68,6 @@ var (
 			Kind:        Rook,
 			Orientation: Black,
 			Moved:       false,
-			Previous:    63,
 		},
 	}
 	WhiteLeftKnightStart = Point{
@@ -84,7 +76,6 @@ var (
 			Kind:        Knight,
 			Orientation: White,
 			Moved:       false,
-			Previous:    1,
 		},
 	}
 	WhiteRightKnightStart = Point{
@@ -93,7 +84,6 @@ var (
 			Kind:        Knight,
 			Orientation: White,
 			Moved:       false,
-			Previous:    6,
 		},
 	}
 	BlackLeftKnightStart = Point{
@@ -102,7 +92,6 @@ var (
 			Kind:        Knight,
 			Orientation: Black,
 			Moved:       false,
-			Previous:    AbsPointToIndex(AbsPoint{File: 1, Rank: 7}),
 		},
 	}
 	BlackRightKnightStart = Point{
@@ -111,7 +100,6 @@ var (
 			Kind:        Knight,
 			Orientation: Black,
 			Moved:       false,
-			Previous:    AbsPointToIndex(AbsPoint{File: 6, Rank: 7}),
 		},
 	}
 	WhiteLeftBishopStart = Point{
@@ -120,7 +108,6 @@ var (
 			Kind:        Bishop,
 			Orientation: White,
 			Moved:       false,
-			Previous:    2,
 		},
 	}
 	WhiteRightBishopStart = Point{
@@ -129,7 +116,6 @@ var (
 			Kind:        Bishop,
 			Orientation: White,
 			Moved:       false,
-			Previous:    5,
 		},
 	}
 	BlackLeftBishopStart = Point{
@@ -138,7 +124,6 @@ var (
 			Kind:        Bishop,
 			Orientation: Black,
 			Moved:       false,
-			Previous:    AbsPointToIndex(AbsPoint{File: 2, Rank: 7}),
 		},
 	}
 	BlackRightBishopStart = Point{
@@ -147,7 +132,6 @@ var (
 			Kind:        Bishop,
 			Orientation: Black,
 			Moved:       false,
-			Previous:    AbsPointToIndex(AbsPoint{File: 5, Rank: 7}),
 		},
 	}
 	WhitePawn0Start = Point{
@@ -156,7 +140,6 @@ var (
 			Kind:        Pawn,
 			Orientation: White,
 			Moved:       false,
-			Previous:    AbsPointToIndex(AbsPoint{File: 0, Rank: 1}),
 		},
 	}
 	WhitePawn1Start = Point{
@@ -165,7 +148,6 @@ var (
 			Kind:        Pawn,
 			Orientation: White,
 			Moved:       false,
-			Previous:    AbsPointToIndex(AbsPoint{File: 1, Rank: 1}),
 		},
 	}
 	WhitePawn2Start = Point{
@@ -174,7 +156,6 @@ var (
 			Kind:        Pawn,
 			Orientation: White,
 			Moved:       false,
-			Previous:    AbsPointToIndex(AbsPoint{File: 2, Rank: 1}),
 		},
 	}
 	WhitePawn3Start = Point{
@@ -183,7 +164,6 @@ var (
 			Kind:        Pawn,
 			Orientation: White,
 			Moved:       false,
-			Previous:    AbsPointToIndex(AbsPoint{File: 3, Rank: 1}),
 		},
 	}
 	WhitePawn4Start = Point{
@@ -192,7 +172,6 @@ var (
 			Kind:        Pawn,
 			Orientation: White,
 			Moved:       false,
-			Previous:    AbsPointToIndex(AbsPoint{File: 4, Rank: 1}),
 		},
 	}
 	WhitePawn5Start = Point{
@@ -201,7 +180,6 @@ var (
 			Kind:        Pawn,
 			Orientation: White,
 			Moved:       false,
-			Previous:    AbsPointToIndex(AbsPoint{File: 5, Rank: 1}),
 		},
 	}
 	WhitePawn6Start = Point{
@@ -210,7 +188,6 @@ var (
 			Kind:        Pawn,
 			Orientation: White,
 			Moved:       false,
-			Previous:    AbsPointToIndex(AbsPoint{File: 6, Rank: 1}),
 		},
 	}
 	WhitePawn7Start = Point{
@@ -219,7 +196,6 @@ var (
 			Kind:        Pawn,
 			Orientation: White,
 			Moved:       false,
-			Previous:    AbsPointToIndex(AbsPoint{File: 7, Rank: 1}),
 		},
 	}
 	BlackPawn0Start = Point{
@@ -228,7 +204,6 @@ var (
 			Kind:        Pawn,
 			Orientation: Black,
 			Moved:       false,
-			Previous:    AbsPointToIndex(AbsPoint{File: 0, Rank: 6}),
 		},
 	}
 	BlackPawn1Start = Point{
@@ -237,7 +212,6 @@ var (
 			Kind:        Pawn,
 			Orientation: Black,
 			Moved:       false,
-			Previous:    AbsPointToIndex(AbsPoint{File: 1, Rank: 6}),
 		},
 	}
 	BlackPawn2Start = Point{
@@ -246,7 +220,6 @@ var (
 			Kind:        Pawn,
 			Orientation: Black,
 			Moved:       false,
-			Previous:    AbsPointToIndex(AbsPoint{File: 2, Rank: 6}),
 		},
 	}
 	BlackPawn3Start = Point{
@@ -255,7 +228,6 @@ var (
 			Kind:        Pawn,
 			Orientation: Black,
 			Moved:       false,
-			Previous:    AbsPointToIndex(AbsPoint{File: 3, Rank: 6}),
 		},
 	}
 	BlackPawn4Start = Point{
@@ -264,7 +236,6 @@ var (
 			Kind:        Pawn,
 			Orientation: Black,
 			Moved:       false,
-			Previous:    AbsPointToIndex(AbsPoint{File: 4, Rank: 6}),
 		},
 	}
 	BlackPawn5Start = Point{
@@ -273,7 +244,6 @@ var (
 			Kind:        Pawn,
 			Orientation: Black,
 			Moved:       false,
-			Previous:    AbsPointToIndex(AbsPoint{File: 5, Rank: 6}),
 		},
 	}
 	BlackPawn6Start = Point{
@@ -282,7 +252,6 @@ var (
 			Kind:        Pawn,
 			Orientation: Black,
 			Moved:       false,
-			Previous:    AbsPointToIndex(AbsPoint{File: 6, Rank: 6}),
 		},
 	}
 	BlackPawn7Start = Point{
@@ -291,7 +260,6 @@ var (
 			Kind:        Pawn,
 			Orientation: Black,
 			Moved:       false,
-			Previous:    AbsPointToIndex(AbsPoint{File: 7, Rank: 6}),
 		},
 	}
 )

@@ -35,6 +35,9 @@ func init() {
 	for _, c := range SwapMovesCases {
 		AvailableMovesCases = append(AvailableMovesCases, c)
 	}
+	for _, c := range EnPassantMovesCases {
+		AvailableMovesCases = append(AvailableMovesCases, c)
+	}
 
 	// board state change with move test cases
 	for _, c := range BasicAfterMoveCases {
@@ -58,38 +61,45 @@ func init() {
 	for _, c := range FortifyAfterMoveCases {
 		AfterMoveCases = append(AfterMoveCases, c)
 	}
+	for _, c := range EnPassantAfterMoveCases {
+		AfterMoveCases = append(AfterMoveCases, c)
+	}
 }
 
 type AvailableMovesCase struct {
-	Name      string
-	Position  PointSet
-	Active    Orientation
-	Draw      bool
-	Check     bool
-	Checkmate bool
-	Moves     map[AbsPoint]AbsPointSet
+	Name         string
+	Position     PointSet
+	Active       Orientation
+	Draw         bool
+	Check        bool
+	Checkmate    bool
+	PreviousFrom AbsPoint
+	PreviousTo   AbsPoint
+	Moves        map[AbsPoint]AbsPointSet
 }
 
 // The active player is inferred by which piece is being moved. The diff is checked by location and piece kind/orientation only.
 type PositionAfterMoveCase struct {
-	Name    string
-	Initial PointSet
-	From    AbsPoint
-	To      AbsPoint
-	Diff    PointSet
+	Name         string
+	Initial      PointSet
+	PreviousFrom AbsPoint
+	PreviousTo   AbsPoint
+	From         AbsPoint
+	To           AbsPoint
+	Diff         PointSet
 }
 
 // Covers Board.Draw and Board.Moves
 func TestMovesCases(t *testing.T) {
 	for _, c := range AvailableMovesCases {
 		b := c.Position.Board()
-		draw := b.Draw(c.Active)
+		draw := b.Draw(c.Active, c.PreviousFrom, c.PreviousTo)
 		if draw && (c.Draw == false) {
 			t.Fatalf("\"%v\" failed: unexpected draw", c.Name)
 		} else if (draw == false) && c.Draw {
 			t.Fatalf("\"%v\" failed: determined not draw", c.Name)
 		}
-		moves, check, checkmate := b.Moves(c.Active)
+		moves, check, checkmate := b.Moves(c.Active, c.PreviousFrom, c.PreviousTo)
 		if check && (c.Check == false) {
 			t.Fatalf("\"%v\" failed: unexpected check", c.Name)
 		} else if (check == false) && c.Check {
@@ -124,7 +134,7 @@ func TestPositionAfterMoveCases(t *testing.T) {
 		if from.Piece == nil {
 			t.Fatalf("\"%v\" failed: from point %v has no piece", c.Name, c.From)
 		}
-		diff, _ := b.Move(c.From, c.To, from.Orientation)
+		diff, _ := b.Move(c.From, c.To, from.Orientation, c.PreviousFrom, c.PreviousTo)
 		if (len(c.Diff) == 0) && (len(diff) == 0) {
 			continue
 		}

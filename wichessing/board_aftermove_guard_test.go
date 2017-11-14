@@ -15,7 +15,6 @@ var GuardAfterMoveCases = []PositionAfterMoveCase{
 					Kind:        Pawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{0, 2}.Index(),
 				},
 			}: {},
 			{
@@ -28,8 +27,10 @@ var GuardAfterMoveCases = []PositionAfterMoveCase{
 			&WhiteKingStart: {},
 			&BlackKingStart: {},
 		},
-		From: AbsPoint{0, 2},
-		To:   AbsPoint{0, 1},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
+		From:         AbsPoint{0, 2},
+		To:           AbsPoint{0, 1},
 		Diff: PointSet{
 			{
 				AbsPoint: AbsPoint{0, 2},
@@ -55,7 +56,6 @@ var GuardAfterMoveCases = []PositionAfterMoveCase{
 					Kind:        GuardPawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{0, 3}.Index(),
 				},
 			}: {},
 			{
@@ -64,7 +64,6 @@ var GuardAfterMoveCases = []PositionAfterMoveCase{
 					Kind:        GuardPawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{1, 2}.Index(),
 				},
 			}: {},
 			{
@@ -73,7 +72,6 @@ var GuardAfterMoveCases = []PositionAfterMoveCase{
 					Kind:        Pawn,
 					Orientation: Black,
 					Moved:       true,
-					Previous:    AbsPoint{1, 4}.Index(),
 				},
 			}: {},
 			{
@@ -82,7 +80,6 @@ var GuardAfterMoveCases = []PositionAfterMoveCase{
 					Kind:        GuardPawn,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{2, 3}.Index(),
 				},
 			}: {},
 			{
@@ -91,14 +88,15 @@ var GuardAfterMoveCases = []PositionAfterMoveCase{
 					Kind:        GuardPawn,
 					Orientation: White,
 					Moved:       true,
-					Previous:    AbsPoint{2, 4}.Index(),
 				},
 			}: {},
 			&WhiteKingStart: {},
 			&BlackKingStart: {},
 		},
-		From: AbsPoint{1, 4},
-		To:   AbsPoint{1, 3},
+		PreviousFrom: AbsPoint{3, 3},
+		PreviousTo:   AbsPoint{3, 4},
+		From:         AbsPoint{1, 4},
+		To:           AbsPoint{1, 3},
 		Diff: PointSet{
 			{
 				AbsPoint: AbsPoint{0, 3},
