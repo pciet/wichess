@@ -17,6 +17,16 @@
             box-shadow: 0px 1px 1px black;
         }
     </style>
+    <script type="text/javascript" src="/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+    // https://stackoverflow.com/questions/8788802/prevent-safari-loading-from-cache-when-back-button-is-clicked/13123626#13123626
+    // https://stackoverflow.com/questions/17432899/javascript-bfcache-pageshow-event-event-persisted-always-set-to-false
+    $(window).bind("pageshow", function(event) {
+        if (event.originalEvent.persisted || (window.performance && (window.performance.navigation.type == 2))) {
+            window.location.reload();
+        }
+    });
+    </script>
 </head>
 
 <body>

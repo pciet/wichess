@@ -124,6 +124,13 @@
     <script type="text/javascript" src="/js/duration.js"></script>
     <script type="text/javascript" src="/js/pieces.js"></script>
     <script type="text/javascript">
+    // https://stackoverflow.com/questions/8788802/prevent-safari-loading-from-cache-when-back-button-is-clicked/13123626#13123626
+    // https://stackoverflow.com/questions/17432899/javascript-bfcache-pageshow-event-event-persisted-always-set-to-false
+    $(window).bind("pageshow", function(event) {
+        if (event.originalEvent.persisted || (window.performance && (window.performance.navigation.type == 2))) {
+            window.location.reload();
+        }
+    });
     // if (width/height) - 1 is within these ratio threshold then the square layout is used, below is vertical, above is horizontal
     var SquareRatioThreshold = 0.3;
     var BottomSquareRatioThreshold = -0.219;

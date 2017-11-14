@@ -23,6 +23,11 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
+	key := validSession(r)
+	if key != "" {
+		http.Redirect(w, r, "/", http.StatusFound)
+		return
+	}
 	executeWebTemplate(w, login_template, nil)
 }
 
