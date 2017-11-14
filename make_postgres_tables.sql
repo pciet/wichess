@@ -31,6 +31,7 @@ CREATE TABLE Games (
     active VARCHAR(64) NOT NULL,
     move_from SMALLINT,
     move_to SMALLINT,
+    draw_turns SMALLINT,
     s0 BIGINT, s1 BIGINT, s2 BIGINT, s3 BIGINT,
     s4 BIGINT, s5 BIGINT, s6 BIGINT, s7 BIGINT,
     s8 BIGINT, s9 BIGINT, s10 BIGINT, s11 BIGINT,

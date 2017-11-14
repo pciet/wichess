@@ -16,6 +16,8 @@ const (
 	promote_key   = "promote"
 	draw_key      = "draw"
 	time_key      = "time"
+
+	draw_turn_count = 50
 )
 
 // Returns address that have changed, Kind 0 piece for a now empty point, but does not update the board points. Returns true and an orientation of the promoter if promoting.
@@ -40,7 +42,7 @@ func (g game) move(from, to int, mover string, timeoutMove bool) (map[string]pie
 	if pring {
 		return nil, false, wichessing.White
 	}
-	if b.Draw(orientation, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To))) {
+	if (g.DrawTurns >= draw_turn_count) || b.Draw(orientation, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To))) {
 		return nil, false, wichessing.White
 	}
 	diff := make(map[string]piece)
@@ -78,9 +80,13 @@ func (g game) move(from, to int, mover string, timeoutMove bool) (map[string]pie
 	after := b.AfterMove(absPoint(from), absPoint(to), orientation, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To)))
 	promoting, promotingOrientation := after.HasPawnToPromote()
 	if promoting && (promotingOrientation == orientation) {
-		g.DB.updateGame(g.ID, diff, mover, from, to)
+		g.DB.updateGame(g.ID, diff, mover, from, to, 0)
 	} else {
-		g.DB.updateGame(g.ID, diff, nextMover, from, to)
+		if (len(taken) == 0) && (b[from].Base != wichessing.Pawn) {
+			g.DB.updateGame(g.ID, diff, nextMover, from, to, g.DrawTurns+1)
+		} else {
+			g.DB.updateGame(g.ID, diff, nextMover, from, to, 0)
+		}
 	}
 	if timeoutMove == false {
 		go func() {
@@ -119,7 +125,7 @@ func (g game) move(from, to int, mover string, timeoutMove bool) (map[string]pie
 			} else {
 				g.DB.updatePlayerRecords(g.White, g.Black, false)
 			}
-		} else if after.Draw(nextOrientation, wichessing.AbsPointFromIndex(uint8(from)), wichessing.AbsPointFromIndex(uint8(to))) {
+		} else if ((g.DrawTurns + 1) >= draw_turn_count) || after.Draw(nextOrientation, wichessing.AbsPointFromIndex(uint8(from)), wichessing.AbsPointFromIndex(uint8(to))) {
 			g.DB.updatePlayerRecords(g.White, g.Black, true)
 		}
 	}
@@ -174,7 +180,7 @@ func (g game) promote(from int, player string, kind wichessing.Kind, timeoutMove
 			}
 		}
 	}
-	g.DB.updateGame(g.ID, diff, nextMover, from, from)
+	g.DB.updateGame(g.ID, diff, nextMover, from, from, 0)
 	if timeoutMove == false {
 		go func() {
 			gameMonitorsLock.RLock()
@@ -247,7 +253,7 @@ func (g game) moves(total time.Duration) map[string]map[string]struct{} {
 		moves[promote_key] = nil
 		return moves
 	}
-	if board.Draw(active, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To))) {
+	if (g.DrawTurns >= draw_turn_count) || board.Draw(active, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To))) {
 		if g.Competitive {
 			moves[draw_key] = map[string]struct{}{
 				fmt.Sprintf("%d", g.Piece): {},
