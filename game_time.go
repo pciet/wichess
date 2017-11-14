@@ -62,7 +62,7 @@ func (g game) randomMoveAtTime(at time.Time) game {
 	} else {
 		active = wichessing.Black
 	}
-	if board.Draw(active, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To))) {
+	if (g.DrawTurns >= draw_turn_count) || board.Draw(active, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To))) {
 		return g
 	}
 	m, _, checkmate := board.Moves(active, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To)))
