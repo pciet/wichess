@@ -122,6 +122,7 @@
     </style>
     <script type="text/javascript" src="/js/jquery-3.2.1.min.js"></script>
     <script type="text/javascript" src="/js/jquery.fittext.js"></script>
+    <script type="text/javascript" src="/js/js.cookie.js"></script>
     <script type="text/javascript" src="/js/pieces.js"></script>
     <script type="text/javascript">
     // https://stackoverflow.com/questions/8788802/prevent-safari-loading-from-cache-when-back-button-is-clicked/13123626#13123626
@@ -150,6 +151,13 @@
         HOTSEAT: 3
     };
     var Clicked = null;
+
+    var ModeCookie = 'mode';
+    var StoredMode = Modes.COMPETITIVE;
+    var c = Cookies.get(ModeCookie);
+    if (c) {
+        StoredMode = parseInt(c);
+    }
 
     var Highlighted48HourGame = null;
 
@@ -343,6 +351,7 @@
             $('#games').html('');
             return;
         }
+        Cookies.set(ModeCookie, mode.toString(), {expires: 30});
         switch (mode) {
             case Modes.COMPUTER:
                 $('#computermode').addClass('modebuttonselected');
@@ -850,7 +859,7 @@
     }
     $(document).ready(function() {
         layout($(window).width(), $(window).height());
-        clickMode(Modes.COMPETITIVE);
+        clickMode(StoredMode);
         jQuery.get('pieces').done(function(data) {
             Pieces = data;
             for (var i = 0; i < Pieces.length; i++) {

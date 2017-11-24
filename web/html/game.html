@@ -125,6 +125,7 @@
     <script type="text/javascript" src="/js/duration.js"></script>
     <script type="text/javascript" src="/js/pieces.js"></script>
     <script type="text/javascript" src="/js/AudioContextMonkeyPatch.js"></script>
+    <script type="text/javascript" src="/js/js.cookie.js"></script>
     <script type="text/javascript">
     // https://stackoverflow.com/questions/8788802/prevent-safari-loading-from-cache-when-back-button-is-clicked/13123626#13123626
     // https://stackoverflow.com/questions/17432899/javascript-bfcache-pageshow-event-event-persisted-always-set-to-false
@@ -184,7 +185,19 @@
     var MoveSoundContext = new AudioContext();
     var MoveSoundSource = null;
     var SoundCount = 325;
-    var Muted = false;
+    var Muted = true;
+    var MusicMuted = true;
+
+    var MoveMutedCookie = "movemuted";
+    var MusicMutedCookie = "musicmuted";
+    var c = Cookies.get(MoveMutedCookie);
+    if (c) {
+        Muted = (c == 'true');
+    }
+    var mc = Cookies.get(MusicMutedCookie);
+    if (mc) {
+        MusicMuted = (mc == 'true');
+    }
 
     loadNextMoveSound();
 
@@ -884,13 +897,20 @@
         $('#back').click(function() {
             window.location.pathname = '/';
         });
+        if (Muted == false) {
+            $('#movesound').html('&#x1f50a;');
+        } else {
+            $('#movesound').html('&#x1f507;');
+        }
         $('#movesound').click(function() {
             if (Muted == false) {
                 $('#movesound').html('&#x1f507;');
                 Muted = true;
+                Cookies.set(MoveMutedCookie, 'true', {expires: 30});
             } else {
                 $('#movesound').html('&#x1f50a;');
                 Muted = false;
+                Cookies.set(MoveMutedCookie, 'false', {expires: 30});
             }
         });
         var board = '';
@@ -931,10 +951,10 @@
                 var className = '';
                 if ((Selected != index) && ($('#point'+index).hasClass('selected'))) {
                     if (Turn == PlayerOrientation) {
-			if (Muted == false) {
-			    MoveSoundSource.start(0);
-			    loadNextMoveSound();
-			}
+                        if (Muted == false) {
+                            MoveSoundSource.start(0);
+                            loadNextMoveSound();
+                        }
                         requestMove(Selected, index);
                     }
                     return;
