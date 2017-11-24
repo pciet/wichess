@@ -123,6 +123,7 @@
     <script type="text/javascript" src="/js/moment.min.js"></script>
     <script type="text/javascript" src="/js/duration.js"></script>
     <script type="text/javascript" src="/js/pieces.js"></script>
+    <script type="text/javascript" src="/js/AudioContextMonkeyPatch.js"></script>
     <script type="text/javascript">
     // https://stackoverflow.com/questions/8788802/prevent-safari-loading-from-cache-when-back-button-is-clicked/13123626#13123626
     // https://stackoverflow.com/questions/17432899/javascript-bfcache-pageshow-event-event-persisted-always-set-to-false
@@ -179,8 +180,12 @@
     var GainedPiece = null;
     var Acknowledging = false;
 
+    var MoveSoundContext = new AudioContext();
+    var MoveSoundSource = null;
     var SoundCount = 325;
     var Muted = false;
+
+    loadNextMoveSound();
 
     var EasyComputer = 'Easy Computer Player';
     var HardComputer = 'Hard Computer Player';
@@ -188,6 +193,21 @@
     var WhiteTimer = null;
     var BlackTimer = null;
 
+    function loadNextMoveSound() {
+        MoveSoundSource = MoveSoundContext.createBufferSource();
+        MoveSoundSource.connect(MoveSoundContext.destination);
+        var request = new XMLHttpRequest();
+        request.open('GET', '/sound/click'+Math.floor(Math.random()*SoundCount)+'.wav', true);
+        request.responseType = 'arraybuffer';
+        request.onload = function() {
+            MoveSoundContext.decodeAudioData(request.response, function(buffer) {
+                MoveSoundSource.buffer = buffer;
+            }, function() {
+                console.log('failed to decode audio clip');
+            });
+        }
+        request.send();
+    }
     var ws = new WebSocket("ws://localhost:8080/moven/"+game_id);
     ws.onmessage = function(event) {
         makeMove(JSON.parse(event.data));
@@ -415,7 +435,8 @@
         }
         getMoves();
         if (Muted == false) {
-            $('#audio'+Math.floor(Math.random()*SoundCount)).get(0).play();
+            MoveSoundSource.start(0);
+            loadNextMoveSound();
         }
     }
     function addrStringToIndex(str) {
@@ -1012,9 +1033,6 @@
         layout($(window).width(), $(window).height());
     });
     $(document).ready(function() {
-        for (var i = 0; i < SoundCount; i++) {
-            $('#audio').append('<audio id="audio'+i+'"><source src="/sound/click'+i+'.wav" type="audio/wav"><source src="/sound/click'+i+'.ogg" type="audio/ogg"></audio>');
-        }
         $.get('/games/'+game_id).done(function(data) {
             Board = data.Points;
             White = data.White;
@@ -1048,7 +1066,6 @@
     </script>
 </head>
 <body>
-    <div id="audio"></div>
     <div id="body"></div>
 </body>
 </html>
