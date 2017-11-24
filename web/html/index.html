@@ -573,7 +573,12 @@
             $('body').html(l);
             $('#spacer').css('height', ($(window).height() / 6) + 'px');
             var margin = $(window).width() / 6;
-            $('#cmp').css('height', ($(window).height() / 4) + 'px').css('width', ($(window).width() - (2 * margin)) + 'px').css('margin-left', margin + 'px').css('margin-right', margin + 'px').fitText(2).css('line-height', $('#cmp').height() + 'px').css('text-align', 'center').css('vertical-align', 'middle');
+            $('#cmp').css('height', ($(window).height() / 4) + 'px').css('width', ($(window).width() - (2 * margin)) + 'px').css('margin-left', margin + 'px').css('margin-right', margin + 'px').css('line-height', $('#cmp').height() + 'px').css('text-align', 'center').css('vertical-align', 'middle');
+            if ($(window).height() > $(window).width()) {
+                $('#cmp').fitText(2);
+            } else {
+                $('#cmp').fitText(3);
+            }
             $('.gamebuttondiv').css('margin-left', margin + 'px').css('margin-right', margin + 'px').css('width', ($(window).width() - (2 * margin)) + 'px').css('height', ($(window).height() / 6) + 'px').css('line-height', $('.gamebuttondiv').height() + 'px').css('text-align', 'center').css('vertical-align', 'middle');
             $('.gamebutton').css('width', '100%').css('height', '100%').fitText(2);
             $('#cancelmatched15').click(function() {
@@ -595,7 +600,12 @@
         $('body').html(l);
         $('#spacer').css('height', ($(window).height() / 6) + 'px');
         var margin = $(window).width() / 6;
-        $('#cmp').css('height', ($(window).height() / 4) + 'px').css('width', ($(window).width() - (2 * margin)) + 'px').css('margin-left', margin + 'px').css('margin-right', margin + 'px').fitText(2).css('line-height', $('#cmp').height() + 'px').css('text-align', 'center').css('vertical-align', 'middle');
+        $('#cmp').css('height', ($(window).height() / 4) + 'px').css('width', ($(window).width() - (2 * margin)) + 'px').css('margin-left', margin + 'px').css('margin-right', margin + 'px').css('line-height', $('#cmp').height() + 'px').css('text-align', 'center').css('vertical-align', 'middle');
+        if ($(window).height() > $(window).width()) {
+	     $('#cmp').fitText(2);
+        } else {
+	    $('#cmp').fitText(3);
+        }
         $('.gamebuttondiv').css('margin-left', margin + 'px').css('margin-right', margin + 'px').css('width', ($(window).width() - (2 * margin)) + 'px').css('height', ($(window).height() / 6) + 'px').css('line-height', $('.gamebuttondiv').height() + 'px').css('text-align', 'center').css('vertical-align', 'middle');
         $('.gamebutton').css('width', '100%').css('height', '100%').fitText(2);
         $('#cancelmatched5').click(function() {
