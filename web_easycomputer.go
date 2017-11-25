@@ -40,7 +40,10 @@ func easyComputerRequestHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	database.requestEasyComputerMatch(name, setup)
+	if database.requestEasyComputerMatch(name, setup) == 0 {
+		http.NotFound(w, r)
+		return
+	}
 	// the client is responsible for triggering a GET at /easycomputer after this POST is successful
 }
 

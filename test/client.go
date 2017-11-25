@@ -570,7 +570,7 @@ func assignRandomPieces(pieces []piece) []byte {
 	used := make([]piece, 0, 16)
 	assignments := [16]int{}
 	for i := 0; i < 16; i++ {
-		if (i == 0) || (i == 7) {
+		if (i == 8) || (i == 15) {
 			for _, pc := range pieces {
 				if pieceSliceHas(used, pc) {
 					continue
@@ -581,7 +581,7 @@ func assignRandomPieces(pieces []piece) []byte {
 					break
 				}
 			}
-		} else if (i == 1) || (i == 6) {
+		} else if (i == 9) || (i == 14) {
 			for _, pc := range pieces {
 				if pieceSliceHas(used, pc) {
 					continue
@@ -592,7 +592,7 @@ func assignRandomPieces(pieces []piece) []byte {
 					break
 				}
 			}
-		} else if (i == 2) || (i == 5) {
+		} else if (i == 10) || (i == 13) {
 			for _, pc := range pieces {
 				if pieceSliceHas(used, pc) {
 					continue
@@ -604,7 +604,7 @@ func assignRandomPieces(pieces []piece) []byte {
 				}
 			}
 			// no kings or queens for now
-		} else if i > 7 {
+		} else if i < 8 {
 			for _, pc := range pieces {
 				if pieceSliceHas(used, pc) {
 					continue

@@ -311,9 +311,8 @@ func (g *game) acknowledgeGameComplete(player string) bool {
 }
 
 // TODO: there may be a race condition for marking pieces in-game - need mutex per-player?
-// TODO: what are the effects of an invalid setup? this function returns 0 which isn't directly handled
 
-// Returns the game identifier.
+// Returns the game identifier or zero on invalid setup.
 func (db DB) newGame(player1 string, player1setup gameSetup, player2 string, player2setup gameSetup, competitive bool) int {
 	var player1Pieces, player2Pieces [16]piece
 	player1Pieces[0] = db.pieceWithID(player1setup[0], wichessing.Pawn, wichessing.White, player1)

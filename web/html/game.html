@@ -224,6 +224,10 @@
     }
     var ws = new WebSocket("ws://localhost:8080/moven/"+game_id);
     ws.onmessage = function(event) {
+        if (Muted == false) {
+            MoveSoundSource.start(0);
+            loadNextMoveSound();
+        }
         makeMove(JSON.parse(event.data));
     }
     function setPieceImage(index, kind, orientation) {

@@ -26,7 +26,7 @@ func (b Board) Checkmate(turn Orientation, previousFrom AbsPoint, previousTo Abs
 	return true
 }
 
-// TODO: if detonate bishop is in danger next to king, then king is in check
+// TODO: verify fixed: if detonate bishop is in danger next to king, then king is in check
 // TODO: possible optimization may involve reducing the check checks for naive moves (into check)
 
 func (b Board) Check(turn Orientation, previousFrom AbsPoint, previousTo AbsPoint) bool {

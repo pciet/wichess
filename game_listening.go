@@ -30,7 +30,6 @@ var (
 )
 
 func listeningToGame(name string, white string, black string, turnTime time.Duration, totalTime time.Duration, previousMove time.Time, id int, socket *websocket.Conn) {
-	// TODO: these game monitoring goroutines don't appear to be returning
 	gameListeningLock.Lock()
 	defer gameListeningLock.Unlock()
 	_, has := gameListening[id]

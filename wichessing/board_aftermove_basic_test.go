@@ -7,6 +7,177 @@ import ()
 
 var BasicAfterMoveCases = []PositionAfterMoveCase{
 	{
+		Name: "Random Testing Move Fail",
+		Initial: PointSet{
+			&WhiteLeftRookStart:    {},
+			&WhiteLeftBishopStart:  {},
+			&WhiteKingStart:        {},
+			&WhiteRightBishopStart: {},
+			{
+				AbsPoint: AbsPoint{6, 0},
+				Piece: &Piece{
+					Kind:        Rook,
+					Orientation: White,
+					Moved:       true,
+				},
+			}: {},
+			&WhitePawn2Start: {},
+			{
+				AbsPoint: AbsPoint{7, 1},
+				Piece: &Piece{
+					Kind:        Queen,
+					Orientation: White,
+					Moved:       true,
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{0, 2},
+				Piece: &Piece{
+					Kind:        Pawn,
+					Orientation: Black,
+					Moved:       true,
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{1, 2},
+				Piece: &Piece{
+					Kind:        Bishop,
+					Orientation: Black,
+					Moved:       true,
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{3, 2},
+				Piece: &Piece{
+					Kind:        Pawn,
+					Orientation: Black,
+					Moved:       true,
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{4, 2},
+				Piece: &Piece{
+					Kind:        Pawn,
+					Orientation: Black,
+					Moved:       true,
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{5, 2},
+				Piece: &Piece{
+					Kind:        Pawn,
+					Orientation: Black,
+					Moved:       true,
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{2, 3},
+				Piece: &Piece{
+					Kind:        Pawn,
+					Orientation: Black,
+					Moved:       true,
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{6, 3},
+				Piece: &Piece{
+					Kind:        Knight,
+					Orientation: Black,
+					Moved:       true,
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{2, 4},
+				Piece: &Piece{
+					Kind:        Rook,
+					Orientation: Black,
+					Moved:       true,
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{3, 4},
+				Piece: &Piece{
+					Kind:        Knight,
+					Orientation: White,
+					Moved:       true,
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{7, 4},
+				Piece: &Piece{
+					Kind:        Pawn,
+					Orientation: White,
+					Moved:       true,
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{0, 5},
+				Piece: &Piece{
+					Kind:        Knight,
+					Orientation: Black,
+					Moved:       true,
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{1, 5},
+				Piece: &Piece{
+					Kind:        Pawn,
+					Orientation: Black,
+					Moved:       true,
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{6, 5},
+				Piece: &Piece{
+					Kind:        Pawn,
+					Orientation: Black,
+					Moved:       true,
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{7, 5},
+				Piece: &Piece{
+					Kind:        Rook,
+					Orientation: Black,
+					Moved:       true,
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{6, 6},
+				Piece: &Piece{
+					Kind:        King,
+					Orientation: Black,
+					Moved:       true,
+				},
+			}: {},
+			{
+				AbsPoint: AbsPoint{3, 7},
+				Piece: &Piece{
+					Kind:        Knight,
+					Orientation: White,
+					Moved:       true,
+				},
+			}: {},
+			&BlackRightBishopStart: {},
+		},
+		PreviousFrom: AbsPoint{1, 6},
+		PreviousTo:   AbsPoint{3, 7},
+		From:         AbsPoint{7, 5},
+		To:           AbsPoint{7, 4},
+		Diff: PointSet{
+			{
+				AbsPoint: AbsPoint{7, 5},
+			}: {},
+			{
+				AbsPoint: AbsPoint{7, 4},
+				Piece: &Piece{
+					Kind:        Rook,
+					Orientation: Black,
+				},
+			}: {},
+		},
+	},
+	{
 		Name: "Chess Initial Position White Knight Move",
 		Initial: PointSet{
 			&WhiteLeftRookStart:    {},

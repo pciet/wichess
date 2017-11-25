@@ -6,7 +6,6 @@ package wichessing
 import ()
 
 func (b Board) Draw(turn Orientation, previousFrom AbsPoint, previousTo AbsPoint) bool {
-	// TODO: no capture or pawn move in the last fifty moves by either player
 	// not in check but no legal move
 	checkmate := b.Checkmate(turn, previousFrom, previousTo)
 	check := b.Check(turn, previousFrom, previousTo)

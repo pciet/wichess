@@ -80,11 +80,22 @@ func (db DB) pieceWithID(id int, kind wichessing.Kind, orientation wichessing.Or
 		// an invalid ID requested results in no piece
 		return piece{}
 	}
+	base := wichessing.BaseForKind(wichessing.Kind(ki))
+	if base != kind {
+		// to catch cases of putting a piece in the wrong square
+		return piece{
+			Piece: wichessing.Piece{
+				Base:        wichessing.BaseForKind(kind),
+				Kind:        kind,
+				Orientation: orientation,
+			},
+		}
+	}
 	return piece{
 		Identifier: id,
 		Ingame:     ig,
 		Piece: wichessing.Piece{
-			Base:        wichessing.BaseForKind(wichessing.Kind(ki)),
+			Base:        base,
 			Kind:        wichessing.Kind(ki),
 			Orientation: orientation,
 		},
