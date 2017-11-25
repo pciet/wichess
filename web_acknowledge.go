@@ -4,6 +4,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 	"sync"
@@ -18,6 +19,9 @@ var acknowledgingLock = sync.Mutex{}
 
 func acknowledgeGameCompletionHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
+		if debug {
+			fmt.Println("acknowledge: request not POST")
+		}
 		http.NotFound(w, r)
 		return
 	}
@@ -34,16 +38,25 @@ func acknowledgeGameCompletionHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	p := r.FormValue(request_player)
 	if p != name {
+		if debug {
+			fmt.Println("acknowledge: request_player not valid")
+		}
 		http.NotFound(w, r)
 		return
 	}
 	id := r.FormValue(request_gameid)
 	if id == "" {
+		if debug {
+			fmt.Println("acknowledge: request_gameid is empty string")
+		}
 		http.NotFound(w, r)
 		return
 	}
 	gid, err := strconv.Atoi(id)
 	if err != nil {
+		if debug {
+			fmt.Println("acknowledge: failed to parse gameid")
+		}
 		http.NotFound(w, r)
 		return
 	}
@@ -52,10 +65,16 @@ func acknowledgeGameCompletionHandler(w http.ResponseWriter, r *http.Request) {
 	game := database.gameWithIdentifier(gid)
 	rUnlockGame(gid)
 	if (game.White != name) && (game.Black != name) {
+		if debug {
+			fmt.Println("acknowledge: player doesn't match white or black")
+		}
 		http.NotFound(w, r)
 		return
 	}
 	if (&game).acknowledgeGameComplete(name) == false {
+		if debug {
+			fmt.Println("acknowledge: game.acknowledgeGameComplete returned false")
+		}
 		http.NotFound(w, r)
 		return
 	}

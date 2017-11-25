@@ -23,6 +23,9 @@ const (
 // Returns address that have changed, Kind 0 piece for a now empty point, but does not update the board points. Returns true and an orientation of the promoter if promoting.
 func (g game) move(from, to int, mover string, timeoutMove bool) (map[string]piece, bool, wichessing.Orientation) {
 	if g.Active != mover {
+		if debug {
+			fmt.Println("move: active player is not mover")
+		}
 		return nil, false, wichessing.White
 	}
 	var nextMover string
@@ -40,9 +43,15 @@ func (g game) move(from, to int, mover string, timeoutMove bool) (map[string]pie
 	// TODO: check for cases of double-checking
 	pring, _ := b.HasPawnToPromote()
 	if pring {
+		if debug {
+			fmt.Println("move: has pawn to promote")
+		}
 		return nil, false, wichessing.White
 	}
 	if (g.DrawTurns >= draw_turn_count) || b.Draw(orientation, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To))) {
+		if debug {
+			fmt.Println("move: draw determined")
+		}
 		return nil, false, wichessing.White
 	}
 	diff := make(map[string]piece)
@@ -71,6 +80,9 @@ func (g game) move(from, to int, mover string, timeoutMove bool) (map[string]pie
 		}
 	}
 	if len(diff) == 0 {
+		if debug {
+			fmt.Println("move: b.Move returned zero length diff")
+		}
 		return diff, false, wichessing.White
 	}
 	takenPieces := make(map[int]struct{})
@@ -134,6 +146,9 @@ func (g game) move(from, to int, mover string, timeoutMove bool) (map[string]pie
 
 func (g game) promote(from int, player string, kind wichessing.Kind, timeoutMove bool) map[string]piece {
 	if g.Active != player {
+		if debug {
+			fmt.Println("promote: active not promoting player")
+		}
 		return nil
 	}
 	var nextMover string
@@ -142,29 +157,47 @@ func (g game) promote(from int, player string, kind wichessing.Kind, timeoutMove
 		nextMover = g.Black
 		orientation = wichessing.White
 		if (from < 56) || (from > 63) {
+			if debug {
+				fmt.Println("promote: white out of range")
+			}
 			return nil
 		}
 	} else {
 		nextMover = g.White
 		orientation = wichessing.Black
 		if (from < 0) || (from > 7) {
+			if debug {
+				fmt.Println("promote: black out of range")
+			}
 			return nil
 		}
 	}
 	point := g.Points[from]
 	if point.Kind == 0 {
+		if debug {
+			fmt.Println("promote: no piece")
+		}
 		return nil
 	}
 	if (point.Orientation != orientation) || (point.Base != wichessing.Pawn) {
+		if debug {
+			fmt.Println("promote: not right orientation or not pawn")
+		}
 		return nil
 	}
 	b := wichessingBoard(g.Points)
 	if b.Draw(orientation, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To))) {
+		if debug {
+			fmt.Println("promote: draw determined")
+		}
 		return nil
 	}
 	diff := make(map[string]piece)
 	promdiff := b.PromotePawn(wichessing.AbsPointFromIndex(uint8(from)), wichessing.Kind(kind))
 	if (promdiff == nil) || (len(promdiff) == 0) {
+		if debug {
+			fmt.Println("promote: b.PromotePawn returned nil or zero length diff")
+		}
 		return diff
 	}
 	for point, _ := range promdiff {
@@ -277,6 +310,11 @@ func (g game) moves(total time.Duration) map[string]map[string]struct{} {
 		}
 	} else if check {
 		moves[check_key] = nil
+	}
+	if debug {
+		if (m == nil) || (len(m) == 0) {
+			fmt.Println("moves: board.Moves returned nil or zero length set")
+		}
 	}
 	return moves
 }

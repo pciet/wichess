@@ -82,6 +82,9 @@ func (db DB) pieceWithID(id int, kind wichessing.Kind, orientation wichessing.Or
 	}
 	base := wichessing.BaseForKind(wichessing.Kind(ki))
 	if base != kind {
+		if debug {
+			fmt.Println("pieceWithID: piece does not match default base (assigned to wrong square)")
+		}
 		// to catch cases of putting a piece in the wrong square
 		return piece{
 			Piece: wichessing.Piece{

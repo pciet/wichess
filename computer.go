@@ -4,6 +4,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/pciet/wichess/wichessing"
 )
 
@@ -27,6 +29,9 @@ func (db DB) easyComputerMoveForGame(id int) map[string]piece {
 	}
 	move := wichessingBoard(g.Points).ComputerMove(orientation, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To)))
 	if move == nil {
+		if debug {
+			fmt.Println("nil return for computer move")
+		}
 		return nil
 	}
 	diff, promoting, promotingOrientation := g.move(int(move.From.Index()), int(move.To.Index()), easy_computer_player, false)
@@ -69,6 +74,9 @@ func (db DB) easyComputerGame(player string) int {
 	var id int
 	err := db.QueryRow("SELECT "+games_identifier+" FROM "+games_table+" WHERE ("+games_white+" = $1 AND "+games_black+" = $2) OR ("+games_white+" = $3 AND "+games_black+" = $4);", player, easy_computer_player, easy_computer_player, player).Scan(&id)
 	if err != nil {
+		if debug {
+			fmt.Println(err.Error())
+		}
 		return 0
 	}
 	return id

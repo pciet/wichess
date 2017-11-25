@@ -17,6 +17,9 @@ const (
 
 func competitive48RequestHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
+		if debug {
+			fmt.Println("competitive48request: not POST")
+		}
 		http.NotFound(w, r)
 		return
 	}
@@ -34,11 +37,17 @@ func competitive48RequestHandler(w http.ResponseWriter, r *http.Request) {
 	var assignments BoardAssignments
 	err := json.NewDecoder(r.Body).Decode(&assignments)
 	if err != nil {
+		if debug {
+			fmt.Println(err.Error())
+		}
 		http.NotFound(w, r)
 		return
 	}
 	defer r.Body.Close()
 	if (assignments.Index < 0) || (assignments.Index > 7) {
+		if debug {
+			fmt.Println("competitive48request: index out of range")
+		}
 		http.NotFound(w, r)
 		return
 	}
@@ -47,11 +56,17 @@ func competitive48RequestHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if competitive48Matcher.Matching(name) != nil {
+		if debug {
+			fmt.Println("competitive48request: already matching")
+		}
 		http.NotFound(w, r)
 		return
 	}
 	setup, err := gameSetupFromRequest(assignments.Assignments)
 	if err != nil {
+		if debug {
+			fmt.Println(err.Error())
+		}
 		http.NotFound(w, r)
 		return
 	}
@@ -72,6 +87,9 @@ func competitive48NotificationWebsocketHandler(w http.ResponseWriter, r *http.Re
 	}
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
+		if debug {
+			fmt.Println(err.Error())
+		}
 		http.NotFound(w, r)
 		return
 	}
@@ -96,6 +114,9 @@ func competitive48Handler(w http.ResponseWriter, r *http.Request) {
 	}
 	index, err := strconv.ParseInt(r.URL.Path[15:len(r.URL.Path)], 10, 0)
 	if err != nil {
+		if debug {
+			fmt.Println(err.Error())
+		}
 		http.NotFound(w, r)
 		return
 	}

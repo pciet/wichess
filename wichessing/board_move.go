@@ -3,7 +3,9 @@
 
 package wichessing
 
-import ()
+import (
+	"fmt"
+)
 
 func (b Board) AfterMove(from AbsPoint, to AbsPoint, turn Orientation, previousFrom AbsPoint, previousTo AbsPoint) Board {
 	board := b.Copy()
@@ -19,24 +21,39 @@ func (b Board) AfterMove(from AbsPoint, to AbsPoint, turn Orientation, previousF
 func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation, previousFrom AbsPoint, previousTo AbsPoint) (PointSet, map[AbsPoint]*Piece) {
 	fromPoint := b[from.Index()]
 	if fromPoint.Piece == nil {
+		if debug {
+			fmt.Println("b.Move: fromPoint.Piece == nil")
+		}
 		return PointSet{}, map[AbsPoint]*Piece{}
 	}
 	if fromPoint.Orientation != turn {
+		if debug {
+			fmt.Println("b.Move: fromPoint has wrong orientation")
+		}
 		return PointSet{}, map[AbsPoint]*Piece{}
 	}
 	promoting, _ := b.HasPawnToPromote()
 	if promoting {
+		if debug {
+			fmt.Println("b.Move: pawn to promote")
+		}
 		return PointSet{}, map[AbsPoint]*Piece{}
 	}
 	toPoint := b[to.Index()]
 	if toPoint.Piece != nil {
 		if (toPoint.Orientation == turn) && (fromPoint.Swaps == false) {
+			if debug {
+				fmt.Println("b.Move: moving onto friendly piece")
+			}
 			return PointSet{}, map[AbsPoint]*Piece{}
 		}
 	}
 	for pt, _ := range b.SurroundingPoints(fromPoint) {
 		if pt.Piece != nil {
 			if (pt.Orientation != fromPoint.Orientation) && pt.Locks {
+				if debug {
+					fmt.Println("b.Move: piece is locked")
+				}
 				return PointSet{}, map[AbsPoint]*Piece{}
 			}
 		}
@@ -124,6 +141,9 @@ func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation, previousFrom A
 		}
 	}
 	if b.MovesFromPoint(fromPoint, previousFrom, previousTo).Has(to) == false {
+		if debug {
+			fmt.Println("b.Move: no moves from")
+		}
 		return PointSet{}, pieceset
 	}
 	// en passant / in passing

@@ -113,6 +113,9 @@ func (db DB) gameWithIdentifier(id int) game {
 	g := GameInfo{}
 	err := db.QueryRow("SELECT * FROM "+games_table+" WHERE "+games_identifier+"=$1;", id).Scan(&g.ID, &g.Piece, &g.Competitive, &g.Recorded, &g.White, &g.WhiteAcknowledge, &g.WhiteLatestMove, &g.WhiteElapsed, &g.WhiteElapsedUpdated, &g.Black, &g.BlackAcknowledge, &g.BlackLatestMove, &g.BlackElapsed, &g.BlackElapsedUpdated, &g.Active, &g.From, &g.To, &g.DrawTurns, &Points[0], &Points[1], &Points[2], &Points[3], &Points[4], &Points[5], &Points[6], &Points[7], &Points[8], &Points[9], &Points[10], &Points[11], &Points[12], &Points[13], &Points[14], &Points[15], &Points[16], &Points[17], &Points[18], &Points[19], &Points[20], &Points[21], &Points[22], &Points[23], &Points[24], &Points[25], &Points[26], &Points[27], &Points[28], &Points[29], &Points[30], &Points[31], &Points[32], &Points[33], &Points[34], &Points[35], &Points[36], &Points[37], &Points[38], &Points[39], &Points[40], &Points[41], &Points[42], &Points[43], &Points[44], &Points[45], &Points[46], &Points[47], &Points[48], &Points[49], &Points[50], &Points[51], &Points[52], &Points[53], &Points[54], &Points[55], &Points[56], &Points[57], &Points[58], &Points[59], &Points[60], &Points[61], &Points[62], &Points[63])
 	if err != nil {
+		if debug {
+			fmt.Println(err.Error())
+		}
 		// rely on other db calls to catch connection issues
 		return game{}
 	}
@@ -131,6 +134,9 @@ func (db DB) gameOpponent(name string, gameID int) string {
 		return white
 	} else {
 		panicExit(fmt.Sprintf("gameID %v has no player %v", gameID, name))
+	}
+	if debug {
+		fmt.Println("no opponent found for game")
 	}
 	return ""
 }
@@ -333,6 +339,9 @@ func (db DB) newGame(player1 string, player1setup gameSetup, player2 string, pla
 	player1Pieces[15] = db.pieceWithID(player1setup[15], wichessing.Rook, wichessing.White, player1)
 	for _, piece := range player1Pieces {
 		if (piece.Identifier > 0) && piece.Ingame && competitive {
+			if debug {
+				fmt.Println("newGame: piece found to already be in a competitive game")
+			}
 			return 0
 		}
 	}
@@ -354,6 +363,9 @@ func (db DB) newGame(player1 string, player1setup gameSetup, player2 string, pla
 	player2Pieces[15] = db.pieceWithID(player2setup[15], wichessing.Rook, wichessing.Black, player2)
 	for _, piece := range player2Pieces {
 		if (piece.Identifier > 0) && piece.Ingame && competitive {
+			if debug {
+				fmt.Println("newGame: piece found to already be in a competitive game")
+			}
 			return 0
 		}
 	}

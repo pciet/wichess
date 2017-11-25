@@ -5,6 +5,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"sync"
 	"time"
@@ -17,6 +18,9 @@ var (
 
 func competitive5CancelHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
+		if debug {
+			fmt.Println("competitive5cancel: not POST")
+		}
 		http.NotFound(w, r)
 		return
 	}
@@ -35,6 +39,9 @@ func competitive5CancelHandler(w http.ResponseWriter, r *http.Request) {
 	cancel, has := competitive5Waiting[name]
 	competitive5WaitingLock.RUnlock()
 	if has == false {
+		if debug {
+			fmt.Println("competitive5cancel: not waiting")
+		}
 		http.NotFound(w, r)
 		return
 	}
@@ -42,6 +49,9 @@ func competitive5CancelHandler(w http.ResponseWriter, r *http.Request) {
 	case cancel <- struct{}{}:
 		return
 	case <-time.After(time.Second * 5):
+		if debug {
+			fmt.Println("competitive5cancel: failed to cancel after five seconds")
+		}
 		http.NotFound(w, r)
 		return
 	}
@@ -66,18 +76,27 @@ func competitive5Handler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		if competitive5Matcher.Matching(name) != nil {
+			if debug {
+				fmt.Println("competitive5: matching")
+			}
 			http.NotFound(w, r)
 			return
 		}
 		var assignments BoardAssignments
 		err := json.NewDecoder(r.Body).Decode(&assignments)
 		if err != nil {
+			if debug {
+				fmt.Println(err.Error())
+			}
 			http.NotFound(w, r)
 			return
 		}
 		defer r.Body.Close()
 		setup, err := gameSetupFromRequest(assignments.Assignments)
 		if err != nil {
+			if debug {
+				fmt.Println(err.Error())
+			}
 			http.NotFound(w, r)
 			return
 		}
@@ -116,6 +135,9 @@ func competitive5Handler(w http.ResponseWriter, r *http.Request) {
 			NowTime:   time.Now(),
 		})
 	} else {
+		if debug {
+			fmt.Println("competitive5: not GET or POST")
+		}
 		http.NotFound(w, r)
 	}
 }

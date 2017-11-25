@@ -52,15 +52,6 @@ func executeWebTemplate(w http.ResponseWriter, file string, data interface{}) {
 	}
 }
 
-func webError(w http.ResponseWriter, r *http.Request, message string, the error) {
-	if the != nil {
-		log.Printf("%v (%v)", message, the.Error())
-	} else {
-		log.Println(message)
-	}
-	http.NotFound(w, r)
-}
-
 type BoardAssignments struct {
 	Assignments []int `json:"assignments"`
 	Index       int   `json:"index"`

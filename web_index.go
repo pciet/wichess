@@ -4,6 +4,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 )
 
@@ -36,6 +37,9 @@ type indexTemplate struct {
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
+		if debug {
+			fmt.Println("index: request not GET")
+		}
 		http.NotFound(w, r)
 		return
 	}

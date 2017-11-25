@@ -5,11 +5,15 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
 func freePiecesHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
+		if debug {
+			fmt.Println("pieces: request not GET")
+		}
 		http.NotFound(w, r)
 		return
 	}

@@ -4,6 +4,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 )
 
@@ -20,6 +21,9 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if r.Method != "GET" {
+		if debug {
+			fmt.Println("login: request not GET")
+		}
 		http.NotFound(w, r)
 		return
 	}
@@ -37,13 +41,19 @@ func loginAttempt(w http.ResponseWriter, r *http.Request) {
 	}
 	err := r.ParseForm()
 	if err != nil {
-		webError(w, r, "failed to parse form", err)
+		if debug {
+			fmt.Println(err.Error())
+		}
+		http.NotFound(w, r)
 		return
 	}
 	playerName := r.FormValue(form_player_name)
 	password := r.FormValue(form_password)
 	if (playerName == "") || (password == "") {
-		webError(w, r, "missing form field", nil)
+		if debug {
+			fmt.Println("login: form missing player or password")
+		}
+		http.NotFound(w, r)
 		return
 	}
 	key := database.loginOrCreate(playerName, password)

@@ -5,6 +5,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -20,10 +21,17 @@ const (
 
 func moveRequestHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
+		if debug {
+			fmt.Println("move: request not POST")
+		}
 		http.NotFound(w, r)
 		return
 	}
+	// TODO: this shouldn't be possible
 	if r.URL.Path == "/" {
+		if debug {
+			fmt.Println("move: request.URL.Path == /")
+		}
 		http.NotFound(w, r)
 		return
 	}
@@ -40,12 +48,18 @@ func moveRequestHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	gameid, err := strconv.ParseInt(r.URL.Path[6:len(r.URL.Path)], 10, 0)
 	if err != nil {
+		if debug {
+			fmt.Println(err.Error())
+		}
 		http.NotFound(w, r)
 		return
 	}
 	var from, to int
 	from, err = strconv.Atoi(r.FormValue(request_from))
 	if err != nil {
+		if debug {
+			fmt.Println(err.Error())
+		}
 		http.NotFound(w, r)
 		return
 	}
@@ -53,6 +67,9 @@ func moveRequestHandler(w http.ResponseWriter, r *http.Request) {
 	if r.FormValue(request_promote_kind) != "" {
 		kind, err = strconv.Atoi(r.FormValue(request_promote_kind))
 		if err != nil {
+			if debug {
+				fmt.Println(err.Error())
+			}
 			http.NotFound(w, r)
 			return
 		}
@@ -60,12 +77,18 @@ func moveRequestHandler(w http.ResponseWriter, r *http.Request) {
 			(wichessing.Kind(kind) != wichessing.Bishop) &&
 			(wichessing.Kind(kind) != wichessing.Rook) &&
 			(wichessing.Kind(kind) != wichessing.Queen) {
+			if debug {
+				fmt.Println("move: requested promote is not queen, rook, bishop, or knight")
+			}
 			http.NotFound(w, r)
 			return
 		}
 	} else {
 		to, err = strconv.Atoi(r.FormValue(request_to))
 		if err != nil {
+			if debug {
+				fmt.Println(err.Error())
+			}
 			http.NotFound(w, r)
 			return
 		}
@@ -84,6 +107,9 @@ func moveRequestHandler(w http.ResponseWriter, r *http.Request) {
 	defer unlockGame(int(gameid))
 	game := database.gameWithIdentifier(int(gameid))
 	if (game.White != name) && (game.Black != name) {
+		if debug {
+			fmt.Println("move: player not white or black")
+		}
 		http.NotFound(w, r)
 		return
 	}
@@ -97,12 +123,18 @@ func moveRequestHandler(w http.ResponseWriter, r *http.Request) {
 		if kind != 0 { // promotion
 			diff = game.promote(from, name, wichessing.Kind(kind), false)
 			if (diff == nil) || (len(diff) == 0) {
+				if debug {
+					fmt.Println("move: game.promote returned nil or zero length diff")
+				}
 				http.NotFound(w, r)
 				return
 			}
 		} else {
 			diff, promoting, promotingOrientation = game.move(from, to, name, false)
 			if (diff == nil) || (len(diff) == 0) {
+				if debug {
+					fmt.Println("move: game.move returned nil or zero length diff")
+				}
 				http.NotFound(w, r)
 				return
 			}

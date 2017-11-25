@@ -9,6 +9,8 @@ import (
 	//_ "net/http/pprof"
 )
 
+const debug = false
+
 const (
 	http_max_idle_conns    = 50
 	http_idle_conn_timeout = time.Duration(time.Minute * 5)

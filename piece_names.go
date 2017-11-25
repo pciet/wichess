@@ -4,6 +4,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/pciet/wichess/wichessing"
 )
 
@@ -89,6 +91,9 @@ func nameForKind(the wichessing.Kind) string {
 		return "Fortify Rook"
 	case wichessing.ExtendedRook:
 		return "Extended Rook"
+	}
+	if debug {
+		fmt.Println("nameForKind: no name found")
 	}
 	return ""
 }

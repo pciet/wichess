@@ -4,6 +4,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -23,6 +24,9 @@ func moveNotificationWebsocketHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	gameid, err := strconv.ParseInt(r.URL.Path[7:len(r.URL.Path)], 10, 0)
 	if err != nil {
+		if debug {
+			fmt.Println(err.Error())
+		}
 		http.NotFound(w, r)
 		return
 	}
@@ -30,16 +34,25 @@ func moveNotificationWebsocketHandler(w http.ResponseWriter, r *http.Request) {
 	game := database.gameWithIdentifier(int(gameid))
 	rUnlockGame(int(gameid))
 	if (game.White != name) && (game.Black != name) {
+		if debug {
+			fmt.Println("moven: player not white or black")
+		}
 		http.NotFound(w, r)
 		return
 	}
 	if game.White == name {
 		if game.WhiteAcknowledge {
+			if debug {
+				fmt.Println("moven: white already acknowledged")
+			}
 			http.NotFound(w, r)
 			return
 		}
 	} else {
 		if game.BlackAcknowledge {
+			if debug {
+				fmt.Println("moven: black already acknowledged")
+			}
 			http.NotFound(w, r)
 			return
 		}
@@ -68,6 +81,9 @@ func moveNotificationWebsocketHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
+		if debug {
+			fmt.Println(err.Error())
+		}
 		http.NotFound(w, r)
 		return
 	}
