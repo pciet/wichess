@@ -165,7 +165,9 @@
     var Opponent = '';
     var White = '';
     var Black = '';
+    var PreviousMover = '';
     var Turn;
+    var MoveAfterPromote = false;
 
     var TotalTime = Duration.parse({{.TotalTime}});
     var TurnTime = Duration.parse({{.TurnTime}});
@@ -261,6 +263,24 @@
         unsetPromoting();
         $.post('/move/'+game_id, {From: from, Kind: kind}).done(makeMove);
     }
+    function promoting() {
+        if (Player == White) {
+            for (var i = 56; i < 64; i++) {
+                var piece = Board[i];
+                if ((piece.Base == k.PAWN) && (piece.Orientation == o.WHITE)) {
+                    return true;
+                }
+            }
+        } else {
+            for (var i = 0; i < 8; i++) {
+                var piece = Board[i];
+                if ((piece.Base == k.PAWN) && (piece.Orientation == o.BLACK)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     function getMoves() {
         $.get('/moves/'+game_id).done(function(data) {
             $('.selected').removeClass('selected');
@@ -317,8 +337,7 @@
                 return;
             }
             if ('promote' in Moves) {
-                // makeMove switched Turn to the other player
-                if ((Turn != PlayerOrientation) || (Opponent == EasyComputer) || (Opponent == HardComputer)) {
+                if (promoting() == true) {
                     setPromoting();
                     Turn = PlayerOrientation;
                     if (Turn == o.WHITE) {
@@ -328,15 +347,31 @@
                         $('#black').addClass('indicating');
                         $('#white').removeClass('indicating');
                     }
+                    if (PreviousMover == Player) {
+                        MoveAfterPromote = false;
+                    } else {
+                        // special case where a guard pawn gets into promotion position: the owner will take another turn after promoting
+                        MoveAfterPromote = true;
+                    }
                 } else {
                     if (PlayerOrientation == o.WHITE) {
                         Turn = o.BLACK;
                         $('#white').removeClass('indicating');
                         $('#black').addClass('indicating');
+                        if (PreviousMover == Black) {
+                            MoveAfterPromote = false;
+                        } else {
+                            MoveAfterPromote = true;
+                        }
                     } else {
                         Turn = o.WHITE;
                         $('#white').addClass('indicating');
                         $('#black').removeClass('indicating');
+                        if (PreviousMover == White) {
+                            MoveAfterPromote = false;
+                        } else {
+                            MoveAfterPromote = true;
+                        }
                     }
                 }
                 if (TurnTime.milliseconds() > 0) {
@@ -388,14 +423,20 @@
     function makeMove(diff) {
         if (Object.keys(diff).length > 0) {
             if ((Opponent != EasyComputer) && (Opponent != HardComputer)) {
-                if (Turn == o.WHITE) {
-                    $('#white').removeClass('indicating');
-                    $('#black').addClass('indicating');
-                    Turn = o.BLACK;
+                if (MoveAfterPromote == false) {
+                    if (Turn == o.WHITE) {
+                        $('#white').removeClass('indicating');
+                        $('#black').addClass('indicating');
+                        Turn = o.BLACK;
+                        PreviousMover = White;
+                    } else {
+                        $('#white').addClass('indicating');
+                        $('#black').removeClass('indicating');
+                        Turn = o.WHITE;
+                        PreviousMover = Black;
+                    }
                 } else {
-                    $('#white').addClass('indicating');
-                    $('#black').removeClass('indicating');
-                    Turn = o.WHITE;
+                    MoveAfterPromote = false;
                 }
             }
             if (TurnTime.milliseconds() > 0) {
@@ -1062,6 +1103,7 @@
             Board = data.Points;
             White = data.White;
             Black = data.Black;
+            PreviousMover = data.PreviousActive;
             if ((TotalTime.milliseconds() > 0) || (TurnTime.milliseconds() > 0)) {
                 if (White == Player) {
                     Opponent = Black;

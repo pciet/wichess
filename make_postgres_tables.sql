@@ -29,6 +29,7 @@ CREATE TABLE Games (
     black_elapsed BIGINT,
     black_elapsedupdated TIMESTAMPTZ,
     active VARCHAR(64) NOT NULL,
+    previous_active VARCHAR(64) NOT NULL,
     move_from SMALLINT,
     move_to SMALLINT,
     draw_turns SMALLINT,

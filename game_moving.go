@@ -92,12 +92,12 @@ func (g game) move(from, to int, mover string, timeoutMove bool) (map[string]pie
 	after := b.AfterMove(absPoint(from), absPoint(to), orientation, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To)))
 	promoting, promotingOrientation := after.HasPawnToPromote()
 	if promoting && (promotingOrientation == orientation) {
-		g.DB.updateGame(g.ID, diff, mover, from, to, 0)
+		g.DB.updateGame(g.ID, diff, mover, g.Active, from, to, 0)
 	} else {
 		if (len(taken) == 0) && (b[from].Base != wichessing.Pawn) {
-			g.DB.updateGame(g.ID, diff, nextMover, from, to, g.DrawTurns+1)
+			g.DB.updateGame(g.ID, diff, nextMover, g.Active, from, to, g.DrawTurns+1)
 		} else {
-			g.DB.updateGame(g.ID, diff, nextMover, from, to, 0)
+			g.DB.updateGame(g.ID, diff, nextMover, g.Active, from, to, 0)
 		}
 	}
 	if timeoutMove == false {
@@ -213,7 +213,12 @@ func (g game) promote(from int, player string, kind wichessing.Kind, timeoutMove
 			}
 		}
 	}
-	g.DB.updateGame(g.ID, diff, nextMover, from, from, 0)
+	// guard pawn case, if previous mover was other player then the promoting player gets a move after this one
+	if g.PreviousActive == nextMover {
+		g.DB.updateGame(g.ID, diff, g.Active, g.Active, from, from, 0)
+	} else {
+		g.DB.updateGame(g.ID, diff, nextMover, g.Active, from, from, 0)
+	}
 	if timeoutMove == false {
 		go func() {
 			gameMonitorsLock.RLock()
