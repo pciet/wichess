@@ -317,8 +317,8 @@ func (g game) moves(total time.Duration) map[string]map[string]struct{} {
 		moves[check_key] = nil
 	}
 	if debug {
-		if (m == nil) || (len(m) == 0) {
-			fmt.Println("moves: board.Moves returned nil or zero length set")
+		if ((m == nil) || (len(m) == 0)) && (checkmate == false) && (check == false)  {
+			fmt.Println("moves: board.Moves returned nil or zero length set and not check/checkmate")
 		}
 	}
 	return moves
