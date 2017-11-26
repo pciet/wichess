@@ -11,6 +11,8 @@ import (
 	"time"
 )
 
+const request_turn = "Turn"
+
 func movesHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
 		if debug {
@@ -56,6 +58,29 @@ func movesHandler(w http.ResponseWriter, r *http.Request) {
 			totalTime = competitive15_total_time
 		}
 	}
+	s, has := r.URL.Query()[request_turn]
+	if has == false {
+		if debug {
+			fmt.Println("moves: request missing request_turn value")
+		}
+		http.NotFound(w, r)
+		return
+	}
+	if (len(s) == 0) || (len(s) > 1) {
+		if debug {
+			fmt.Println("moves: request has invalid request_turn value")
+		}
+		http.NotFound(w, r)
+		return
+	}
+	turn, err := strconv.ParseInt(s[0], 10, 0)
+	if err != nil {
+		if debug {
+			fmt.Println(err.Error())
+		}
+		http.NotFound(w, r)
+		return
+	}
 	lockGame(int(gameid))
 	defer unlockGame(int(gameid))
 	game := database.gameWithIdentifier(int(gameid))
@@ -66,7 +91,23 @@ func movesHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	json, err := json.Marshal(game.moves(totalTime))
+	var moves map[string]map[string]struct{}
+	moves = game.moves(totalTime)
+	if (game.Black == easy_computer_player) || (game.Black == hard_computer_player) {
+		for mv, _ := range moves {
+			if (mv == "checkmate") || (mv == "time") || (mv == "draw") {
+				// since the client doesn't check for these cases then the turn count will be +1 from actual during computer matches
+				turn = turn - 1
+				break
+			}
+		}
+	}
+	if int(turn) != game.Turn {
+		moves = map[string]map[string]struct{}{
+			"outdated": nil,
+		}
+	}
+	json, err := json.Marshal(moves)
 	if err != nil {
 		panicExit(err.Error())
 	}

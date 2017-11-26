@@ -92,12 +92,12 @@ func (g game) move(from, to int, mover string, timeoutMove bool) (map[string]pie
 	after := b.AfterMove(absPoint(from), absPoint(to), orientation, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To)))
 	promoting, promotingOrientation := after.HasPawnToPromote()
 	if promoting && (promotingOrientation == orientation) {
-		g.DB.updateGame(g.ID, diff, mover, g.Active, from, to, 0)
+		g.DB.updateGame(g.ID, diff, mover, g.Active, from, to, 0, g.Turn)
 	} else {
 		if (len(taken) == 0) && (b[from].Base != wichessing.Pawn) {
-			g.DB.updateGame(g.ID, diff, nextMover, g.Active, from, to, g.DrawTurns+1)
+			g.DB.updateGame(g.ID, diff, nextMover, g.Active, from, to, g.DrawTurns+1, g.Turn)
 		} else {
-			g.DB.updateGame(g.ID, diff, nextMover, g.Active, from, to, 0)
+			g.DB.updateGame(g.ID, diff, nextMover, g.Active, from, to, 0, g.Turn)
 		}
 	}
 	if timeoutMove == false {
@@ -215,9 +215,9 @@ func (g game) promote(from int, player string, kind wichessing.Kind, timeoutMove
 	}
 	// guard pawn case, if previous mover was other player then the promoting player gets a move after this one
 	if g.PreviousActive == nextMover {
-		g.DB.updateGame(g.ID, diff, g.Active, g.Active, from, from, 0)
+		g.DB.updateGame(g.ID, diff, g.Active, g.Active, from, from, 0, g.Turn)
 	} else {
-		g.DB.updateGame(g.ID, diff, nextMover, g.Active, from, from, 0)
+		g.DB.updateGame(g.ID, diff, nextMover, g.Active, from, from, 0, g.Turn)
 	}
 	if timeoutMove == false {
 		go func() {
@@ -317,7 +317,7 @@ func (g game) moves(total time.Duration) map[string]map[string]struct{} {
 		moves[check_key] = nil
 	}
 	if debug {
-		if ((m == nil) || (len(m) == 0)) && (checkmate == false) && (check == false)  {
+		if ((m == nil) || (len(m) == 0)) && (checkmate == false) && (check == false) {
 			fmt.Println("moves: board.Moves returned nil or zero length set and not check/checkmate")
 		}
 	}

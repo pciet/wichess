@@ -184,6 +184,8 @@
     var GainedPiece = null;
     var Acknowledging = false;
 
+    var Move = 0;
+
     var MoveSoundContext = new AudioContext();
     var MoveSoundSource = null;
     var SoundCount = 325;
@@ -281,11 +283,33 @@
         }
         return false;
     }
+    function opponentPromoting() {
+        if (Player == White) {
+            for (var i = 0; i < 8; i++) {
+                var piece = Board[i];
+                if ((piece.Base == k.PAWN) && (piece.Orientation == o.BLACK)) {
+                    return true;
+                }
+            }
+        } else {
+            for (var i = 56; i < 64; i++) {
+                var piece = Board[i];
+                if ((piece.Base == k.PAWN) && (piece.Orientation == o.WHITE)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     function getMoves() {
-        $.get('/moves/'+game_id).done(function(data) {
+        $.get('/moves/'+game_id, {Turn: Move}).done(function(data) {
             $('.selected').removeClass('selected');
             $('.hovered').removeClass('hovered');
             $('.hoveredopp').removeClass('hoveredopp');
+            if ('outdated' in data) {
+                // the moves request is invalid and must be done again after a websocket diff is received
+                return;
+            }
             Selected = null;
             Moves = data;
             if ('check' in Moves) {
@@ -423,6 +447,11 @@
     function makeMove(diff) {
         if (Object.keys(diff).length > 0) {
             if ((Opponent != EasyComputer) && (Opponent != HardComputer)) {
+                Move = Move + 1;
+            } else {
+                Move = Move + 2;
+            }
+            if ((Opponent != EasyComputer) && (Opponent != HardComputer)) {
                 if (MoveAfterPromote == false) {
                     if (Turn == o.WHITE) {
                         $('#white').removeClass('indicating');
@@ -481,6 +510,19 @@
                 }
             }
         }
+        var pawnCount = 0;
+        var queenCount = 0;
+        var rookCount = 0;
+        var bishopCount = 0;
+        var knightCount = 0;
+        if ((Opponent == EasyComputer) || (Opponent == HardComputer)) {
+            // computer is always black
+            pawnCount = pieceCount(k.PAWN, o.BLACK);
+            queenCount = pieceCount(k.QUEEN, o.BLACK);
+            rookCount = pieceCount(k.ROOK, o.BLACK);
+            bishopCount = pieceCount(k.BISHOP, o.BLACK);
+            knightCount = pieceCount(k.KNIGHT, o.BLACK);
+        }
         for (var point in diff) {
             var index = addrStringToIndex(point);
             if (diff[point].Kind == 0) {
@@ -492,7 +534,29 @@
             }
             Board[index] = diff[point];
         }
+        // did the computer make a promotion?
+        if ((Opponent == EasyComputer) || (Opponent == HardComputer)) {
+            if (promoting() == true) {
+                Move = Move - 1;
+            } else if (pieceCount(k.PAWN, o.BLACK) == (pawnCount - 1)) {
+                if ((pieceCount(k.QUEEN, o.BLACK) == (queenCount + 1)) ||
+                    (pieceCount(k.ROOK, o.BLACK) == (rookCount + 1)) ||
+                    (pieceCount(k.BISHOP, o.BLACK) == (bishopCount + 1)) ||
+                    (pieceCount(k.KNIGHT, o.BLACK) == (knightCount + 1))) {
+                    Move = Move + 1;
+                }
+            }
+        }
         getMoves();
+    }
+    function pieceCount(base, orientation) {
+        var count = 0;
+        for (point in Board) {
+            if ((point.Orientation == orientation) && (point.Base == base)) {
+                count = count + 1;
+            }
+        }
+        return count;
     }
     function addrStringToIndex(str) {
         var address = str.split('-');
@@ -1103,6 +1167,7 @@
             Board = data.Points;
             White = data.White;
             Black = data.Black;
+            Move = data.Turn;
             PreviousMover = data.PreviousActive;
             if ((TotalTime.milliseconds() > 0) || (TurnTime.milliseconds() > 0)) {
                 if (White == Player) {
