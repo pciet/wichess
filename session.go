@@ -8,38 +8,33 @@ import (
 	"encoding/base64"
 	"fmt"
 	"net/http"
-	"sync"
 )
 
 const (
 	key_cookie = "k"
 
 	key_length = 64
+
+	session_table = "sessions"
+	session_name  = "name"
+	session_key   = "key"
 )
 
-// TODO: to support multiple instances of the logic server this will have to be stored in the database
-
-var (
-	// map[name]key
-	keys = map[string]string{}
-	// map[key]name
-	names = map[string]string{}
-
-	sessionLock = sync.RWMutex{}
-)
-
-func validSession(r *http.Request) string {
+// key, name
+func (db DB) validSession(r *http.Request) (string, string) {
 	keyCookie, err := r.Cookie(key_cookie)
 	if err != nil {
-		return ""
+		return "", ""
 	}
-	sessionLock.RLock()
-	defer sessionLock.RUnlock()
-	_, has := names[keyCookie.Value]
-	if has {
-		return keyCookie.Value
+	var name string
+	err = db.QueryRow("SELECT "+session_name+" FROM "+session_table+" WHERE "+session_key+"=$1;", keyCookie.Value).Scan(&name)
+	if err != nil {
+		if debug {
+			fmt.Println(err.Error())
+		}
+		return "", ""
 	}
-	return ""
+	return keyCookie.Value, name
 }
 
 func clearClientSession(w http.ResponseWriter) {
@@ -52,15 +47,22 @@ func clearClientSession(w http.ResponseWriter) {
 	})
 }
 
-func newSession(name, key string) {
-	sessionLock.Lock()
-	defer sessionLock.Unlock()
-	oldkey, has := keys[name]
-	if has {
-		delete(names, oldkey)
+func (db DB) newSession(name, key string) {
+	var playerKey []byte
+	err := db.QueryRow("SELECT "+session_key+" FROM "+session_table+" WHERE "+session_name+"=$1;", name).Scan(&playerKey)
+	if err == nil {
+		if string(playerKey) != key {
+			_, err = db.Exec("UPDATE "+session_table+" SET "+session_key+" =$1 WHERE "+session_name+" =$2;", []byte(key), name)
+			if err != nil {
+				panicExit(err.Error())
+			}
+		}
+		return
 	}
-	keys[name] = key
-	names[key] = name
+	_, err = db.Exec("INSERT INTO "+session_table+"("+session_name+", "+session_key+") VALUES ($1, $2);", name, []byte(key))
+	if err != nil {
+		panicExit(err.Error())
+	}
 }
 
 func newSessionKey() string {
@@ -73,10 +75,4 @@ func newSessionKey() string {
 		panicExit(fmt.Sprintf("count %v does not match key length %v", count, key_length))
 	}
 	return base64.StdEncoding.EncodeToString(key)
-}
-
-func nameFromSessionKey(key string) string {
-	sessionLock.RLock()
-	defer sessionLock.RUnlock()
-	return names[key]
 }

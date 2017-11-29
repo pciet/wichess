@@ -17,12 +17,11 @@ func easyComputerRequestHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	key := validSession(r)
+	key, name := database.validSession(r)
 	if key == "" {
 		http.Redirect(w, r, "/login", http.StatusFound)
 		return
 	}
-	name := nameFromSessionKey(key)
 	if name == "" {
 		clearClientSession(w)
 		http.Redirect(w, r, "/login", http.StatusFound)
@@ -68,12 +67,11 @@ func easyComputerHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	key := validSession(r)
+	key, name := database.validSession(r)
 	if key == "" {
 		http.Redirect(w, r, "/login", http.StatusFound)
 		return
 	}
-	name := nameFromSessionKey(key)
 	if name == "" {
 		clearClientSession(w)
 		http.Redirect(w, r, "/login", http.StatusFound)

@@ -9,6 +9,11 @@ CREATE TABLE Players (
     c15 INTEGER
 );
 
+CREATE TABLE Sessions (
+    name VARCHAR(64) PRIMARY KEY,
+    key BYTEA UNIQUE NOT NULL
+);
+
 CREATE TABLE Games (
     game_id SERIAL PRIMARY KEY,
     piece INTEGER,

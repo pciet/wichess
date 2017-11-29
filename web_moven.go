@@ -11,12 +11,11 @@ import (
 )
 
 func moveNotificationWebsocketHandler(w http.ResponseWriter, r *http.Request) {
-	key := validSession(r)
+	key, name := database.validSession(r)
 	if key == "" {
 		http.Redirect(w, r, "/login", http.StatusFound)
 		return
 	}
-	name := nameFromSessionKey(key)
 	if name == "" {
 		clearClientSession(w)
 		http.Redirect(w, r, "/login", http.StatusFound)

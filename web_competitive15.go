@@ -24,12 +24,11 @@ func competitive15CancelHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	key := validSession(r)
+	key, name := database.validSession(r)
 	if key == "" {
 		http.Redirect(w, r, "/login", http.StatusFound)
 		return
 	}
-	name := nameFromSessionKey(key)
 	if name == "" {
 		clearClientSession(w)
 		http.Redirect(w, r, "/login", http.StatusFound)
@@ -58,12 +57,11 @@ func competitive15CancelHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func competitive15Handler(w http.ResponseWriter, r *http.Request) {
-	key := validSession(r)
+	key, name := database.validSession(r)
 	if key == "" {
 		http.Redirect(w, r, "/login", http.StatusFound)
 		return
 	}
-	name := nameFromSessionKey(key)
 	if name == "" {
 		clearClientSession(w)
 		http.Redirect(w, r, "/login", http.StatusFound)

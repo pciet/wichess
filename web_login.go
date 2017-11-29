@@ -13,6 +13,8 @@ const (
 
 	form_player_name = "name"
 	form_password    = "password"
+
+	name_max_length = 64
 )
 
 func loginHandler(w http.ResponseWriter, r *http.Request) {
@@ -27,7 +29,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	key := validSession(r)
+	key, _ := database.validSession(r)
 	if key != "" {
 		http.Redirect(w, r, "/", http.StatusFound)
 		return
@@ -36,7 +38,8 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func loginAttempt(w http.ResponseWriter, r *http.Request) {
-	if validSession(r) != "" {
+	key, _ := database.validSession(r)
+	if key != "" {
 		http.Redirect(w, r, "/", http.StatusFound)
 	}
 	err := r.ParseForm()
@@ -56,7 +59,14 @@ func loginAttempt(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	key := database.loginOrCreate(playerName, password)
+	if len(playerName) > name_max_length {
+		if debug {
+			fmt.Println("login: player name longer than max length")
+		}
+		http.NotFound(w, r)
+		return
+	}
+	key = database.loginOrCreate(playerName, password)
 	if key == "" {
 		executeWebTemplate(w, login_template, nil)
 		return

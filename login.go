@@ -26,7 +26,7 @@ func (db DB) login(name, password string) string {
 		return ""
 	}
 	sessionKey := newSessionKey()
-	newSession(name, sessionKey)
+	db.newSession(name, sessionKey)
 	return sessionKey
 }
 
