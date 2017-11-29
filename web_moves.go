@@ -93,16 +93,14 @@ func movesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	var moves map[string]map[string]struct{}
 	moves = game.moves(totalTime)
-	if (game.Black == easy_computer_player) || (game.Black == hard_computer_player) {
-		for mv, _ := range moves {
-			if (mv == "checkmate") || (mv == "time") || (mv == "draw") {
-				// since the client doesn't check for these cases then the turn count will be +1 from actual during computer matches
-				turn = turn - 1
-				break
-			}
+	done := false
+	for mv, _ := range moves {
+		if (mv == "checkmate") || (mv == "time") || (mv == "draw") {
+			done = true
+			break
 		}
 	}
-	if int(turn) != game.Turn {
+	if (done == false) && (int(turn) != game.Turn) {
 		moves = map[string]map[string]struct{}{
 			"outdated": nil,
 		}
