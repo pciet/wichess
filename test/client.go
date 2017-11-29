@@ -57,6 +57,39 @@ const (
 	keyCookie = "k"
 )
 
+// move and initial state get locking is required to remove the race condition A Dial, B Move, A FullGameState that is here because of the synchronous websocket read, when that race occurred A is now receiving the move before the previous move on websocket reads
+var locks = map[int]*sync.Mutex{}
+var locksLock = sync.Mutex{}
+
+func lock(id int) {
+	locksLock.Lock()
+	l, has := locks[id]
+	if has == false {
+		l = &sync.Mutex{}
+		locks[id] = l
+	}
+	locksLock.Unlock()
+	l.Lock()
+}
+
+func unlock(id int) {
+	locksLock.Lock()
+	l, has := locks[id]
+	locksLock.Unlock()
+	if has {
+		l.Unlock()
+	}
+}
+
+func deleteLock(id int) {
+	locksLock.Lock()
+	_, has := locks[id]
+	if has {
+		delete(locks, id)
+	}
+	locksLock.Unlock()
+}
+
 type client struct {
 	name     string
 	password string
@@ -81,10 +114,12 @@ func (b board) String() string {
 }
 
 type game struct {
-	White  string
-	Black  string
-	Active string
-	Points board
+	White          string
+	Black          string
+	Active         string
+	PreviousActive string
+	Points         board
+	Turn           int
 }
 
 type piece struct {
@@ -123,7 +158,6 @@ func main() {
 			password: fmt.Sprintf("passwordclient%v", i),
 		}
 	}
-	wait := sync.WaitGroup{}
 	for _, cl := range clients {
 		jar, err := cookiejar.New(nil)
 		if err != nil {
@@ -139,7 +173,6 @@ func main() {
 		dt.MaxIdleConns = client_count
 		dt.MaxIdleConnsPerHost = client_count
 		// dt set as client Transport on the go func call below
-		wait.Add(1)
 		go func(client *http.Client, meta client) {
 			dialer := &websocket.Dialer{
 				Jar: client.Jar,
@@ -286,6 +319,7 @@ func main() {
 				if r.StatusCode != http.StatusOK {
 					panic(fmt.Sprintf("unexpected error code on GET /competitive15: %v", r.StatusCode))
 				}
+				lock(gameid)
 				if debug {
 					fmt.Printf("(%v) DIAL %v\n", meta.name, moven+"/"+fmt.Sprintf("%v", gameid))
 				}
@@ -313,6 +347,7 @@ func main() {
 				if r.StatusCode != http.StatusOK {
 					panic(fmt.Sprintf("unexpected error code on GET /games/%v: %v", gameid, r.StatusCode))
 				}
+				unlock(gameid)
 				if (meta.name != g.White) && (meta.name != g.Black) {
 					panic(fmt.Sprintf("%v is not White (%v) or Black (%v)", meta.name, g.White, g.Black))
 				}
@@ -328,9 +363,9 @@ func main() {
 			PLAYGAME:
 				for {
 					if debug {
-						fmt.Printf("(%v) GET %v\n", meta.name, moves+"/"+fmt.Sprintf("%d", gameid))
+						fmt.Printf("(%v) GET %v\n", meta.name, moves+"/"+fmt.Sprintf("%d", gameid)+"?Turn="+fmt.Sprintf("%v", g.Turn))
 					}
-					r, err = client.Get(moves + "/" + fmt.Sprintf("%d", gameid))
+					r, err = client.Get(moves + "/" + fmt.Sprintf("%d", gameid) + "?Turn=" + fmt.Sprintf("%v", g.Turn))
 					if err != nil {
 						panic(err.Error())
 					}
@@ -381,44 +416,58 @@ func main() {
 							if err != nil {
 								panic(err.Error())
 							}
+							deleteLock(gameid)
 							continue NEWGAME
 						}
 					}
 					for point, mvs := range em {
-						if point == "promote" {
-							if g.Active != meta.name {
-								break // wait for opponent to promote
-							}
-							from := 0
+						if point == "outdated" {
+							// need update from websocket read
 							if orientation == wichessing.White {
-							WHITEPROMOTE:
-								for {
-									for i := 56; i < 64; i++ {
-										if (g.Points[i].Base == wichessing.Pawn) && (g.Points[i].Orientation == wichessing.White) {
-											from = i
-											break WHITEPROMOTE
-										}
-									}
-									fmt.Println(g.Points)
-									panic(fmt.Sprintf("(%v) found no promotion (white)\n", meta.name))
+								g.Active = g.Black
+							} else {
+								g.Active = g.White
+							}
+							break
+						}
+						if point == "promote" {
+							from := -1
+							for i := 56; i < 64; i++ {
+								if (g.Points[i].Base == wichessing.Pawn) && (g.Points[i].Orientation == wichessing.White) {
+									from = i
+									break
+								}
+							}
+							for i := 0; i < 8; i++ {
+								if (g.Points[i].Base == wichessing.Pawn) && (g.Points[i].Orientation == wichessing.Black) {
+									from = i
+									break
+								}
+							}
+							if from == -1 {
+								fmt.Println(g.Points)
+								panic(fmt.Sprintf("(%v) found no promotion\n", meta.name))
+							}
+							if (from < 8) && (from >= 0) {
+								if g.Active != g.Black {
+									g.Active = g.Black
+								}
+							} else if (from < 64) && (from >= 56) {
+								if g.Active != g.White {
+									g.Active = g.White
 								}
 							} else {
-							BLACKPROMOTE:
-								for {
-									for i := 0; i < 8; i++ {
-										if (g.Points[i].Base == wichessing.Pawn) && (g.Points[i].Orientation == wichessing.Black) {
-											from = i
-											break BLACKPROMOTE
-										}
-									}
-									fmt.Println(g.Points)
-									panic(fmt.Sprintf("(%v) found no promotion (black)\n", meta.name))
-								}
+								fmt.Println(g.Points)
+								panic(fmt.Sprintf("(%v) promotion %v out of range\n", meta.name, from))
+							}
+							if g.Active != meta.name {
+								break // wait for opponent to promote
 							}
 							<-time.After(time.Second * delay_seconds)
 							l = url.Values{}
 							l.Add(fromKey, fmt.Sprintf("%d", from))
 							l.Add(kindKey, fmt.Sprintf("%d", wichessing.Queen))
+							lock(gameid)
 							if debug {
 								fmt.Printf("(%v) POST %v %v %v\n", meta.name, wichessing.AbsPointFromIndex(uint8(from)), "Queen", makeMove+"/"+fmt.Sprintf("%v", gameid))
 							}
@@ -439,14 +488,27 @@ func main() {
 							if err != nil {
 								panic(err.Error())
 							}
+							unlock(gameid)
+							g.Turn = g.Turn + 1
 							for point, p := range diff {
 								g.Points[wichessing.IndexFromAddressString(point)] = p
 							}
-							if orientation == wichessing.White {
-								g.Active = g.Black
+							if g.PreviousActive == meta.name {
+								// then this is a regular promotion
+								if orientation == wichessing.White {
+									g.Active = g.Black
+								} else {
+									g.Active = g.White
+								}
 							} else {
-								g.Active = g.White
+								// otherwise this is a reverse guard pawn promotion
+								if orientation == wichessing.White {
+									g.Active = g.White
+								} else {
+									g.Active = g.Black
+								}
 							}
+							g.PreviousActive = meta.name
 							continue PLAYGAME
 						}
 						if point == "check" {
@@ -474,19 +536,42 @@ func main() {
 							panic(err.Error())
 						}
 						if debug {
-							fmt.Printf("(%v) RECV DIFF\n", meta.name)
+							fmt.Printf("(%v) RECV DIFF: %v\n", meta.name, diff)
 						}
 						if len(diff) == 0 {
 							timeLoss = true
 							continue
 						}
+						// if the previous move is a promote and before that the non-promoter moved, the promoter then gets a turn
+						promoting, _ := g.promoting()
+						if promoting && (g.PreviousActive == meta.name) {
+							if orientation == wichessing.White {
+								g.PreviousActive = g.Black
+								g.Active = g.Black
+							} else {
+								g.PreviousActive = g.White
+								g.Active = g.White
+							}
+						} else {
+							if orientation == wichessing.White {
+								g.PreviousActive = g.Black
+							} else {
+								g.PreviousActive = g.White
+							}
+							g.Active = meta.name
+						}
 						for point, p := range diff {
 							g.Points[wichessing.IndexFromAddressString(point)] = p
 						}
 						promoting, promotingOrientation := g.promoting()
-						if (promoting == false) || (promoting && (promotingOrientation == orientation)) {
-							g.Active = meta.name
+						if promoting && (promotingOrientation != orientation) {
+							if promotingOrientation == wichessing.White {
+								g.Active = g.White
+							} else {
+								g.Active = g.Black
+							}
 						}
+						g.Turn = g.Turn + 1
 						<-time.After(time.Second * delay_seconds)
 						continue
 					}
@@ -499,6 +584,7 @@ func main() {
 							l = url.Values{}
 							l.Add(fromKey, fmt.Sprintf("%d", pt.Index()))
 							l.Add(toKey, fmt.Sprintf("%d", mv.Index()))
+							lock(gameid)
 							if debug {
 								fmt.Printf("(%v) POST %v %v %v\n", meta.name, pt, mv, makeMove+"/"+fmt.Sprintf("%v", gameid))
 							}
@@ -522,6 +608,7 @@ func main() {
 							if err != nil {
 								panic(err.Error())
 							}
+							unlock(gameid)
 							if len(diff) == 0 {
 								timeLoss = true
 								continue PLAYGAME
@@ -529,6 +616,7 @@ func main() {
 							for point, p := range diff {
 								g.Points[wichessing.IndexFromAddressString(point)] = p
 							}
+							g.PreviousActive = meta.name
 							promoting, promotingOrientation := g.promoting()
 							if (promoting == false) || (promoting && (promotingOrientation != orientation)) {
 								if orientation == wichessing.White {
@@ -537,6 +625,7 @@ func main() {
 									g.Active = g.White
 								}
 							}
+							g.Turn = g.Turn + 1
 							continue PLAYGAME
 						}
 						fmt.Println(availableMoves)
@@ -547,13 +636,12 @@ func main() {
 					panic(fmt.Sprintf("(%v) has no available moves\n", meta.name))
 				}
 			}
-			wait.Done()
 		}(&http.Client{
 			Jar:       jar,
 			Transport: &dt,
 		}, cl)
 	}
-	wait.Wait()
+	select {}
 }
 
 func pieceSliceHas(slice []piece, p piece) bool {
