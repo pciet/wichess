@@ -243,6 +243,10 @@
         $.post('/move/'+game_id, {From: from, To: to}).done(makeMove);
     }
     function promote(kind) {
+        if (Muted == false) {
+            MoveSoundSource.start(0);
+            loadNextMoveSound();
+        }
         var from = 0;
         if (Player == White) {
             for (var i = 56; i < 64; i++) {
