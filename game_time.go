@@ -5,7 +5,6 @@ package main
 
 import (
 	"fmt"
-	"math/rand"
 	"sync"
 	"time"
 
@@ -54,79 +53,6 @@ func (g game) timeLoss(active wichessing.Orientation, total time.Duration) bool 
 	return false
 }
 
-func (g game) randomMoveAtTime(at time.Time) game {
-	board := wichessingBoard(g.Points)
-	var active wichessing.Orientation
-	if g.Active == g.White {
-		active = wichessing.White
-	} else {
-		active = wichessing.Black
-	}
-	if (g.DrawTurns >= draw_turn_count) || board.Draw(active, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To))) {
-		return g
-	}
-	m, _, checkmate := board.Moves(active, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To)))
-	if checkmate {
-		return g
-	}
-	for addr, _ := range m {
-		if g.Points[addr.Index()].Orientation != active {
-			delete(m, addr)
-		}
-	}
-	piece := rand.Intn(len(m))
-	i := 0
-OUTER:
-	for addr, moves := range m {
-		if i != piece {
-			i++
-			continue
-		}
-		move := rand.Intn(len(moves))
-		i = 0
-		for point, _ := range moves {
-			if i != move {
-				i++
-				continue
-			}
-			_, promoting, promotingOrientation := g.move(int(addr.Index()), int(point.Index()), g.Active, true)
-			// TODO: this logic is duplicated in easyComputerMoveForGame
-			if promoting && (active == promotingOrientation) {
-				after := board.AfterMove(addr, *point, active, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To)))
-				var from int
-				if active == wichessing.White {
-					for i := 56; i < 64; i++ {
-						p := after[i]
-						if p.Piece == nil {
-							continue
-						}
-						if (p.Base == wichessing.Pawn) && (p.Orientation == wichessing.White) {
-							from = i
-							break
-						}
-					}
-				} else {
-					for i := 0; i < 8; i++ {
-						p := after[i]
-						if p.Piece == nil {
-							continue
-						}
-						if (p.Base == wichessing.Pawn) && (p.Orientation == wichessing.Black) {
-							from = i
-							break
-						}
-					}
-				}
-				_ = g.DB.gameWithIdentifier(g.ID).promote(from, g.Active, wichessing.Queen, true)
-			}
-			break OUTER
-		}
-		panicExit("game_moving: reached unreachable execution path")
-	}
-	g.updateGameTimesWithMove(at)
-	return g.DB.gameWithIdentifier(g.ID)
-}
-
 func (g *game) updateGameTimesWithMove(at time.Time) {
 	var timeKey, elapsedKey string
 	var elapsed time.Duration
@@ -158,7 +84,7 @@ func (g *game) updateGameTimesWithMove(at time.Time) {
 	}
 }
 
-func (db DB) updateGameTimes(id int, turn time.Duration, total time.Duration, activePlayer string) GameInfo {
+func (db DB) updateGameTimes(id int, total time.Duration, activePlayer string) GameInfo {
 	// there is a case where the game listening goroutine can determine a time loss but before the lock can be acquired a move is made - if the move signal cannot be sent in time to reset that routine then the game is considered a loss for the original player even though the database shows the opponent as the active player
 	var active wichessing.Orientation
 	g := db.gameWithIdentifier(id)
@@ -186,18 +112,6 @@ func (db DB) updateGameTimes(id int, turn time.Duration, total time.Duration, ac
 	// if the database contains a timeLoss state then the game is already over and recorded by the listening routine or page load logic
 	if g.timeLoss(active, total) || g.timeLoss(opponent, total) {
 		return g.GameInfo
-	}
-	if turn > time.Duration(0) {
-		sinceMove := g.sinceMove()
-		// if a turn timer is set then make a random move for every turn duration that has occurred.
-		for sinceMove > turn {
-			if g.activeOrientation() == wichessing.Black {
-				g = g.randomMoveAtTime(g.WhiteLatestMove.Add(turn))
-			} else {
-				g = g.randomMoveAtTime(g.BlackLatestMove.Add(turn))
-			}
-			sinceMove = g.sinceMove()
-		}
 	}
 	var elapsedKey, elapsedUpdatedKey string
 	var elapsed time.Duration

@@ -19,7 +19,6 @@ type gameTemplate struct {
 	GameInfo
 	Name      string
 	TotalTime time.Duration
-	TurnTime  time.Duration
 	NowTime   time.Time
 }
 

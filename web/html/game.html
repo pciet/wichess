@@ -170,7 +170,6 @@
     var MoveAfterPromote = false;
 
     var TotalTime = Duration.parse({{.TotalTime}});
-    var TurnTime = Duration.parse({{.TurnTime}});
     var NowTime = moment({{.NowTime}});
 
     var WhiteLatestMove = moment({{.WhiteLatestMove}});
@@ -318,7 +317,7 @@
                 setState(states.NONE);
             }
             if ('checkmate' in Moves) {
-                if ((TurnTime.milliseconds() > 0) || (TotalTime.milliseconds() > 0)) {
+                if (TotalTime.milliseconds() > 0) {
                     if (Turn == o.BLACK) {
                         clearInterval(BlackTimer);
                     } else {
@@ -332,7 +331,7 @@
                 setAcknowledge();
                 return;
             } else if ('draw' in Moves) {
-                if ((TurnTime.milliseconds() > 0) || (TotalTime.milliseconds() > 0)) {
+                if (TotalTime.milliseconds() > 0) {
                     if (Turn == o.BLACK) {
                         clearInterval(BlackTimer);
                     } else {
@@ -398,23 +397,7 @@
                         }
                     }
                 }
-                if (TurnTime.milliseconds() > 0) {
-                    if (Turn == o.BLACK) {
-                        clearInterval(WhiteTimer);
-                        $('#whiteclock').html(millisecondsToClock(TurnTime.valueOf()-1000));
-                        WhiteLatestMove = moment();
-                        BlackTimer = setInterval(function() {
-                            updateClock(o.BLACK);
-                        }, 1000);
-                    } else {
-                        clearInterval(BlackTimer);
-                        $('#blackclock').html(millisecondsToClock(TurnTime.valueOf()-1000));
-                        BlackLatestMove = moment();
-                        WhiteTimer = setInterval(function() {
-                            updateClock(o.WHITE);
-                        }, 1000);
-                    }
-                } else if (TotalTime.milliseconds() > 0) {
+                if (TotalTime.milliseconds() > 0) {
                     if (Turn == o.BLACK) {
                         if (NowTime.isAfter(BlackLatestMove)) {
                             WhiteElapsed = Duration.parse((WhiteElapsed.milliseconds() + moment().diff(NowTime).valueOf())+'ms');
@@ -468,23 +451,7 @@
                     MoveAfterPromote = false;
                 }
             }
-            if (TurnTime.milliseconds() > 0) {
-                if (Turn == o.BLACK) {
-                    clearInterval(WhiteTimer);
-                    $('#whiteclock').html(millisecondsToClock(TurnTime.valueOf()-1000));
-                    WhiteLatestMove = moment();
-                    BlackTimer = setInterval(function() {
-                        updateClock(o.BLACK);
-                    }, 1000);
-                } else {
-                    clearInterval(BlackTimer);
-                    $('#blackclock').html(millisecondsToClock(TurnTime.valueOf()-1000));
-                    BlackLatestMove = moment();
-                    WhiteTimer = setInterval(function() {
-                        updateClock(o.WHITE);
-                    }, 1000);
-                }
-            } else if (TotalTime.milliseconds() > 0) {
+            if (TotalTime.milliseconds() > 0) {
                 if (Turn == o.BLACK) {
                     if (NowTime.isAfter(BlackLatestMove)) {
                         WhiteElapsed = Duration.parse((WhiteElapsed.milliseconds() + moment().diff(NowTime).valueOf())+'ms');
@@ -593,7 +560,11 @@
         } else {
             secondStr = seconds;
         }
-        return hourStr+':'+minuteStr+':'+secondStr;
+        if (hours == 0) {
+            return minuteStr+':'+secondStr;
+        } else {
+            return hourStr+':'+minuteStr+':'+secondStr;
+        }
     }
     function updateClock(orientation) {
         var clock, latestMove, elapsed;
@@ -607,9 +578,7 @@
             elapsed = BlackElapsed;
         }
         var remaining;
-        if (TurnTime.milliseconds() > 0) {
-            remaining = TurnTime.milliseconds() - moment().subtract(NowDifference).diff(latestMove).valueOf();
-        } else if (TotalTime.milliseconds() > 0) {
+        if (TotalTime.milliseconds() > 0) {
             if (NowTime.isAfter(latestMove)) {
                 remaining = TotalTime.milliseconds() - (elapsed.milliseconds() + moment().diff(NowTime).valueOf());
             } else {
@@ -719,7 +688,7 @@
         }
         var blackTime = '';
         var whiteTime = '';
-        if ((TurnTime.milliseconds() > 0) || (TotalTime.milliseconds() > 0)) {
+        if (TotalTime.milliseconds() > 0) {
             blackTime = $('#blackclock').html();
             whiteTime = $('#whiteclock').html();
         }
@@ -754,7 +723,7 @@
             $('#promote').css('width', remainingWidth + 'px').css('height', (height / 4) + 'px');
             $('#acknowledge').css('width', (boardDim / 2) + 'px').css('height', remainingHeight + 'px');
             $('#soundback').css('width', (boardDim / 2) + 'px').css('height', remainingHeight + 'px');
-            if ((TotalTime.milliseconds() > 0) || (TurnTime.milliseconds() > 0)) {
+            if (TotalTime.milliseconds() > 0) {
                 $('#players').html(`
                     <div id="black" class="player">
                         <div id="blackname"></div>
@@ -819,7 +788,7 @@
             $('#acknowledge').css('width', ((width - height) / 2) + 'px').css('height', (height / 8) + 'px');
             $('#promote').css('width', ((width - height) / 2) + 'px').css('height', (height / 4) + 'px');
             $('#buttons').css('height', (height / 4) + 'px');
-            if ((TotalTime.milliseconds() > 0) || (TurnTime.milliseconds() > 0)) {
+            if (TotalTime.milliseconds() > 0) {
                 $('#players').html(`
                     <div id="black" class="player"><!--
                         --><div id="blackname"></div><!--
@@ -883,7 +852,7 @@
             $('#promote').css('width', (width / 4) + 'px').css('height', ((height - width) / 4) + 'px');
             $('#soundback').css('width', (width / 4) + 'px').css('height', ((height - width) / 4) + 'px');
             $('#players').css('width', width + 'px').css('height', ((height - width) / 2) + 'px');
-            if ((TotalTime.milliseconds() > 0) || (TurnTime.milliseconds() > 0)) {
+            if (TotalTime.milliseconds() > 0) {
                 $('#players').html(`
                     <div id="black" class="player inline"><!--
                         --><div id="blackname"></div><!--
@@ -930,7 +899,7 @@
             $('#white').removeClass('indicating');
             $('#black').addClass('indicating');
         }
-        if ((TotalTime.milliseconds() > 0) || (TurnTime.milliseconds() > 0)) {
+        if (TotalTime.milliseconds() > 0) {
             $('#blackname').css('height', '50%').css('width', '100%').css('line-height', $('#blackname').height() + 'px');
             $('#whitename').css('height', '50%').css('width', '100%').css('line-height', $('#whitename').height() + 'px');
             $('#blackclock').css('height', '50%').css('width', '100%').css('line-height', $('#blackclock').height() + 'px');
@@ -955,27 +924,7 @@
             }
             $('#white, #black').fitText(1.5);
         }
-        if (TurnTime.milliseconds() > 0) {
-            if (Turn == o.WHITE) {
-                $('#blackclock').html(millisecondsToClock(TurnTime.valueOf()-1000)).addClass('clock').fitText();
-                updateClock(o.WHITE);
-                $('#whiteclock').addClass('clock').fitText();
-                if (Acknowledging == false) {
-                    WhiteTimer = setInterval(function() {
-                        updateClock(o.WHITE);
-                    }, 1000);
-                }
-            } else {
-                $('#whiteclock').html(millisecondsToClock(TurnTime.valueOf()-1000)).addClass('clock').fitText();
-                updateClock(o.BLACK);
-                $('#blackclock').addClass('clock').fitText();
-                if (Acknowledging == false) {
-                    BlackTimer = setInterval(function() {
-                        updateClock(o.BLACK);
-                    }, 1000);            
-                }
-            }
-        } else if (TotalTime.milliseconds() > 0) {
+        if (TotalTime.milliseconds() > 0) {
             var btime = TotalTime.milliseconds()-BlackElapsed.milliseconds()-1000;
             if (btime < 0) {
                 btime = 0;
@@ -1169,7 +1118,7 @@
             Black = data.Black;
             Move = data.Turn;
             PreviousMover = data.PreviousActive;
-            if ((TotalTime.milliseconds() > 0) || (TurnTime.milliseconds() > 0)) {
+            if (TotalTime.milliseconds() > 0) {
                 if (White == Player) {
                     Opponent = Black;
                     PlayerOrientation = o.WHITE;

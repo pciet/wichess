@@ -125,13 +125,12 @@ func competitive5Handler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		lockGame(id)
-		info := database.updateGameTimes(id, competitive5_turn_time, competitive5_total_time, "")
+		info := database.updateGameTimes(id, competitive5_total_time, "")
 		unlockGame(id)
 		executeWebTemplate(w, game_template, gameTemplate{
 			GameInfo:  info,
 			Name:      name,
 			TotalTime: competitive5_total_time,
-			TurnTime:  competitive5_turn_time,
 			NowTime:   time.Now(),
 		})
 	} else {

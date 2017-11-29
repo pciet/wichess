@@ -280,11 +280,6 @@ func (g *game) acknowledgeGameComplete(player string) bool {
 			g.DB.removePlayersCompetitive5Game(player)
 		} else if c15 != 0 {
 			g.DB.removePlayersCompetitive15Game(player)
-		} else {
-			isCompetitive48, slot := g.DB.gameIsCompetitive48ForPlayer(g.ID, player)
-			if isCompetitive48 {
-				g.DB.removePlayersCompetitive48Game(player, slot)
-			}
 		}
 	}
 	if g.Competitive {

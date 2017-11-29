@@ -21,7 +21,7 @@ const (
 )
 
 // Returns address that have changed, Kind 0 piece for a now empty point, but does not update the board points. Returns true and an orientation of the promoter if promoting.
-func (g game) move(from, to int, mover string, timeoutMove bool) (map[string]piece, bool, wichessing.Orientation) {
+func (g game) move(from, to int, mover string) (map[string]piece, bool, wichessing.Orientation) {
 	if g.Active != mover {
 		if debug {
 			fmt.Println("move: active player is not mover")
@@ -100,25 +100,23 @@ func (g game) move(from, to int, mover string, timeoutMove bool) (map[string]pie
 			g.DB.updateGame(g.ID, diff, nextMover, g.Active, from, to, 0, g.Turn)
 		}
 	}
-	if timeoutMove == false {
-		go func() {
-			gameMonitorsLock.RLock()
-			c, has := gameMonitors[g.ID]
-			if has {
-				c.move <- time.Now()
-			}
-			gameMonitorsLock.RUnlock()
-		}()
-	}
+	go func() {
+		gameMonitorsLock.RLock()
+		c, has := gameMonitors[g.ID]
+		if has {
+			c.move <- time.Now()
+		}
+		gameMonitorsLock.RUnlock()
+	}()
 	if (mover != easy_computer_player) && (mover != hard_computer_player) {
 		gameListeningLock.RLock()
 		listeners, has := gameListening[g.ID]
-		if ((orientation == wichessing.White) || timeoutMove) && has {
+		if (orientation == wichessing.White) && has {
 			if listeners.black != nil {
 				listeners.black <- diff
 			}
 		}
-		if ((orientation == wichessing.Black) || timeoutMove) && has {
+		if (orientation == wichessing.Black) && has {
 			if listeners.white != nil {
 				listeners.white <- diff
 			}
@@ -144,7 +142,7 @@ func (g game) move(from, to int, mover string, timeoutMove bool) (map[string]pie
 	return diff, promoting, promotingOrientation
 }
 
-func (g game) promote(from int, player string, kind wichessing.Kind, timeoutMove bool) map[string]piece {
+func (g game) promote(from int, player string, kind wichessing.Kind) map[string]piece {
 	if g.Active != player {
 		if debug {
 			fmt.Println("promote: active not promoting player")
@@ -219,25 +217,23 @@ func (g game) promote(from int, player string, kind wichessing.Kind, timeoutMove
 	} else {
 		g.DB.updateGame(g.ID, diff, nextMover, g.Active, from, from, 0, g.Turn)
 	}
-	if timeoutMove == false {
-		go func() {
-			gameMonitorsLock.RLock()
-			c, has := gameMonitors[g.ID]
-			if has {
-				c.move <- time.Now()
-			}
-			gameMonitorsLock.RUnlock()
-		}()
-	}
+	go func() {
+		gameMonitorsLock.RLock()
+		c, has := gameMonitors[g.ID]
+		if has {
+			c.move <- time.Now()
+		}
+		gameMonitorsLock.RUnlock()
+	}()
 	if (player != easy_computer_player) && (player != hard_computer_player) {
 		gameListeningLock.RLock()
 		listeners, has := gameListening[g.ID]
-		if ((orientation == wichessing.White) || timeoutMove) && has {
+		if (orientation == wichessing.White) && has {
 			if listeners.black != nil {
 				listeners.black <- diff
 			}
 		}
-		if ((orientation == wichessing.Black) || timeoutMove) && has {
+		if (orientation == wichessing.Black) && has {
 			if listeners.white != nil {
 				listeners.white <- diff
 			}

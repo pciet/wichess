@@ -121,7 +121,7 @@ func moveRequestHandler(w http.ResponseWriter, r *http.Request) {
 		var promoting bool
 		var promotingOrientation wichessing.Orientation
 		if kind != 0 { // promotion
-			diff = game.promote(from, name, wichessing.Kind(kind), false)
+			diff = game.promote(from, name, wichessing.Kind(kind))
 			if (diff == nil) || (len(diff) == 0) {
 				if debug {
 					fmt.Println("move: game.promote returned nil or zero length diff")
@@ -130,7 +130,7 @@ func moveRequestHandler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 		} else {
-			diff, promoting, promotingOrientation = game.move(from, to, name, false)
+			diff, promoting, promotingOrientation = game.move(from, to, name)
 			if (diff == nil) || (len(diff) == 0) {
 				if debug {
 					fmt.Println("move: game.move returned nil or zero length diff")

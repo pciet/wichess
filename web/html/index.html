@@ -99,16 +99,6 @@
     .gameselectpoint {
         outline: 1px solid #d4cca5;
     }
-    .matching {
-        background-color: #e1e1e1;
-    }
-    .matched {
-        outline: 1px dotted black;
-        background-color: #f3f3f3;
-    }
-    .highlightedgame {
-        outline: 1px solid black;
-    }
     .selectpiece {
         height: 100%;
     }
@@ -141,9 +131,6 @@
     // space around a game cell
     var GameCellPadding = 1;
 
-    var Competitive48Games = [{{.C48S0}}, {{.C48S1}}, {{.C48S2}}, {{.C48S3}}, {{.C48S4}}, {{.C48S5}}, {{.C48S6}}, {{.C48S7}}];
-    var available = 0, matching = 1, matched = 2; // see web_index.go for these consts
-
     var Modes = {
         COMPUTER: 0,
         FRIEND: 1,
@@ -159,8 +146,6 @@
         StoredMode = parseInt(c);
     }
 
-    var Highlighted48HourGame = null;
-
     var Matching = false;
     var Matching5 = false;
     var Matching15 = false;
@@ -168,11 +153,6 @@
     var Pieces = null;
     var Assignments = [];
 
-    var c48ws = new WebSocket('ws://localhost:8080/competitive48n');
-    c48ws.onmessage = function(event) {
-        Matching = false;
-        $('#match'+JSON.parse(event.data).Slot).removeClass('matching').addClass('matched');
-    }
     for (var i = 0; i < 16; i++) {
         Assignments[i] = 0;
     }
@@ -437,15 +417,10 @@
                             <div class="gamebuttondiv">
                                 <div class="gamebutton" id="matched15">15 Minute</div>
                             </div>
-                            <div class="gamebuttondiv">
-                                <div class="gamebutton" id="matched5">5 Minute</div>
-                            </div>
                         </div>
                         <div class="inline competitivebuttondiv">
-                            <div id="matchgrid"></div>
                             <div class="gamebuttondiv">
-                                <div style="height: 10%;"></div>
-                                <div class="gamebutton" id="matched48">48 Hour Turn</div>
+                                <div class="gamebutton" id="matched5">5 Minute</div>
                             </div>
                         </div>
                     </div>
@@ -460,52 +435,7 @@
                 } else { 
                     $('.gamebutton').fitText(1.4);
                 }
-                var matchGrid = '<table>';
-                for (var i = 0; i < 2; i++) {
-                    matchGrid += '<tr class="gameselectrow">';
-                    for (var j = 0; j < 4; j++) {
-                        matchGrid += '<td id="match'+((i*4)+j)+'" class="gameselectpoint"></td>';
-                    }
-                    matchGrid += '</tr>';
-                }
-                matchGrid += '</table>';
-                $('#matchgrid').html(matchGrid);
-                // border-collapse with two rows = three borders
-                var dim = (($('#competitivebuttons').height() / 2) - (GameCellPadding * 3)) / 2; 
-                $('.gameselectrow').css('height', dim + 'px');
-                $('.gameselectpoint').css('width', dim + 'px');
-                for (var i = 0; i < 8; i++) {
-                    switch (Competitive48Games[i]) {
-                        case available:
-                            break;
-                        case matching:
-                            Matching = true;
-                            $('#match'+i).addClass('matching');
-                            break;
-                        case matched:
-                            $('#match'+i).addClass('matched');
-                            break;
-                    }
-                    $('#match'+i).click({Index: i}, function(event) {
-                        var index = event.data.Index;
-                        if ((Matching == true) && ($('#match'+index).hasClass('matched') == false)) {
-                            return;
-                        }
-                        if (Highlighted48HourGame != null) {
-                            $('#match'+Highlighted48HourGame).removeClass('highlightedgame');
-                            if (Highlighted48HourGame == index) {
-                                Highlighted48HourGame = null;
-                                return;
-                            }
-                        }
-                        if ($('#match'+index).hasClass('matching')) {
-                            return;
-                        }
-                        Highlighted48HourGame = index;
-                        $('#match'+Highlighted48HourGame).addClass('highlightedgame');
-                    });
-                }
-                $('#matched15').click(function() {
+               $('#matched15').click(function() {
                     Clicked = null;
                     jQuery.post('competitive15', JSON.stringify({assignments: Assignments})).done(function() {
                         window.location.pathname = '/competitive15';
@@ -522,20 +452,6 @@
                     Matching5 = true;
                     match5Competitive();
 
-                });
-                $('#matched48').click(function() {
-                    if (Highlighted48HourGame == null) {
-                        return;
-                    }
-                    if ($('#match'+Highlighted48HourGame).hasClass('matched')) {
-                        window.location.pathname = '/competitive48/'+Highlighted48HourGame;
-                        return;
-                    }
-                    jQuery.post('competitive48', JSON.stringify({index: Highlighted48HourGame, assignments: Assignments})).done(function() {
-                        $('#match'+Highlighted48HourGame).removeClass('highlighted').addClass('matching');
-                        Matching = true;
-                        Highlighted48HourGame = null;
-                    });
                 });
                 break;
             case Modes.HOTSEAT:

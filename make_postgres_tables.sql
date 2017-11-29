@@ -6,11 +6,7 @@ CREATE TABLE Players (
     draws INTEGER,
     rating INTEGER,
     c5 INTEGER,
-    c15 INTEGER,
-    c48s0 INTEGER, c48s1 INTEGER,
-    c48s2 INTEGER, c48s3 INTEGER,
-    c48s4 INTEGER, c48s5 INTEGER,
-    c48s6 INTEGER, c48s7 INTEGER
+    c15 INTEGER
 );
 
 CREATE TABLE Games (

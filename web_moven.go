@@ -57,12 +57,6 @@ func moveNotificationWebsocketHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	var turnTime time.Duration
-	for _, id := range game.DB.playersCompetitive48Games(name) {
-		if id == int(gameid) {
-			turnTime = competitive48_turn_time
-		}
-	}
 	var totalTime time.Duration
 	c5 := database.playersCompetitive5HourGameID(name)
 	if c5 != 0 {
@@ -87,5 +81,5 @@ func moveNotificationWebsocketHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	listeningToGame(name, game.White, game.Black, turnTime, totalTime, previousMove, game.ID, conn)
+	listeningToGame(name, game.White, game.Black, totalTime, previousMove, game.ID, conn)
 }
