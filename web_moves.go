@@ -73,7 +73,7 @@ func movesHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	tx := database.Begin()
-	game := tx.gameWithIdentifier(int(gameid), false)
+	game := tx.gameWithIdentifier(int(gameid), true)
 	tx.Commit()
 	if (game.White != name) && (game.Black != name) {
 		if debug {
