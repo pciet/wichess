@@ -29,9 +29,9 @@ func moveNotificationWebsocketHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	rLockGame(int(gameid))
-	game := database.gameWithIdentifier(int(gameid))
-	rUnlockGame(int(gameid))
+	tx := database.Begin()
+	game := tx.gameWithIdentifier(int(gameid), false)
+	tx.Commit()
 	if (game.White != name) && (game.Black != name) {
 		if debug {
 			fmt.Println("moven: player not white or black")

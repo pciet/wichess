@@ -27,14 +27,6 @@ func moveRequestHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	// TODO: this shouldn't be possible
-	if r.URL.Path == "/" {
-		if debug {
-			fmt.Println("move: request.URL.Path == /")
-		}
-		http.NotFound(w, r)
-		return
-	}
 	key, name := database.validSession(r)
 	if key == "" {
 		http.Redirect(w, r, "/login", http.StatusFound)
@@ -102,17 +94,17 @@ func moveRequestHandler(w http.ResponseWriter, r *http.Request) {
 			totalTime = competitive15_total_time
 		}
 	}
-	lockGame(int(gameid))
-	defer unlockGame(int(gameid))
-	game := database.gameWithIdentifier(int(gameid))
+	tx := database.Begin()
+	game := tx.gameWithIdentifier(int(gameid), true)
 	if (game.White != name) && (game.Black != name) {
+		tx.Commit()
 		if debug {
 			fmt.Println("move: player not white or black")
 		}
 		http.NotFound(w, r)
 		return
 	}
-	(&game).updateGameTimesWithMove(time.Now())
+	(&game).updateGameTimesWithMove(time.Now(), tx)
 	var diff map[string]piece
 	if game.timeLoss(game.activeOrientation(), totalTime) {
 		diff = map[string]piece{}
@@ -120,8 +112,9 @@ func moveRequestHandler(w http.ResponseWriter, r *http.Request) {
 		var promoting bool
 		var promotingOrientation wichessing.Orientation
 		if kind != 0 { // promotion
-			diff = game.promote(from, name, wichessing.Kind(kind))
+			diff = game.promote(from, name, wichessing.Kind(kind), tx)
 			if (diff == nil) || (len(diff) == 0) {
+				tx.Commit()
 				if debug {
 					fmt.Println("move: game.promote returned nil or zero length diff")
 				}
@@ -129,8 +122,9 @@ func moveRequestHandler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 		} else {
-			diff, promoting, promotingOrientation = game.move(from, to, name)
+			diff, promoting, promotingOrientation = game.move(from, to, name, tx)
 			if (diff == nil) || (len(diff) == 0) {
+				tx.Commit()
 				if debug {
 					fmt.Println("move: game.move returned nil or zero length diff")
 				}
@@ -138,6 +132,7 @@ func moveRequestHandler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 		}
+		tx.Commit()
 		var orientation wichessing.Orientation
 		if game.White == name {
 			orientation = wichessing.White

@@ -44,10 +44,10 @@ func listeningToGame(name string, white string, black string, totalTime time.Dur
 			}
 			go func(channels gameMonitor, gameid int, total time.Duration, move time.Time) {
 				for {
-					lockGame(gameid)
-					g := database.gameWithIdentifier(gameid)
+					tx := database.Begin()
+					g := tx.gameWithIdentifier(gameid, false)
+					tx.Commit()
 					if (g.White != name) && (g.Black != name) {
-						unlockGame(gameid)
 						gameMonitorsLock.Lock()
 						delete(gameMonitors, gameid)
 						gameMonitorsLock.Unlock()
@@ -57,13 +57,11 @@ func listeningToGame(name string, white string, black string, totalTime time.Dur
 					active := g.activeOrientation()
 					activePlayer := g.Active
 					if (g.DrawTurns >= draw_turn_count) || b.Draw(active, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To))) || b.Checkmate(active, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To))) || g.timeLoss(active, total) {
-						unlockGame(gameid)
 						gameMonitorsLock.Lock()
 						delete(gameMonitors, gameid)
 						gameMonitorsLock.Unlock()
 						return
 					}
-					unlockGame(gameid)
 					elapsed := g.orientationsElapsedTime(active)
 					select {
 					case <-channels.done:
@@ -71,9 +69,7 @@ func listeningToGame(name string, white string, black string, totalTime time.Dur
 					case <-channels.move:
 					case <-time.After(total - elapsed):
 						// between hitting this case and reading the game in updateGameTimes the active player may have switched
-						lockGame(gameid)
 						_ = g.DB.updateGameTimes(gameid, total, activePlayer)
-						unlockGame(gameid)
 						// by sending an empty notification the client will request /moves, which says time has expired
 						gameListeningLock.RLock()
 						cs, has := gameListening[gameid]

@@ -5,6 +5,7 @@ package main
 
 import (
 	"crypto/rand"
+	"database/sql"
 	"encoding/base64"
 	"fmt"
 	"net/http"
@@ -48,18 +49,22 @@ func clearClientSession(w http.ResponseWriter) {
 }
 
 func (db DB) newSession(name, key string) {
+	tx := db.Begin()
+	defer tx.Commit()
 	var playerKey []byte
-	err := db.QueryRow("SELECT "+session_key+" FROM "+session_table+" WHERE "+session_name+"=$1;", name).Scan(&playerKey)
+	err := tx.QueryRow("SELECT "+session_key+" FROM "+session_table+" WHERE "+session_name+"=$1 FOR UPDATE;", name).Scan(&playerKey)
 	if err == nil {
 		if string(playerKey) != key {
-			_, err = db.Exec("UPDATE "+session_table+" SET "+session_key+" =$1 WHERE "+session_name+" =$2;", []byte(key), name)
+			_, err = tx.Exec("UPDATE "+session_table+" SET "+session_key+" =$1 WHERE "+session_name+" =$2;", []byte(key), name)
 			if err != nil {
 				panicExit(err.Error())
 			}
 		}
 		return
+	} else if err != sql.ErrNoRows {
+		panicExit(err.Error())
 	}
-	_, err = db.Exec("INSERT INTO "+session_table+"("+session_name+", "+session_key+") VALUES ($1, $2);", name, []byte(key))
+	_, err = tx.Exec("INSERT INTO "+session_table+"("+session_name+", "+session_key+") VALUES ($1, $2);", name, []byte(key))
 	if err != nil {
 		panicExit(err.Error())
 	}

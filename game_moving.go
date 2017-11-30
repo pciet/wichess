@@ -21,7 +21,7 @@ const (
 )
 
 // Returns address that have changed, Kind 0 piece for a now empty point, but does not update the board points. Returns true and an orientation of the promoter if promoting.
-func (g game) move(from, to int, mover string) (map[string]piece, bool, wichessing.Orientation) {
+func (g game) move(from, to int, mover string, tx TX) (map[string]piece, bool, wichessing.Orientation) {
 	if g.Active != mover {
 		if debug {
 			fmt.Println("move: active player is not mover")
@@ -92,12 +92,12 @@ func (g game) move(from, to int, mover string) (map[string]piece, bool, wichessi
 	after := b.AfterMove(absPoint(from), absPoint(to), orientation, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To)))
 	promoting, promotingOrientation := after.HasPawnToPromote()
 	if promoting && (promotingOrientation == orientation) {
-		g.DB.updateGame(g.ID, diff, mover, g.Active, from, to, 0, g.Turn)
+		tx.updateGame(g.ID, diff, mover, g.Active, from, to, 0, g.Turn)
 	} else {
 		if (len(taken) == 0) && (b[from].Base != wichessing.Pawn) {
-			g.DB.updateGame(g.ID, diff, nextMover, g.Active, from, to, g.DrawTurns+1, g.Turn)
+			tx.updateGame(g.ID, diff, nextMover, g.Active, from, to, g.DrawTurns+1, g.Turn)
 		} else {
-			g.DB.updateGame(g.ID, diff, nextMover, g.Active, from, to, 0, g.Turn)
+			tx.updateGame(g.ID, diff, nextMover, g.Active, from, to, 0, g.Turn)
 		}
 	}
 	go func() {
@@ -142,7 +142,7 @@ func (g game) move(from, to int, mover string) (map[string]piece, bool, wichessi
 	return diff, promoting, promotingOrientation
 }
 
-func (g game) promote(from int, player string, kind wichessing.Kind) map[string]piece {
+func (g game) promote(from int, player string, kind wichessing.Kind, tx TX) map[string]piece {
 	if g.Active != player {
 		if debug {
 			fmt.Println("promote: active not promoting player")
@@ -213,9 +213,9 @@ func (g game) promote(from int, player string, kind wichessing.Kind) map[string]
 	}
 	// guard pawn case, if previous mover was other player then the promoting player gets a move after this one
 	if g.PreviousActive == nextMover {
-		g.DB.updateGame(g.ID, diff, g.Active, g.Active, from, from, 0, g.Turn)
+		tx.updateGame(g.ID, diff, g.Active, g.Active, from, from, 0, g.Turn)
 	} else {
-		g.DB.updateGame(g.ID, diff, nextMover, g.Active, from, from, 0, g.Turn)
+		tx.updateGame(g.ID, diff, nextMover, g.Active, from, from, 0, g.Turn)
 	}
 	go func() {
 		gameMonitorsLock.RLock()

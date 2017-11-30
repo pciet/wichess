@@ -112,10 +112,14 @@ func (db DB) gameInfo(id int) GameInfo {
 }
 
 // For an invalid ID an empty game is returned. Check against the player names.
-func (db DB) gameWithIdentifier(id int) game {
+func (tx TX) gameWithIdentifier(id int, forWrite bool) game {
+	update := ""
+	if forWrite {
+		update = "FOR UPDATE"
+	}
 	var Points [64]pieceEncoding
 	g := GameInfo{}
-	err := db.QueryRow("SELECT * FROM "+games_table+" WHERE "+games_identifier+"=$1;", id).Scan(&g.ID, &g.Piece, &g.Competitive, &g.Recorded, &g.White, &g.WhiteAcknowledge, &g.WhiteLatestMove, &g.WhiteElapsed, &g.WhiteElapsedUpdated, &g.Black, &g.BlackAcknowledge, &g.BlackLatestMove, &g.BlackElapsed, &g.BlackElapsedUpdated, &g.Active, &g.PreviousActive, &g.From, &g.To, &g.DrawTurns, &g.Turn, &Points[0], &Points[1], &Points[2], &Points[3], &Points[4], &Points[5], &Points[6], &Points[7], &Points[8], &Points[9], &Points[10], &Points[11], &Points[12], &Points[13], &Points[14], &Points[15], &Points[16], &Points[17], &Points[18], &Points[19], &Points[20], &Points[21], &Points[22], &Points[23], &Points[24], &Points[25], &Points[26], &Points[27], &Points[28], &Points[29], &Points[30], &Points[31], &Points[32], &Points[33], &Points[34], &Points[35], &Points[36], &Points[37], &Points[38], &Points[39], &Points[40], &Points[41], &Points[42], &Points[43], &Points[44], &Points[45], &Points[46], &Points[47], &Points[48], &Points[49], &Points[50], &Points[51], &Points[52], &Points[53], &Points[54], &Points[55], &Points[56], &Points[57], &Points[58], &Points[59], &Points[60], &Points[61], &Points[62], &Points[63])
+	err := tx.QueryRow("SELECT * FROM "+games_table+" WHERE "+games_identifier+"=$1"+update+";", id).Scan(&g.ID, &g.Piece, &g.Competitive, &g.Recorded, &g.White, &g.WhiteAcknowledge, &g.WhiteLatestMove, &g.WhiteElapsed, &g.WhiteElapsedUpdated, &g.Black, &g.BlackAcknowledge, &g.BlackLatestMove, &g.BlackElapsed, &g.BlackElapsedUpdated, &g.Active, &g.PreviousActive, &g.From, &g.To, &g.DrawTurns, &g.Turn, &Points[0], &Points[1], &Points[2], &Points[3], &Points[4], &Points[5], &Points[6], &Points[7], &Points[8], &Points[9], &Points[10], &Points[11], &Points[12], &Points[13], &Points[14], &Points[15], &Points[16], &Points[17], &Points[18], &Points[19], &Points[20], &Points[21], &Points[22], &Points[23], &Points[24], &Points[25], &Points[26], &Points[27], &Points[28], &Points[29], &Points[30], &Points[31], &Points[32], &Points[33], &Points[34], &Points[35], &Points[36], &Points[37], &Points[38], &Points[39], &Points[40], &Points[41], &Points[42], &Points[43], &Points[44], &Points[45], &Points[46], &Points[47], &Points[48], &Points[49], &Points[50], &Points[51], &Points[52], &Points[53], &Points[54], &Points[55], &Points[56], &Points[57], &Points[58], &Points[59], &Points[60], &Points[61], &Points[62], &Points[63])
 	if err != nil {
 		if debug {
 			fmt.Println(err.Error())
@@ -126,7 +130,7 @@ func (db DB) gameWithIdentifier(id int) game {
 	return game{
 		GameInfo: g,
 		Points:   decodedPoints(Points),
-		DB:       db,
+		DB:       database,
 	}
 }
 
@@ -155,7 +159,7 @@ func (db DB) gamePlayers(gameID int) (string, string) {
 	return white, black
 }
 
-func (db DB) updateGame(id int, diff map[string]piece, active string, previousActive string, from int, to int, drawTurns int, turn int) {
+func (tx TX) updateGame(id int, diff map[string]piece, active string, previousActive string, from int, to int, drawTurns int, turn int) {
 	if (diff == nil) || (len(diff) == 0) {
 		panicExit("no game changes recorded to database")
 	}
@@ -224,7 +228,7 @@ func (db DB) updateGame(id int, diff map[string]piece, active string, previousAc
 		panicExit(err.Error())
 	}
 
-	result, err := db.Exec(query.String(), args...)
+	result, err := tx.Exec(query.String(), args...)
 	if err != nil {
 		panicExit(err.Error())
 	}
@@ -237,7 +241,7 @@ func (db DB) updateGame(id int, diff map[string]piece, active string, previousAc
 	}
 }
 
-func (g *game) acknowledgeGameComplete(player string) bool {
+func (g *game) acknowledgeGameComplete(player string, tx TX) bool {
 	active := (*g).activeOrientation()
 	var totalTime time.Duration
 	var c5, c15 int
@@ -312,10 +316,10 @@ func (g *game) acknowledgeGameComplete(player string) bool {
 	}
 	gameListeningLock.Unlock()
 	if g.BlackAcknowledge && g.WhiteAcknowledge {
-		g.DB.deleteGame(g.ID)
+		tx.deleteGame(g.ID)
 		return true
 	}
-	result, err := g.DB.Exec("UPDATE "+games_table+" SET "+ackKey+" = $1 WHERE "+games_identifier+" = $2;", true, g.ID)
+	result, err := tx.Exec("UPDATE "+games_table+" SET "+ackKey+" = $1 WHERE "+games_identifier+" = $2;", true, g.ID)
 	if err != nil {
 		panicExit(err.Error())
 	}
@@ -436,9 +440,8 @@ func (db DB) newGame(player1 string, player1setup gameSetup, player2 string, pla
 	return id
 }
 
-func (db DB) deleteGame(id int) {
-	go func(gid int) { deleteGameLock(gid) }(id)
-	result, err := db.Exec("DELETE FROM "+games_table+" WHERE "+games_identifier+" = $1;", id)
+func (tx TX) deleteGame(id int) {
+	result, err := tx.Exec("DELETE FROM "+games_table+" WHERE "+games_identifier+" = $1;", id)
 	if err != nil {
 		panicExit(err.Error())
 	}

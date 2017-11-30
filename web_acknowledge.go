@@ -7,15 +7,12 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	"sync"
 )
 
 const (
 	request_player = "player"
 	request_gameid = "gameid"
 )
-
-var acknowledgingLock = sync.Mutex{}
 
 func acknowledgeGameCompletionHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
@@ -59,10 +56,9 @@ func acknowledgeGameCompletionHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	acknowledgingLock.Lock()
-	rLockGame(gid)
-	game := database.gameWithIdentifier(gid)
-	rUnlockGame(gid)
+	tx := database.Begin()
+	defer tx.Commit()
+	game := tx.gameWithIdentifier(gid, true)
 	if (game.White != name) && (game.Black != name) {
 		if debug {
 			fmt.Println("acknowledge: player doesn't match white or black")
@@ -70,7 +66,7 @@ func acknowledgeGameCompletionHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	if (&game).acknowledgeGameComplete(name) == false {
+	if (&game).acknowledgeGameComplete(name, tx) == false {
 		if debug {
 			fmt.Println("acknowledge: game.acknowledgeGameComplete returned false")
 		}
@@ -78,14 +74,13 @@ func acknowledgeGameCompletionHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if (game.White == easy_computer_player) || (game.Black == easy_computer_player) {
-		if (&game).acknowledgeGameComplete(easy_computer_player) == false {
+		if (&game).acknowledgeGameComplete(easy_computer_player, tx) == false {
 			panicExit("web_acknowledge: failed to acknowledge easy computer player")
 		}
 	} else if (game.White == hard_computer_player) || (game.Black == hard_computer_player) {
-		if (&game).acknowledgeGameComplete(hard_computer_player) == false {
+		if (&game).acknowledgeGameComplete(hard_computer_player, tx) == false {
 			panicExit("web_acknowledge: failed to acknowledge hard computer  player")
 		}
 	}
-	acknowledgingLock.Unlock()
 	r.Body.Close()
 }

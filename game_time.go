@@ -53,7 +53,7 @@ func (g game) timeLoss(active wichessing.Orientation, total time.Duration) bool 
 	return false
 }
 
-func (g *game) updateGameTimesWithMove(at time.Time) {
+func (g *game) updateGameTimesWithMove(at time.Time, tx TX) {
 	var timeKey, elapsedKey string
 	var elapsed time.Duration
 	if g.Active == g.White {
@@ -71,7 +71,7 @@ func (g *game) updateGameTimesWithMove(at time.Time) {
 		g.BlackElapsed = elapsed
 		g.BlackElapsedUpdated = at
 	}
-	result, err := g.DB.Exec("UPDATE "+games_table+" SET "+timeKey+" = $1, "+elapsedKey+" = $2, "+games_white_elapsed_updated+" = $3, "+games_black_elapsed_updated+" = $4 WHERE "+games_identifier+" = $5;", at, elapsed, at, at, g.ID)
+	result, err := tx.Exec("UPDATE "+games_table+" SET "+timeKey+" = $1, "+elapsedKey+" = $2, "+games_white_elapsed_updated+" = $3, "+games_black_elapsed_updated+" = $4 WHERE "+games_identifier+" = $5;", at, elapsed, at, at, g.ID)
 	if err != nil {
 		panicExit(err.Error())
 	}
@@ -87,7 +87,9 @@ func (g *game) updateGameTimesWithMove(at time.Time) {
 func (db DB) updateGameTimes(id int, total time.Duration, activePlayer string) GameInfo {
 	// there is a case where the game listening goroutine can determine a time loss but before the lock can be acquired a move is made - if the move signal cannot be sent in time to reset that routine then the game is considered a loss for the original player even though the database shows the opponent as the active player
 	var active wichessing.Orientation
-	g := db.gameWithIdentifier(id)
+	tx := db.Begin()
+	defer tx.Commit()
+	g := tx.gameWithIdentifier(id, true)
 	if activePlayer == "" {
 		if g.Active == g.White {
 			active = wichessing.White
@@ -131,7 +133,7 @@ func (db DB) updateGameTimes(id int, total time.Duration, activePlayer string) G
 		g.BlackElapsedUpdated = elapsedUpdated
 		g.BlackElapsed = elapsed
 	}
-	result, err := g.DB.Exec("UPDATE "+games_table+" SET "+elapsedKey+" = $1, "+elapsedUpdatedKey+" = $2 WHERE "+games_identifier+" = $3;", elapsed, elapsedUpdated, g.ID)
+	result, err := tx.Exec("UPDATE "+games_table+" SET "+elapsedKey+" = $1, "+elapsedUpdatedKey+" = $2 WHERE "+games_identifier+" = $3;", elapsed, elapsedUpdated, g.ID)
 	if err != nil {
 		panicExit(err.Error())
 	}

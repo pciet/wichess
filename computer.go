@@ -20,7 +20,8 @@ func (db DB) hardComputerMoveForGame(id int) map[string]piece {
 }
 
 func (db DB) easyComputerMoveForGame(id int) map[string]piece {
-	g := db.gameWithIdentifier(id)
+	tx := db.Begin()
+	g := tx.gameWithIdentifier(id, true)
 	var orientation wichessing.Orientation
 	if easy_computer_player == g.White {
 		orientation = wichessing.White
@@ -29,12 +30,15 @@ func (db DB) easyComputerMoveForGame(id int) map[string]piece {
 	}
 	move := wichessingBoard(g.Points).ComputerMove(orientation, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To)))
 	if move == nil {
+		tx.Commit()
 		if debug {
 			fmt.Println("nil return for computer move")
 		}
 		return nil
 	}
-	diff, promoting, promotingOrientation := g.move(int(move.From.Index()), int(move.To.Index()), easy_computer_player)
+	// TODO: reverse promotion isn't handled (computer guard pawn moved by person playing into promotion square)
+	diff, promoting, promotingOrientation := g.move(int(move.From.Index()), int(move.To.Index()), easy_computer_player, tx)
+	tx.Commit()
 	if promoting && (promotingOrientation == orientation) {
 		after := wichessingBoard(g.Points).AfterMove(move.From, move.To, orientation, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To)))
 		var from int
@@ -61,8 +65,10 @@ func (db DB) easyComputerMoveForGame(id int) map[string]piece {
 				}
 			}
 		}
+		tx = db.Begin()
 		// TODO: g.move to update g with the database writes so this second query isn't necessary
-		pdiff := db.gameWithIdentifier(id).promote(from, easy_computer_player, wichessing.Queen)
+		pdiff := tx.gameWithIdentifier(id, true).promote(from, easy_computer_player, wichessing.Queen, tx)
+		tx.Commit()
 		for point, piece := range pdiff {
 			diff[point] = piece
 		}

@@ -26,6 +26,27 @@ type DB struct {
 
 var database DB
 
+type TX struct {
+	*sql.Tx
+}
+
+func (db DB) Begin() TX {
+	tx, err := db.DB.Begin()
+	if err != nil {
+		panicExit(err.Error())
+	}
+	return TX{
+		Tx: tx,
+	}
+}
+
+func (tx TX) Commit() {
+	err := tx.Tx.Commit()
+	if err != nil {
+		panicExit(err.Error())
+	}
+}
+
 type databaseConfiguration struct {
 	Database string
 	User     string

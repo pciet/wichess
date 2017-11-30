@@ -18,14 +18,6 @@ func gamesHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	// TODO: this shouldn't be possible
-	if r.URL.Path == "/" {
-		if debug {
-			fmt.Println("games: request.URL.Path == /")
-		}
-		http.NotFound(w, r)
-		return
-	}
 	key, name := database.validSession(r)
 	if key == "" {
 		http.Redirect(w, r, "/login", http.StatusFound)
@@ -44,9 +36,9 @@ func gamesHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	rLockGame(int(gameid))
-	game := database.gameWithIdentifier(int(gameid))
-	rUnlockGame(int(gameid))
+	tx := database.Begin()
+	defer tx.Commit()
+	game := tx.gameWithIdentifier(int(gameid), false)
 	if (game.White != name) && (game.Black != name) {
 		if debug {
 			fmt.Println("games: player not white or black")

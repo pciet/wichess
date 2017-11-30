@@ -21,14 +21,6 @@ func movesHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	// TODO: this shouldn't be possible
-	if r.URL.Path == "/" {
-		if debug {
-			fmt.Println("moves: request.URL.Path == /")
-		}
-		http.NotFound(w, r)
-		return
-	}
 	key, name := database.validSession(r)
 	if key == "" {
 		http.Redirect(w, r, "/login", http.StatusFound)
@@ -80,9 +72,9 @@ func movesHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	lockGame(int(gameid))
-	defer unlockGame(int(gameid))
-	game := database.gameWithIdentifier(int(gameid))
+	tx := database.Begin()
+	game := tx.gameWithIdentifier(int(gameid), false)
+	tx.Commit()
 	if (game.White != name) && (game.Black != name) {
 		if debug {
 			fmt.Println("moves: player not white or black")
