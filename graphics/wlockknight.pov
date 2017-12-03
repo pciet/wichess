@@ -10,9 +10,7 @@ object {
     merge {
         object { 
             Lock
-            scale 1.1
-            translate <0.1,0,0>
-            rotate <0,90,0>
+            translate <0,0,-0.1>
         }
         object { Knight }
     }

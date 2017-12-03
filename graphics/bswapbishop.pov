@@ -10,7 +10,8 @@ object {
         object { Bishop }
         object {
             Swap
-            scale 1.3
+            scale 0.7
+            translate <0,-0.5,0>
         }
     }
     texture { BlackT }

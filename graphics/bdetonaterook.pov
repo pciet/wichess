@@ -10,8 +10,9 @@ object {
         object { Rook }
         object {
             Detonate
-            scale 1.6
-            translate <0,-0.45,0>
+            scale 1.5
+            translate <0,-0.22,0>
+            scale <1.1,0,1.1>
         }
     }
     texture { BlackT }

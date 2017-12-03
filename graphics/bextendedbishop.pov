@@ -10,7 +10,8 @@ object {
         object { Bishop }
         object {
             Extended
-            translate <0,0.3,0>
+            translate <0,1.12,0>
+            scale 0.9
         }
     }
     texture { BlackT }

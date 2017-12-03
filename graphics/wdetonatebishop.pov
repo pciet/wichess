@@ -10,8 +10,8 @@ object {
         object { Bishop }
         object {
             Detonate
-            translate <0,0.7,0>
-            scale 0.8
+            scale 1.1
+            translate <0,0.3,0>
         }
     }
     texture { WhiteT }

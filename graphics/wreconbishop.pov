@@ -10,9 +10,6 @@ object {
         object { Bishop }
         object {
             Recon
-            translate <0,0.7,0>
-            rotate <0,90,0>
-            scale 0.8
         }
     }
     texture { WhiteT }

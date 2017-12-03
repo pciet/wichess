@@ -10,7 +10,8 @@ object {
         object { Rook }
         object {
             Guard
-            scale 1.3
+            scale 1.1
+            translate <0,-0.2,0>
         }
     }
     texture { WhiteT }

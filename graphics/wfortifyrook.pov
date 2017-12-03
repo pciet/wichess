@@ -10,7 +10,6 @@ object {
         object { Rook }
         object {
             Fortify
-            scale 1.3
         }
     }
     texture { WhiteT }

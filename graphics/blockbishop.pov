@@ -10,7 +10,6 @@ object {
         object { Bishop }
         object {
             Lock 
-            scale 1.3
         }
     }
     texture { BlackT }

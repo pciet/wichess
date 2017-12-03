@@ -10,7 +10,8 @@ object {
     merge {
         object { 
             Recon
-            scale 1.1
+            scale 0.9
+            translate <0,-0.1,0>
             rotate <0,-20,0>
         }
         object { Knight }

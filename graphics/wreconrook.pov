@@ -10,8 +10,7 @@ object {
         object { Rook }
         object {
             Recon
-            translate <0,0.2,0>
-            rotate <0,90,0>
+            translate <0,0.07,0>
         }
     }
     texture { WhiteT }

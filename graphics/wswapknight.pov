@@ -10,8 +10,8 @@ object {
     merge {
         object { 
             Swap
-            scale 1.3
-            translate <0,-0.2,0>
+            scale 0.5
+            translate <0,-0.3,0>
         }
         object { Knight }
     }

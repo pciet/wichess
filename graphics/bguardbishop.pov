@@ -10,7 +10,7 @@ object {
         object { Bishop }
         object {
             Guard
-            scale 1.3
+            scale 1.1
         }
     }
     texture { BlackT }

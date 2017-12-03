@@ -10,9 +10,8 @@ object {
     merge {
         object { 
             Detonate
-            scale 1.2
-            rotate <0,-20,0>
-            translate <0,-0.15,-0.15>
+            scale 1.3
+            translate <0,-0.2,-0.2>
         }
         object { Knight }
     }

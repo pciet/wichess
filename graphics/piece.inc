@@ -2,8 +2,23 @@
     cylinder {
         <0,0,0>, <0,0.1,0>, 0.9
     }
+    torus {
+        0.9, 0.04
+        translate <0,0.05,0>
+    }
     cylinder {
         <0,0.1,0>, <0,0.2,0>, 0.8
+    }
+    torus {
+        0.8, 0.04
+        translate <0,0.15,0>
+    }
+    cylinder {
+        <0,0.2,0>, <0,0.3,0>, 0.7
+    }
+    torus {
+        0.7, 0.04
+        translate <0,0.25,0>
     }
     translate <0,-1,0>
 }
@@ -12,67 +27,131 @@
     cylinder {
         <0,0,0>, <0,0.1,0>, 0.85
     }
+    torus {
+        0.85, 0.04
+        translate <0,0.05,0>
+    }
     cylinder {
         <0,0.1,0>, <0,0.2,0>, 0.75
+    }
+    torus {
+        0.75, 0.04
+        translate <0,0.15,0>
+    }
+    cylinder {
+        <0,0.2,0>, <0,0.3,0>, 0.65
+    }
+    torus {
+        0.65, 0.04
+        translate <0,0.25,0>
     }
     translate <0,-1,0>
 }
 
 #declare SpecialBase = merge {
     cylinder {
-        <0,0,0>, <0,0.09,0>, 0.75
+        <0,0,0>, <0,0.09,0>, 0.85
+    }
+    torus {
+        0.85, 0.04
+        translate <0,0.0435,0>
     }
     cylinder {
-        <0,0.09,0>, <0,0.18,0>, 0.65
+        <0,0.09,0>, <0,0.18,0>, 0.75
+    }
+    torus {
+        0.75, 0.035
+        translate <0,0.1435,0>
     }
     translate <0,-1,0>
 }
 
 #declare PawnBase = merge {
     cylinder {
-        <0,0,0>, <0,0.08,0>, 0.7
+        <0,0,0>, <0,0.08,0>, 0.8
+    }
+    torus {
+        0.8, 0.035
+        translate <0,0.04,0>
     }
     cylinder {
-        <0,0.08,0>, <0,0.16,0>, 0.6
+        <0,0.08,0>, <0,0.16,0>, 0.7
+    }
+    torus {
+        0.7, 0.03
+        translate <0,0.12,0>
     }
     translate <0,-1,0>
 }
 
 #declare KingNeck = cylinder {
-    <0,-0.8,0>, <0,0.8,0>, 0.25
+    <0,-0.7,0>, <0,0.8,0>, 0.55
 }
 
 #declare QueenNeck = cylinder {
-    <0,-0.8,0>, <0,0.78,0>, 0.25
+    <0,-0.7,0>, <0,0.78,0>, 0.5
 }
 
-#declare SpecialNeck = cylinder {
-    <0,-0.82,0>, <0,0.68,0>, 0.22
+#declare SpecialNeck = merge {
+    torus {
+        0.45, 0.04
+        translate <0,-0.82,0>
+    }
+    cylinder {
+        <0,-0.82,0>, <0,0.5,0>, 0.45
+    }
 }
 
-#declare PawnNeck = cylinder {
-    <0,-0.84,0>, <0,0.6,0>, 0.2
+#declare PawnNeck = merge {
+    torus {
+        0.45, 0.04
+        translate <0,-0.87,0>
+    }
+    cylinder {
+        <0,-0.84,0>, <0,0.6,0>, 0.45
+    }
 }
 
 #declare KingCap = merge {
-    torus {
-        0.26, 0.04
-        translate <0,0.8,0>
+    cylinder {
+        <0,0.8,0>, <0,0.85,0>, 0.6
     }
     torus {
-        0.26, 0.02
-        translate <0,0.85,0>
+        0.6, 0.02
+        translate <0,0.835,0>
     }
     cylinder {
-        <0,1,0>, <0,0.85,0>, 0.28
+        <0,0.85,0>, <0,0.9,0>, 0.55
     }
-    box {
-        <0.03, 1, 0.04>
-        <-0.03, 1.25, -0.04>
+    torus {
+        0.55, 0.02
+        translate <0,0.875,0>
     }
-    box {
-        <-0.03001, 1.125, -0.15>
-        <0.03001, 1.175, 0.15>
+    cylinder {
+        <0,0.9,0>, <0,0.95,0>, 0.5
+    }
+    torus {
+        0.5, 0.02
+        translate <0,0.935,0>
+    }
+    merge {
+        box {
+            <0.03, 0.95, 0.04>
+            <-0.03, 1.25, -0.04>
+        }
+        box {
+            <-0.03001, 1.115, -0.15>
+            <0.03001, 1.175, 0.15>
+        }
+        scale 1.8
+        translate <0,-0.9,0>
+    }
+    cylinder {
+        <0,0.95,0>, <0,0.98,0>, 0.2
+    }
+    torus {
+        0.2, 0.01
+        translate <0,0.965,0>
     }
     rotate <0,45,0>
 }
@@ -84,24 +163,45 @@
 }
 
 #declare QueenCap = merge {
+    cylinder {
+        <0,0.78,0>, <0,0.83,0>, 0.58
+    }
     torus {
-        0.26, 0.04
-        translate <0,0.78,0>
+        0.58, 0.02
+        translate <0,0.81,0>
     }
     cylinder {
-        <0,0.78,0>, <0,0.93,0>, 0.28
+        <0,0.83,0>, <0,0.88,0>, 0.53
+    }
+    torus {
+        0.53, 0.02
+        translate <0,0.865,0>
+    }
+    cylinder {
+        <0,0.88,0>, <0,0.93,0>, 0.48
+    }
+    torus {
+        0.48, 0.02
+        translate <0,0.9,0>
+    }
+    cylinder {
+        <0,0.93,0>, <0,0.95,0>, 0.2
+    }
+    torus {
+        0.2, 0.01
+        translate <0,0.94,0>
     }
     #local i = 0;
     #while (i < 30)
         sphere {
-            0, 0.03
-            translate <0.26,0.9315,0>
+            0, 0.04
+            translate <0.42,0.9415,0>
             rotate y*360/30*i
         }
         #local i = i + 1;
     #end
     sphere {
-        <0,0.965,0>, 0.07
+        <0,1,0>, 0.12
     }
 }
 
@@ -111,17 +211,33 @@
     object { QueenCap }
 }
 
-#declare RookCap = difference {
-    cylinder { <0,0.68,0>, <0,0.98,0>, 0.35 }
-    #local i = 0;
-    #while (i < 4)
-        box {
-            <0.05,0.78,-1>, <-0.05,1.03,1>
-            rotate 45*i
-        }
-        #local i = i + 1;
-    #end
-    cylinder { <0,0.78,0>, <0,1.08,0>, 0.2 }
+#declare RookCap =  merge {
+    cylinder {
+        <0,0.5,0>, <0,0.6,0>, 0.5
+    }
+    torus {
+        0.5, 0.03
+        translate <0,0.55,0>
+    }
+    cylinder {
+        <0,0.6,0>, <0,0.65,0>, 0.4
+    }
+    torus {
+        0.4, 0.015
+        translate <0,0.635,0>
+    }
+    difference {
+        cylinder { <0,0.64,0>, <0,1,0>, 0.45 }
+        #local i = 0;
+        #while (i < 2)
+            box {
+                <0.1,0.78,-1>, <-0.1,1.11,1>
+                rotate <0,90*i,0>
+            }
+            #local i = i + 1;
+        #end
+        cylinder { <0,0.7,0>, <0,1.11,0>, 0.25 }
+    }
 }
 
 #declare Rook = merge {
@@ -131,24 +247,38 @@
 }
 
 #declare BishopCap = merge {
+    cylinder {
+        <0,0.5,0>, <0,0.6,0>, 0.5
+    }
     torus {
-        0.23, 0.04
-        translate <0,0.68,0>
+        0.5, 0.03
+        translate <0,0.55,0>
+    }
+    cylinder {
+        <0,0.6,0>, <0,0.65,0>, 0.4
+    }
+    torus {
+        0.4, 0.015
+        translate <0,0.635,0>
     }
     difference {
         sphere {
-            <0,0.83,0> 0.3
+            <0,0.73,0> 0.35
             scale <1,1.1,1>
         }
         box {
             <-1,-0.2,-0.025>, <1,0.2,0.025>
-            rotate -x*30
+            rotate -x*23
             rotate y*90
-            translate <-0.2,1.25,0.2>
+            translate <-0.15,1,0.15>
         }
     }
     sphere {
-        <0,1.3,0>, 0.07
+        <0,1.15,0>, 0.06
+    }
+    torus {
+        0.06, 0.01
+        translate <0,1.15,0>
     }
 }
 
@@ -159,12 +289,15 @@
 }
 
 #declare PawnCap = merge {
+    cylinder {
+        <0,0.6,0>, <0,0.68,0>, 0.5
+    }
     torus {
-        0.2, 0.04
-        translate <0,0.6,0>
+        0.5, 0.03
+        translate <0,0.64,0>
     }
     sphere {
-        <0,0.7,0>, 0.2
+        <0,0.8,0>, 0.35
     }
 }
 
@@ -184,46 +317,29 @@
         }
         #local i = i + 1;
     #end
-    scale 0.35
 }
 
 #declare SwapPawn = merge {
     object { Pawn }
-    object { Swap }
+    object {
+        Swap
+        scale 0.7
+        translate <0,-0.5,0>
+    }
 }
 
 #declare Lock = merge {
-    merge {
-        box {
-            <-0.1,0,-0.1>, <0.1,1.2,0.1>
-            rotate <45,0,45>
-        }
-        box {
-            <-0.1,0,-0.1>, <0.1,1.2,0.1>
-            rotate <45,45,90>
-        }
-        box {
-            <-0.1,0,-0.1>, <0.1,1.2,0.1>
-            rotate <-45,0,-45>
-        }
-        box {
-            <-0.1,0,-0.1>, <0.1,1.2,0.1>
-            rotate <-45,-45,-90>
-        }
-        translate <0,5,0>
-    }
     #local i = 0;
     #while (i < 6)
         box {
-            <-0.1,-1.2,-0.1>,<0.1,1.2,0.1>
+            <-0.1,-2,-0.1>,<0.1,2,0.1>
             rotate <90,90,0>
-            translate <0,i,0>
+            translate <0,i/1.2,0>
         }
         #local i = i + 1;
     #end
-    scale 0.35
-    translate <0,-1.15,0>
-    rotate <0,60,0>
+    scale 0.4
+    translate <0,-0.8,0>
 }
 
 #declare LockPawn = merge {
@@ -233,17 +349,17 @@
 
 #declare Recon = merge {
     box {
-        <-0.1,-1.3,-0.1>, <0.1,1.3,0.1>
+        <-0.18,-1.2,-0.18>, <0.18,1.2,0.18>
         rotate <90,0,0>
-        translate <0.3,5,0>
+        translate <0.5,5,0>
     }
     box {
-        <-0.1,-1.3,-0.1>, <0.1,1.3,0.1>
+        <-0.18,-1.2,-0.18>, <0.2,1.2,0.18>
         rotate <90,0,0>
-        translate <-0.3,5,0>
+        translate <-0.5,5,0>
     }
     scale 0.35
-    translate <0,-1,0>
+    translate <0,-0.78,0>
     rotate <0,15,0>
 }
 
@@ -254,28 +370,30 @@
 
 #declare Detonate = merge {
     box {
-        <0.3,0.82,0.05>, <-0.3,0.8,-0.05>
+        <0.3,0.82,0.08>, <-0.3,0.8,-0.08>
         rotate <0,-45,0>
     }
     box {
-        <0.3,0.821,0.05>, <-0.3,0.8,-0.05>
+        <0.3,0.821,0.08>, <-0.3,0.8,-0.08>
         rotate <0,45,0>
     }
-    scale 0.8
-    translate <0,0.238,0>
 }
 
 #declare DetonatePawn = merge {
     object { Pawn }
-    object { Detonate }
+    object {
+        Detonate
+        scale 1.1
+        translate <0,0.245,0>
+    }
 }
 
 #declare Ghost = merge {
     #local i = 0;
     #while (i < 3)
         torus {
-            0.18, 0.1
-            translate <0,i*0.12,0>
+            0.25, 0.04
+            translate <0,i*0.18,0>
         }
         #local i = i + 1;
     #end
@@ -290,17 +408,19 @@
     #local i = 0;
     #while (i < 4)
         box {
-            <0.02,0.9,-0.5>, <-0.02,1.1-(i/100),0.5>
+            <0.02,0.7,-0.5>, <-0.02,1.1-(i/100),0.5>
             rotate 45*i
         }
         #local i = i + 2;
     #end
-    scale 0.7
 }
 
 #declare GuardPawn = merge {
     object { Pawn }
-    object { Guard }
+    object {
+        Guard
+        translate <0,0.05,0>
+    }
 }
 
 #declare Rally = merge {
@@ -312,12 +432,14 @@
         }
         #local i = i + 1;
     #end
-    scale 0.75
 }
 
 #declare RallyPawn = merge {
     object { Pawn }
-    object { Rally }
+    object {
+        Rally
+        scale 1.3
+    }
 }
 
 #declare Fortify = merge {
@@ -329,6 +451,7 @@
         }
         #local i = i + 1;
     #end
+    scale <1.5,0,1.5>
 }
 
 #declare FortifyPawn = merge {
@@ -340,11 +463,13 @@
     box {
         <-1,-1,-1>, <1,1,1>
     }
-    scale 0.1
-    translate <0,0.9,0>
+    scale 0.2
 }
 
 #declare ExtendedPawn = merge {
     object { Pawn }
-    object { Extended }
+    object {
+        Extended
+        translate <0,1,0>
+    }
 }

@@ -1,5 +1,9 @@
+#include "colors.inc"
+#include "textures.inc"
+#include "stones1.inc"
+
 #declare WhiteT = texture {
-    pigment { rgb <1,0.999,0.98> }
+    T_Stone15 scale 0.1
     finish {
         specular 0.75
         roughness 0.001
@@ -7,9 +11,9 @@
 }
 
 #declare BlackT = texture {
-    pigment { rgb <0.1,0.1,0.1> }
+    DMFDarkOak scale 0.1
     finish {
-        specular 0.5
-        roughness 0.1
+        specular 0.3
+        roughness 0.01
     }
 }

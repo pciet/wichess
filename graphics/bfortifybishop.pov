@@ -10,8 +10,6 @@ object {
         object { Bishop }
         object {
             Fortify
-            translate <0,0.3,0>
-            scale 1.2
         }
     }
     texture { BlackT }

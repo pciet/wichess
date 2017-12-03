@@ -10,8 +10,6 @@ object {
         object { Rook }
         object {
             Lock
-            scale 1.3
-            rotate <0,90,0>
         }
     }
     texture { BlackT }

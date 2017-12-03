@@ -11,6 +11,7 @@ object {
         object {
             Rally
             scale 1.3
+            translate <0,-0.3,0>
         }
     }
     texture { BlackT }
