@@ -44,7 +44,24 @@
  *  Declare the Knight
  *************************************************************************************/
 
-#declare Knight_Base = sor{
+#declare Knight_Base = merge {
+    cylinder {
+        <0,0,0>, <0,0.5,0> 1.8
+    }
+    torus {
+        1.8, 0.125
+        translate <0,0.25,0>
+    }
+    cylinder {
+        <0,0.5,0>, <0,1,0> 1.65
+    }
+    torus {
+        1.65, 0.125
+        translate <0,0.75,0>
+    }
+}
+/*the cylinders+torus replaced:
+sor{
     9,
     <0, -.01>,
     <0, 0>,
@@ -55,7 +72,7 @@
     <1.25, .99>,
     <0, 1>,
     <0, 1.01>
-}
+}*/
 
 #declare Knight_Body = cylinder{
     <0,1,0>,
@@ -373,7 +390,7 @@
 #declare Knight = merge {
     object{Knight_Base}
     object{Knight_Mid}
-    scale 0.35
-    translate <0,-1.1,0>
+    scale 0.38
+    translate <0,-1.03,0>
     rotate <0,170,0>
 }

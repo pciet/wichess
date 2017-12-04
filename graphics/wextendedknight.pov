@@ -10,7 +10,7 @@ object {
     merge {
         object { 
             Extended
-            translate <0,1.21,-0.1>
+            translate <0,1.45,-0.1>
             scale 0.75
         }
         object { Knight }

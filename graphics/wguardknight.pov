@@ -11,6 +11,7 @@ object {
         object { 
             Guard
             scale 0.9
+            translate <0,0.2,0>
         }
         object { Knight }
     }
