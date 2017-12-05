@@ -12,14 +12,14 @@ func (b Board) AfterPromote(from AbsPoint, kind Kind) Board {
 		panic("failed to promote pawn")
 	}
 	for point, _ := range diff {
-		board[point.Index()] = *point
+		board.Points[point.Index()] = *point
 	}
 	return board
 }
 
 func (b Board) HasPawnToPromote() (bool, Orientation) {
 	for i := 0; i < 8; i++ {
-		p := b[i]
+		p := b.Points[i]
 		if p.Piece != nil {
 			if (p.Orientation == Black) && (p.Base == Pawn) {
 				return true, Black
@@ -27,7 +27,7 @@ func (b Board) HasPawnToPromote() (bool, Orientation) {
 		}
 	}
 	for i := 56; i < 64; i++ {
-		p := b[i]
+		p := b.Points[i]
 		if p.Piece != nil {
 			if (p.Orientation == White) && (p.Base == Pawn) {
 				return true, White
@@ -42,7 +42,7 @@ func (b Board) PromotePawn(at AbsPoint, to Kind) PointSet {
 	if (at.Rank != 0) && (at.Rank != 7) {
 		return nil
 	}
-	point := b[at.Index()]
+	point := b.Points[at.Index()]
 	if point.Piece == nil {
 		return nil
 	}

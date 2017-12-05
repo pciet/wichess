@@ -113,9 +113,9 @@ func (db DB) gameInfo(id int) GameInfo {
 
 // For an invalid ID an empty game is returned. Check against the player names.
 func (tx TX) gameWithIdentifier(id int, forWrite bool) game {
-	update := ""
+	update := " "
 	if forWrite {
-		update = "FOR UPDATE"
+		update = " FOR UPDATE"
 	}
 	var Points [64]pieceEncoding
 	g := GameInfo{}
@@ -262,8 +262,8 @@ func (g *game) acknowledgeGameComplete(player string, tx TX) bool {
 			timeLoss = true
 		}
 	}
-	b := wichessingBoard(g.Points)
-	if (b.Checkmate(active, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To))) == false) && (b.Draw(active, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To))) == false) && (g.DrawTurns < draw_turn_count) && (timeLoss == false) {
+	b := wichessingBoard(g.Points, g.From, g.To)
+	if (b.Checkmate(active) == false) && (b.Draw(active) == false) && (g.DrawTurns < draw_turn_count) && (timeLoss == false) {
 		return false
 	}
 	var ackKey string
@@ -466,8 +466,11 @@ func decodedPoints(pts [64]pieceEncoding) [64]piece {
 	return ret
 }
 
-func wichessingBoard(points [64]piece) wichessing.Board {
-	var board wichessing.Board
+func wichessingBoard(points [64]piece, previousFrom int, previousTo int) wichessing.Board {
+	board := wichessing.Board{
+		PreviousFrom: absPoint(previousFrom),
+		PreviousTo:   absPoint(previousTo),
+	}
 	for i := 0; i < 64; i++ {
 		var p *wichessing.Piece
 		if points[i].Piece.Kind == 0 {
@@ -475,7 +478,7 @@ func wichessingBoard(points [64]piece) wichessing.Board {
 		} else {
 			p = &points[i].Piece
 		}
-		board[i] = wichessing.Point{
+		board.Points[i] = wichessing.Point{
 			Piece: p,
 			AbsPoint: wichessing.AbsPoint{
 				File: wichessing.FileFromIndex(uint8(i)),

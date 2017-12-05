@@ -5,20 +5,20 @@ package wichessing
 
 import ()
 
-func (b Board) Checkmate(turn Orientation, previousFrom AbsPoint, previousTo AbsPoint) bool {
+func (b Board) Checkmate(turn Orientation) bool {
 	// if the King is not in check then its not a checkmate - the no moves case is a stalemate
-	if b.Check(turn, previousFrom, previousTo) == false {
+	if b.Check(turn) == false {
 		return false
 	}
-	for from, set := range b.AllNaiveMovesFor(turn, previousFrom, previousTo) {
+	for from, set := range b.AllNaiveMovesFor(turn) {
 		for move, _ := range set {
-			if (b[from.Index()].Kind == King) && (b[from.Index()].Moved == false) {
+			if (b.Points[from.Index()].Kind == King) && (b.Points[from.Index()].Moved == false) {
 				// castle isn't allowed when king in check
 				if (move.File == 1) || (move.File == 6) {
 					continue
 				}
 			}
-			if b.AfterMove(from, *move, turn, previousFrom, previousTo).Check(turn, from, *move) == false {
+			if b.AfterMove(from, *move, turn).Check(turn) == false {
 				return false
 			}
 		}
@@ -29,14 +29,14 @@ func (b Board) Checkmate(turn Orientation, previousFrom AbsPoint, previousTo Abs
 // TODO: verify fixed: if detonate bishop is in danger next to king, then king is in check
 // TODO: possible optimization may involve reducing the check checks for naive moves (into check)
 
-func (b Board) Check(turn Orientation, previousFrom AbsPoint, previousTo AbsPoint) bool {
+func (b Board) Check(turn Orientation) bool {
 	var orientation Orientation
 	if turn == White {
 		orientation = Black
 	} else {
 		orientation = White
 	}
-	allMoves := b.AllNaiveMovesFor(orientation, previousFrom, previousTo)
+	allMoves := b.AllNaiveMovesFor(orientation)
 	king, _ := b.KingLocationFor(turn)
 	for orig, moves := range allMoves {
 		for pt, _ := range moves {
@@ -44,7 +44,7 @@ func (b Board) Check(turn Orientation, previousFrom AbsPoint, previousTo AbsPoin
 				return true
 			}
 			// some cases cause reactions that remove the King, such as an enemy detonator move and friendly guard adjacent
-			_, has := b.AfterMove(orig, *pt, orientation, previousFrom, previousTo).KingLocationFor(turn)
+			_, has := b.AfterMove(orig, *pt, orientation).KingLocationFor(turn)
 			if has == false {
 				return true
 			}

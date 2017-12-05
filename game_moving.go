@@ -39,7 +39,7 @@ func (g game) move(from, to int, mover string, tx TX) (map[string]piece, bool, w
 		nextOrientation = wichessing.White
 		nextMover = g.White
 	}
-	b := wichessingBoard(g.Points)
+	b := wichessingBoard(g.Points, g.From, g.To)
 	// TODO: check for cases of double-checking
 	pring, _ := b.HasPawnToPromote()
 	if pring {
@@ -48,14 +48,14 @@ func (g game) move(from, to int, mover string, tx TX) (map[string]piece, bool, w
 		}
 		return nil, false, wichessing.White
 	}
-	if (g.DrawTurns >= draw_turn_count) || b.Draw(orientation, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To))) {
+	if (g.DrawTurns >= draw_turn_count) || b.Draw(orientation) {
 		if debug {
 			fmt.Println("move: draw determined")
 		}
 		return nil, false, wichessing.White
 	}
 	diff := make(map[string]piece)
-	difference, taken := b.Move(absPoint(from), absPoint(to), orientation, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To)))
+	difference, taken := b.Move(absPoint(from), absPoint(to), orientation)
 	for point, _ := range difference {
 		if point.Piece == nil {
 			diff[point.AbsPoint.String()] = piece{
@@ -67,7 +67,7 @@ func (g game) move(from, to int, mover string, tx TX) (map[string]piece, bool, w
 			// the identifier must be set here for the game update to work correctly
 			// make taken = map[AbsPoint]Piece instead of PieceSet
 			var id int
-			for index, ppt := range b {
+			for index, ppt := range b.Points {
 				if ppt.Piece == point.Piece {
 					id = g.Points[index].Identifier
 					break
@@ -89,12 +89,12 @@ func (g game) move(from, to int, mover string, tx TX) (map[string]piece, bool, w
 	for point, _ := range taken {
 		takenPieces[g.Points[point.Index()].Identifier] = struct{}{}
 	}
-	after := b.AfterMove(absPoint(from), absPoint(to), orientation, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To)))
+	after := b.AfterMove(absPoint(from), absPoint(to), orientation)
 	promoting, promotingOrientation := after.HasPawnToPromote()
 	if promoting && (promotingOrientation == orientation) {
 		tx.updateGame(g.ID, diff, mover, g.Active, from, to, 0, g.Turn)
 	} else {
-		if (len(taken) == 0) && (b[from].Base != wichessing.Pawn) {
+		if (len(taken) == 0) && (b.Points[from].Base != wichessing.Pawn) {
 			tx.updateGame(g.ID, diff, nextMover, g.Active, from, to, g.DrawTurns+1, g.Turn)
 		} else {
 			tx.updateGame(g.ID, diff, nextMover, g.Active, from, to, 0, g.Turn)
@@ -129,13 +129,13 @@ func (g game) move(from, to int, mover string, tx TX) (map[string]piece, bool, w
 			// pieces with no ID (normal chess pieces) have no effect in this function
 			g.DB.removePiece(id)
 		}
-		if after.Checkmate(nextOrientation, wichessing.AbsPointFromIndex(uint8(from)), wichessing.AbsPointFromIndex(uint8(to))) {
+		if after.Checkmate(nextOrientation) {
 			if nextOrientation == wichessing.White {
 				g.DB.updatePlayerRecords(g.Black, g.White, false)
 			} else {
 				g.DB.updatePlayerRecords(g.White, g.Black, false)
 			}
-		} else if ((g.DrawTurns + 1) >= draw_turn_count) || after.Draw(nextOrientation, wichessing.AbsPointFromIndex(uint8(from)), wichessing.AbsPointFromIndex(uint8(to))) {
+		} else if ((g.DrawTurns + 1) >= draw_turn_count) || after.Draw(nextOrientation) {
 			g.DB.updatePlayerRecords(g.White, g.Black, true)
 		}
 	}
@@ -183,8 +183,8 @@ func (g game) promote(from int, player string, kind wichessing.Kind, tx TX) map[
 		}
 		return nil
 	}
-	b := wichessingBoard(g.Points)
-	if b.Draw(orientation, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To))) {
+	b := wichessingBoard(g.Points, g.From, g.To)
+	if b.Draw(orientation) {
 		if debug {
 			fmt.Println("promote: draw determined")
 		}
@@ -248,13 +248,13 @@ func (g game) promote(from int, player string, kind wichessing.Kind, tx TX) map[
 			checkOrientation = wichessing.White
 		}
 		after := b.AfterPromote(absPoint(from), wichessing.Kind(kind))
-		if after.Checkmate(checkOrientation, wichessing.AbsPointFromIndex(uint8(from)), wichessing.AbsPointFromIndex(uint8(from))) {
+		if after.Checkmate(checkOrientation) {
 			if checkOrientation == wichessing.White {
 				g.DB.updatePlayerRecords(g.Black, g.White, false)
 			} else {
 				g.DB.updatePlayerRecords(g.White, g.Black, false)
 			}
-		} else if after.Draw(checkOrientation, wichessing.AbsPointFromIndex(uint8(from)), wichessing.AbsPointFromIndex(uint8(from))) {
+		} else if after.Draw(checkOrientation) {
 			g.DB.updatePlayerRecords(g.White, g.Black, true)
 		}
 	}
@@ -281,13 +281,13 @@ func (g game) moves(total time.Duration) map[string]map[string]struct{} {
 		}
 		return moves
 	}
-	board := wichessingBoard(g.Points)
+	board := wichessingBoard(g.Points, g.From, g.To)
 	promoting, _ := board.HasPawnToPromote()
 	if promoting {
 		moves[promote_key] = nil
 		return moves
 	}
-	if (g.DrawTurns >= draw_turn_count) || board.Draw(active, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To))) {
+	if (g.DrawTurns >= draw_turn_count) || board.Draw(active) {
 		if g.Competitive {
 			moves[draw_key] = map[string]struct{}{
 				fmt.Sprintf("%d", g.Piece): {},
@@ -297,7 +297,7 @@ func (g game) moves(total time.Duration) map[string]map[string]struct{} {
 		}
 		return moves
 	}
-	m, check, checkmate := board.Moves(active, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To)))
+	m, check, checkmate := board.Moves(active)
 	for point, set := range m {
 		moves[point.String()] = set.Strings()
 	}

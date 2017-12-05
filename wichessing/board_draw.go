@@ -5,15 +5,15 @@ package wichessing
 
 import ()
 
-func (b Board) Draw(turn Orientation, previousFrom AbsPoint, previousTo AbsPoint) bool {
+func (b Board) Draw(turn Orientation) bool {
 	// not in check but no legal move
-	checkmate := b.Checkmate(turn, previousFrom, previousTo)
-	check := b.Check(turn, previousFrom, previousTo)
-	moves := b.AllNaiveMovesFor(turn, previousFrom, previousTo)
+	checkmate := b.Checkmate(turn)
+	check := b.Check(turn)
+	moves := b.AllNaiveMovesFor(turn)
 	// remove all check moves
 	for pt, mvs := range moves {
 		for mv, _ := range mvs {
-			if b.AfterMove(pt, *mv, turn, previousFrom, previousTo).Check(turn, pt, *mv) {
+			if b.AfterMove(pt, *mv, turn).Check(turn) {
 				delete(mvs, mv)
 			}
 			if len(mvs) == 0 {

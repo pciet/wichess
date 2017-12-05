@@ -8,7 +8,7 @@ import (
 )
 
 func (b Board) KingLocationFor(turn Orientation) (AbsPoint, bool) {
-	for _, point := range b {
+	for _, point := range b.Points {
 		if point.Piece == nil {
 			continue
 		}
@@ -23,7 +23,7 @@ func (b Board) KingLocationFor(turn Orientation) (AbsPoint, bool) {
 }
 
 func (b Board) IndexPositionOfPiece(the *Piece) uint8 {
-	for index, point := range b {
+	for index, point := range b.Points {
 		if point.Piece == the {
 			return uint8(index)
 		}
@@ -34,7 +34,7 @@ func (b Board) IndexPositionOfPiece(the *Piece) uint8 {
 
 func (b Board) PiecesFor(player Orientation) PieceSet {
 	set := make(PieceSet)
-	for _, point := range b {
+	for _, point := range b.Points {
 		if point.Piece == nil {
 			continue
 		}
@@ -48,7 +48,7 @@ func (b Board) PiecesFor(player Orientation) PieceSet {
 
 func (b Board) PieceCount(player Orientation) uint8 {
 	count := 0
-	for _, point := range b {
+	for _, point := range b.Points {
 		if point.Piece == nil {
 			continue
 		}
@@ -60,16 +60,16 @@ func (b Board) PieceCount(player Orientation) uint8 {
 	return uint8(count)
 }
 
-func (b Board) PiecesInDanger(player Orientation, previousFrom AbsPoint, previousTo AbsPoint) uint8 {
+func (b Board) PiecesInDanger(player Orientation) uint8 {
 	var opponent Orientation
 	if player == White {
 		opponent = Black
 	} else {
 		opponent = White
 	}
-	moves := b.AllNaiveMovesFor(opponent, previousFrom, previousTo)
+	moves := b.AllNaiveMovesFor(opponent)
 	count := 0
-	for _, point := range b {
+	for _, point := range b.Points {
 		if point.Piece == nil {
 			continue
 		}
@@ -91,7 +91,7 @@ func (b Board) PiecesInDanger(player Orientation, previousFrom AbsPoint, previou
 
 func (b Board) TotalPieceScore(player Orientation) int {
 	total := 0
-	for _, point := range b {
+	for _, point := range b.Points {
 		if point.Piece == nil {
 			continue
 		}

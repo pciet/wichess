@@ -52,15 +52,18 @@ func (s PointSet) String() string {
 	return buffer.String()
 }
 
-func (p PointSet) Board() Board {
-	b := Board{}
+func (p PointSet) Board(previousFrom, previousTo AbsPoint) Board {
+	b := Board{
+		PreviousFrom: previousFrom,
+		PreviousTo:   previousTo,
+	}
 	for i := 0; i < 64; i++ {
-		b[i].AbsPoint = AbsPointFromIndex(uint8(i))
+		b.Points[i].AbsPoint = AbsPointFromIndex(uint8(i))
 	}
 	for point, _ := range p {
 		if point.Piece != nil {
 			piece := (*(point.Piece)).SetKindFlags()
-			b[AbsPointToIndex(point.AbsPoint)].Piece = &piece
+			b.Points[AbsPointToIndex(point.AbsPoint)].Piece = &piece
 		}
 	}
 	return b

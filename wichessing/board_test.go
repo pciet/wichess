@@ -92,14 +92,14 @@ type PositionAfterMoveCase struct {
 // Covers Board.Draw and Board.Moves
 func TestMovesCases(t *testing.T) {
 	for _, c := range AvailableMovesCases {
-		b := c.Position.Board()
-		draw := b.Draw(c.Active, c.PreviousFrom, c.PreviousTo)
+		b := c.Position.Board(c.PreviousFrom, c.PreviousTo)
+		draw := b.Draw(c.Active)
 		if draw && (c.Draw == false) {
 			t.Fatalf("\"%v\" failed: unexpected draw", c.Name)
 		} else if (draw == false) && c.Draw {
 			t.Fatalf("\"%v\" failed: determined not draw", c.Name)
 		}
-		moves, check, checkmate := b.Moves(c.Active, c.PreviousFrom, c.PreviousTo)
+		moves, check, checkmate := b.Moves(c.Active)
 		if check && (c.Check == false) {
 			t.Fatalf("\"%v\" failed: unexpected check", c.Name)
 		} else if (check == false) && c.Check {
@@ -129,12 +129,12 @@ func TestMovesCases(t *testing.T) {
 // Covers Board.Move
 func TestPositionAfterMoveCases(t *testing.T) {
 	for _, c := range AfterMoveCases {
-		b := c.Initial.Board()
-		from := b[AbsPointToIndex(c.From)]
+		b := c.Initial.Board(c.PreviousFrom, c.PreviousTo)
+		from := b.Points[AbsPointToIndex(c.From)]
 		if from.Piece == nil {
 			t.Fatalf("\"%v\" failed: from point %v has no piece", c.Name, c.From)
 		}
-		diff, _ := b.Move(c.From, c.To, from.Orientation, c.PreviousFrom, c.PreviousTo)
+		diff, _ := b.Move(c.From, c.To, from.Orientation)
 		if (len(c.Diff) == 0) && (len(diff) == 0) {
 			continue
 		}

@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
-	"github.com/pciet/wichess/wichessing"
 )
 
 type gameListeners struct {
@@ -53,10 +52,10 @@ func listeningToGame(name string, white string, black string, totalTime time.Dur
 						gameMonitorsLock.Unlock()
 						return
 					}
-					b := wichessingBoard(g.Points)
+					b := wichessingBoard(g.Points, g.From, g.To)
 					active := g.activeOrientation()
 					activePlayer := g.Active
-					if (g.DrawTurns >= draw_turn_count) || b.Draw(active, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To))) || b.Checkmate(active, wichessing.AbsPointFromIndex(uint8(g.From)), wichessing.AbsPointFromIndex(uint8(g.To))) || g.timeLoss(active, total) {
+					if (g.DrawTurns >= draw_turn_count) || b.Draw(active) || b.Checkmate(active) || g.timeLoss(active, total) {
 						gameMonitorsLock.Lock()
 						delete(gameMonitors, gameid)
 						gameMonitorsLock.Unlock()
