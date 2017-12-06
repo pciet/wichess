@@ -108,7 +108,7 @@ func (s AbsPointSet) Combine(sets ...AbsPointSet) AbsPointSet {
 func (s AbsPointSet) Reduce() AbsPointSet {
 	out := make(AbsPointSet, 0, len(s))
 	for _, pt := range s {
-		if s.Has(pt) {
+		if out.Has(pt) {
 			continue
 		}
 		out = append(out, pt)
