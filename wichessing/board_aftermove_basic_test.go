@@ -9,10 +9,10 @@ var BasicAfterMoveCases = []PositionAfterMoveCase{
 	{
 		Name: "Random Testing Move Fail",
 		Initial: PointSet{
-			&WhiteLeftRookStart:    {},
-			&WhiteLeftBishopStart:  {},
-			&WhiteKingStart:        {},
-			&WhiteRightBishopStart: {},
+			WhiteLeftRookStart,
+			WhiteLeftBishopStart,
+			WhiteKingStart,
+			WhiteRightBishopStart,
 			{
 				AbsPoint: AbsPoint{6, 0},
 				Piece: &Piece{
@@ -20,8 +20,8 @@ var BasicAfterMoveCases = []PositionAfterMoveCase{
 					Orientation: White,
 					Moved:       true,
 				},
-			}: {},
-			&WhitePawn2Start: {},
+			},
+			WhitePawn2Start,
 			{
 				AbsPoint: AbsPoint{7, 1},
 				Piece: &Piece{
@@ -29,7 +29,7 @@ var BasicAfterMoveCases = []PositionAfterMoveCase{
 					Orientation: White,
 					Moved:       true,
 				},
-			}: {},
+			},
 			{
 				AbsPoint: AbsPoint{0, 2},
 				Piece: &Piece{
@@ -37,7 +37,7 @@ var BasicAfterMoveCases = []PositionAfterMoveCase{
 					Orientation: Black,
 					Moved:       true,
 				},
-			}: {},
+			},
 			{
 				AbsPoint: AbsPoint{1, 2},
 				Piece: &Piece{
@@ -45,7 +45,7 @@ var BasicAfterMoveCases = []PositionAfterMoveCase{
 					Orientation: Black,
 					Moved:       true,
 				},
-			}: {},
+			},
 			{
 				AbsPoint: AbsPoint{3, 2},
 				Piece: &Piece{
@@ -53,7 +53,7 @@ var BasicAfterMoveCases = []PositionAfterMoveCase{
 					Orientation: Black,
 					Moved:       true,
 				},
-			}: {},
+			},
 			{
 				AbsPoint: AbsPoint{4, 2},
 				Piece: &Piece{
@@ -61,7 +61,7 @@ var BasicAfterMoveCases = []PositionAfterMoveCase{
 					Orientation: Black,
 					Moved:       true,
 				},
-			}: {},
+			},
 			{
 				AbsPoint: AbsPoint{5, 2},
 				Piece: &Piece{
@@ -69,7 +69,7 @@ var BasicAfterMoveCases = []PositionAfterMoveCase{
 					Orientation: Black,
 					Moved:       true,
 				},
-			}: {},
+			},
 			{
 				AbsPoint: AbsPoint{2, 3},
 				Piece: &Piece{
@@ -77,7 +77,7 @@ var BasicAfterMoveCases = []PositionAfterMoveCase{
 					Orientation: Black,
 					Moved:       true,
 				},
-			}: {},
+			},
 			{
 				AbsPoint: AbsPoint{6, 3},
 				Piece: &Piece{
@@ -85,7 +85,7 @@ var BasicAfterMoveCases = []PositionAfterMoveCase{
 					Orientation: Black,
 					Moved:       true,
 				},
-			}: {},
+			},
 			{
 				AbsPoint: AbsPoint{2, 4},
 				Piece: &Piece{
@@ -93,7 +93,7 @@ var BasicAfterMoveCases = []PositionAfterMoveCase{
 					Orientation: Black,
 					Moved:       true,
 				},
-			}: {},
+			},
 			{
 				AbsPoint: AbsPoint{3, 4},
 				Piece: &Piece{
@@ -101,7 +101,7 @@ var BasicAfterMoveCases = []PositionAfterMoveCase{
 					Orientation: White,
 					Moved:       true,
 				},
-			}: {},
+			},
 			{
 				AbsPoint: AbsPoint{7, 4},
 				Piece: &Piece{
@@ -109,7 +109,7 @@ var BasicAfterMoveCases = []PositionAfterMoveCase{
 					Orientation: White,
 					Moved:       true,
 				},
-			}: {},
+			},
 			{
 				AbsPoint: AbsPoint{0, 5},
 				Piece: &Piece{
@@ -117,7 +117,7 @@ var BasicAfterMoveCases = []PositionAfterMoveCase{
 					Orientation: Black,
 					Moved:       true,
 				},
-			}: {},
+			},
 			{
 				AbsPoint: AbsPoint{1, 5},
 				Piece: &Piece{
@@ -125,7 +125,7 @@ var BasicAfterMoveCases = []PositionAfterMoveCase{
 					Orientation: Black,
 					Moved:       true,
 				},
-			}: {},
+			},
 			{
 				AbsPoint: AbsPoint{6, 5},
 				Piece: &Piece{
@@ -133,7 +133,7 @@ var BasicAfterMoveCases = []PositionAfterMoveCase{
 					Orientation: Black,
 					Moved:       true,
 				},
-			}: {},
+			},
 			{
 				AbsPoint: AbsPoint{7, 5},
 				Piece: &Piece{
@@ -141,7 +141,7 @@ var BasicAfterMoveCases = []PositionAfterMoveCase{
 					Orientation: Black,
 					Moved:       true,
 				},
-			}: {},
+			},
 			{
 				AbsPoint: AbsPoint{6, 6},
 				Piece: &Piece{
@@ -149,7 +149,7 @@ var BasicAfterMoveCases = []PositionAfterMoveCase{
 					Orientation: Black,
 					Moved:       true,
 				},
-			}: {},
+			},
 			{
 				AbsPoint: AbsPoint{3, 7},
 				Piece: &Piece{
@@ -157,8 +157,8 @@ var BasicAfterMoveCases = []PositionAfterMoveCase{
 					Orientation: White,
 					Moved:       true,
 				},
-			}: {},
-			&BlackRightBishopStart: {},
+			},
+			BlackRightBishopStart,
 		},
 		PreviousFrom: AbsPoint{1, 6},
 		PreviousTo:   AbsPoint{3, 7},
@@ -167,313 +167,313 @@ var BasicAfterMoveCases = []PositionAfterMoveCase{
 		Diff: PointSet{
 			{
 				AbsPoint: AbsPoint{7, 5},
-			}: {},
+			},
 			{
 				AbsPoint: AbsPoint{7, 4},
 				Piece: &Piece{
 					Kind:        Rook,
 					Orientation: Black,
 				},
-			}: {},
+			},
 		},
 	},
 	{
 		Name: "Chess Initial Position White Knight Move",
 		Initial: PointSet{
-			&WhiteLeftRookStart:    {},
-			&WhiteLeftKnightStart:  {},
-			&WhiteLeftBishopStart:  {},
-			&WhiteQueenStart:       {},
-			&WhiteKingStart:        {},
-			&WhiteRightBishopStart: {},
-			&WhiteRightKnightStart: {},
-			&WhiteRightRookStart:   {},
-			&WhitePawn0Start:       {},
-			&WhitePawn1Start:       {},
-			&WhitePawn2Start:       {},
-			&WhitePawn3Start:       {},
-			&WhitePawn4Start:       {},
-			&WhitePawn5Start:       {},
-			&WhitePawn6Start:       {},
-			&WhitePawn7Start:       {},
-			&BlackLeftRookStart:    {},
-			&BlackLeftKnightStart:  {},
-			&BlackLeftBishopStart:  {},
-			&BlackQueenStart:       {},
-			&BlackKingStart:        {},
-			&BlackRightBishopStart: {},
-			&BlackRightKnightStart: {},
-			&BlackRightRookStart:   {},
-			&BlackPawn0Start:       {},
-			&BlackPawn1Start:       {},
-			&BlackPawn2Start:       {},
-			&BlackPawn3Start:       {},
-			&BlackPawn4Start:       {},
-			&BlackPawn5Start:       {},
-			&BlackPawn6Start:       {},
-			&BlackPawn7Start:       {},
+			WhiteLeftRookStart,
+			WhiteLeftKnightStart,
+			WhiteLeftBishopStart,
+			WhiteQueenStart,
+			WhiteKingStart,
+			WhiteRightBishopStart,
+			WhiteRightKnightStart,
+			WhiteRightRookStart,
+			WhitePawn0Start,
+			WhitePawn1Start,
+			WhitePawn2Start,
+			WhitePawn3Start,
+			WhitePawn4Start,
+			WhitePawn5Start,
+			WhitePawn6Start,
+			WhitePawn7Start,
+			BlackLeftRookStart,
+			BlackLeftKnightStart,
+			BlackLeftBishopStart,
+			BlackQueenStart,
+			BlackKingStart,
+			BlackRightBishopStart,
+			BlackRightKnightStart,
+			BlackRightRookStart,
+			BlackPawn0Start,
+			BlackPawn1Start,
+			BlackPawn2Start,
+			BlackPawn3Start,
+			BlackPawn4Start,
+			BlackPawn5Start,
+			BlackPawn6Start,
+			BlackPawn7Start,
 		},
 		PreviousFrom: AbsPoint{0, 8},
 		PreviousTo:   AbsPoint{0, 8},
 		From:         AbsPoint{File: 1, Rank: 0},
 		To:           AbsPoint{File: 0, Rank: 2},
 		Diff: PointSet{
-			&Point{
+			{
 				AbsPoint: AbsPoint{File: 1, Rank: 0},
-			}: {},
-			&Point{
+			},
+			{
 				AbsPoint: AbsPoint{File: 0, Rank: 2},
 				Piece: &Piece{
 					Kind:        Knight,
 					Orientation: White,
 				},
-			}: {},
+			},
 		},
 	},
 	{
 		Name: "Chess Initial Position No Pawns White Queen Take",
 		Initial: PointSet{
-			&WhiteLeftRookStart:    {},
-			&WhiteLeftKnightStart:  {},
-			&WhiteLeftBishopStart:  {},
-			&WhiteQueenStart:       {},
-			&WhiteKingStart:        {},
-			&WhiteRightBishopStart: {},
-			&WhiteRightKnightStart: {},
-			&WhiteRightRookStart:   {},
-			&BlackLeftRookStart:    {},
-			&BlackLeftKnightStart:  {},
-			&BlackLeftBishopStart:  {},
-			&BlackQueenStart:       {},
-			&BlackKingStart:        {},
-			&BlackRightBishopStart: {},
-			&BlackRightKnightStart: {},
-			&BlackRightRookStart:   {},
+			WhiteLeftRookStart,
+			WhiteLeftKnightStart,
+			WhiteLeftBishopStart,
+			WhiteQueenStart,
+			WhiteKingStart,
+			WhiteRightBishopStart,
+			WhiteRightKnightStart,
+			WhiteRightRookStart,
+			BlackLeftRookStart,
+			BlackLeftKnightStart,
+			BlackLeftBishopStart,
+			BlackQueenStart,
+			BlackKingStart,
+			BlackRightBishopStart,
+			BlackRightKnightStart,
+			BlackRightRookStart,
 		},
 		PreviousFrom: AbsPoint{0, 8},
 		PreviousTo:   AbsPoint{0, 8},
 		From:         AbsPoint{File: 3, Rank: 0},
 		To:           AbsPoint{File: 3, Rank: 7},
 		Diff: PointSet{
-			&Point{
+			{
 				AbsPoint: AbsPoint{File: 3, Rank: 0},
-			}: {},
-			&Point{
+			},
+			{
 				AbsPoint: AbsPoint{File: 3, Rank: 7},
 				Piece: &Piece{
 					Kind:        Queen,
 					Orientation: White,
 				},
-			}: {},
+			},
 		},
 	},
 	{
 		Name: "Moving Two White Pawn",
 		Initial: PointSet{
-			&WhiteKingStart:  {},
-			&WhitePawn2Start: {},
-			&BlackKingStart:  {},
-			&BlackPawn7Start: {},
+			WhiteKingStart,
+			WhitePawn2Start,
+			BlackKingStart,
+			BlackPawn7Start,
 		},
 		PreviousFrom: AbsPoint{3, 3},
 		PreviousTo:   AbsPoint{4, 3},
 		From:         AbsPoint{File: 2, Rank: 1},
 		To:           AbsPoint{File: 2, Rank: 3},
 		Diff: PointSet{
-			&Point{
+			{
 				AbsPoint: AbsPoint{File: 2, Rank: 1},
-			}: {},
-			&Point{
+			},
+			{
 				AbsPoint: AbsPoint{File: 2, Rank: 3},
 				Piece: &Piece{
 					Kind:        Pawn,
 					Orientation: White,
 				},
-			}: {},
+			},
 		},
 	},
 	{
 		Name: "Moving Black Pawn",
 		Initial: PointSet{
-			&WhiteKingStart:  {},
-			&WhitePawn0Start: {},
-			&WhitePawn1Start: {},
-			&WhitePawn2Start: {},
-			&WhitePawn3Start: {},
-			&WhitePawn4Start: {},
-			&WhitePawn5Start: {},
-			&WhitePawn6Start: {},
-			&WhitePawn7Start: {},
-			&BlackKingStart:  {},
-			&BlackPawn0Start: {},
-			&BlackPawn1Start: {},
-			&BlackPawn2Start: {},
-			&BlackPawn3Start: {},
-			&BlackPawn4Start: {},
-			&BlackPawn5Start: {},
-			&BlackPawn6Start: {},
-			&BlackPawn7Start: {},
+			WhiteKingStart,
+			WhitePawn0Start,
+			WhitePawn1Start,
+			WhitePawn2Start,
+			WhitePawn3Start,
+			WhitePawn4Start,
+			WhitePawn5Start,
+			WhitePawn6Start,
+			WhitePawn7Start,
+			BlackKingStart,
+			BlackPawn0Start,
+			BlackPawn1Start,
+			BlackPawn2Start,
+			BlackPawn3Start,
+			BlackPawn4Start,
+			BlackPawn5Start,
+			BlackPawn6Start,
+			BlackPawn7Start,
 		},
 		PreviousFrom: AbsPoint{3, 3},
 		PreviousTo:   AbsPoint{4, 3},
 		From:         AbsPoint{File: 5, Rank: 6},
 		To:           AbsPoint{File: 5, Rank: 5},
 		Diff: PointSet{
-			&Point{
+			{
 				AbsPoint: AbsPoint{File: 5, Rank: 6},
-			}: {},
-			&Point{
+			},
+			{
 				AbsPoint: AbsPoint{File: 5, Rank: 5},
 				Piece: &Piece{
 					Kind:        Pawn,
 					Orientation: Black,
 				},
-			}: {},
+			},
 		},
 	},
 	{
 		Name: "Moving White Queen",
 		Initial: PointSet{
-			&WhiteKingStart:  {},
-			&WhiteQueenStart: {},
-			&BlackKingStart:  {},
-			&BlackQueenStart: {},
+			WhiteKingStart,
+			WhiteQueenStart,
+			BlackKingStart,
+			BlackQueenStart,
 		},
 		PreviousFrom: AbsPoint{3, 3},
 		PreviousTo:   AbsPoint{3, 4},
 		From:         AbsPoint{File: 3, Rank: 0},
 		To:           AbsPoint{File: 3, Rank: 5},
 		Diff: PointSet{
-			&Point{
+			{
 				AbsPoint: AbsPoint{File: 3, Rank: 0},
-			}: {},
-			&Point{
+			},
+			{
 				AbsPoint: AbsPoint{File: 3, Rank: 5},
 				Piece: &Piece{
 					Kind:        Queen,
 					Orientation: White,
 				},
-			}: {},
+			},
 		},
 	},
 	{
 		Name: "Moving Black Bishop",
 		Initial: PointSet{
-			&WhiteKingStart:        {},
-			&WhiteLeftBishopStart:  {},
-			&WhiteRightBishopStart: {},
-			&BlackKingStart:        {},
-			&BlackLeftBishopStart:  {},
-			&BlackRightBishopStart: {},
+			WhiteKingStart,
+			WhiteLeftBishopStart,
+			WhiteRightBishopStart,
+			BlackKingStart,
+			BlackLeftBishopStart,
+			BlackRightBishopStart,
 		},
 		PreviousFrom: AbsPoint{3, 3},
 		PreviousTo:   AbsPoint{3, 4},
 		From:         AbsPoint{File: 2, Rank: 7},
 		To:           AbsPoint{File: 0, Rank: 5},
 		Diff: PointSet{
-			&Point{
+			{
 				AbsPoint: AbsPoint{File: 2, Rank: 7},
-			}: {},
-			&Point{
+			},
+			{
 				AbsPoint: AbsPoint{File: 0, Rank: 5},
 				Piece: &Piece{
 					Kind:        Bishop,
 					Orientation: Black,
 				},
-			}: {},
+			},
 		},
 	},
 	{
 		Name: "Moving White Knight",
 		Initial: PointSet{
-			&WhiteKingStart:        {},
-			&WhiteLeftKnightStart:  {},
-			&WhiteRightKnightStart: {},
-			&BlackKingStart:        {},
-			&BlackLeftKnightStart:  {},
-			&BlackRightKnightStart: {},
+			WhiteKingStart,
+			WhiteLeftKnightStart,
+			WhiteRightKnightStart,
+			BlackKingStart,
+			BlackLeftKnightStart,
+			BlackRightKnightStart,
 		},
 		PreviousFrom: AbsPoint{3, 3},
 		PreviousTo:   AbsPoint{3, 4},
 		From:         AbsPoint{File: 6, Rank: 0},
 		To:           AbsPoint{File: 7, Rank: 2},
 		Diff: PointSet{
-			&Point{
+			{
 				AbsPoint: AbsPoint{File: 6, Rank: 0},
-			}: {},
-			&Point{
+			},
+			{
 				AbsPoint: AbsPoint{File: 7, Rank: 2},
 				Piece: &Piece{
 					Kind:        Knight,
 					Orientation: White,
 				},
-			}: {},
+			},
 		},
 	},
 	{
 		Name: "Moving Black Rook",
 		Initial: PointSet{
-			&WhiteKingStart:      {},
-			&WhiteLeftRookStart:  {},
-			&WhiteRightRookStart: {},
-			&BlackKingStart:      {},
-			&BlackLeftRookStart:  {},
-			&BlackRightRookStart: {},
+			WhiteKingStart,
+			WhiteLeftRookStart,
+			WhiteRightRookStart,
+			BlackKingStart,
+			BlackLeftRookStart,
+			BlackRightRookStart,
 		},
 		PreviousFrom: AbsPoint{3, 3},
 		PreviousTo:   AbsPoint{3, 4},
 		From:         AbsPoint{File: 7, Rank: 7},
 		To:           AbsPoint{File: 7, Rank: 3},
 		Diff: PointSet{
-			&Point{
+			{
 				AbsPoint: AbsPoint{File: 7, Rank: 7},
-			}: {},
-			&Point{
+			},
+			{
 				AbsPoint: AbsPoint{File: 7, Rank: 3},
 				Piece: &Piece{
 					Kind:        Rook,
 					Orientation: Black,
 				},
-			}: {},
+			},
 		},
 	},
 	{
 		Name: "Moving Black King",
 		Initial: PointSet{
-			&WhiteKingStart: {},
-			&Point{
+			WhiteKingStart,
+			{
 				AbsPoint: AbsPoint{File: 0, Rank: 1},
 				Piece: &Piece{
 					Kind:        Pawn,
 					Orientation: White,
 					Moved:       false,
 				},
-			}: {},
-			&BlackKingStart: {},
-			&Point{
+			},
+			BlackKingStart,
+			{
 				AbsPoint: AbsPoint{File: 4, Rank: 6},
 				Piece: &Piece{
 					Kind:        Pawn,
 					Orientation: Black,
 					Moved:       false,
 				},
-			}: {},
+			},
 		},
 		PreviousFrom: AbsPoint{3, 3},
 		PreviousTo:   AbsPoint{3, 4},
 		From:         AbsPoint{File: 4, Rank: 7},
 		To:           AbsPoint{File: 5, Rank: 7},
 		Diff: PointSet{
-			&Point{
+			{
 				AbsPoint: AbsPoint{File: 4, Rank: 7},
-			}: {},
-			&Point{
+			},
+			{
 				AbsPoint: AbsPoint{File: 5, Rank: 7},
 				Piece: &Piece{
 					Kind:        King,
 					Orientation: Black,
 				},
-			}: {},
+			},
 		},
 	},
 }

@@ -16,16 +16,16 @@ var GuardAfterMoveCases = []PositionAfterMoveCase{
 					Orientation: Black,
 					Moved:       true,
 				},
-			}: {},
+			},
 			{
 				AbsPoint: AbsPoint{0, 0},
 				Piece: &Piece{
 					Kind:        GuardRook,
 					Orientation: White,
 				},
-			}: {},
-			&WhiteKingStart: {},
-			&BlackKingStart: {},
+			},
+			WhiteKingStart,
+			BlackKingStart,
 		},
 		PreviousFrom: AbsPoint{3, 3},
 		PreviousTo:   AbsPoint{3, 4},
@@ -34,17 +34,17 @@ var GuardAfterMoveCases = []PositionAfterMoveCase{
 		Diff: PointSet{
 			{
 				AbsPoint: AbsPoint{0, 2},
-			}: {},
+			},
 			{
 				AbsPoint: AbsPoint{0, 0},
-			}: {},
+			},
 			{
 				AbsPoint: AbsPoint{0, 1},
 				Piece: &Piece{
 					Kind:        GuardRook,
 					Orientation: White,
 				},
-			}: {},
+			},
 		},
 	},
 	{
@@ -57,7 +57,7 @@ var GuardAfterMoveCases = []PositionAfterMoveCase{
 					Orientation: Black,
 					Moved:       true,
 				},
-			}: {},
+			},
 			{
 				AbsPoint: AbsPoint{1, 2},
 				Piece: &Piece{
@@ -65,7 +65,7 @@ var GuardAfterMoveCases = []PositionAfterMoveCase{
 					Orientation: Black,
 					Moved:       true,
 				},
-			}: {},
+			},
 			{
 				AbsPoint: AbsPoint{1, 4},
 				Piece: &Piece{
@@ -73,7 +73,7 @@ var GuardAfterMoveCases = []PositionAfterMoveCase{
 					Orientation: Black,
 					Moved:       true,
 				},
-			}: {},
+			},
 			{
 				AbsPoint: AbsPoint{2, 3},
 				Piece: &Piece{
@@ -81,7 +81,7 @@ var GuardAfterMoveCases = []PositionAfterMoveCase{
 					Orientation: White,
 					Moved:       true,
 				},
-			}: {},
+			},
 			{
 				AbsPoint: AbsPoint{2, 4},
 				Piece: &Piece{
@@ -89,9 +89,9 @@ var GuardAfterMoveCases = []PositionAfterMoveCase{
 					Orientation: White,
 					Moved:       true,
 				},
-			}: {},
-			&WhiteKingStart: {},
-			&BlackKingStart: {},
+			},
+			WhiteKingStart,
+			BlackKingStart,
 		},
 		PreviousFrom: AbsPoint{3, 3},
 		PreviousTo:   AbsPoint{3, 4},
@@ -100,26 +100,26 @@ var GuardAfterMoveCases = []PositionAfterMoveCase{
 		Diff: PointSet{
 			{
 				AbsPoint: AbsPoint{0, 3},
-			}: {},
+			},
 			{
 				AbsPoint: AbsPoint{1, 2},
-			}: {},
+			},
 			{
 				AbsPoint: AbsPoint{2, 3},
-			}: {},
+			},
 			{
 				AbsPoint: AbsPoint{2, 4},
-			}: {},
+			},
 			{
 				AbsPoint: AbsPoint{1, 4},
-			}: {},
+			},
 			{
 				AbsPoint: AbsPoint{1, 3},
 				Piece: &Piece{
 					Kind:        GuardPawn,
 					Orientation: Black,
 				},
-			}: {},
+			},
 		},
 	},
 }

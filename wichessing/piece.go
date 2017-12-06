@@ -31,11 +31,10 @@ func (p Piece) String() string {
 	return fmt.Sprintf("(%v %v)", p.Kind, p.Orientation)
 }
 
-type PieceSet map[*Piece]struct{}
+type PieceSet []*Piece
 
 func (the PieceSet) Add(a *Piece) PieceSet {
-	the[a] = struct{}{}
-	return the
+	return append(the, a)
 }
 
 type Orientation int

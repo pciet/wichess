@@ -21,30 +21,29 @@ func (p Point) String() string {
 	}
 }
 
-type PointSet map[*Point]struct{}
+type PointSet []Point
 
-func (p PointSet) SetPointPiece(at AbsPoint, piece *Piece) {
-	for point, _ := range p {
-		if (point.File == at.File) && (point.Rank == at.Rank) {
-			point.Piece = piece
-			return
+func (p PointSet) Add(the Point) PointSet {
+	return append(p, the)
+}
+
+func (p PointSet) SetPointPiece(at AbsPoint, piece *Piece) PointSet {
+	for i, point := range p {
+		if point.AbsPoint == at {
+			p[i].Piece = piece
+			return p
 		}
 	}
-	p[&Point{
-		AbsPoint: at,
-		Piece:    piece,
-	}] = struct{}{}
+	return append(p, Point{AbsPoint: at, Piece: piece})
 }
 
 func (s PointSet) String() string {
 	var buffer bytes.Buffer
 	buffer.WriteString("(")
 	length := len(s)
-	i := 0
-	for point, _ := range s {
+	for i, point := range s {
 		buffer.WriteString(fmt.Sprintf("%v", point))
-		i++
-		if i != length {
+		if i != (length - 1) {
 			buffer.WriteString(" ")
 		}
 	}
@@ -60,9 +59,9 @@ func (p PointSet) Board(previousFrom, previousTo AbsPoint) Board {
 	for i := 0; i < 64; i++ {
 		b.Points[i].AbsPoint = AbsPointFromIndex(uint8(i))
 	}
-	for point, _ := range p {
+	for _, point := range p {
 		if point.Piece != nil {
-			piece := (*(point.Piece)).SetKindFlags()
+			piece := point.Piece.SetKindFlags()
 			b.Points[AbsPointToIndex(point.AbsPoint)].Piece = &piece
 		}
 	}
@@ -80,51 +79,46 @@ type RelPoint struct {
 	YOffset int8
 }
 
-type AbsPointSet map[*AbsPoint]struct{}
+type AbsPointSet []AbsPoint
 
-func (s AbsPointSet) Add(the AbsPointSet) AbsPointSet {
-	if len(the) == 0 {
-		return s
+func (s AbsPointSet) Add(the AbsPoint) AbsPointSet {
+	return append(s, the)
+}
+
+func (s AbsPointSet) Combine(sets ...AbsPointSet) AbsPointSet {
+	length := len(s)
+	for _, set := range sets {
+		length += len(set)
 	}
-	newset := make(AbsPointSet)
-	for pt, _ := range s {
-		newset[&AbsPoint{
-			File: pt.File,
-			Rank: pt.Rank,
-		}] = struct{}{}
+	out := make(AbsPointSet, length)
+	i := 0
+	for _, point := range s {
+		out[i] = point
+		i++
 	}
-OUTER:
-	for pt, _ := range the {
-		for ep, _ := range newset {
-			if (pt.File == ep.File) && (pt.Rank == ep.Rank) {
-				continue OUTER
-			}
+	for _, set := range sets {
+		for _, point := range set {
+			out[i] = point
+			i++
 		}
-		newset[&AbsPoint{
-			File: pt.File,
-			Rank: pt.Rank,
-		}] = struct{}{}
 	}
-	return newset
+	return out
 }
 
 func (s AbsPointSet) Reduce() AbsPointSet {
-	for pt, _ := range s {
-		for opt, _ := range s {
-			if pt == opt {
-				continue
-			}
-			if (pt.File == opt.File) && (pt.Rank == opt.Rank) {
-				delete(s, opt)
-			}
+	out := make(AbsPointSet, 0, len(s))
+	for _, pt := range s {
+		if s.Has(pt) {
+			continue
 		}
+		out = append(out, pt)
 	}
 	return s
 }
 
 func (s AbsPointSet) Has(the AbsPoint) bool {
-	for pt, _ := range s {
-		if (pt.File == the.File) && (pt.Rank == the.Rank) {
+	for _, pt := range s {
+		if pt == the {
 			return true
 		}
 	}
@@ -132,38 +126,52 @@ func (s AbsPointSet) Has(the AbsPoint) bool {
 }
 
 func (s AbsPointSet) Equal(an AbsPointSet) bool {
-	for point, _ := range s {
-		if an.Has(*point) == false {
+	if len(s) != len(an) {
+		return false
+	}
+	for _, point := range s {
+		if an.Has(point) == false {
 			return false
 		}
 	}
-	for point, _ := range an {
-		if s.Has(*point) == false {
+	for _, point := range an {
+		if s.Has(point) == false {
 			return false
 		}
 	}
 	return true
 }
 
-func (s AbsPointSet) Diff(from AbsPointSet) AbsPointSet {
-	diff := make(AbsPointSet)
-	for point, _ := range s {
-		if from.Has(*point) == false {
-			diff[point] = struct{}{}
+func (s AbsPointSet) ReducedDiff(from AbsPointSet) AbsPointSet {
+	diff := make(AbsPointSet, 0, len(s))
+	for _, point := range s {
+		if from.Has(point) == false {
+			diff = append(diff, point)
 		}
 	}
-	for point, _ := range from {
-		if s.Has(*point) == false {
-			diff[point] = struct{}{}
+	for _, point := range from {
+		if s.Has(point) == false {
+			diff = append(diff, point)
 		}
 	}
 	return diff.Reduce()
 }
 
-func (s AbsPointSet) Strings() map[string]struct{} {
-	m := make(map[string]struct{})
-	for p, _ := range s {
-		m[p.String()] = struct{}{}
+func (s AbsPointSet) Remove(the AbsPoint) AbsPointSet {
+	out := make(AbsPointSet, 0, len(s))
+	for _, point := range s {
+		if point == the {
+			continue
+		}
+		out = append(out, point)
+	}
+	return out
+}
+
+func (s AbsPointSet) Strings() []string {
+	m := make([]string, len(s))
+	for i, p := range s {
+		m[i] = p.String()
 	}
 	return m
 }
@@ -172,11 +180,10 @@ func (s AbsPointSet) String() string {
 	var buffer bytes.Buffer
 	buffer.WriteString("(")
 	length := len(s)
-	i := 0
-	for point, _ := range s {
+	for i, point := range s {
 		buffer.WriteString(fmt.Sprintf("%v", point))
 		i++
-		if i != length {
+		if i != (length - 1) {
 			buffer.WriteString(" ")
 		}
 	}

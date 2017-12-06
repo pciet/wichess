@@ -46,29 +46,29 @@ func (b Board) Moves(active Orientation) (map[AbsPoint]AbsPointSet, bool, bool) 
 				}
 			}
 		}
-		for move, _ := range moves {
-			if b.AfterMove(point.AbsPoint, *move, piece.Orientation).Check(piece.Orientation) {
-				delete(moves, move)
+		for _, move := range moves {
+			if b.AfterMove(point.AbsPoint, move, piece.Orientation).Check(piece.Orientation) {
+				moves = moves.Remove(move)
 			}
 			if removeLeftCastle {
 				if piece.Orientation == White {
 					if (move.File == 2) && (move.Rank == 0) {
-						delete(moves, move)
+						moves = moves.Remove(move)
 					}
 				} else {
 					if (move.File == 2) && (move.Rank == 7) {
-						delete(moves, move)
+						moves = moves.Remove(move)
 					}
 				}
 			}
 			if removeRightCastle {
 				if piece.Orientation == White {
 					if (move.File == 6) && (move.Rank == 0) {
-						delete(moves, move)
+						moves = moves.Remove(move)
 					}
 				} else {
 					if (move.File == 6) && (move.Rank == 7) {
-						delete(moves, move)
+						moves = moves.Remove(move)
 					}
 				}
 			}
@@ -98,9 +98,9 @@ func (b Board) CheckMoves(active Orientation) map[AbsPoint]AbsPointSet {
 		}
 	}
 	for pt, set := range moves {
-		for mv, _ := range set {
-			if b.AfterMove(pt, *mv, b.Points[pt.Index()].Orientation).Check(b.Points[pt.Index()].Orientation) {
-				delete(set, mv)
+		for _, mv := range set {
+			if b.AfterMove(pt, mv, b.Points[pt.Index()].Orientation).Check(b.Points[pt.Index()].Orientation) {
+				set = set.Remove(mv)
 				if len(set) == 0 {
 					delete(moves, pt)
 				}
@@ -108,7 +108,7 @@ func (b Board) CheckMoves(active Orientation) map[AbsPoint]AbsPointSet {
 		}
 	}
 	for pt, set := range unfiltered {
-		allowed := make(AbsPointSet)
+		allowed := make(AbsPointSet, 0, 8)
 		piece := b.Points[pt.Index()]
 		removeCastling := false
 		removeLeftCastle := false
@@ -133,7 +133,7 @@ func (b Board) CheckMoves(active Orientation) map[AbsPoint]AbsPointSet {
 				}
 			}
 		}
-		for mv, _ := range set {
+		for _, mv := range set {
 			if removeCastling || (removeLeftCastle && removeRightCastle) {
 				if active == White {
 					if ((mv.File == 2) && (mv.Rank == 0)) || ((mv.File == 6) && (mv.Rank == 0)) {
@@ -165,10 +165,10 @@ func (b Board) CheckMoves(active Orientation) map[AbsPoint]AbsPointSet {
 					}
 				}
 			}
-			if b.AfterMove(pt, *mv, active).Check(active) {
+			if b.AfterMove(pt, mv, active).Check(active) {
 				continue
 			}
-			allowed[mv] = struct{}{}
+			allowed = allowed.Add(mv)
 		}
 		if len(allowed) == 0 {
 			continue
@@ -200,94 +200,65 @@ func (b Board) MovesFromPoint(the Point) AbsPointSet {
 	if the.Piece == nil {
 		panic(fmt.Sprintf("wichessing: point (%v,%v) without piece", the.File, the.Rank))
 	}
-	for pt, _ := range b.SurroundingPoints(the) {
+	for _, pt := range b.SurroundingPoints(the) {
 		if pt.Piece != nil {
 			if (pt.Orientation != the.Orientation) && (pt.Locks) {
 				return AbsPointSet{}
 			}
 		}
 	}
-	firstSet := make(AbsPointSet)
-	moveSet := make(AbsPointSet)
-	takeSet := make(AbsPointSet)
-	rallySet := make(AbsPointSet)
+	firstSet := make(AbsPointSet, 0, 16)
+	moveSet := make(AbsPointSet, 0, 16)
+	takeSet := make(AbsPointSet, 0, 4)
+	rallySet := make(AbsPointSet, 0, 16)
 	for movetype, unfilteredpaths := range TruncatedAbsPathsForKind(the.Piece.Kind, the.AbsPoint, the.Piece.Orientation) {
-		for path, _ := range b.ActualPaths(the, movetype, unfilteredpaths) {
+		for _, path := range b.ActualPaths(the, movetype, unfilteredpaths) {
 			for _, pt := range path.Points {
 				switch movetype {
 				case First:
-					firstSet[&AbsPoint{
-						File: pt.File,
-						Rank: pt.Rank,
-					}] = struct{}{}
+					firstSet = firstSet.Add(pt)
 				case Move:
-					moveSet[&AbsPoint{
-						File: pt.File,
-						Rank: pt.Rank,
-					}] = struct{}{}
+					moveSet = moveSet.Add(pt)
 				case Take:
-					takeSet[&AbsPoint{
-						File: pt.File,
-						Rank: pt.Rank,
-					}] = struct{}{}
+					takeSet = takeSet.Add(pt)
 				case RallyMove:
-					rallySet[&AbsPoint{
-						File: pt.File,
-						Rank: pt.Rank,
-					}] = struct{}{}
+					rallySet = rallySet.Add(pt)
 				}
 			}
 		}
 	}
-	set := make(AbsPointSet)
+	set := make(AbsPointSet, 0, len(firstSet)+len(moveSet)+len(rallySet)+len(takeSet))
 	if (len(takeSet) == 0) || (the.MustTake == false) {
-		set = set.Add(firstSet)
-		set = set.Add(moveSet)
-		set = set.Add(rallySet)
+		set = set.Combine(firstSet, moveSet, rallySet)
 	}
-	set = set.Add(takeSet)
-	set = set.Add(b.ReconPointsFrom(the))
+	set = set.Combine(takeSet, b.ReconPointsFrom(the), b.EnPassantTakeFromPoint(the))
 	// castling
 	if (the.Base == King) && (the.Moved == false) {
 		if (the.File == 4) && (the.Rank == 0) {
 			if (b.Points[1].Piece == nil) && (b.Points[2].Piece == nil) && (b.Points[3].Piece == nil) && (b.Points[0].Piece != nil) {
 				if b.Points[0].Moved == false {
-					set[&AbsPoint{
-						File: 2,
-						Rank: 0,
-					}] = struct{}{}
+					set = set.Add(AbsPoint{2, 0})
 				}
 			}
 			if (b.Points[5].Piece == nil) && (b.Points[6].Piece == nil) && (b.Points[7].Piece != nil) {
 				if b.Points[7].Moved == false {
-					set[&AbsPoint{
-						File: 6,
-						Rank: 0,
-					}] = struct{}{}
+					set = set.Add(AbsPoint{6, 0})
 				}
 			}
 		} else if (the.File == 4) && (the.Rank == 7) {
 			if (b.Points[57].Piece == nil) && (b.Points[58].Piece == nil) && (b.Points[59].Piece == nil) && (b.Points[56].Piece != nil) {
 				if b.Points[56].Moved == false {
-					set[&AbsPoint{
-						File: 2,
-						Rank: 7,
-					}] = struct{}{}
+					set = set.Add(AbsPoint{2, 7})
 				}
 			}
 			if (b.Points[61].Piece == nil) && (b.Points[62].Piece == nil) && (b.Points[63].Piece != nil) {
 				if b.Points[63].Moved == false {
-					set[&AbsPoint{
-						File: 6,
-						Rank: 7,
-					}] = struct{}{}
+					set = set.Add(AbsPoint{6, 7})
 				}
 			}
 		}
 	}
-	set = set.Add(b.EnPassantTakeFromPoint(the))
-	set = set.Reduce()
-	return set
+	return set.Reduce()
 }
 
 func (b Board) EnPassantTakeFromPoint(the Point) AbsPointSet {
@@ -304,7 +275,7 @@ func (b Board) EnPassantTakeFromPoint(the Point) AbsPointSet {
 	if ((the.Orientation == White) && (the.Rank != 4)) || ((the.Orientation == Black) && (the.Rank != 3)) {
 		return AbsPointSet{}
 	}
-	set := make(AbsPointSet)
+	set := make(AbsPointSet, 0, 2)
 	if the.Orientation == White {
 		file := int(the.File) + 1
 		if file < 8 {
@@ -315,10 +286,7 @@ func (b Board) EnPassantTakeFromPoint(the Point) AbsPointSet {
 			piece := b.Points[index.Index()].Piece
 			if piece != nil {
 				if (piece.Orientation != the.Orientation) && (piece.Base == Pawn) && (b.PreviousFrom == AbsPoint{File: uint8(file), Rank: 6}) && (b.PreviousTo == index) {
-					set[&AbsPoint{
-						File: uint8(file),
-						Rank: 5,
-					}] = struct{}{}
+					set = set.Add(AbsPoint{uint8(file), 5})
 				}
 			}
 		}
@@ -331,10 +299,7 @@ func (b Board) EnPassantTakeFromPoint(the Point) AbsPointSet {
 			piece := b.Points[index.Index()].Piece
 			if piece != nil {
 				if (piece.Orientation != the.Orientation) && (piece.Base == Pawn) && (b.PreviousFrom == AbsPoint{File: uint8(file), Rank: 6}) && (b.PreviousTo == index) {
-					set[&AbsPoint{
-						File: uint8(file),
-						Rank: 5,
-					}] = struct{}{}
+					set = set.Add(AbsPoint{uint8(file), 5})
 				}
 			}
 		}
@@ -348,10 +313,7 @@ func (b Board) EnPassantTakeFromPoint(the Point) AbsPointSet {
 			piece := b.Points[index.Index()].Piece
 			if piece != nil {
 				if (piece.Orientation != the.Orientation) && (piece.Base == Pawn) && (b.PreviousFrom == AbsPoint{File: uint8(file), Rank: 1}) && (b.PreviousTo == index) {
-					set[&AbsPoint{
-						File: uint8(file),
-						Rank: 2,
-					}] = struct{}{}
+					set = set.Add(AbsPoint{uint8(file), 2})
 				}
 			}
 		}
@@ -364,18 +326,15 @@ func (b Board) EnPassantTakeFromPoint(the Point) AbsPointSet {
 			piece := b.Points[index.Index()].Piece
 			if piece != nil {
 				if (piece.Orientation != the.Orientation) && (piece.Base == Pawn) && (b.PreviousFrom == AbsPoint{File: uint8(file), Rank: 1}) && (b.PreviousTo == index) {
-					set[&AbsPoint{
-						File: uint8(file),
-						Rank: 2,
-					}] = struct{}{}
+					set = set.Add(AbsPoint{uint8(file), 2})
 				}
 			}
 		}
 	}
 	// remove cases where another piece is at the en passant capture point
-	for point, _ := range set {
+	for _, point := range set {
 		if b.Points[point.Index()].Piece != nil {
-			delete(set, point)
+			set = set.Remove(point)
 		}
 	}
 	return set
@@ -385,13 +344,13 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 	if the.Piece == nil {
 		return AbsPathSet{}
 	}
-	actualPaths := make(AbsPathSet)
+	actualPaths := make(AbsPathSet, 0, 4)
 	switch movetype {
 	case First:
 		if the.Moved {
 			break
 		}
-		for path, _ := range unfilteredpaths {
+		for _, path := range unfilteredpaths {
 			if path.Truncated && the.MustEnd {
 				continue
 			}
@@ -422,7 +381,7 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 					continue
 				}
 				if the.Base == King {
-					for pt, _ := range b.SurroundingPoints(actualPoint) {
+					for _, pt := range b.SurroundingPoints(actualPoint) {
 						if pt.Piece == nil {
 							continue
 						}
@@ -437,14 +396,14 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 				filteredPath.Points = append(filteredPath.Points, point)
 			}
 			if len(filteredPath.Points) > 0 {
-				actualPaths[filteredPath.Copy()] = struct{}{}
+				actualPaths = actualPaths.Add(filteredPath)
 			}
 		}
 	case Move:
 		if the.Moved == false {
 			break
 		}
-		for path, _ := range unfilteredpaths {
+		for _, path := range unfilteredpaths {
 			if path.Truncated && the.MustEnd {
 				continue
 			}
@@ -475,7 +434,7 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 					continue
 				}
 				if the.Base == King {
-					for pt, _ := range b.SurroundingPoints(actualPoint) {
+					for _, pt := range b.SurroundingPoints(actualPoint) {
 						if pt.Piece == nil {
 							continue
 						}
@@ -490,11 +449,11 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 				filteredPath.Points = append(filteredPath.Points, point)
 			}
 			if len(filteredPath.Points) > 0 {
-				actualPaths[filteredPath.Copy()] = struct{}{}
+				actualPaths = actualPaths.Add(filteredPath)
 			}
 		}
 	case Take:
-		for path, _ := range unfilteredpaths {
+		for _, path := range unfilteredpaths {
 			if path.Truncated && the.MustEnd {
 				continue
 			}
@@ -520,7 +479,7 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 						if the.Base == King {
 							break
 						}
-						for pt, _ := range b.SurroundingPoints(actualPoint) {
+						for _, pt := range b.SurroundingPoints(actualPoint) {
 							if pt.Piece == nil {
 								continue
 							}
@@ -533,7 +492,7 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 						}
 					}
 					if the.Base == King {
-						for pt, _ := range b.SurroundingPoints(actualPoint) {
+						for _, pt := range b.SurroundingPoints(actualPoint) {
 							if pt.Piece == nil {
 								continue
 							}
@@ -554,12 +513,12 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 				}
 			}
 			if len(filteredPath.Points) > 0 {
-				actualPaths[filteredPath.Copy()] = struct{}{}
+				actualPaths = actualPaths.Add(filteredPath)
 			}
 		}
 	case RallyMove:
 		var rallied bool
-		for point, _ := range b.SurroundingPoints(the) {
+		for _, point := range b.SurroundingPoints(the) {
 			if point.Piece != nil {
 				if (point.Orientation == the.Orientation) && point.Rallies {
 					rallied = true
@@ -570,7 +529,7 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 		if rallied == false {
 			break
 		}
-		for path, _ := range unfilteredpaths {
+		for _, path := range unfilteredpaths {
 			if path.Truncated && the.MustEnd {
 				continue
 			}
@@ -601,7 +560,7 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 					continue
 				}
 				if the.Base == King {
-					for pt, _ := range b.SurroundingPoints(actualPoint) {
+					for _, pt := range b.SurroundingPoints(actualPoint) {
 						if pt.Piece == nil {
 							continue
 						}
@@ -616,7 +575,7 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 				filteredPath.Points = append(filteredPath.Points, point)
 			}
 			if len(filteredPath.Points) > 0 {
-				actualPaths[filteredPath.Copy()] = struct{}{}
+				actualPaths = actualPaths.Add(filteredPath)
 			}
 		}
 	}
@@ -629,7 +588,7 @@ func (b Board) ActualPaths(the Point, movetype PathType, unfilteredpaths AbsPath
 func (b Board) DetonationsFrom(the AbsPoint, detonated AbsPointSet) AbsPointSet {
 	var set AbsPointSet
 	if detonated == nil {
-		set = make(AbsPointSet)
+		set = make(AbsPointSet, 0, 1)
 	} else {
 		set = detonated
 	}
@@ -637,15 +596,15 @@ func (b Board) DetonationsFrom(the AbsPoint, detonated AbsPointSet) AbsPointSet 
 	if b.Points[index].Piece == nil {
 		return set
 	}
-	set[&the] = struct{}{}
+	set = set.Add(the)
 	if b.Points[index].Detonates == false {
 		return set
 	}
-	for pt, _ := range b.SurroundingPoints(b.Points[index]) {
+	for _, pt := range b.SurroundingPoints(b.Points[index]) {
 		if set.Has(pt.AbsPoint) {
 			continue
 		}
-		set = set.Add(b.DetonationsFrom(pt.AbsPoint, set))
+		set = set.Combine(b.DetonationsFrom(pt.AbsPoint, set))
 	}
 	return set.Reduce()
 }
@@ -663,7 +622,7 @@ func (b Board) ReconPointsFrom(the Point) AbsPointSet {
 	if (rank < 0) || (rank >= 8) {
 		return AbsPointSet{}
 	}
-	set := make(AbsPointSet)
+	set := make(AbsPointSet, 0, 3)
 	for f := -1; f <= 1; f++ {
 		file := int(the.File) + f
 		if (file < 0) || (file >= 8) {
@@ -692,16 +651,13 @@ func (b Board) ReconPointsFrom(the Point) AbsPointSet {
 		if b.Points[IndexFromFileAndRank(uint8(file), uint8(nrank))].Piece != nil {
 			continue
 		}
-		set[&AbsPoint{
-			File: b.Points[index].File,
-			Rank: uint8(nrank),
-		}] = struct{}{}
+		set = set.Add(AbsPoint{b.Points[index].File, uint8(nrank)})
 	}
 	return set
 }
 
 func (b Board) SurroundingPoints(from Point) PointSet {
-	set := make(PointSet)
+	set := make(PointSet, 0, 8)
 	for i := -1; i <= 1; i++ {
 		for j := -1; j <= 1; j++ {
 			if (i == 0) && (j == 0) {
@@ -715,7 +671,7 @@ func (b Board) SurroundingPoints(from Point) PointSet {
 			if (r < 0) || (r >= 8) {
 				continue
 			}
-			set[&b.Points[IndexFromFileAndRank(uint8(f), uint8(r))]] = struct{}{}
+			set = set.Add(b.Points[IndexFromFileAndRank(uint8(f), uint8(r))])
 		}
 	}
 	return set

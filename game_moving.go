@@ -56,7 +56,7 @@ func (g game) move(from, to int, mover string, tx TX) (map[string]piece, bool, w
 	}
 	diff := make(map[string]piece)
 	difference, taken := b.Move(absPoint(from), absPoint(to), orientation)
-	for point, _ := range difference {
+	for _, point := range difference {
 		if point.Piece == nil {
 			diff[point.AbsPoint.String()] = piece{
 				Piece: wichessing.Piece{
@@ -198,7 +198,7 @@ func (g game) promote(from int, player string, kind wichessing.Kind, tx TX) map[
 		}
 		return diff
 	}
-	for point, _ := range promdiff {
+	for _, point := range promdiff {
 		if point.Piece == nil {
 			diff[point.AbsPoint.String()] = piece{
 				Piece: wichessing.Piece{
@@ -299,7 +299,12 @@ func (g game) moves(total time.Duration) map[string]map[string]struct{} {
 	}
 	m, check, checkmate := board.Moves(active)
 	for point, set := range m {
-		moves[point.String()] = set.Strings()
+		strings := set.Strings()
+		out := make(map[string]struct{})
+		for _, str := range strings {
+			out[str] = struct{}{}
+		}
+		moves[point.String()] = out
 	}
 	if checkmate {
 		if g.Competitive {

@@ -12,9 +12,9 @@ func (b Board) Draw(turn Orientation) bool {
 	moves := b.AllNaiveMovesFor(turn)
 	// remove all check moves
 	for pt, mvs := range moves {
-		for mv, _ := range mvs {
-			if b.AfterMove(pt, *mv, turn).Check(turn) {
-				delete(mvs, mv)
+		for _, mv := range mvs {
+			if b.AfterMove(pt, mv, turn).Check(turn) {
+				mvs = mvs.Remove(mv)
 			}
 			if len(mvs) == 0 {
 				delete(moves, pt)
@@ -47,7 +47,7 @@ func (b Board) Draw(turn Orientation) bool {
 	var friendly1, friendly2 *Piece
 	var opponent1, opponent2 *Piece
 	i := 0
-	for piece, _ := range friendlyPieces {
+	for _, piece := range friendlyPieces {
 		if i == 0 {
 			friendly1 = piece
 		} else {
@@ -56,7 +56,7 @@ func (b Board) Draw(turn Orientation) bool {
 		i++
 	}
 	i = 0
-	for piece, _ := range opponentPieces {
+	for _, piece := range opponentPieces {
 		if i == 0 {
 			opponent1 = piece
 		} else {

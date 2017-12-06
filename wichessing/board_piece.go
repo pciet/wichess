@@ -33,7 +33,7 @@ func (b Board) IndexPositionOfPiece(the *Piece) uint8 {
 }
 
 func (b Board) PiecesFor(player Orientation) PieceSet {
-	set := make(PieceSet)
+	set := make(PieceSet, 0, 16)
 	for _, point := range b.Points {
 		if point.Piece == nil {
 			continue
@@ -78,8 +78,8 @@ func (b Board) PiecesInDanger(player Orientation) uint8 {
 		}
 	OUTER:
 		for _, set := range moves {
-			for pt, _ := range set {
-				if (pt.File == point.File) && (pt.Rank == point.Rank) {
+			for _, pt := range set {
+				if point.AbsPoint == pt {
 					count++
 					break OUTER
 				}

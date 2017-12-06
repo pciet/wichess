@@ -120,7 +120,7 @@ func TestMovesCases(t *testing.T) {
 				t.Fatalf("\"%v\" failed: %v is marked as moveable but has no moves", c.Name, point)
 			}
 			if targets.Equal(expected) == false {
-				t.Fatalf("\"%v\" failed: %v moves mismatch, %v found, %v expected, %v difference", c.Name, point, targets, expected, targets.Diff(expected))
+				t.Fatalf("\"%v\" failed: %v moves mismatch, %v found, %v expected, %v difference", c.Name, point, targets, expected, targets.ReducedDiff(expected))
 			}
 		}
 	}
@@ -143,9 +143,9 @@ func TestPositionAfterMoveCases(t *testing.T) {
 		}
 		// every expected point must have a matching point on the move diff
 	DIFFING:
-		for expected, _ := range c.Diff {
-			for actual, _ := range diff {
-				if (expected.File == actual.File) && (expected.Rank == actual.Rank) {
+		for _, expected := range c.Diff {
+			for _, actual := range diff {
+				if expected.AbsPoint == actual.AbsPoint {
 					if (expected.Piece == nil) && (actual.Piece == nil) {
 						continue DIFFING
 					}
@@ -156,7 +156,7 @@ func TestPositionAfterMoveCases(t *testing.T) {
 						t.Fatalf("\"%v\" failed: expected %v at %v but found none", c.Name, expected.Piece, expected.AbsPoint)
 					}
 					if expected.Orientation != actual.Orientation {
-						t.Fatalf("\"%v\" failed: expected %v piece but found %v piece", c.Name, expected.Orientation, actual.Orientation)
+						t.Fatalf("\"%v\" failed: expected %v piece at %v but found %v piece at %v", c.Name, expected.Orientation, expected, actual.Orientation, actual)
 					}
 					if expected.Kind != actual.Kind {
 						t.Fatalf("\"%v\" failed: expected %v kind at %v but found %v kind", c.Name, expected.Kind, expected.AbsPoint, actual.Kind)

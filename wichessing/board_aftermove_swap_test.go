@@ -9,8 +9,8 @@ var SwapAfterMoveCases = []PositionAfterMoveCase{
 	{
 		Name: "Black Bishop Swaps With Pawn Across Board",
 		Initial: PointSet{
-			&WhiteKingStart: {},
-			&BlackKingStart: {},
+			WhiteKingStart,
+			BlackKingStart,
 			{
 				AbsPoint: AbsPoint{1, 1},
 				Piece: &Piece{
@@ -18,7 +18,7 @@ var SwapAfterMoveCases = []PositionAfterMoveCase{
 					Orientation: Black,
 					Moved:       true,
 				},
-			}: {},
+			},
 			{
 				AbsPoint: AbsPoint{7, 7},
 				Piece: &Piece{
@@ -26,7 +26,7 @@ var SwapAfterMoveCases = []PositionAfterMoveCase{
 					Orientation: Black,
 					Moved:       true,
 				},
-			}: {},
+			},
 		},
 		PreviousFrom: AbsPoint{3, 3},
 		PreviousTo:   AbsPoint{3, 4},
@@ -39,28 +39,28 @@ var SwapAfterMoveCases = []PositionAfterMoveCase{
 					Kind:        Pawn,
 					Orientation: Black,
 				},
-			}: {},
+			},
 			{
 				AbsPoint: AbsPoint{7, 7},
 				Piece: &Piece{
 					Kind:        SwapBishop,
 					Orientation: Black,
 				},
-			}: {},
+			},
 		},
 	},
 	{
 		Name: "White Swap Pawn Swaps Regular Pawn",
 		Initial: PointSet{
-			&WhiteKingStart: {},
-			&BlackKingStart: {},
+			WhiteKingStart,
+			BlackKingStart,
 			{
 				AbsPoint: AbsPoint{0, 1},
 				Piece: &Piece{
 					Kind:        SwapPawn,
 					Orientation: White,
 				},
-			}: {},
+			},
 			{
 				AbsPoint: AbsPoint{0, 2},
 				Piece: &Piece{
@@ -68,7 +68,7 @@ var SwapAfterMoveCases = []PositionAfterMoveCase{
 					Orientation: White,
 					Moved:       true,
 				},
-			}: {},
+			},
 		},
 		PreviousFrom: AbsPoint{3, 3},
 		PreviousTo:   AbsPoint{3, 4},
@@ -81,14 +81,14 @@ var SwapAfterMoveCases = []PositionAfterMoveCase{
 					Kind:        Pawn,
 					Orientation: White,
 				},
-			}: {},
+			},
 			{
 				AbsPoint: AbsPoint{0, 2},
 				Piece: &Piece{
 					Kind:        SwapPawn,
 					Orientation: White,
 				},
-			}: {},
+			},
 		},
 	},
 }

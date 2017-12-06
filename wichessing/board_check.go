@@ -11,14 +11,14 @@ func (b Board) Checkmate(turn Orientation) bool {
 		return false
 	}
 	for from, set := range b.AllNaiveMovesFor(turn) {
-		for move, _ := range set {
+		for _, move := range set {
 			if (b.Points[from.Index()].Kind == King) && (b.Points[from.Index()].Moved == false) {
 				// castle isn't allowed when king in check
 				if (move.File == 1) || (move.File == 6) {
 					continue
 				}
 			}
-			if b.AfterMove(from, *move, turn).Check(turn) == false {
+			if b.AfterMove(from, move, turn).Check(turn) == false {
 				return false
 			}
 		}
@@ -39,12 +39,12 @@ func (b Board) Check(turn Orientation) bool {
 	allMoves := b.AllNaiveMovesFor(orientation)
 	king, _ := b.KingLocationFor(turn)
 	for orig, moves := range allMoves {
-		for pt, _ := range moves {
-			if (pt.File == king.File) && (pt.Rank == king.Rank) {
+		for _, pt := range moves {
+			if pt == king {
 				return true
 			}
 			// some cases cause reactions that remove the King, such as an enemy detonator move and friendly guard adjacent
-			_, has := b.AfterMove(orig, *pt, orientation).KingLocationFor(turn)
+			_, has := b.AfterMove(orig, pt, orientation).KingLocationFor(turn)
 			if has == false {
 				return true
 			}

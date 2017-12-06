@@ -27,11 +27,11 @@ func (b Board) ComputerMove(player Orientation) *PlayerMove {
 		if b.Points[point.Index()].Orientation != player {
 			continue
 		}
-		for to, _ := range set {
+		for _, to := range set {
 			ratings[&PlayerMove{
 				From: point,
-				To:   *to,
-			}] = b.ComputerRating(point, *to, player)
+				To:   to,
+			}] = b.ComputerRating(point, to, player)
 		}
 	}
 	var best *PlayerMove

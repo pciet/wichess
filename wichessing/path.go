@@ -14,13 +14,13 @@ type Path []Point
 func TruncatedAbsPathsForKind(the Kind, from AbsPoint, with Orientation) AbsPathSetMap {
 	absmap := make(AbsPathSetMap)
 	for movetype, paths := range RelPathMapForKind(the) {
-		availablepaths := make(AbsPathSet)
-		for path, _ := range paths {
+		availablepaths := make(AbsPathSet, 0, 4)
+		for _, path := range paths {
 			availablepath := AbsPath{
-				Points: make([]AbsPoint, 0, len(*path)),
+				Points: make([]AbsPoint, 0, len(path)),
 			}
 			truncated := false
-			for _, point := range *path {
+			for _, point := range path {
 				absfile := int8(from.File) + point.XOffset
 				if (absfile > 7) || (absfile < 0) {
 					truncated = true
@@ -40,7 +40,7 @@ func TruncatedAbsPathsForKind(the Kind, from AbsPoint, with Orientation) AbsPath
 			}
 			availablepath.Truncated = truncated
 			if len(availablepath.Points) != 0 {
-				availablepaths[&availablepath] = struct{}{}
+				availablepaths = availablepaths.Add(availablepath)
 			}
 		}
 		if len(availablepaths) != 0 {
@@ -79,77 +79,84 @@ func RelPathMapForKind(the Kind) RelPathSetMap {
 
 type RelPath []RelPoint
 
+func (the RelPath) Equal(to RelPath) bool {
+	if len(the) != len(to) {
+		return false
+	}
+	for i, point := range the {
+		if to[i] != point {
+			return false
+		}
+	}
+	return true
+}
+
 type AbsPath struct {
 	Points    []AbsPoint
 	Truncated bool
 }
 
-func (the AbsPath) Copy() *AbsPath {
+func (the AbsPath) Copy() AbsPath {
 	p := AbsPath{
 		Points: make([]AbsPoint, 0, len(the.Points)),
 	}
 	for _, pt := range the.Points {
 		p.Points = append(p.Points, pt)
 	}
-	return &p
+	return p
 }
 
-type AbsPathSet map[*AbsPath]struct{}
+type AbsPathSet []AbsPath
+
+func (an AbsPathSet) Add(the AbsPath) AbsPathSet {
+	return append(an, the)
+}
 
 // All relative paths for a piece, used to calculate actual paths for a board state.
-type RelPathSet map[*RelPath]struct{}
+type RelPathSet []RelPath
 
-func (s RelPathSet) Combine(ps RelPathSet) {
-	for path, _ := range ps {
-		if s.HasPath(*path) {
+func (s RelPathSet) Combine(with RelPathSet) RelPathSet {
+	out := make(RelPathSet, 0, len(s)+len(with))
+	for _, path := range with {
+		if s.Has(path) {
 			continue
 		}
-		s[path] = struct{}{}
+		out = append(out, path)
 	}
+	return out
 }
 
-func (s RelPathSet) HasPath(p RelPath) bool {
-OUTER:
-	for path, _ := range s {
-		if len(*path) != len(p) {
-			continue
+func (s RelPathSet) Has(the RelPath) bool {
+	for _, path := range s {
+		if path.Equal(the) {
+			return true
 		}
-		for index, point := range *path {
-			if (point.XOffset != p[index].XOffset) || (point.YOffset != p[index].YOffset) {
-				continue OUTER
-			}
-		}
-		return true
 	}
 	return false
 }
 
 func (s RelPathSet) Copy() RelPathSet {
-	n := make(RelPathSet)
-	for p, _ := range s {
-		n[p] = struct{}{}
+	out := make(RelPathSet, len(s))
+	for i, path := range s {
+		out[i] = path
 	}
-	return n
+	return out
 }
 
 func (s RelPathSet) String() string {
 	var buffer bytes.Buffer
-	t := 0
-	l := len(s)
-	for path, _ := range s {
+	length := len(s)
+	for i, path := range s {
 		buffer.WriteString("(")
-		i := 0
-		length := len(*path)
-		for _, point := range *path {
+		pathLength := len(path)
+		for j, point := range path {
 			buffer.WriteString(fmt.Sprintf("%v", point))
-			i++
-			if i != length {
+			if j != (pathLength - 1) {
 				buffer.WriteString(",")
 			}
 		}
 		buffer.WriteString(")")
-		t++
-		if t != l {
+		if i != (length - 1) {
 			buffer.WriteString(",")
 		}
 	}
@@ -158,66 +165,66 @@ func (s RelPathSet) String() string {
 
 var (
 	KnightPathSet = RelPathSet{
-		&RelPath{{0, 1}, {0, 2}, {-1, 2}}:    {},
-		&RelPath{{0, 1}, {0, 2}, {1, 2}}:     {},
-		&RelPath{{1, 0}, {2, 0}, {2, 1}}:     {},
-		&RelPath{{1, 0}, {2, 0}, {2, -1}}:    {},
-		&RelPath{{0, -1}, {0, -2}, {1, -2}}:  {},
-		&RelPath{{0, -1}, {0, -2}, {-1, -2}}: {},
-		&RelPath{{-1, 0}, {-2, 0}, {-2, 1}}:  {},
-		&RelPath{{-1, 0}, {-2, 0}, {-2, -1}}: {},
+		{{0, 1}, {0, 2}, {-1, 2}},
+		{{0, 1}, {0, 2}, {1, 2}},
+		{{1, 0}, {2, 0}, {2, 1}},
+		{{1, 0}, {2, 0}, {2, -1}},
+		{{0, -1}, {0, -2}, {1, -2}},
+		{{0, -1}, {0, -2}, {-1, -2}},
+		{{-1, 0}, {-2, 0}, {-2, 1}},
+		{{-1, 0}, {-2, 0}, {-2, -1}},
 	}
 	TripleKnightPathSet = RelPathSet{
-		&RelPath{{0, 1}, {0, 2}, {0, 3}, {-1, 3}}:     {},
-		&RelPath{{0, 1}, {0, 2}, {0, 3}, {1, 3}}:      {},
-		&RelPath{{1, 0}, {2, 0}, {3, 0}, {3, 1}}:      {},
-		&RelPath{{1, 0}, {2, 0}, {3, 0}, {3, -1}}:     {},
-		&RelPath{{0, -1}, {0, -2}, {0, -3}, {1, -3}}:  {},
-		&RelPath{{0, -1}, {0, -2}, {0, -3}, {-1, -3}}: {},
-		&RelPath{{-1, 0}, {-2, 0}, {-3, 0}, {-3, 1}}:  {},
-		&RelPath{{-1, 0}, {-2, 0}, {-3, 0}, {-3, -1}}: {},
+		{{0, 1}, {0, 2}, {0, 3}, {-1, 3}},
+		{{0, 1}, {0, 2}, {0, 3}, {1, 3}},
+		{{1, 0}, {2, 0}, {3, 0}, {3, 1}},
+		{{1, 0}, {2, 0}, {3, 0}, {3, -1}},
+		{{0, -1}, {0, -2}, {0, -3}, {1, -3}},
+		{{0, -1}, {0, -2}, {0, -3}, {-1, -3}},
+		{{-1, 0}, {-2, 0}, {-3, 0}, {-3, 1}},
+		{{-1, 0}, {-2, 0}, {-3, 0}, {-3, -1}},
 	}
 	BishopPathSet = RelPathSet{
-		&RelPath{{1, 1}, {2, 2}, {3, 3}, {4, 4}, {5, 5}, {6, 6}, {7, 7}}:               {},
-		&RelPath{{-1, -1}, {-2, -2}, {-3, -3}, {-4, -4}, {-5, -5}, {-6, -6}, {-7, -7}}: {},
-		&RelPath{{1, -1}, {2, -2}, {3, -3}, {4, -4}, {5, -5}, {6, -6}, {7, -7}}:        {},
-		&RelPath{{-1, 1}, {-2, 2}, {-3, 3}, {-4, 4}, {-5, 5}, {-6, 6}, {-7, 7}}:        {},
+		{{1, 1}, {2, 2}, {3, 3}, {4, 4}, {5, 5}, {6, 6}, {7, 7}},
+		{{-1, -1}, {-2, -2}, {-3, -3}, {-4, -4}, {-5, -5}, {-6, -6}, {-7, -7}},
+		{{1, -1}, {2, -2}, {3, -3}, {4, -4}, {5, -5}, {6, -6}, {7, -7}},
+		{{-1, 1}, {-2, 2}, {-3, 3}, {-4, 4}, {-5, 5}, {-6, 6}, {-7, 7}},
 	}
 	RookPathSet = RelPathSet{
-		&RelPath{{1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}}:        {},
-		&RelPath{{-1, 0}, {-2, 0}, {-3, 0}, {-4, 0}, {-5, 0}, {-6, 0}, {-7, 0}}: {},
-		&RelPath{{0, 1}, {0, 2}, {0, 3}, {0, 4}, {0, 5}, {0, 6}, {0, 7}}:        {},
-		&RelPath{{0, -1}, {0, -2}, {0, -3}, {0, -4}, {0, -5}, {0, -6}, {0, -7}}: {},
+		{{1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}},
+		{{-1, 0}, {-2, 0}, {-3, 0}, {-4, 0}, {-5, 0}, {-6, 0}, {-7, 0}},
+		{{0, 1}, {0, 2}, {0, 3}, {0, 4}, {0, 5}, {0, 6}, {0, 7}},
+		{{0, -1}, {0, -2}, {0, -3}, {0, -4}, {0, -5}, {0, -6}, {0, -7}},
 	}
 	QueenPathSet = RelPathSet{
-		&RelPath{{1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}}:               {},
-		&RelPath{{-1, 0}, {-2, 0}, {-3, 0}, {-4, 0}, {-5, 0}, {-6, 0}, {-7, 0}}:        {},
-		&RelPath{{0, 1}, {0, 2}, {0, 3}, {0, 4}, {0, 5}, {0, 6}, {0, 7}}:               {},
-		&RelPath{{0, -1}, {0, -2}, {0, -3}, {0, -4}, {0, -5}, {0, -6}, {0, -7}}:        {},
-		&RelPath{{1, 1}, {2, 2}, {3, 3}, {4, 4}, {5, 5}, {6, 6}, {7, 7}}:               {},
-		&RelPath{{-1, -1}, {-2, -2}, {-3, -3}, {-4, -4}, {-5, -5}, {-6, -6}, {-7, -7}}: {},
-		&RelPath{{1, -1}, {2, -2}, {3, -3}, {4, -4}, {5, -5}, {6, -6}, {7, -7}}:        {},
-		&RelPath{{-1, 1}, {-2, 2}, {-3, 3}, {-4, 4}, {-5, 5}, {-6, 6}, {-7, 7}}:        {},
+		{{1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}},
+		{{-1, 0}, {-2, 0}, {-3, 0}, {-4, 0}, {-5, 0}, {-6, 0}, {-7, 0}},
+		{{0, 1}, {0, 2}, {0, 3}, {0, 4}, {0, 5}, {0, 6}, {0, 7}},
+		{{0, -1}, {0, -2}, {0, -3}, {0, -4}, {0, -5}, {0, -6}, {0, -7}},
+		{{1, 1}, {2, 2}, {3, 3}, {4, 4}, {5, 5}, {6, 6}, {7, 7}},
+		{{-1, -1}, {-2, -2}, {-3, -3}, {-4, -4}, {-5, -5}, {-6, -6}, {-7, -7}},
+		{{1, -1}, {2, -2}, {3, -3}, {4, -4}, {5, -5}, {6, -6}, {7, -7}},
+		{{-1, 1}, {-2, 2}, {-3, 3}, {-4, 4}, {-5, 5}, {-6, 6}, {-7, 7}},
 	}
 	KingPathSet = RelPathSet{
-		&RelPath{{0, 1}}:   {},
-		&RelPath{{1, 1}}:   {},
-		&RelPath{{1, 0}}:   {},
-		&RelPath{{1, -1}}:  {},
-		&RelPath{{0, -1}}:  {},
-		&RelPath{{-1, -1}}: {},
-		&RelPath{{-1, 0}}:  {},
-		&RelPath{{-1, 1}}:  {},
+		{{0, 1}},
+		{{1, 1}},
+		{{1, 0}},
+		{{1, -1}},
+		{{0, -1}},
+		{{-1, -1}},
+		{{-1, 0}},
+		{{-1, 1}},
 	}
 	DoubleKingPathSet = RelPathSet{
-		&RelPath{{0, 1}, {0, 2}}:     {},
-		&RelPath{{1, 1}, {2, 2}}:     {},
-		&RelPath{{1, 0}, {2, 0}}:     {},
-		&RelPath{{1, -1}, {2, -2}}:   {},
-		&RelPath{{0, -1}, {0, -2}}:   {},
-		&RelPath{{-1, -1}, {-2, -2}}: {},
-		&RelPath{{-1, 0}, {-2, 0}}:   {},
-		&RelPath{{-1, 1}, {-2, 2}}:   {},
+		{{0, 1}, {0, 2}},
+		{{1, 1}, {2, 2}},
+		{{1, 0}, {2, 0}},
+		{{1, -1}, {2, -2}},
+		{{0, -1}, {0, -2}},
+		{{-1, -1}, {-2, -2}},
+		{{-1, 0}, {-2, 0}},
+		{{-1, 1}, {-2, 2}},
 	}
 	// set in init()
 	ExtendedBishopPathSet      RelPathSet
@@ -275,17 +282,17 @@ type AbsPathSetMap map[PathType]AbsPathSet
 var (
 	PawnPathMap = RelPathSetMap{
 		First: RelPathSet{
-			&RelPath{{0, 1}, {0, 2}}: {},
+			{{0, 1}, {0, 2}},
 		},
 		Move: RelPathSet{
-			&RelPath{{0, 1}}: {},
+			{{0, 1}},
 		},
 		Take: RelPathSet{
-			&RelPath{{1, 1}}:  {},
-			&RelPath{{-1, 1}}: {},
+			{{1, 1}},
+			{{-1, 1}},
 		},
 		RallyMove: RelPathSet{
-			&RelPath{{0, 1}, {0, 2}}: {},
+			{{0, 1}, {0, 2}},
 		},
 	}
 	RookPathMap = RelPathSetMap{
@@ -319,17 +326,17 @@ var (
 	ExtendedPawnPathMap = RelPathSetMap{
 		// TODO: en passant for the second passing position
 		First: RelPathSet{
-			&RelPath{{0, 1}, {0, 2}, {0, 3}}: {},
+			{{0, 1}, {0, 2}, {0, 3}},
 		},
 		Move: RelPathSet{
-			&RelPath{{0, 1}, {0, 2}}: {},
+			{{0, 1}, {0, 2}},
 		},
 		Take: RelPathSet{
-			&RelPath{{1, 1}}:  {},
-			&RelPath{{-1, 1}}: {},
+			{{1, 1}},
+			{{-1, 1}},
 		},
 		RallyMove: RelPathSet{
-			&RelPath{{0, 1}, {0, 2}, {0, 3}}: {},
+			{{0, 1}, {0, 2}, {0, 3}},
 		},
 	}
 	ExtendedKnightPathMap = RelPathSetMap{
