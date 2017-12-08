@@ -80,7 +80,20 @@ func listeningToGame(name string, white string, black string, totalTime time.Dur
 								cs.black <- make(map[string]piece)
 							}
 						}
-						gameMonitorsLock.Lock()
+						// if the lock can't be acquired we have to try a read here because the notifier could be holding it waiting to send
+						// this won't work serially: lock blocks us from trying to read and trying to read first gives the notifier a chance to lock before we do
+						acq := make(chan struct{})
+						go func() {
+							gameMonitorsLock.Lock()
+							acq <- struct{}{}
+						}()
+						for {
+							select{
+							case <-channels.move:
+							case <-acq:
+								break
+							}
+						}
 						delete(gameMonitors, gameid)
 						gameMonitorsLock.Unlock()
 						gameListeningLock.RUnlock()
