@@ -517,7 +517,7 @@ func main() {
 						set := wichessing.AbsPointSet{}
 						for mv, _ := range mvs {
 							pt := wichessing.AbsPointFromAddressString(mv)
-							set[&pt] = struct{}{}
+							set = set.Add(pt)
 						}
 						availableMoves[wichessing.AbsPointFromAddressString(point)] = set
 					}
@@ -579,7 +579,7 @@ func main() {
 						if g.Points[pt.Index()].Orientation != orientation {
 							continue
 						}
-						for mv, _ := range mvs {
+						for _, mv := range mvs {
 							<-time.After(time.Second * delay_seconds)
 							l = url.Values{}
 							l.Add(fromKey, fmt.Sprintf("%d", pt.Index()))
