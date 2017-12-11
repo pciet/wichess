@@ -90,6 +90,7 @@ func listeningToGame(name string, white string, black string, totalTime time.Dur
 						for {
 							select{
 							case <-channels.move:
+							case <-channels.done:
 							case <-acq:
 								break
 							}

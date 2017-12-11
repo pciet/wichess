@@ -110,6 +110,7 @@ func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) (PointSet, map
 					board := b.Copy()
 					board.Points[fromPoint.AbsPoint.Index()].Piece = nil
 					board.Points[pt.AbsPoint.Index()].Piece = nil
+					pt.Moved = true
 					board.Points[to.Index()].Piece = pt.Piece
 					// in the diff we'll at least have the first piece here, maybe updated if another opponent guard is around
 					set = set.SetPointPiece(to, pt.Piece)
@@ -123,6 +124,7 @@ func (b Board) Move(from AbsPoint, to AbsPoint, turn Orientation) (PointSet, map
 							if gpt.Piece != nil {
 								if (gpt.Orientation != board.Points[to.Index()].Piece.Orientation) && gpt.Guards {
 									set = set.SetPointPiece(gpt.AbsPoint, nil)
+									gpt.Moved = true
 									set = set.SetPointPiece(to, gpt.Piece)
 									pieceset[to] = board.Points[to.Index()].Piece
 									board.Points[gpt.AbsPoint.Index()].Piece = nil
