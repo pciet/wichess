@@ -10,7 +10,8 @@ object {
         object { Bishop }
         object {
             Guard
-            scale 1.1
+            scale 0.8
+            translate <0,0.2,0>
         }
     }
     texture { WhiteT }
