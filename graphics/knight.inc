@@ -40,6 +40,26 @@
  *
  ************************************************************************************/
 
+/****************************************************************************************
+ * Changes for https://github.com/pciet/wichess by Matthew Juran, 2017:
+ *   - isolated Teds_Knight from the rest of the set and changed declared name to Knight
+ *   - replaced sor base with cylinders + torus pattern used with the rest of the set
+ *     (sor is better looking but harder to maintain and may be added in the future)
+ *   - set translation, scaling, and rotation for my set specifics
+ *
+ * This knight.inc is used in wichess/graphics/<w/b><type>knight.pov files where final
+ * rotation and texture is set and combined with the same lighting applied to all pieces.
+ * The generated images are at wichess/web/img/ and a viewer page is created at 
+ * wichess/graphics/img/ when rendering a new set with wichess/graphics/generate.
+ *
+ * wichess/graphics/generate.go shows how the camera is moved to generate 65 images.
+ *
+ * Carving a knight out from a cylinder is a mind-bender, good job to the original authors.
+ *
+ * Issues with povray 3.7:
+ *   - two surfaces on the head of the knight are equal which renders a noise pattern
+ ****************************************************************************************/
+
 /*************************************************************************************
  *  Declare the Knight
  *************************************************************************************/
