@@ -84,12 +84,16 @@ func (g *game) updateGameTimesWithMove(at time.Time, tx TX) {
 	}
 }
 
+// Returns an empty GameInfo if the game is already deleted or otherwise not in the database.
 func (db DB) updateGameTimes(id int, total time.Duration, activePlayer string) GameInfo {
 	// there is a case where the game listening goroutine can determine a time loss but before the lock can be acquired a move is made - if the move signal cannot be sent in time to reset that routine then the game is considered a loss for the original player even though the database shows the opponent as the active player
 	var active wichessing.Orientation
 	tx := db.Begin()
 	defer tx.Commit()
 	g := tx.gameWithIdentifier(id, true)
+	if (g.Active == "") || (g.White == "") || (g.Black == "") {
+		return GameInfo{}
+	}
 	if activePlayer == "" {
 		if g.Active == g.White {
 			active = wichessing.White
@@ -102,7 +106,7 @@ func (db DB) updateGameTimes(id int, total time.Duration, activePlayer string) G
 		} else if activePlayer == g.Black {
 			active = wichessing.Black
 		} else {
-			panicExit(fmt.Sprintf("unknown player %v", activePlayer))
+			panicExit(fmt.Sprintf("unknown player %v not white %v or black %v", activePlayer, g.White, g.Black))
 		}
 	}
 	var opponent wichessing.Orientation
