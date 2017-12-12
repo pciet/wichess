@@ -4,6 +4,7 @@
 package main
 
 import (
+	"fmt"
 	"sync"
 	"time"
 
@@ -47,6 +48,9 @@ func listeningToGame(name string, white string, black string, totalTime time.Dur
 					g := tx.gameWithIdentifier(gameid, false)
 					tx.Commit()
 					if (g.White != name) && (g.Black != name) {
+						if debug {
+							fmt.Printf("player %v not white %v or black %v\n", name, g.White, g.Black)
+						}
 						gameMonitorsLock.Lock()
 						delete(gameMonitors, gameid)
 						gameMonitorsLock.Unlock()
@@ -56,7 +60,21 @@ func listeningToGame(name string, white string, black string, totalTime time.Dur
 					active := g.activeOrientation()
 					activePlayer := g.Active
 					if (g.DrawTurns >= draw_turn_count) || b.Draw(active) || b.Checkmate(active) || g.timeLoss(active, total) {
-						gameMonitorsLock.Lock()
+						// this pattern also needed here in case a final move is made but then another move is sent before the game can be torn down
+						acq := make(chan struct{})
+						go func() {
+							gameMonitorsLock.Lock()
+							acq <- struct{}{}
+						}()
+						OUTER1:
+						for {
+							select{
+							case <-channels.move:
+							case <-channels.done:
+							case <-acq:
+								break OUTER1
+							}
+						}
 						delete(gameMonitors, gameid)
 						gameMonitorsLock.Unlock()
 						return
@@ -80,6 +98,7 @@ func listeningToGame(name string, white string, black string, totalTime time.Dur
 								cs.black <- make(map[string]piece)
 							}
 						}
+						gameListeningLock.RUnlock()
 						// if the lock can't be acquired we have to try a read here because the notifier could be holding it waiting to send
 						// this won't work serially: lock blocks us from trying to read and trying to read first gives the notifier a chance to lock before we do
 						acq := make(chan struct{})
@@ -87,17 +106,17 @@ func listeningToGame(name string, white string, black string, totalTime time.Dur
 							gameMonitorsLock.Lock()
 							acq <- struct{}{}
 						}()
+						OUTER2:
 						for {
 							select{
 							case <-channels.move:
 							case <-channels.done:
 							case <-acq:
-								break
+								break OUTER2
 							}
 						}
 						delete(gameMonitors, gameid)
 						gameMonitorsLock.Unlock()
-						gameListeningLock.RUnlock()
 						return
 					}
 				}
@@ -134,6 +153,7 @@ func listeningToGame(name string, white string, black string, totalTime time.Dur
 				}
 				if (cs.white == nil) && (cs.black == nil) {
 					delete(gameListening, id)
+					gameListeningLock.Unlock()
 					gameMonitorsLock.Lock()
 					monitor, has := gameMonitors[id]
 					if has {
@@ -141,8 +161,9 @@ func listeningToGame(name string, white string, black string, totalTime time.Dur
 						delete(gameMonitors, id)
 					}
 					gameMonitorsLock.Unlock()
+				} else {
+					gameListeningLock.Unlock()
 				}
-				gameListeningLock.Unlock()
 				return
 			}
 			err := conn.WriteJSON(diff)
@@ -161,6 +182,7 @@ func listeningToGame(name string, white string, black string, totalTime time.Dur
 				}
 				if (cs.white == nil) && (cs.black == nil) {
 					delete(gameListening, id)
+					gameListeningLock.Unlock()
 					gameMonitorsLock.Lock()
 					monitor, has := gameMonitors[id]
 					if has {
@@ -168,8 +190,9 @@ func listeningToGame(name string, white string, black string, totalTime time.Dur
 						delete(gameMonitors, id)
 					}
 					gameMonitorsLock.Unlock()
+				} else {
+					gameListeningLock.Unlock()
 				}
-				gameListeningLock.Unlock()
 				return
 			}
 		}
