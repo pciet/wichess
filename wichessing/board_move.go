@@ -13,6 +13,7 @@ func (b Board) AfterMove(from AbsPoint, to AbsPoint, turn Orientation) Board {
 	for _, point := range diff {
 		board.Points[point.Index()] = point
 	}
+	// TODO: assertion that the move is valid?
 	board.PreviousFrom = from
 	board.PreviousTo = to
 	return board

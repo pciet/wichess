@@ -30,19 +30,38 @@ func (b Board) Moves(active Orientation) (map[AbsPoint]AbsPointSet, bool, bool) 
 		removeRightCastle := false
 		if (piece.Kind == King) && (piece.Moved == false) {
 			// are the skipped king squares threatened?
+			// if we have the castling move then the intermediate squares are empty
 			if piece.Orientation == White {
-				if b.AfterMove(point.AbsPoint, AbsPoint{3, 0}, piece.Orientation).Check(piece.Orientation) {
-					removeLeftCastle = true
+				board := b.Copy()
+				if moves.Has(AbsPoint{2, 0}) {
+					board.Points[AbsPoint{3, 0}.Index()].Piece = piece
+					board.Points[AbsPoint{4, 0}.Index()].Piece = nil
+					if board.Check(piece.Orientation) {
+						removeLeftCastle = true
+					}
 				}
-				if b.AfterMove(point.AbsPoint, AbsPoint{5, 0}, active).Check(active) {
-					removeRightCastle = true
+				if moves.Has(AbsPoint{6, 0}) {
+					board.Points[AbsPoint{3, 0}.Index()].Piece = nil
+					board.Points[AbsPoint{5, 0}.Index()].Piece = piece
+					if board.Check(active) {
+						removeRightCastle = true
+					}
 				}
 			} else {
-				if b.AfterMove(point.AbsPoint, AbsPoint{3, 7}, piece.Orientation).Check(piece.Orientation) {
-					removeLeftCastle = true
+				board := b.Copy()
+				if moves.Has(AbsPoint{2, 7}) {
+					board.Points[AbsPoint{3, 7}.Index()].Piece = piece
+					board.Points[AbsPoint{4, 7}.Index()].Piece = nil
+					if board.Check(piece.Orientation) {
+						removeLeftCastle = true
+					}
 				}
-				if b.AfterMove(point.AbsPoint, AbsPoint{5, 7}, piece.Orientation).Check(piece.Orientation) {
-					removeRightCastle = true
+				if moves.Has(AbsPoint{6, 7}) {
+					board.Points[AbsPoint{3, 7}.Index()].Piece = nil
+					board.Points[AbsPoint{5, 7}.Index()].Piece = piece
+					if board.Check(piece.Orientation) {
+						removeRightCastle = true
+					}
 				}
 			}
 		}
@@ -109,7 +128,7 @@ func (b Board) CheckMoves(active Orientation) map[AbsPoint]AbsPointSet {
 	}
 	for pt, set := range unfiltered {
 		allowed := make(AbsPointSet, 0, 8)
-		piece := b.Points[pt.Index()]
+		piece := b.Points[pt.Index()].Piece
 		removeCastling := false
 		removeLeftCastle := false
 		removeRightCastle := false
@@ -118,17 +137,38 @@ func (b Board) CheckMoves(active Orientation) map[AbsPoint]AbsPointSet {
 				removeCastling = true
 			} else {
 				// are the skipped king squares threatened?
-				if active == White {
-					if b.AfterMove(pt, AbsPoint{3, 0}, active).Check(active) {
-						removeLeftCastle = true
-					} else if b.AfterMove(pt, AbsPoint{5, 0}, active).Check(active) {
-						removeRightCastle = true
+				// if we have the castling move then the intermediate squares are empty
+				if piece.Orientation == White {
+					board := b.Copy()
+					if set.Has(AbsPoint{2, 0}) {
+						board.Points[AbsPoint{3, 0}.Index()].Piece = piece
+						board.Points[AbsPoint{4, 0}.Index()].Piece = nil
+						if board.Check(piece.Orientation) {
+							removeLeftCastle = true
+						}
+					}
+					if set.Has(AbsPoint{6, 0}) {
+						board.Points[AbsPoint{3, 0}.Index()].Piece = nil
+						board.Points[AbsPoint{5, 0}.Index()].Piece = piece
+						if board.Check(active) {
+							removeRightCastle = true
+						}
 					}
 				} else {
-					if b.AfterMove(pt, AbsPoint{3, 7}, active).Check(active) {
-						removeLeftCastle = true
-					} else if b.AfterMove(pt, AbsPoint{5, 7}, active).Check(active) {
-						removeRightCastle = true
+					board := b.Copy()
+					if set.Has(AbsPoint{2, 7}) {
+						board.Points[AbsPoint{3, 7}.Index()].Piece = piece
+						board.Points[AbsPoint{4, 7}.Index()].Piece = nil
+						if board.Check(piece.Orientation) {
+							removeLeftCastle = true
+						}
+					}
+					if set.Has(AbsPoint{6, 7}) {
+						board.Points[AbsPoint{3, 7}.Index()].Piece = nil
+						board.Points[AbsPoint{5, 7}.Index()].Piece = piece
+						if board.Check(piece.Orientation) {
+							removeRightCastle = true
+						}
 					}
 				}
 			}

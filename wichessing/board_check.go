@@ -14,7 +14,8 @@ func (b Board) Checkmate(turn Orientation) bool {
 		for _, move := range set {
 			if (b.Points[from.Index()].Kind == King) && (b.Points[from.Index()].Moved == false) {
 				// castle isn't allowed when king in check
-				if (move.File == 1) || (move.File == 6) {
+				// TODO: test cases for this
+				if (move.File == 2) || (move.File == 6) {
 					continue
 				}
 			}
