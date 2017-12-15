@@ -27,8 +27,7 @@ func freePiecesHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/login", http.StatusFound)
 		return
 	}
-	free := database.playersFreePieces(name)
-	json, err := json.Marshal(free)
+	json, err := json.Marshal(database.playersFreePieces(name))
 	if err != nil {
 		panicExit(err.Error())
 	}

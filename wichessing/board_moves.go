@@ -302,7 +302,7 @@ func (b Board) MovesFromPoint(the Point) AbsPointSet {
 }
 
 func (b Board) EnPassantTakeFromPoint(the Point) AbsPointSet {
-	// an fresh game starts with a previous from/to index of 64, which maps to AbsPoint{0, 8}
+	// a fresh game starts with a previous from/to index of 64, which maps to AbsPoint{0, 8}
 	if (b.PreviousFrom.Rank == 8) || (b.PreviousTo.Rank == 8) {
 		return AbsPointSet{}
 	}

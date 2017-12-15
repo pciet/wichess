@@ -238,7 +238,6 @@ func main() {
 		NEWGAME:
 			for {
 				<-time.After(time.Second * delay_seconds)
-				// TODO: open ws://localhost:8080/competitive48n
 				if debug {
 					fmt.Printf("(%v) GET %v\n", meta.name, pieces)
 				}
@@ -261,7 +260,7 @@ func main() {
 				assignments := assignRandomPieces(pcs)
 				<-time.After(time.Second * delay_seconds)
 				// TODO: test cancel
-				// TODO: test competitive48, competitive5, friend, easy/hard computer, and hotseat
+				// TODO: test competitive5, friend, easy/hard computer, and hotseat
 				// request a match
 				// this post returns when a match is made
 				if debug {
