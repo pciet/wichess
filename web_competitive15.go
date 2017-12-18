@@ -116,6 +116,10 @@ func competitive15Handler(w http.ResponseWriter, r *http.Request) {
 			competitive15Matcher.Cancel(name)
 			http.NotFound(w, r) // the client ignores the POST response
 			return
+		case <-w.(http.CloseNotifier).CloseNotify(): // https://groups.google.com/forum/#!topic/golang-nuts/ROxbuskAglc
+			competitive5Matcher.Cancel(name)
+			http.NotFound(w, r)
+			return
 		}
 	} else if r.Method == "GET" {
 		if id == 0 {

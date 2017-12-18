@@ -95,9 +95,9 @@ func moveRequestHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	tx := database.Begin()
+	defer tx.Commit()
 	game := tx.gameWithIdentifier(int(gameid), true)
 	if (game.White != name) && (game.Black != name) {
-		tx.Commit()
 		if debug {
 			fmt.Println("move: player not white or black")
 		}
@@ -106,7 +106,7 @@ func moveRequestHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	(&game).updateGameTimesWithMove(time.Now(), tx)
 	var diff map[string]piece
-	if game.timeLoss(game.activeOrientation(), totalTime) {
+	if game.timeLoss(game.activeOrientation(), totalTime, tx) {
 		diff = map[string]piece{}
 	} else {
 		var promoting bool
@@ -114,7 +114,6 @@ func moveRequestHandler(w http.ResponseWriter, r *http.Request) {
 		if kind != 0 { // promotion
 			diff = game.promote(from, name, wichessing.Kind(kind), tx)
 			if (diff == nil) || (len(diff) == 0) {
-				tx.Commit()
 				if debug {
 					fmt.Println("move: game.promote returned nil or zero length diff")
 				}
@@ -124,7 +123,6 @@ func moveRequestHandler(w http.ResponseWriter, r *http.Request) {
 		} else {
 			diff, promoting, promotingOrientation = game.move(from, to, name, tx)
 			if (diff == nil) || (len(diff) == 0) {
-				tx.Commit()
 				if debug {
 					fmt.Println("move: game.move returned nil or zero length diff")
 				}
@@ -132,7 +130,6 @@ func moveRequestHandler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 		}
-		tx.Commit()
 		var orientation wichessing.Orientation
 		if game.White == name {
 			orientation = wichessing.White

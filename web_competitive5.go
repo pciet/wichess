@@ -116,6 +116,10 @@ func competitive5Handler(w http.ResponseWriter, r *http.Request) {
 			competitive5Matcher.Cancel(name)
 			http.NotFound(w, r) // the client ignores the POST response
 			return
+		case <-w.(http.CloseNotifier).CloseNotify():
+			competitive5Matcher.Cancel(name)
+			http.NotFound(w, r)
+			return
 		}
 	} else if r.Method == "GET" {
 		if id == 0 {

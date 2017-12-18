@@ -59,16 +59,18 @@ func listeningToGame(name string, white string, black string, totalTime time.Dur
 					b := wichessingBoard(g.Points, g.From, g.To)
 					active := g.activeOrientation()
 					activePlayer := g.Active
-					if (g.DrawTurns >= draw_turn_count) || b.Draw(active) || b.Checkmate(active) || g.timeLoss(active, total) {
+					tx = database.Begin()
+					if (g.DrawTurns >= draw_turn_count) || b.Draw(active) || b.Checkmate(active) || g.timeLoss(active, total, tx) {
+						tx.Commit()
 						// this pattern also needed here in case a final move is made but then another move is sent before the game can be torn down
 						acq := make(chan struct{})
 						go func() {
 							gameMonitorsLock.Lock()
 							acq <- struct{}{}
 						}()
-						OUTER1:
+					OUTER1:
 						for {
-							select{
+							select {
 							case <-channels.move:
 							case <-channels.done:
 							case <-acq:
@@ -79,6 +81,7 @@ func listeningToGame(name string, white string, black string, totalTime time.Dur
 						gameMonitorsLock.Unlock()
 						return
 					}
+					tx.Commit()
 					elapsed := g.orientationsElapsedTime(active)
 					select {
 					case <-channels.done:
@@ -106,9 +109,9 @@ func listeningToGame(name string, white string, black string, totalTime time.Dur
 							gameMonitorsLock.Lock()
 							acq <- struct{}{}
 						}()
-						OUTER2:
+					OUTER2:
 						for {
-							select{
+							select {
 							case <-channels.move:
 							case <-channels.done:
 							case <-acq:

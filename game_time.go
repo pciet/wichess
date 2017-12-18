@@ -23,7 +23,7 @@ func (g game) orientationsElapsedTime(active wichessing.Orientation) time.Durati
 
 var timeLossLock = sync.Mutex{}
 
-func (g game) timeLoss(active wichessing.Orientation, total time.Duration) bool {
+func (g game) timeLoss(active wichessing.Orientation, total time.Duration, tx TX) bool {
 	if total == time.Duration(0) {
 		return false
 	}
@@ -32,7 +32,7 @@ func (g game) timeLoss(active wichessing.Orientation, total time.Duration) bool 
 			timeLossLock.Lock()
 			if g.DB.gameRecorded(g.ID) == false {
 				g.DB.updatePlayerRecords(g.Black, g.White, false)
-				g.DB.setGameRecorded(g.ID)
+				tx.setGameRecorded(g.ID)
 			}
 			timeLossLock.Unlock()
 			return true
@@ -42,7 +42,7 @@ func (g game) timeLoss(active wichessing.Orientation, total time.Duration) bool 
 			timeLossLock.Lock()
 			if g.DB.gameRecorded(g.ID) == false {
 				g.DB.updatePlayerRecords(g.White, g.Black, false)
-				g.DB.setGameRecorded(g.ID)
+				tx.setGameRecorded(g.ID)
 			}
 			timeLossLock.Unlock()
 			return true
@@ -116,7 +116,7 @@ func (db DB) updateGameTimes(id int, total time.Duration, activePlayer string) G
 		opponent = wichessing.White
 	}
 	// if the database contains a timeLoss state then the game is already over and recorded by the listening routine or page load logic
-	if g.timeLoss(active, total) || g.timeLoss(opponent, total) {
+	if g.timeLoss(active, total, tx) || g.timeLoss(opponent, total, tx) {
 		return g.GameInfo
 	}
 	var elapsedKey, elapsedUpdatedKey string

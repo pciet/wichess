@@ -271,7 +271,9 @@ func (g game) moves(total time.Duration) map[string]map[string]struct{} {
 	} else {
 		opponent = wichessing.White
 	}
-	if g.timeLoss(active, total) || g.timeLoss(opponent, total) {
+	tx := g.DB.Begin()
+	if g.timeLoss(active, total, tx) || g.timeLoss(opponent, total, tx) {
+		tx.Commit()
 		if g.Competitive {
 			moves[time_key] = map[string]struct{}{
 				fmt.Sprintf("%d", g.Piece): {},
@@ -281,6 +283,7 @@ func (g game) moves(total time.Duration) map[string]map[string]struct{} {
 		}
 		return moves
 	}
+	tx.Commit()
 	board := wichessingBoard(g.Points, g.From, g.To)
 	promoting, _ := board.HasPawnToPromote()
 	if promoting {

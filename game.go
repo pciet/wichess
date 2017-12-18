@@ -77,8 +77,8 @@ func (db DB) gameRecorded(gameID int) bool {
 	return recorded
 }
 
-func (db DB) setGameRecorded(id int) {
-	result, err := db.Exec("UPDATE "+games_table+" SET "+games_recorded+" = $1 WHERE "+games_identifier+" = $2;", true, id)
+func (tx TX) setGameRecorded(id int) {
+	result, err := tx.Exec("UPDATE "+games_table+" SET "+games_recorded+" = $1 WHERE "+games_identifier+" = $2;", true, id)
 	if err != nil {
 		panicExit(err.Error())
 	}
