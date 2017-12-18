@@ -117,10 +117,10 @@ type RelPathSet []RelPath
 
 func (s RelPathSet) Combine(with RelPathSet) RelPathSet {
 	out := make(RelPathSet, 0, len(s)+len(with))
+	for _, path := range s {
+		out = append(out, path)
+	}
 	for _, path := range with {
-		if s.Has(path) {
-			continue
-		}
 		out = append(out, path)
 	}
 	return out
@@ -139,6 +139,17 @@ func (s RelPathSet) Copy() RelPathSet {
 	out := make(RelPathSet, len(s))
 	for i, path := range s {
 		out[i] = path
+	}
+	return out
+}
+
+func (s RelPathSet) Reduce() RelPathSet {
+	out := make(RelPathSet, 0, len(s))
+	for _, path := range s {
+		if out.Has(path) {
+			continue
+		}
+		out = append(out, path)
 	}
 	return out
 }
@@ -235,20 +246,12 @@ var (
 )
 
 func init() {
-	ExtendedBishopPathSet = KingPathSet.Copy()
-	ExtendedBishopPathSet.Combine(BishopPathSet)
+	ExtendedBishopPathSet = KingPathSet.Copy().Combine(BishopPathSet).Reduce()
+	ExtendedRookPathSet = KingPathSet.Copy().Combine(RookPathSet).Reduce()
 
-	ExtendedRookPathSet = KingPathSet.Copy()
-	ExtendedRookPathSet.Combine(RookPathSet)
-
-	ExtendedKnightRallyPathSet = TripleKnightPathSet.Copy()
-	ExtendedKnightRallyPathSet.Combine(KnightPathSet)
-
-	ExtendedBishopRallyPathSet = ExtendedBishopPathSet.Copy()
-	ExtendedBishopRallyPathSet.Combine(DoubleKingPathSet)
-
-	ExtendedRookRallyPathSet = ExtendedRookPathSet.Copy()
-	ExtendedRookRallyPathSet.Combine(DoubleKingPathSet)
+	ExtendedKnightRallyPathSet = TripleKnightPathSet.Copy().Combine(KnightPathSet).Reduce()
+	ExtendedBishopRallyPathSet = ExtendedBishopPathSet.Copy().Combine(DoubleKingPathSet).Reduce()
+	ExtendedRookRallyPathSet = ExtendedRookPathSet.Copy().Combine(DoubleKingPathSet).Reduce()
 
 	// have to reset these since the pointer changed with RelPathSet.Copy
 	ExtendedKnightPathMap[RallyMove] = ExtendedKnightRallyPathSet
