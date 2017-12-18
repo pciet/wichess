@@ -735,6 +735,14 @@
                         if (Pieces[k].Identifier != bishopList[event.data.Index].Identifier) {
                             continue;
                         }
+                        if (Assignments[event.data.File] != 0) {
+                            for (var l = 0; l < Pieces.length; l++) {
+                                if (Assignments[event.data.File] == Pieces[l].Identifier) {
+                                    Pieces[l].assigned = false;
+                                    break;
+                                }
+                            }
+                        }
                         Assignments[event.data.File] = Pieces[k].Identifier;
                         Pieces[k].assigned = true;
                         populateAvailablePieces();
