@@ -231,6 +231,18 @@
             MoveSoundSource.start(0);
             loadNextMoveSound();
         }
+        if (Selected != null) {
+            if (Board[Selected].Orientation == PlayerOrientation) {
+                className = 'selected';
+            } else {
+                className = 'selectedopp';
+            }
+            $('#point'+Selected).removeClass(className);
+            for (var point in Moves[indexToAddrString(Selected)]) {
+                $('#point'+addrStringToIndex(point)).removeClass(className);
+            }
+            Selected = null;
+        }
         makeMove(JSON.parse(event.data));
     }
     function setPieceImage(index, kind, orientation) {
