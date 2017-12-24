@@ -18,6 +18,14 @@
         font-family: 'Libre Baskerville', serif;
         color: #d4cca5;
     }
+    input {
+        -moz-appearance: none;
+        -webkit-appearance: none;
+        background-color: #fb835e;
+        color: #d4cca5;
+        box-shadow: 0px 1px 1px black;
+        font-family: 'Libre Baskerville', serif;
+    }
     .inline {
         display: inline-block;
         vertical-align: top;
@@ -92,9 +100,47 @@
         padding: 0px;
         vertical-align: top;
     }
-    #friendname, #friendinput {
-        margin: 0 auto;
-        display: block;
+    .frienddiv {
+        text-align: center;
+    }
+    .friendmatching {
+        -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Safari */
+        -khtml-user-select: none; /* Konqueror HTML */
+        -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
+        cursor: default;
+    }
+    .friendmatched {
+        display: inline-block;
+        border-radius: 10px;
+        border: none;
+        background-color: #fb835e;
+        color: #d4cca5;
+        box-shadow: 0px 1px 1px black;
+        -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Safari */
+        -khtml-user-select: none; /* Konqueror HTML */
+        -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
+        cursor: default;
+    }
+    .cancelbutton {
+        display: inline-block;
+        border-radius: 10px;
+        border: none;
+        background-color: #fb835e;
+        color: #d4cca5;
+        box-shadow: 0px 1px 1px black;
+        -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Safari */
+        -khtml-user-select: none; /* Konqueror HTML */
+        -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
+        cursor: default;
     }
     .gameselectpoint {
         outline: 1px solid #d4cca5;
@@ -150,11 +196,23 @@
     var Matching5 = false;
     var Matching15 = false;
 
+    // '' or name of opponent
+    var FriendGames = [{{.F0}}, {{.F1}}, {{.F2}}, {{.F3}}, {{.F4}}, {{.F5}}];
+    var FriendMatching = ['{{.F0Matching}}', '{{.F1Matching}}', '{{.F2Matching}}', '{{.F3Matching}}', '{{.F4Matching}}', '{{.F5Matching}}'];
+
     var Pieces = null;
     var Assignments = [];
 
     for (var i = 0; i < 16; i++) {
         Assignments[i] = 0;
+    }
+
+    var ws = new WebSocket('ws://localhost:8080/friend');
+    ws.onmessage = function(event) {
+        var slot = JSON.parse(event.data).slot;
+        FriendGames[slot] = FriendMatching[slot];
+        FriendMatching[slot] = '';
+        setMatchedFriend(slot);
     }
     function layout(width, height) {
         var fitFactor = 1;
@@ -244,8 +302,7 @@
             clickMode(Modes.COMPUTER);
         });
         $('#friendmode').click(function() {
-            // TODO
-            //clickMode(Modes.FRIEND);
+            clickMode(Modes.FRIEND);
         });
         $('#competitivemode').click(function() {
             clickMode(Modes.COMPETITIVE);
@@ -256,7 +313,6 @@
         });
         // TODO
         $('#hotseatmode').addClass('disabled');
-        $('#friendmode').addClass('disabled');
         var army = `
             <div class="armyrow" id="pawnrow"></div>
             <div class="armyselect" id="pawnselect"></div>
@@ -309,6 +365,16 @@
         $('.armyselect').css('height', (armyDim+(2*SelectCellPadding))+'px').css('width', (((armyDim-(2*SelectCellPadding))*8)+(16*SelectCellPadding))+'px');
         $('#pawnrow').css('margin-top', (($('#army').height() - ($('.armyrow').height() * 2) - ($('.armyselect').height() * 2)) / 4) + 'px');
     }
+    var setMatchedFriend = function(index) {
+        $('#f'+index).html('<div id="fw'+index+'">'+FriendGames[index]+'</div>');
+        $('#fw'+index).css('width', '80%').css('height', '80%')
+            .fitText(1.4)
+            .css('line-height', $('#fw'+index).height() + 'px')
+            .addClass('friendmatched')
+            .click({Index: index}, function(event) {
+            window.location.href = '/friend/'+event.data.Index;
+        });
+    };
     function clickMode(mode) {
         if (Clicked != null) {
             switch (Clicked) {
@@ -364,54 +430,74 @@
             case Modes.FRIEND:
                 $('#friendmode').addClass('modebuttonselected');
                 var layout = `
-                    <div class="inline frienddiv">
-                        <div id="friendgrid"></div>
-                        <div id="friendname"></div>
-                    </div>
-                    <div class="inline frienddiv" style="height: 100%;">
-                        <div style="height: 50%;"><input id="friendinput" type="text" name="name" style="height: 80%;"/></div>
-                        <div class="gamebuttondiv">
-                            <div class="gamebutton" id="friend">Play</div>
-                        </div>
-                    </div>
+                    <div class="inline"><!--
+                        --><div id="f0" class="frienddiv"></div><!--
+                        --><div id="f1" class="frienddiv"></div><!--
+                        --><div id="f2" class="frienddiv"></div><!--
+                    --></div><!--
+                    --><div class="inline"><!--
+                        --><div id="f3" class="frienddiv"></div><!--
+                        --><div id="f4" class="frienddiv"></div><!--
+                        --><div id="f5" class="frienddiv"></div><!--
+                    --></div>
                 `;
                 $('#games').html(layout);
-                $('.frienddiv').css('width', (($('#games').width() - (BoxPadding * 2)) / 2) + 'px');
-                $('.gamebuttondiv').css('width', '100%').css('height', '50%');
-                $('.gamebutton').css('width', '90%').css('height', '90%');
-                $('#friendinput').fitText();
-                if ($(window).height() > $(window).width()) {
-                    $('.gamebutton').fitText();
-                } else { 
-                    $('.gamebutton').fitText(1.4);
-                }
-                var friendGrid = '<table>';
-                for (var i = 0; i < 2; i++) {
-                    friendGrid += '<tr class="gameselectrow">';
-                    for (var j = 0; j < 4; j++) {
-                        friendGrid += '<td id="friend'+((i*4)+j)+'" class="gameselectpoint"></td>';
-                    }
-                    friendGrid += '</tr>';
-                }
-                friendGrid += '</table>';
-                $('#friendgrid').html(friendGrid);
-                // border-collapse with two rows = three borders
-                var dim = (($('#games').height() / 2) - (GameCellPadding * 3)) / 2; 
-                $('.gameselectrow').css('height', dim + 'px');
-                $('.gameselectpoint').css('width', dim + 'px');
-                for (var i = 0; i < 8; i++) {
-                    $('#friend'+i).click({Index: i}, function(event) {
-                        // TODO
+                var h = $('#games').height() / 3;
+                var w = $('#games').width() / 2;
+                var setNoFriend = function(index) {
+                    var e = $('#f'+index);
+                    e.html('<input id="friendinput'+index+'" type="text" placeholder="Open"><div class="fispacer inline"></div><input id="friendsubmit'+index+'" type="submit" value=">">');
+                    $('#friendinput'+index).css('box-sizing', 'border-box').css('height', '80%').css('width', '60%').fitText(1.2);
+                    $('#friendsubmit'+index).css('box-sizing', 'border-box').css('height', '80%').css('width', '20%').fitText(0.3);
+                    $('.fispacer').css('width', '5%');
+                    $('#friendsubmit'+index).click({Index: index}, function(event) {
+                        FriendMatching[event.data.Index] = $('#friendinput'+event.data.Index).val();
+                        setMatchingFriend(event.data.Index);
+                        jQuery.post('friend/'+event.data.Index, 
+                            JSON.stringify({friend: FriendMatching[event.data.Index], assignments: Assignments}))
+                        .done(function(data) {
+                            if (data == true) {
+                                FriendGames[event.data.Index] = FriendMatching[event.data.Index];
+                                FriendMatching[event.data.Index] = '';
+                                setMatchedFriend(event.data.Index);
+                            }
+                        });
                     });
-                }
-                // TODO: friend games
-                $('#friend').click(function() {});
+                };
+                var setMatchingFriend = function(index) {
+                    var e = $('#f'+index);
+                    e.html('<div class="inline" id="friendname'+index+'">Matching '+FriendMatching[index]+'</div><div class="matchingspacer inline"></div><div class="inline cancelbutton" id="cancelfriend'+index+'">Cancel</div>');
+                    $('#friendname'+index).css('width', '60%').css('height', '100%').css('box-model', 'border-box').fitText(1.2).css('line-height', $('#friendname'+index).height() + 'px').addClass('friendmatching');
+                    $('.matchingspacer').css('box-model', 'border-box').css('width', '5%');
+                    $('#cancelfriend'+index).css('width', '20%').css('height', '80%').css('box-model', 'border-box').fitText(0.6).css('line-height', $('#cancelfriend'+index).height() + 'px');
+                    $('#cancelfriend'+index).click({Index: index}, function(event) {
+                        var ci = event.data.Index;
+                        jQuery.post('friendcancel/'+event.data.Index).done(function() {
+                            FriendMatching[ci] = '';
+                            setNoFriend(ci);
+                        });
+                    });
+                };
+
+                $('.frienddiv').each(function(index, element) {
+                    var e = $(element);
+                    e.css('box-sizing', 'border-box');
+                    e.css('height', h + 'px');
+                    e.css('width', w + 'px');
+                    if (FriendGames[index] != '') {
+                        setMatchedFriend(index);
+                    } else if (FriendMatching[index] != '') {
+                        setMatchingFriend(index);
+                    } else {
+                        setNoFriend(index);
+                    }
+                });
                 break;
             case Modes.COMPETITIVE:
                 $('#competitivemode').addClass('modebuttonselected');
                 var layout = `
                     <div id="record" style="height: 25%;">+{{.Wins}} / -{{.Losses}} / ={{.Draws}}</div>
-                    <div style="height: 3%;"></div>
+                    <div style="height: 5%;"></div>
                     <div id="competitivebuttons" style="height: 72%;">
                         <div class="inline competitivebuttondiv">
                             <div class="gamebuttondiv">
@@ -428,7 +514,7 @@
                 $('#games').html(layout);
                 $('.competitivebuttondiv').css('width', (($('#games').width() / 2) - BoxPadding) + 'px').css('height', '100%');
                 $('#record').fitText(2.1);
-                $('.gamebuttondiv').css('width', '100%').css('height', '50%');
+                $('.gamebuttondiv').css('width', '100%').css('height', '90%');
                 $('.gamebutton').css('width', '90%').css('height', '90%');
                 if ($(window).height() > $(window).width()) {
                     $('.gamebutton').fitText();

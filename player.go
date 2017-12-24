@@ -4,21 +4,97 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/pciet/wichess/rating"
 )
 
 const (
 	player_table = "players"
 
-	player_name_key   = "name"
-	player_crypt_key  = "crypt"
-	player_wins_key   = "wins"
-	player_losses_key = "losses"
-	player_draws_key  = "draws"
-	player_rating_key = "rating"
-	player_c5_key     = "c5"
-	player_c15_key    = "c15"
+	player_name_key      = "name"
+	player_crypt_key     = "crypt"
+	player_wins_key      = "wins"
+	player_losses_key    = "losses"
+	player_draws_key     = "draws"
+	player_rating_key    = "rating"
+	player_c5_key        = "c5"
+	player_c15_key       = "c15"
+	player_friend_prefix = "f"
 )
+
+func (db DB) freePlayersFriendSlot(name string, slot uint8) {
+	result, err := db.Exec("UPDATE "+player_table+" SET "+player_friend_prefix+fmt.Sprintf("%d", slot)+" = $1 WHERE "+player_name_key+" = $2;", 0, name)
+	if err != nil {
+		panic(err.Error())
+	}
+	count, err := result.RowsAffected()
+	if err != nil {
+		panic(err.Error())
+	}
+	if count != 1 {
+		panic(fmt.Sprint(count, " rows affected by update to free player's friend slot"))
+	}
+}
+
+// Returns -1 if the game is not in one of the slots.
+func (db DB) playersFriendSlotForGame(name string, id int) int {
+	var games [6]int
+	err := db.QueryRow("SELECT "+player_friend_prefix+"0, "+player_friend_prefix+"1, "+player_friend_prefix+"2, "+player_friend_prefix+"3, "+player_friend_prefix+"4, "+player_friend_prefix+"5 FROM "+player_table+" WHERE "+player_name_key+"=$1;", name).Scan(&games[0], &games[1], &games[2], &games[3], &games[4], &games[5])
+	if err != nil {
+		panic(err.Error())
+	}
+	slot := -1
+	for s, gid := range games {
+		if gid == id {
+			slot = s
+			break
+		}
+	}
+	return slot
+}
+
+func (db DB) playersGameFromFriendSlot(name string, slot uint8) int {
+	var id int
+	err := db.QueryRow("SELECT "+player_friend_prefix+fmt.Sprintf("%d", slot)+" FROM "+player_table+" WHERE "+player_name_key+"=$1;", name).Scan(&id)
+	if err != nil {
+		panic(err.Error())
+	}
+	return id
+}
+
+func (db DB) playersFriendSlotOpponents(name string) [6]string {
+	var games [6]int
+	err := db.QueryRow("SELECT "+player_friend_prefix+"0, "+player_friend_prefix+"1, "+player_friend_prefix+"2, "+player_friend_prefix+"3, "+player_friend_prefix+"4, "+player_friend_prefix+"5 FROM "+player_table+" WHERE "+player_name_key+"=$1;", name).Scan(&games[0], &games[1], &games[2], &games[3], &games[4], &games[5])
+	if err != nil {
+		panic(err.Error())
+	}
+	var opponents [6]string
+	for i, id := range games {
+		if id == 0 {
+			continue
+		}
+		opponents[i] = db.gameOpponent(name, id)
+	}
+	return opponents
+}
+
+func (db DB) setPlayerFriendSlot(name string, slot uint8, gameID int) {
+	if slot > 5 {
+		panic(fmt.Sprint(slot, "friend slot greater than 5"))
+	}
+	result, err := db.Exec("UPDATE "+player_table+" SET "+player_friend_prefix+fmt.Sprintf("%d", slot)+" = $1 WHERE "+player_name_key+" = $2;", gameID, name)
+	if err != nil {
+		panic(err.Error())
+	}
+	count, err := result.RowsAffected()
+	if err != nil {
+		panic(err.Error())
+	}
+	if count != 1 {
+		panic(fmt.Sprint(count, "instead of 1 rows affected"))
+	}
+}
 
 func (db DB) playersCompetitive15HourGameID(player string) int {
 	var id int
@@ -126,7 +202,7 @@ func (db DB) playerCrypt(name string) (bool, string) {
 }
 
 func (db DB) newPlayer(name, crypt string) {
-	_, err := db.Exec("INSERT INTO "+player_table+"("+player_name_key+", "+player_crypt_key+", "+player_wins_key+", "+player_losses_key+", "+player_draws_key+", "+player_rating_key+", "+player_c5_key+", "+player_c15_key+") VALUES ($1, $2, $3, $4, $5, $6, $7, $8);", name, crypt, 0, 0, 0, rating.Initial, 0, 0)
+	_, err := db.Exec("INSERT INTO "+player_table+"("+player_name_key+", "+player_crypt_key+", "+player_wins_key+", "+player_losses_key+", "+player_draws_key+", "+player_rating_key+", "+player_c5_key+", "+player_c15_key+", "+player_friend_prefix+"0, "+player_friend_prefix+"1, "+player_friend_prefix+"2, "+player_friend_prefix+"3, "+player_friend_prefix+"4, "+player_friend_prefix+"5) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14);", name, crypt, 0, 0, 0, rating.Initial, 0, 0, 0, 0, 0, 0, 0, 0)
 	if err != nil {
 		panicExit(err.Error())
 	}

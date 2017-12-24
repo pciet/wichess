@@ -15,6 +15,7 @@ type gameSetup [16]int
 
 // Returns the game ID or zero if the setup is invalid.
 func (db DB) requestEasyComputerMatch(player string, setup gameSetup) int {
+	db.reservePieces(setup)
 	return db.newGame(player, setup, easy_computer_player, gameSetup{}, false)
 }
 

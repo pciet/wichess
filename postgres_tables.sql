@@ -5,13 +5,23 @@ CREATE TABLE Players (
     losses INTEGER,
     draws INTEGER,
     rating INTEGER,
-    c5 INTEGER,
-    c15 INTEGER
+    c5 INTEGER, c15 INTEGER,
+    f0 INTEGER, f1 INTEGER,
+    f2 INTEGER, f3 INTEGER,
+    f4 INTEGER, f5 INTEGER
 );
 
 CREATE TABLE Sessions (
     name VARCHAR(64) PRIMARY KEY,
     key BYTEA UNIQUE NOT NULL
+);
+
+CREATE TABLE Friends (
+    requester VARCHAR(64),
+    setup INTEGER[16],
+    friend VARCHAR(64),
+    slot SMALLINT,
+    PRIMARY KEY(requester, slot)
 );
 
 CREATE TABLE Games (
@@ -57,5 +67,6 @@ CREATE TABLE Pieces (
     piece_id SERIAL PRIMARY KEY,
     kind INTEGER,
     owner VARCHAR(64),
-    ingame BOOLEAN
+    reserved SMALLINT,
+    taken BOOLEAN
 );

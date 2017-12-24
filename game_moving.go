@@ -20,6 +20,8 @@ const (
 	draw_turn_count = 50
 )
 
+// TODO: reduce duplication in game.move and game.promote
+
 // Returns address that have changed, Kind 0 piece for a now empty point, but does not update the board points. Returns true and an orientation of the promoter if promoting.
 func (g game) move(from, to int, mover string, tx TX) (map[string]piece, bool, wichessing.Orientation) {
 	if g.Active != mover {
@@ -138,6 +140,13 @@ func (g game) move(from, to int, mover string, tx TX) (map[string]piece, bool, w
 		} else if ((g.DrawTurns + 1) >= draw_turn_count) || after.Draw(nextOrientation) {
 			g.DB.updatePlayerRecords(g.White, g.Black, true)
 		}
+	} else {
+		// in non-competitive games the collectible pieces maintain a reference count, reduced by one when removed
+		tx := g.DB.Begin()
+		for id, _ := range takenPieces {
+			tx.unreservePiece(id)
+		}
+		tx.Commit()
 	}
 	return diff, promoting, promotingOrientation
 }

@@ -1,7 +1,7 @@
 #!/bin/sh
 DBNAME="test"
 USER="test"
-QUERY="make_postgres_tables.sql"
+QUERY="postgres_tables.sql"
 HOST="localhost"
 PORT="5432"
 

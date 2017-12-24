@@ -40,6 +40,10 @@ func main() {
 	http.HandleFunc("/competitive15", competitive15Handler)
 	http.HandleFunc("/cancelcompetitive15", competitive15CancelHandler)
 
+	http.HandleFunc("/friend", friendNotificationWebsocketHandler)
+	http.HandleFunc("/friend/", friendHandler)
+	http.HandleFunc("/friendcancel/", friendCancelHandler)
+
 	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("web/js"))))
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("web/css"))))
 	http.Handle("/img/", http.StripPrefix("/img/", http.FileServer(http.Dir("web/img"))))
