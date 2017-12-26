@@ -29,6 +29,7 @@ CREATE TABLE Games (
     piece INTEGER,
     competitive BOOLEAN,
     recorded BOOLEAN,
+    conceded BOOLEAN,
     white VARCHAR(64) NOT NULL,
     white_ack BOOLEAN,
     white_latestmove TIMESTAMPTZ,

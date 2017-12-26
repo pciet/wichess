@@ -83,6 +83,33 @@ func (db DB) playersFriendMatching(name string) [6]string {
 	return friends
 }
 
+func (db DB) concedeFriendGame(name string, slot uint8) {
+	id := db.playersGameFromFriendSlot(name, slot)
+	// acknowledge sets the slot to zero
+	tx := db.Begin()
+	tx.setGameConceded(id)
+	g := tx.gameWithIdentifier(id, true)
+	(&g).acknowledgeGameComplete(name, tx)
+	tx.Commit()
+	// notifying with an empty diff will cause the client to ask for available moves which will show the conceded state
+	gameListeningLock.RLock()
+	cs, has := gameListening[id]
+	if has {
+		if g.White == name {
+			if cs.black != nil {
+				cs.black <- make(map[string]piece)
+			}
+		} else if g.Black == name {
+			if cs.white != nil {
+				cs.white <- make(map[string]piece)
+			}
+		} else {
+			panic(fmt.Sprint(name, " player not white or black ", g.White, g.Black))
+		}
+	}
+	gameListeningLock.RUnlock()
+}
+
 func (db DB) cancelFriendRequest(requester string, slot uint8) bool {
 	tx := db.Begin()
 	defer tx.Commit()

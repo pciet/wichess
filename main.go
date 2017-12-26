@@ -5,8 +5,8 @@ package main
 
 import (
 	"net/http"
+	// _ "net/http/pprof"
 	"time"
-	//_ "net/http/pprof"
 )
 
 const debug = false
@@ -43,6 +43,7 @@ func main() {
 	http.HandleFunc("/friend", friendNotificationWebsocketHandler)
 	http.HandleFunc("/friend/", friendHandler)
 	http.HandleFunc("/friendcancel/", friendCancelHandler)
+	http.HandleFunc("/friendconcede/", friendConcedeHandler)
 
 	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("web/js"))))
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("web/css"))))

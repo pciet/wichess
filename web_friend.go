@@ -177,3 +177,39 @@ func friendCancelHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func friendConcedeHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		if debug {
+			fmt.Println("request not POST")
+		}
+		http.NotFound(w, r)
+		return
+	}
+	key, name := database.validSession(r)
+	if key == "" {
+		http.Redirect(w, r, "/login", http.StatusFound)
+		return
+	}
+	if name == "" {
+		clearClientSession(w)
+		http.Redirect(w, r, "/login", http.StatusFound)
+		return
+	}
+	slot, err := strconv.ParseInt(r.URL.Path[15:len(r.URL.Path)], 10, 0)
+	if err != nil {
+		if debug {
+			fmt.Println(err.Error())
+		}
+		http.NotFound(w, r)
+		return
+	}
+	if (slot > 5) || (slot < 0) {
+		if debug {
+			fmt.Println(slot, " out of range")
+		}
+		http.NotFound(w, r)
+		return
+	}
+	database.concedeFriendGame(name, uint8(slot))
+}

@@ -17,6 +17,7 @@ const (
 	games_piece                 = "piece"
 	games_competitive           = "competitive"
 	games_recorded              = "recorded"
+	games_conceded              = "conceded"
 	games_white                 = "white"
 	games_white_acknowledge     = "white_ack"
 	games_white_latest_move     = "white_latestmove"
@@ -44,6 +45,7 @@ type GameInfo struct {
 	Piece               int  `json:"-"`
 	Competitive         bool `json:"-"`
 	Recorded            bool `json:"-"`
+	Conceded            bool `json:"-"`
 	White               string
 	WhiteAcknowledge    bool `json:"-"`
 	WhiteLatestMove     time.Time
@@ -66,6 +68,20 @@ type game struct {
 	GameInfo
 	Points [64]piece
 	DB     DB `json:"-"`
+}
+
+func (tx TX) setGameConceded(id int) {
+	result, err := tx.Exec("UPDATE "+games_table+" SET "+games_conceded+" = $1 WHERE "+games_identifier+" = $2;", true, id)
+	if err != nil {
+		panic(err.Error())
+	}
+	count, err := result.RowsAffected()
+	if err != nil {
+		panic(err.Error())
+	}
+	if count != 1 {
+		panic(fmt.Sprint(count, " rows affected by setting game conceded"))
+	}
 }
 
 func (db DB) gameRecorded(gameID int) bool {
@@ -104,7 +120,7 @@ func (g game) activeOrientation() wichessing.Orientation {
 
 func (db DB) gameInfo(id int) GameInfo {
 	g := GameInfo{ID: id}
-	err := db.QueryRow("SELECT "+games_piece+", "+games_competitive+", "+games_recorded+", "+games_white+", "+games_white_acknowledge+", "+games_white_latest_move+", "+games_white_elapsed+", "+games_white_elapsed_updated+", "+games_black+", "+games_black_acknowledge+", "+games_black_latest_move+", "+games_black_elapsed+", "+games_black_elapsed_updated+", "+games_active+", "+games_previous_active+", "+games_from+", "+games_to+", "+games_draw_turns+", "+games_turn+" FROM "+games_table+" WHERE "+games_identifier+"=$1;", id).Scan(&g.Piece, &g.Competitive, &g.Recorded, &g.White, &g.WhiteAcknowledge, &g.WhiteLatestMove, &g.WhiteElapsed, &g.WhiteElapsedUpdated, &g.Black, &g.BlackAcknowledge, &g.BlackLatestMove, &g.BlackElapsed, &g.BlackElapsedUpdated, &g.Active, &g.PreviousActive, &g.From, &g.To, &g.DrawTurns, &g.Turn)
+	err := db.QueryRow("SELECT "+games_piece+", "+games_competitive+", "+games_recorded+", "+games_conceded+","+games_white+", "+games_white_acknowledge+", "+games_white_latest_move+", "+games_white_elapsed+", "+games_white_elapsed_updated+", "+games_black+", "+games_black_acknowledge+", "+games_black_latest_move+", "+games_black_elapsed+", "+games_black_elapsed_updated+", "+games_active+", "+games_previous_active+", "+games_from+", "+games_to+", "+games_draw_turns+", "+games_turn+" FROM "+games_table+" WHERE "+games_identifier+"=$1;", id).Scan(&g.Piece, &g.Competitive, &g.Recorded, &g.Conceded, &g.White, &g.WhiteAcknowledge, &g.WhiteLatestMove, &g.WhiteElapsed, &g.WhiteElapsedUpdated, &g.Black, &g.BlackAcknowledge, &g.BlackLatestMove, &g.BlackElapsed, &g.BlackElapsedUpdated, &g.Active, &g.PreviousActive, &g.From, &g.To, &g.DrawTurns, &g.Turn)
 	if err != nil {
 		panicExit(err.Error())
 	}
@@ -119,7 +135,7 @@ func (tx TX) gameWithIdentifier(id int, forWrite bool) game {
 	}
 	var Points [64]pieceEncoding
 	g := GameInfo{}
-	err := tx.QueryRow("SELECT * FROM "+games_table+" WHERE "+games_identifier+"=$1"+update+";", id).Scan(&g.ID, &g.Piece, &g.Competitive, &g.Recorded, &g.White, &g.WhiteAcknowledge, &g.WhiteLatestMove, &g.WhiteElapsed, &g.WhiteElapsedUpdated, &g.Black, &g.BlackAcknowledge, &g.BlackLatestMove, &g.BlackElapsed, &g.BlackElapsedUpdated, &g.Active, &g.PreviousActive, &g.From, &g.To, &g.DrawTurns, &g.Turn, &Points[0], &Points[1], &Points[2], &Points[3], &Points[4], &Points[5], &Points[6], &Points[7], &Points[8], &Points[9], &Points[10], &Points[11], &Points[12], &Points[13], &Points[14], &Points[15], &Points[16], &Points[17], &Points[18], &Points[19], &Points[20], &Points[21], &Points[22], &Points[23], &Points[24], &Points[25], &Points[26], &Points[27], &Points[28], &Points[29], &Points[30], &Points[31], &Points[32], &Points[33], &Points[34], &Points[35], &Points[36], &Points[37], &Points[38], &Points[39], &Points[40], &Points[41], &Points[42], &Points[43], &Points[44], &Points[45], &Points[46], &Points[47], &Points[48], &Points[49], &Points[50], &Points[51], &Points[52], &Points[53], &Points[54], &Points[55], &Points[56], &Points[57], &Points[58], &Points[59], &Points[60], &Points[61], &Points[62], &Points[63])
+	err := tx.QueryRow("SELECT * FROM "+games_table+" WHERE "+games_identifier+"=$1"+update+";", id).Scan(&g.ID, &g.Piece, &g.Competitive, &g.Recorded, &g.Conceded, &g.White, &g.WhiteAcknowledge, &g.WhiteLatestMove, &g.WhiteElapsed, &g.WhiteElapsedUpdated, &g.Black, &g.BlackAcknowledge, &g.BlackLatestMove, &g.BlackElapsed, &g.BlackElapsedUpdated, &g.Active, &g.PreviousActive, &g.From, &g.To, &g.DrawTurns, &g.Turn, &Points[0], &Points[1], &Points[2], &Points[3], &Points[4], &Points[5], &Points[6], &Points[7], &Points[8], &Points[9], &Points[10], &Points[11], &Points[12], &Points[13], &Points[14], &Points[15], &Points[16], &Points[17], &Points[18], &Points[19], &Points[20], &Points[21], &Points[22], &Points[23], &Points[24], &Points[25], &Points[26], &Points[27], &Points[28], &Points[29], &Points[30], &Points[31], &Points[32], &Points[33], &Points[34], &Points[35], &Points[36], &Points[37], &Points[38], &Points[39], &Points[40], &Points[41], &Points[42], &Points[43], &Points[44], &Points[45], &Points[46], &Points[47], &Points[48], &Points[49], &Points[50], &Points[51], &Points[52], &Points[53], &Points[54], &Points[55], &Points[56], &Points[57], &Points[58], &Points[59], &Points[60], &Points[61], &Points[62], &Points[63])
 	if err != nil {
 		if debug {
 			fmt.Println(err.Error())
@@ -263,7 +279,7 @@ func (g *game) acknowledgeGameComplete(player string, tx TX) bool {
 		}
 	}
 	b := wichessingBoard(g.Points, g.From, g.To)
-	if (b.Checkmate(active) == false) && (b.Draw(active) == false) && (g.DrawTurns < draw_turn_count) && (timeLoss == false) {
+	if (b.Checkmate(active) == false) && (b.Draw(active) == false) && (g.DrawTurns < draw_turn_count) && (timeLoss == false) && (g.Conceded == false) {
 		return false
 	}
 	var ackKey string
@@ -282,6 +298,7 @@ func (g *game) acknowledgeGameComplete(player string, tx TX) bool {
 		} else if c15 != 0 {
 			g.DB.removePlayersCompetitive15Game(player)
 		} else {
+			// TODO: should the friend slot ever be free before here?
 			slot := g.DB.playersFriendSlotForGame(player, g.ID)
 			if slot != -1 {
 				g.DB.freePlayersFriendSlot(player, uint8(slot))
@@ -306,6 +323,11 @@ func (g *game) acknowledgeGameComplete(player string, tx TX) bool {
 	}
 	gameListeningLock.Unlock()
 	if g.BlackAcknowledge && g.WhiteAcknowledge {
+		if g.Competitive == false {
+			for _, point := range g.Points {
+				tx.unreservePiece(point.Identifier)
+			}
+		}
 		tx.deleteGame(g.ID)
 		return true
 	}
@@ -362,8 +384,8 @@ func (db DB) newGame(player1 string, player1setup gameSetup, player2 string, pla
 	player2Pieces[15] = db.pieceWithID(player2setup[15], wichessing.Rook, wichessing.Black, player2)
 	// https://github.com/lib/pq/issues/24
 	var id int
-	err := db.QueryRow("INSERT INTO "+games_table+" ("+games_piece+", "+games_competitive+", "+games_recorded+", "+games_white+", "+games_white_acknowledge+", "+games_white_latest_move+", "+games_white_elapsed+", "+games_white_elapsed_updated+", "+games_black+", "+games_black_acknowledge+", "+games_black_latest_move+", "+games_black_elapsed+", "+games_black_elapsed_updated+", "+games_active+", "+games_previous_active+", "+games_from+", "+games_to+", "+games_draw_turns+", "+games_turn+", s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15, s16, s17, s18, s19, s20, s21, s22, s23, s24, s25, s26, s27, s28, s29, s30, s31, s32, s33, s34, s35, s36, s37, s38, s39, s40, s41, s42, s43, s44, s45, s46, s47, s48, s49, s50, s51, s52, s53, s54, s55, s56, s57, s58, s59, s60, s61, s62, s63) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34, $35, $36, $37, $38, $39, $40, $41, $42, $43, $44, $45, $46, $47, $48, $49, $50, $51, $52, $53, $54, $55, $56, $57, $58, $59, $60, $61, $62, $63, $64, $65, $66, $67, $68, $69, $70, $71, $72, $73, $74, $75, $76, $77, $78, $79, $80, $81, $82, $83) RETURNING "+games_identifier+";",
-		int(randomHeroPiece().Piece.Kind), competitive, false, player1, false, time.Now(), time.Duration(0), time.Now(), player2, false, time.Now(), time.Duration(0), time.Now(), player1, player2, no_move, no_move, 0, 0,
+	err := db.QueryRow("INSERT INTO "+games_table+" ("+games_piece+", "+games_competitive+", "+games_recorded+", "+games_conceded+", "+games_white+", "+games_white_acknowledge+", "+games_white_latest_move+", "+games_white_elapsed+", "+games_white_elapsed_updated+", "+games_black+", "+games_black_acknowledge+", "+games_black_latest_move+", "+games_black_elapsed+", "+games_black_elapsed_updated+", "+games_active+", "+games_previous_active+", "+games_from+", "+games_to+", "+games_draw_turns+", "+games_turn+", s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15, s16, s17, s18, s19, s20, s21, s22, s23, s24, s25, s26, s27, s28, s29, s30, s31, s32, s33, s34, s35, s36, s37, s38, s39, s40, s41, s42, s43, s44, s45, s46, s47, s48, s49, s50, s51, s52, s53, s54, s55, s56, s57, s58, s59, s60, s61, s62, s63) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34, $35, $36, $37, $38, $39, $40, $41, $42, $43, $44, $45, $46, $47, $48, $49, $50, $51, $52, $53, $54, $55, $56, $57, $58, $59, $60, $61, $62, $63, $64, $65, $66, $67, $68, $69, $70, $71, $72, $73, $74, $75, $76, $77, $78, $79, $80, $81, $82, $83, $84) RETURNING "+games_identifier+";",
+		int(randomHeroPiece().Piece.Kind), competitive, false, false, player1, false, time.Now(), time.Duration(0), time.Now(), player2, false, time.Now(), time.Duration(0), time.Now(), player1, player2, no_move, no_move, 0, 0,
 		player1Pieces[8].encode(),
 		player1Pieces[9].encode(),
 		player1Pieces[10].encode(),

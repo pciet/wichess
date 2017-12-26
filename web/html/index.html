@@ -451,6 +451,9 @@
                     $('#friendsubmit'+index).css('box-sizing', 'border-box').css('height', '80%').css('width', '20%').fitText(0.3);
                     $('.fispacer').css('width', '5%');
                     $('#friendsubmit'+index).click({Index: index}, function(event) {
+                        if ($('#friendinput'+event.data.Index).val() == '') {
+                            return;
+                        }
                         FriendMatching[event.data.Index] = $('#friendinput'+event.data.Index).val();
                         setMatchingFriend(event.data.Index);
                         jQuery.post('friend/'+event.data.Index, 

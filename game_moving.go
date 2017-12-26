@@ -16,6 +16,7 @@ const (
 	promote_key   = "promote"
 	draw_key      = "draw"
 	time_key      = "time"
+	conceded_key  = "conceded"
 
 	draw_turn_count = 50
 )
@@ -50,9 +51,9 @@ func (g game) move(from, to int, mover string, tx TX) (map[string]piece, bool, w
 		}
 		return nil, false, wichessing.White
 	}
-	if (g.DrawTurns >= draw_turn_count) || b.Draw(orientation) {
+	if (g.DrawTurns >= draw_turn_count) || b.Draw(orientation) || g.Conceded {
 		if debug {
-			fmt.Println("move: draw determined")
+			fmt.Println("move: draw or conceded determined")
 		}
 		return nil, false, wichessing.White
 	}
@@ -193,9 +194,9 @@ func (g game) promote(from int, player string, kind wichessing.Kind, tx TX) map[
 		return nil
 	}
 	b := wichessingBoard(g.Points, g.From, g.To)
-	if b.Draw(orientation) {
+	if b.Draw(orientation) || g.Conceded {
 		if debug {
-			fmt.Println("promote: draw determined")
+			fmt.Println("promote: draw or conceded determined")
 		}
 		return nil
 	}
@@ -279,6 +280,16 @@ func (g game) moves(total time.Duration) map[string]map[string]struct{} {
 		opponent = wichessing.Black
 	} else {
 		opponent = wichessing.White
+	}
+	if g.Conceded {
+		if g.Competitive {
+			moves[conceded_key] = map[string]struct{}{
+				fmt.Sprintf("%d", g.Piece): {},
+			}
+		} else {
+			moves[conceded_key] = nil
+		}
+		return moves
 	}
 	tx := g.DB.Begin()
 	if g.timeLoss(active, total, tx) || g.timeLoss(opponent, total, tx) {

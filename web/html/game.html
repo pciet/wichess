@@ -39,9 +39,9 @@
         background-color: #f3f3f3;
     }
     #state {
-        border: 5px solid #cc785c;
+        border: 10px solid #cc785c;
         text-align: center;
-        border-radius: 10px;
+        border-radius: 30px;
         background-color: #cc785c;
         color: #fb835e;
         -webkit-touch-callout: none; /* iOS Safari */
@@ -139,7 +139,7 @@
     var BottomSquareRatioThreshold = -0.219;
     // space around the board, set as table in the css above
     var BoardPadding = 7;
-    var StatePadding = 5;
+    var StatePadding = 10;
     var PlayerPadding = 10;
 
     var states = {
@@ -147,7 +147,8 @@
         CHECK: 1,
         DRAW: 2,
         TIME: 3,
-        CHECKMATE: 4
+        CHECKMATE: 4,
+        CONCEDED: 5
     };
 
     // used to keep the same state on redraw of interface (like on a resize)
@@ -371,6 +372,18 @@
                 GainedPiece = parseInt(Object.keys(Moves['time'])[0]);
                 setGainedPiece();
                 setState(states.TIME);
+                Acknowledging = true;
+                setAcknowledge();
+                return;
+            } else if ('conceded' in Moves) {
+                setState(states.CONCEDED);
+                if (PlayerOrientation == o.WHITE) {
+                    $('#white').removeClass('indicating');
+                    $('#black').addClass('indicating');
+                } else {
+                    $('#white').addClass('indicating');
+                    $('#black').removeClass('indicating');
+                }
                 Acknowledging = true;
                 setAcknowledge();
                 return;
@@ -603,6 +616,39 @@
         }
         $(clock).html(millisecondsToClock(remaining));
     }
+    var Conceding = false;
+    function setConcede() {
+        if ((Opponent == EasyComputer) || (Opponent == HardComputer)) {
+            return;
+        } else if (TotalTime.milliseconds() != 0) {
+            return;
+        } else if (Acknowledging == true) {
+            return;
+        }
+        if (Conceding == false) {
+            $('#acknowledge').html('<div id="aspacer"></div><div class="button" id="concedebutton">Concede</div>');
+            $('#concedebutton').click(function() {
+                Conceding = true;
+                setConcede();
+            }).css('box-sizing', 'border-box').css('height', '80%').css('width', '90%').css('line-height', $('#concedebutton').height() + 'px').fitText(0.8);
+        } else {
+            $('#acknowledge').html('<div id="aspacer"></div><div class="inline" id="cspacerfront"></div><div class="button inline" id="concedeyes">Yes</div><div class="inline" id="concedespacer"></div><div class="button inline" id="concedeno">No</div><div class="inline" id="cspacerback"></div>');
+            $('#concedeyes').click(function() {
+                jQuery.post('/friendconcede/'+window.location.href.substr(window.location.href.lastIndexOf('/')+1))
+                .done(function() {
+                    window.location.pathname = '/';
+                });
+            }).css('box-sizing', 'border-box').css('height', '80%').css('width', '45%').css('line-height', $('#concedeyes').height() + 'px').fitText(0.6);
+            $('#concedeno').click(function() {
+                Conceding = false;
+                setConcede();
+            }).css('box-sizing', 'border-box').css('height', '80%').css('width', '45%').css('line-height', $('#concedeno').height() + 'px').fitText(0.6);
+            $('#concedespacer').css('box-sizing', 'border-box').css('width', '5%');
+            $('#cspacerfront').css('box-sizing', 'border-box').css('width', '2.5%');
+            $('#cspacerback').css('box-sizing', 'border-box').css('width', '2.5%');
+        }
+        $('#aspacer').css('height', '10%');
+    }
     function setAcknowledge() {
         if (Acknowledging == false) {
             return;
@@ -691,6 +737,9 @@
             case states.CHECKMATE:
                 $('#state').html('Checkmate').addClass('indicating');
                 break;
+            case states.CONCEDED:
+                $('#state').html('Conceded').addClass('indicating');
+                break;
         }
         $('#state').fitText();
         $('#state').css('line-height', $('#state').height()  + 'px');
@@ -776,7 +825,7 @@
                     --></div>
                 `);
                 $('#backdiv').css('width', ($('#soundback').width() * (3/4)) + 'px').css('height', $('#soundback').height() + 'px');
-                $('#bspacer').css('height', ($('#soundback').height() * (1/8)) + 'px');
+                $('#bspacer').css('height', '10%');                
                 $('#sound').css('width', ($('#soundback').width() * (1/4)) + 'px').css('height', $('#soundback').height() + 'px');
                 $('#movesound, #music').css('width', $('#sound').width() + 'px').css('height', ($('#sound').height() / 2) + 'px').css('line-height', $('#movesound').height() + 'px').fitText(0.3);
                 $('#back').css('width', '80%').css('height', '80%').css('line-height', $('#back').height() + 'px').fitText(0.6);
@@ -1105,6 +1154,8 @@
         setState(GameState);
         if (Acknowledging) {
             setAcknowledge();
+        } else {
+            setConcede();
         }
         if (GainedPiece != null) {
             setGainedPiece();
