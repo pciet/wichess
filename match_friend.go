@@ -25,7 +25,8 @@ var friendMatchListeners = map[string]*websocket.Conn{}
 var friendMatchListenersLock = sync.RWMutex{}
 
 type friendMatchMessage struct {
-	Slot int `json:"slot"`
+	Slot     int `json:"slot"`
+	Moveable int `json:"moveable"`
 }
 
 func notifyFriendMatch(name string, slot uint8) {
@@ -35,7 +36,7 @@ func notifyFriendMatch(name string, slot uint8) {
 	if has == false {
 		return
 	}
-	err := conn.WriteJSON(friendMatchMessage{int(slot)})
+	err := conn.WriteJSON(friendMatchMessage{int(slot), -1})
 	if err != nil {
 		if debug {
 			fmt.Println(err.Error())
@@ -60,6 +61,25 @@ func listeningForFriendMatches(name string, conn *websocket.Conn) {
 	friendMatchListenersLock.Unlock()
 }
 
+func notifyFriendMoveAvailable(name string, id int) {
+	friendMatchListenersLock.RLock()
+	conn, has := friendMatchListeners[name]
+	friendMatchListenersLock.RUnlock()
+	if has == false {
+		return
+	}
+	err := conn.WriteJSON(friendMatchMessage{-1, database.playersFriendSlotForGame(name, id)})
+	if err != nil {
+		if debug {
+			fmt.Println(err.Error())
+		}
+		err = conn.Close()
+		if debug && (err != nil) {
+			fmt.Println(err.Error())
+		}
+	}
+}
+
 // The name should be validated before calling this function.
 func (db DB) playersFriendMatching(name string) [6]string {
 	rows, err := db.Query("SELECT "+friend_friend+", "+friend_slot+" FROM "+friend_table+" WHERE "+friend_requester+"=$1;", name)
@@ -82,6 +102,8 @@ func (db DB) playersFriendMatching(name string) [6]string {
 	}
 	return friends
 }
+
+// TODO: does conceding a game correctly shutdown the monitor goroutine?
 
 func (db DB) concedeFriendGame(name string, slot uint8) {
 	id := db.playersGameFromFriendSlot(name, slot)
@@ -108,6 +130,13 @@ func (db DB) concedeFriendGame(name string, slot uint8) {
 		}
 	}
 	gameListeningLock.RUnlock()
+	if g.White == name {
+		notifyFriendMoveAvailable(g.Black, g.ID)
+	} else if g.Black == name {
+		notifyFriendMoveAvailable(g.White, g.ID)
+	} else {
+		panic(fmt.Sprint(name, " player not white or black ", g.White, g.Black))
+	}
 }
 
 func (db DB) cancelFriendRequest(requester string, slot uint8) bool {
@@ -143,6 +172,7 @@ func (db DB) cancelFriendRequest(requester string, slot uint8) bool {
 // Returns -1 if the request is now pending, otherwise returns the opponent's slot for the matched game.
 // The calling names should be validated before calling this function.
 // Any specified pieces in the provided setup are reserved so that loss during a competitive game doesn't delete the piece until after the friend game completes.
+// If an ID is returned then the requester is the first active player.
 func (db DB) friendRequest(requester string, setup gameSetup, friend string, slot uint8) int {
 	defer db.reservePieces(setup)
 	tx := db.Begin()

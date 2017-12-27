@@ -63,20 +63,21 @@ func (db DB) playersGameFromFriendSlot(name string, slot uint8) int {
 	return id
 }
 
-func (db DB) playersFriendSlotOpponents(name string) [6]string {
+func (db DB) playersFriendSlotOpponentsAndActive(name string) ([6]string, [6]bool) {
 	var games [6]int
 	err := db.QueryRow("SELECT "+player_friend_prefix+"0, "+player_friend_prefix+"1, "+player_friend_prefix+"2, "+player_friend_prefix+"3, "+player_friend_prefix+"4, "+player_friend_prefix+"5 FROM "+player_table+" WHERE "+player_name_key+"=$1;", name).Scan(&games[0], &games[1], &games[2], &games[3], &games[4], &games[5])
 	if err != nil {
 		panic(err.Error())
 	}
 	var opponents [6]string
+	var active [6]bool
 	for i, id := range games {
 		if id == 0 {
 			continue
 		}
-		opponents[i] = db.gameOpponent(name, id)
+		opponents[i], active[i] = db.gameOpponentAndActive(name, id)
 	}
-	return opponents
+	return opponents, active
 }
 
 func (db DB) setPlayerFriendSlot(name string, slot uint8, gameID int) {

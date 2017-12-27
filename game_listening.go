@@ -61,6 +61,8 @@ func listeningToGame(name string, white string, black string, totalTime time.Dur
 					activePlayer := g.Active
 					tx = database.Begin()
 					if (g.DrawTurns >= draw_turn_count) || b.Draw(active) || b.Checkmate(active) || g.timeLoss(active, total, tx) || g.Conceded {
+						notifyFriendMoveAvailable(g.White, g.ID)
+						notifyFriendMoveAvailable(g.Black, g.ID)
 						tx.Commit()
 						// this pattern also needed here in case a final move is made but then another move is sent before the game can be torn down
 						acq := make(chan struct{})

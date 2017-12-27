@@ -115,7 +115,6 @@
     .friendmatched {
         display: inline-block;
         border-radius: 10px;
-        border: none;
         background-color: #fb835e;
         color: #d4cca5;
         box-shadow: 0px 1px 1px black;
@@ -199,6 +198,8 @@
     // '' or name of opponent
     var FriendGames = [{{.F0}}, {{.F1}}, {{.F2}}, {{.F3}}, {{.F4}}, {{.F5}}];
     var FriendMatching = ['{{.F0Matching}}', '{{.F1Matching}}', '{{.F2Matching}}', '{{.F3Matching}}', '{{.F4Matching}}', '{{.F5Matching}}'];
+    // true or false
+    var FriendMoveable = [{{.F0Moveable}}, {{.F1Moveable}}, {{.F2Moveable}}, {{.F3Moveable}}, {{.F4Moveable}}, {{.F5Moveable}}];
 
     var Pieces = null;
     var Assignments = [];
@@ -209,10 +210,16 @@
 
     var ws = new WebSocket('ws://localhost:8080/friend');
     ws.onmessage = function(event) {
-        var slot = JSON.parse(event.data).slot;
-        FriendGames[slot] = FriendMatching[slot];
-        FriendMatching[slot] = '';
-        setMatchedFriend(slot);
+        var msg = JSON.parse(event.data);
+        if (msg.moveable != -1) {
+            FriendMoveable[msg.moveable] = true;
+            var name = $('#fw'+msg.moveable).addClass('modebuttonselected');
+        }
+        if (msg.slot != -1) {
+            FriendGames[msg.slot] = FriendMatching[msg.slot];
+            FriendMatching[msg.slot] = '';
+            setMatchedFriend(msg.slot);
+        }
     }
     function layout(width, height) {
         var fitFactor = 1;
@@ -374,6 +381,9 @@
             .click({Index: index}, function(event) {
             window.location.href = '/friend/'+event.data.Index;
         });
+        if (FriendMoveable[index] != false) {
+            $('#fw'+index).addClass('modebuttonselected');
+        }
     };
     function clickMode(mode) {
         if (Clicked != null) {
@@ -462,6 +472,8 @@
                             if (data == true) {
                                 FriendGames[event.data.Index] = FriendMatching[event.data.Index];
                                 FriendMatching[event.data.Index] = '';
+                                // the player that gets a true response from this post is the first active player
+                                FriendMoveable[event.data.Index] = true;
                                 setMatchedFriend(event.data.Index);
                             }
                         });

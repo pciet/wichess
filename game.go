@@ -175,6 +175,31 @@ func (db DB) gamePlayers(gameID int) (string, string) {
 	return white, black
 }
 
+// This has a special case where the player is marked as active if the game has been conceded.
+func (db DB) gameOpponentAndActive(name string, id int) (string, bool) {
+	var white, black, active string
+	var conceded bool
+	err := db.QueryRow("SELECT "+games_active+", "+games_white+", "+games_black+", "+games_conceded+" FROM "+games_table+" WHERE "+games_identifier+"=$1;", id).Scan(&active, &white, &black, &conceded)
+	if err != nil {
+		panic(err.Error())
+	}
+	var playerActive bool
+	var playerOpponent string
+	if name == white {
+		playerOpponent = black
+	} else if name == black {
+		playerOpponent = white
+	} else {
+		panic(fmt.Sprint(name, " doesn't match white or black ", white, black))
+	}
+	if (name == active) || conceded {
+		playerActive = true
+	} else {
+		playerActive = false
+	}
+	return playerOpponent, playerActive
+}
+
 func (tx TX) updateGame(id int, diff map[string]piece, active string, previousActive string, from int, to int, drawTurns int, turn int) {
 	if (diff == nil) || (len(diff) == 0) {
 		panicExit("no game changes recorded to database")

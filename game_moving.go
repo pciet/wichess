@@ -102,6 +102,10 @@ func (g game) move(from, to int, mover string, tx TX) (map[string]piece, bool, w
 		} else {
 			tx.updateGame(g.ID, diff, nextMover, g.Active, from, to, 0, g.Turn)
 		}
+		// if it's a friend game try to notify that a move is available if the friend is listening
+		if (g.Competitive == false) && (nextMover != easy_computer_player) && (nextMover != hard_computer_player) {
+			notifyFriendMoveAvailable(nextMover, g.ID)
+		}
 	}
 	go func() {
 		gameMonitorsLock.RLock()
@@ -226,6 +230,10 @@ func (g game) promote(from int, player string, kind wichessing.Kind, tx TX) map[
 		tx.updateGame(g.ID, diff, g.Active, g.Active, from, from, 0, g.Turn)
 	} else {
 		tx.updateGame(g.ID, diff, nextMover, g.Active, from, from, 0, g.Turn)
+		// if it's a friend game try to notify that a move is available if the friend is listening
+		if (g.Competitive == false) && (nextMover != easy_computer_player) && (nextMover != hard_computer_player) {
+			notifyFriendMoveAvailable(nextMover, g.ID)
+		}
 	}
 	go func() {
 		gameMonitorsLock.RLock()
