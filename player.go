@@ -159,6 +159,9 @@ const (
 )
 
 func (db DB) updatePlayerRecords(winner, loser string, draw bool) {
+	if debug {
+		fmt.Printf("updating record, winner %v loser %v draw %v\n", winner, loser, draw)
+	}
 	if (winner == easy_computer_player) || (winner == hard_computer_player) || (loser == easy_computer_player) || (loser == hard_computer_player) {
 		panicExit("updating record for computer game")
 	}

@@ -84,11 +84,14 @@ func (tx TX) setGameConceded(id int) {
 	}
 }
 
-func (db DB) gameRecorded(gameID int) bool {
+func (tx TX) gameRecorded(gameID int) bool {
 	var recorded bool
-	err := db.QueryRow("SELECT "+games_recorded+" FROM "+games_table+" WHERE "+games_identifier+"=$1;", gameID).Scan(&recorded)
+	err := tx.QueryRow("SELECT "+games_recorded+" FROM "+games_table+" WHERE "+games_identifier+"=$1 FOR UPDATE;", gameID).Scan(&recorded)
 	if err != nil {
 		panicExit(err.Error())
+	}
+	if debug {
+		fmt.Printf("%v recorded %v\n", gameID, recorded)
 	}
 	return recorded
 }
@@ -104,6 +107,9 @@ func (tx TX) setGameRecorded(id int) {
 	}
 	if count != 1 {
 		panicExit(fmt.Sprintf("%v rows affected by ack update exec", count))
+	}
+	if debug {
+		fmt.Printf("%v %v set true\n", id, games_recorded)
 	}
 }
 

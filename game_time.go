@@ -30,7 +30,7 @@ func (g game) timeLoss(active wichessing.Orientation, total time.Duration, tx TX
 	if active == wichessing.White {
 		if g.WhiteElapsed > total {
 			timeLossLock.Lock()
-			if g.DB.gameRecorded(g.ID) == false {
+			if tx.gameRecorded(g.ID) == false {
 				g.DB.updatePlayerRecords(g.Black, g.White, false)
 				tx.setGameRecorded(g.ID)
 			}
@@ -40,7 +40,7 @@ func (g game) timeLoss(active wichessing.Orientation, total time.Duration, tx TX
 	} else if active == wichessing.Black {
 		if g.BlackElapsed > total {
 			timeLossLock.Lock()
-			if g.DB.gameRecorded(g.ID) == false {
+			if tx.gameRecorded(g.ID) == false {
 				g.DB.updatePlayerRecords(g.White, g.Black, false)
 				tx.setGameRecorded(g.ID)
 			}
