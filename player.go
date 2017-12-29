@@ -21,6 +21,8 @@ const (
 	player_c5_key        = "c5"
 	player_c15_key       = "c15"
 	player_friend_prefix = "f"
+
+	newPlayerPieceCount = 3
 )
 
 func (db DB) freePlayersFriendSlot(name string, slot uint8) {
@@ -206,9 +208,19 @@ func (db DB) playerCrypt(name string) (bool, string) {
 }
 
 func (db DB) newPlayer(name, crypt string) {
-	_, err := db.Exec("INSERT INTO "+player_table+"("+player_name_key+", "+player_crypt_key+", "+player_wins_key+", "+player_losses_key+", "+player_draws_key+", "+player_rating_key+", "+player_c5_key+", "+player_c15_key+", "+player_friend_prefix+"0, "+player_friend_prefix+"1, "+player_friend_prefix+"2, "+player_friend_prefix+"3, "+player_friend_prefix+"4, "+player_friend_prefix+"5) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14);", name, crypt, 0, 0, 0, rating.Initial, 0, 0, 0, 0, 0, 0, 0, 0)
+	result, err := db.Exec("INSERT INTO "+player_table+"("+player_name_key+", "+player_crypt_key+", "+player_wins_key+", "+player_losses_key+", "+player_draws_key+", "+player_rating_key+", "+player_c5_key+", "+player_c15_key+", "+player_friend_prefix+"0, "+player_friend_prefix+"1, "+player_friend_prefix+"2, "+player_friend_prefix+"3, "+player_friend_prefix+"4, "+player_friend_prefix+"5) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14);", name, crypt, 0, 0, 0, rating.Initial, 0, 0, 0, 0, 0, 0, 0, 0)
 	if err != nil {
-		panicExit(err.Error())
+		panic(err.Error())
+	}
+	count, err := result.RowsAffected()
+	if err != nil {
+		panic(err.Error())
+	}
+	if count != 1 {
+		panic(fmt.Sprint(count, " rows affected by new player insert for ", name))
+	}
+	for i := 0; i < newPlayerPieceCount; i++ {
+		db.newPiece(int(randomHeroPiece().Kind), name)
 	}
 }
 

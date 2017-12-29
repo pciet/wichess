@@ -202,9 +202,16 @@ func (db DB) playersFreePieces(name string) []piece {
 }
 
 func (db DB) newPiece(kind int, player string) {
-	_, err := db.Exec("INSERT INTO "+piece_table+"("+piece_kind_key+", "+piece_owner_key+", "+piece_reserved_key+", "+piece_taken_key+") VALUES ($1, $2, $3, $4);", kind, player, 0, false)
+	result, err := db.Exec("INSERT INTO "+piece_table+"("+piece_kind_key+", "+piece_owner_key+", "+piece_reserved_key+", "+piece_taken_key+") VALUES ($1, $2, $3, $4);", kind, player, 0, false)
 	if err != nil {
-		panicExit(err.Error())
+		panic(err.Error())
+	}
+	count, err := result.RowsAffected()
+	if err != nil {
+		panic(err.Error())
+	}
+	if count != 1 {
+		panic(fmt.Sprint(count, " rows affected by new piece insert for ", player))
 	}
 }
 

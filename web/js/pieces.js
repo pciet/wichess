@@ -1,3 +1,6 @@
+// Copyright 2017 Matthew Juran
+// All Rights Reserved
+
 var k = {
     KING: 1,
     QUEEN: 2,

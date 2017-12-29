@@ -118,12 +118,25 @@
         width: 100%;
         height: 100%;
     }
+    #pname {
+        font-weight: bold;
+    }
+    .pattr {
+        -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Safari */
+        -khtml-user-select: none; /* Konqueror HTML */
+        -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
+        cursor: default;
+    }
     </style>
     <script type="text/javascript" src="/js/jquery-3.2.1.min.js"></script>
     <script type="text/javascript" src="/js/jquery.fittext.js"></script>
     <script type="text/javascript" src="/js/moment.min.js"></script>
     <script type="text/javascript" src="/js/duration.js"></script>
     <script type="text/javascript" src="/js/pieces.js"></script>
+    <script type="text/javascript" src="/js/piece_attributes.js"></script>
     <script type="text/javascript" src="/js/AudioContextMonkeyPatch.js"></script>
     <script type="text/javascript" src="/js/js.cookie.js"></script>
     <script type="text/javascript">
@@ -665,10 +678,34 @@
             });
         });
     }
+    var PieceGained = false;
+    function showPieceAttributes(kind) {
+        if (Promoting || PieceGained) {
+            return;
+        }
+        var sheet = '<div id="pname">'+nameForKind(kind)+'</div>';
+        var attr = attributesForKind(kind);
+        for (var i = 0; i < attr.length; i++) {
+            sheet += '<div id="pattr'+i+'" class="pattr">'+stringForAttribute(attr[i])+'</div>';
+        }
+        $('#promote').html(sheet);
+        var height = $('#promote').height() / (attr.length + 1);
+        $('#pname').css('box-sizing', 'border-box').css('height', height + 'px').css('line-height', height + 'px').css('width', '100%').css('text-align', 'center').fitText();
+        for (var i = 0; i < attr.length; i++) {
+            $('#pattr'+i).css('box-sizing', 'border-box').css('height', height + 'px').css('line-height', height + 'px').css('width', '100%').css('text-align', 'center').fitText();
+        }
+    }
+    function unshowPieceAttributes() {
+        if (Promoting || PieceGained) {
+            return;
+        }
+        $('#promote').html('');
+    }
     function setGainedPiece() {
         if (GainedPiece == null) {
             return;
         }
+        PieceGained = true;
         $('#promote').html(`
             <div id="gainimg"><img id="gainedpieceimg" src="/img/`+imageNameForKind(GainedPiece, 64, PlayerOrientation)+`"></div><!--
             --><div id="gaintext">+`+nameForKind(GainedPiece)+`</div>
@@ -1078,6 +1115,7 @@
                             MoveSoundSource.start(0);
                             loadNextMoveSound();
                         }
+                        unshowPieceAttributes();
                         requestMove(Selected, index);
                     }
                     return;
@@ -1085,6 +1123,7 @@
                 if (Board[index].Kind == 0) {
                     return;
                 }
+                showPieceAttributes(Board[index].Kind);
                 if (Moves[indexToAddrString(index)] == null) {
                     return;
                 }
@@ -1100,6 +1139,7 @@
                     }
                     if (Selected == index) {
                         Selected = null;
+                        unshowPieceAttributes();
                         return;
                     }
                 }
@@ -1119,6 +1159,9 @@
                 if (Board[index].Kind == 0) {
                     return;
                 }
+                if (Selected == null) {
+                    showPieceAttributes(Board[index].Kind);
+                }
                 if (Moves[indexToAddrString(index)] == null) {
                     return;
                 }
@@ -1136,6 +1179,9 @@
                 var className;
                 if (Board[index].Kind == 0) {
                     return;
+                }
+                if (Selected == null) {
+                    unshowPieceAttributes();
                 }
                 if (Moves[indexToAddrString(index)] == null) {
                     return;
@@ -1176,6 +1222,7 @@
         }
     }
     $(window).resize(function() {
+        Selected = null;
         layout($(window).width(), $(window).height());
     });
     $(document).ready(function() {
