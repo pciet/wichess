@@ -119,9 +119,29 @@
         height: 100%;
     }
     #pname {
+        text-align: center;
         font-weight: bold;
     }
     .pattr {
+        background-color: #884EA0;
+        border: 3px outset #d4cca5;
+        border-radius: 10px;        
+        text-align: center;
+        -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Safari */
+        -khtml-user-select: none; /* Konqueror HTML */
+        -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
+        cursor: default;
+    }
+    .pattrdesc {
+        background-color: grey;
+        font-style: italic;
+        font-size: 11px;
+        border: 3px outset #d4cca5;
+        border-radius: 5px; 
+        padding: 7px;
         -webkit-touch-callout: none; /* iOS Safari */
         -webkit-user-select: none; /* Safari */
         -khtml-user-select: none; /* Konqueror HTML */
@@ -685,14 +705,49 @@
         }
         var sheet = '<div id="pname">'+nameForKind(kind)+'</div>';
         var attr = attributesForKind(kind);
-        for (var i = 0; i < attr.length; i++) {
-            sheet += '<div id="pattr'+i+'" class="pattr">'+stringForAttribute(attr[i])+'</div>';
-        }
-        $('#promote').html(sheet);
-        var height = $('#promote').height() / (attr.length + 1);
-        $('#pname').css('box-sizing', 'border-box').css('height', height + 'px').css('line-height', height + 'px').css('width', '100%').css('text-align', 'center').fitText();
-        for (var i = 0; i < attr.length; i++) {
-            $('#pattr'+i).css('box-sizing', 'border-box').css('height', height + 'px').css('line-height', height + 'px').css('width', '100%').css('text-align', 'center').fitText();
+        if (attr.length > 0) {
+            for (var i = 0; i < MaxAttributeCount; i++) {
+                if (i < attr.length) {
+                    sheet += '<div class="pattrdiv"><div id="pattr'+i+'" class="pattr">'+stringForAttribute(attr[i])+'</div><div class="pattrdesc" id="pattrdesc'+i+'"></div></div>';
+                } else {
+                    sheet += '<div class="pattrdiv"><div id="pattr'+i+'" class="pattr"></div></div>';
+                }
+            }
+            $('#promote').html(sheet);
+            var height = $('#promote').height() / (MaxAttributeCount + 1);
+            $('.pattrdiv').css('height', height + 'px').css('width', '100%').css('box-sizing', 'border-box');
+            $('#pname').css('box-sizing', 'border-box').css('height', height + 'px').css('line-height', height + 'px').css('width', '100%').fitText();
+            for (var i = 0; i < MaxAttributeCount; i++) {
+                $('#pattr'+i).css('box-sizing', 'border-box').css('height', '80%').css('line-height', $('#pattr'+i).height() + 'px').css('width', '80%').css('margin', '0 auto').fitText(1.1);
+                if ($('#pattr'+i).html() == '') {
+                    $('#pattr'+i).css('border', '0px').css('background-color', '#cc785c');
+                } else {
+                    $('#pattr'+i).click({Index: i, Kind: kind, Attribute: attr[i]}, function(event) {
+                        $('#pattrdesc'+event.data.Index).html(descriptionForAttribute(event.data.Attribute))
+                            .css('display', 'inline-block')
+                            .css('position', 'relative')
+                            .css('left', '40px')
+                            .css('top', '-100px')
+                            .css('width', $('#pattr'+event.data.Index).width() * 2);
+                        var h = function(pevent) {
+                            $('#pattrdesc'+pevent.data.Index).css('display', 'none');
+                            showPieceAttributes(pevent.data.Kind);
+                        };
+                        $('#pattr'+event.data.Index).unbind().click({Index: event.data.Index, Kind: event.data.Kind}, h);
+                        for (var i = 0; i < MaxAttributeCount; i++) {
+                            if ((('#pattr'+i).html == '') || (i == event.data.Index)) {
+                                continue;
+                            }
+                            $('#pattr'+i).click({Index: event.data.Index, Kind: event.data.Kind}, h);
+                        }
+                        $('#pattrdesc'+event.data.Index).click({Index: event.data.Index, Kind: event.data.Kind}, h);
+                    });
+                }
+                $('#pattrdesc'+i).css('display', 'none');
+            }
+        } else {
+            $('#promote').html(sheet);
+            $('#pname').css('box-sizing', 'border-box').css('height', $('#promote').height() + 'px').css('line-height', $('#promote').height() + 'px').css('width', '100%').fitText();
         }
     }
     function unshowPieceAttributes() {
@@ -1121,21 +1176,53 @@
                     return;
                 }
                 if (Board[index].Kind == 0) {
+                    unshowPieceAttributes();
+                    if (Selected != null) {
+                        if (Board[Selected].Orientation == PlayerOrientation) {
+                            className = 'selected';
+                        } else {
+                            className = 'selectedopp';
+                        }
+                        $('#point'+Selected).removeClass(className);
+                        for (var point in Moves[indexToAddrString(Selected)]) {
+                            $('#point'+addrStringToIndex(point)).removeClass(className);
+                        }
+                        Selected = null;
+                    }
                     return;
                 }
                 showPieceAttributes(Board[index].Kind);
                 if (Moves[indexToAddrString(index)] == null) {
+                    if (Selected != null) {
+                        if (Board[Selected].Orientation == PlayerOrientation) {
+                            className = 'selected';
+                        } else {
+                            className = 'selectedopp';
+                        }
+                        $('#point'+Selected).removeClass(className);
+                        for (var point in Moves[indexToAddrString(Selected)]) {
+                            $('#point'+addrStringToIndex(point)).removeClass(className);
+                        }
+                    }
+                    if (Selected == index) {
+                        Selected = null;
+                    } else {
+                        Selected = index;
+                    }
                     return;
                 }
                 if (Selected != null) {
+                    var className2;
                     if (Board[Selected].Orientation == PlayerOrientation) {
                         className = 'selected';
+                        className2 = 'hovered';
                     } else {
                         className = 'selectedopp';
+                        className2 = 'hoveredopp';
                     }
-                    $('#point'+Selected).removeClass(className);
+                    $('#point'+Selected).removeClass(className).removeClass(className2);
                     for (var point in Moves[indexToAddrString(Selected)]) {
-                        $('#point'+addrStringToIndex(point)).removeClass(className);
+                        $('#point'+addrStringToIndex(point)).removeClass(className).removeClass(className2);
                     }
                     if (Selected == index) {
                         Selected = null;
@@ -1179,9 +1266,6 @@
                 var className;
                 if (Board[index].Kind == 0) {
                     return;
-                }
-                if (Selected == null) {
-                    unshowPieceAttributes();
                 }
                 if (Moves[indexToAddrString(index)] == null) {
                     return;

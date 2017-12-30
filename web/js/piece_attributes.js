@@ -1,6 +1,8 @@
 // Copyright 2017 Matthew Juran
 // All Rights Reserved
 
+var MaxAttributeCount = 2;
+
 var a = {
     GHOST: 1,
     SWAPS: 2,
@@ -9,7 +11,6 @@ var a = {
     DETONATES: 5,
     GUARDS: 6,
     RALLIES: 7,
-    RALLYABLE: 8,
     FORTIFIED: 9,
     SOVEREIGN: 10
 };
@@ -30,8 +31,6 @@ function stringForAttribute(attribute) {
             return "Guard";
         case a.RALLIES:
             return "Rallies";
-        case a.RALLYABLE:
-            return "Rallyable";
         case a.FORTIFIED:
             return "Fortified";
         case a.SOVEREIGN:
@@ -57,8 +56,6 @@ function descriptionForAttribute(attribute) {
             return "If an opponent piece moves into a square adjacent to this piece then this piece takes that piece by moving to that square."
         case a.RALLIES:
             return "Any rallyable friendly pieces adjacent to this piece gain their rally moves.";
-        case a.RALLYABLE:
-            return "This piece has additional rally moves that are only available when the piece is rallied.";
         case a.FORTIFIED:
             return "Pieces with a pawn base cannot take this piece.";
         case a.SOVEREIGN:
@@ -75,64 +72,60 @@ function attributesForKind(kind) {
         case k.KING:
             return [a.SOVEREIGN];
         case k.QUEEN:
-            return [];
-        case k.ROOK:
-        case k.EXTENDED_ROOK:
-            return [a.RALLYABLE];
-        case k.BISHOP:
-        case k.EXTENDED_BISHOP:
-            return [a.RALLYABLE];
-        case k.KNIGHT:
-        case k.EXTENDED_KNIGHT:
-            return [a.GHOST, a.RALLYABLE];
         case k.PAWN:
         case k.EXTENDED_PAWN:
-            return [a.RALLYABLE];
+        case k.ROOK:
+        case k.EXTENDED_ROOK:
+        case k.BISHOP:
+        case k.EXTENDED_BISHOP:
+            return [];
+        case k.KNIGHT:
+        case k.EXTENDED_KNIGHT:
+        case k.GHOST_BISHOP:
+        case k.GHOST_ROOK:
+            return [a.GHOST];
         case k.SWAP_PAWN:
         case k.SWAP_BISHOP:
         case k.SWAP_ROOK:
-            return [a.SWAPS, a.RALLYABLE];
+            return [a.SWAPS];
         case k.LOCK_PAWN:
         case k.LOCK_BISHOP:
         case k.LOCK_ROOK:
-            return [a.LOCKS, a.RALLYABLE];
+            return [a.LOCKS];
         case k.RECON_PAWN:
         case k.RECON_BISHOP:
         case k.RECON_ROOK:
-            return [a.RECON, a.RALLYABLE];
+            return [a.RECON];
         case k.DETONATE_PAWN:
         case k.DETONATE_BISHOP:
         case k.DETONATE_ROOK:
-            return [a.DETONATES, a.RALLYABLE];
+            return [a.DETONATES];
         case k.GUARD_PAWN:
         case k.GUARD_BISHOP:
         case k.GUARD_ROOK:
-            return [a.GUARDS, a.RALLYABLE];
+            return [a.GUARDS];
         case k.RALLY_PAWN:
         case k.RALLY_BISHOP:
         case k.RALLY_ROOK:
-            return [a.RALLIES, a.RALLYABLE];
+            return [a.RALLIES];
         case k.FORTIFY_PAWN:
         case k.FORTIFY_BISHOP:
         case k.FORTIFY_ROOK:
-            return [a.FORTIFIED, a.RALLYABLE];
+            return [a.FORTIFIED];
         case k.SWAP_KNIGHT:
-            return [a.SWAPS, a.GHOST, a.RALLYABLE];
+            return [a.SWAPS, a.GHOST];
         case k.LOCK_KNIGHT:
-            return [a.LOCKS, a.GHOST, a.RALLYABLE];
+            return [a.LOCKS, a.GHOST];
         case k.RECON_KNIGHT:
-            return [a.RECON, a.GHOST, a.RALLYABLE];
+            return [a.RECON, a.GHOST];
         case k.DETONATE_KNIGHT:
-            return [a.DETONATES, a.GHOST, a.RALLYABLE];
+            return [a.DETONATES, a.GHOST];
         case k.GUARD_KNIGHT:
-            return [a.GUARDS, a.GHOST, a.RALLYABLE];
+            return [a.GUARDS, a.GHOST];
         case k.RALLY_KNIGHT:
-            return [a.RALLIES, a.GHOST, a.RALLYABLE];
+            return [a.RALLIES, a.GHOST];
         case k.FORTIFY_KNIGHT:
-            return [a.FORTIFIED, a.GHOST, a.RALLYABLE];
-        case k.GHOST_BISHOP:
-        case k.GHOST_ROOK:
-            return [a.GHOST, a.RALLYABLE];
+            return [a.FORTIFIED, a.GHOST];
         default:
             throw "unknown piece " + kind;
     }
