@@ -208,7 +208,7 @@
         Assignments[i] = 0;
     }
 
-    var ws = new WebSocket('ws://localhost:8080/friend');
+    var ws = new WebSocket('ws://'+window.location.host+'/friend');
     ws.onmessage = function(event) {
         var msg = JSON.parse(event.data);
         if (msg.moveable != -1) {

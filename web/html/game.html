@@ -259,7 +259,7 @@
         }
         request.send();
     }
-    var ws = new WebSocket("ws://localhost:8080/moven/"+game_id);
+    var ws = new WebSocket('ws://'+window.location.host+'/moven/'+game_id);
     ws.onmessage = function(event) {
         if (Muted == false) {
             MoveSoundSource.start(0);
