@@ -127,7 +127,7 @@ function nameForKind(kind) {
             return 'Rally Rook';
         case k.FORTIFY_ROOK:
             return 'Fortify Rook';
-        case EXTENDED_ROOK:
+        case k.EXTENDED_ROOK:
             return 'Extended Rook';
     }
 }
