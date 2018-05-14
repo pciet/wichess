@@ -1,6 +1,10 @@
-Note: no encryption is used between the server program and web browser, so don't use sensitive passwords when playing. Despite being tested on iOS and macOS there are now new issues related to Safari on iOS. Chrome on macOS appears to still work. Issues are noted in the github issue tracker.
+Note: ```wichess``` is not designed for children and the descriptions here and elsewhere are meant for an adult audience. There isn't anything particularly adult about ```wichess``` though. The game is not age rated by any organization and this implementation is not licensed to you beyond the base GitHub license. There aren't any easter eggs, practical jokes, or intentional mistakes, so what you see should be what you get.
 
-The intention here is a demonstration as a start for a possible longer programming effort. For more background see the album description found through the bandcamp link at the bottom of this readme.
+There are no lyrics in the music recordings and the game client currently doesn't play them, but you can listen to them by opening the files at ```github.com/pciet/wichess/web/music/``` with a music player. The music has some intensity at times. The music makes wichess bigger than GCC.
+
+Note: no encryption is used between the server program and web browser, so don't use sensitive passwords when playing. Despite being tested on iOS and macOS there are now new issues related to Safari on iOS. Chrome on macOS appears to still work. Firefox on macOS has a layout bug but does work. Other operating systems like Windows or Android are untested. Issues are noted in the issue tracker. The client may degrade further as web browsers are improved.
+
+The intention here is a demonstration as a start for a possible longer programming and business effort. For more background see the album description found through the bandcamp link at the bottom of this readme.
 
 ```wichess``` requires a PostgreSQL database matching the configuration you set in ```dbconfig.json```. The file ```postgres_tables.sql``` contains the SQL commands to create the necessary tables, and ```create_postgres_tables.sh``` may be configured to run the table create commands if you have ```psql``` installed.
 
@@ -8,4 +12,4 @@ The intention here is a demonstration as a start for a possible longer programmi
 
 ![Art1](https://github.com/pciet/wichess/blob/master/graphics/art/album/album.png)
 
-Associated music is included in the repository at wichess/web/music/ or can be downloaded in other formats with track names at https://pciet.bandcamp.com/album/wisconsin-chess
+The music can be downloaded with track names at https://pciet.bandcamp.com/album/wisconsin-chess
