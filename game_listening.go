@@ -51,7 +51,21 @@ func listeningToGame(name string, white string, black string, totalTime time.Dur
 						if debug {
 							fmt.Printf("player %v not white %v or black %v\n", name, g.White, g.Black)
 						}
-						gameMonitorsLock.Lock()
+						// a move was notified then the game was deleted by both acknowledging, but the next move that ended the game could still be waiting to notify
+						acq := make(chan struct{})
+						go func() {
+							gameMonitorsLock.Lock()
+							acq <- struct{}{}
+						}()
+					OUTER3:
+						for {
+							select {
+							case <-channels.move:
+							case <-channels.done:
+							case <-acq:
+								break OUTER3
+							}
+						}
 						delete(gameMonitors, gameid)
 						gameMonitorsLock.Unlock()
 						return
