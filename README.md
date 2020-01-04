@@ -2,7 +2,7 @@ Wisconsin Chess is a computer network program to play chess with others. Some ti
 
 ![Screenshot1](https://github.com/pciet/wichess/blob/master/screenshots/Screen%20Shot%202018-01-09%20at%201.56.21%20PM.png)
 
--
+---
 
 Before starting a match you can replace standard chess pieces in your army with new kinds of pieces you get one of when completing each timed game. These extended-rules pieces are lost from your collection when taken by an opponent.
 
@@ -20,7 +20,7 @@ The program has had significant testing which helped me fix obscure mistakes, an
 
 I believe chess is a good intellectual training game and I hope you and others get value from my work. Most importantly, have fun!
 
--
+---
 
 For now it's intended for adults; despite in my understanding there not being anything particularly adult about the game perhaps there are unknown or unexpected effects on a person. Wisconsin Chess is not age rated or approved by any organization like the ESRB.
 
