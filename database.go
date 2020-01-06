@@ -6,7 +6,6 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 
 	_ "github.com/lib/pq"
@@ -66,7 +65,11 @@ func initializeDatabaseConnection() {
 	if err != nil {
 		panicExit(err.Error())
 	}
-	database.DB, err = sql.Open("postgres", fmt.Sprintf("dbname=%v user=%v password=%v host=%v port=%v sslmode=%v", config.Database, config.User, config.Password, config.Host, config.Port, config.SslMode))
+	args := "dbname=" + config.Database + " host=" + config.Host + " port=" + config.Port + " sslmode=" + config.SslMode
+	if config.User != "" {
+		args += " user=" + config.User + " password=" + config.Password
+	}
+	database.DB, err = sql.Open("postgres", args)
 	if err != nil {
 		panicExit(err.Error())
 	}

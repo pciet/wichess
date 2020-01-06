@@ -30,3 +30,4 @@ if [ $? -ne 0 ] ; then
 fi
 
 rm -r img
+rm generate

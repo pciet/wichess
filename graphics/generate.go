@@ -30,8 +30,9 @@ const (
 	viewer_file = "viewer.html"
 	output_dir  = "img"
 
-	povray_width        = 512
-	povray_height       = 512
+	// original renderings were at 512x512
+	povray_width        = 200
+	povray_height       = 200
 	povray_quality      = 11
 	povray_antialias    = "off"
 	povray_output_alpha = "on"

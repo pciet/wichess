@@ -1,7 +1,7 @@
 {
     "database": "test",
-    "user": "test",
-    "password": "test",
+    "user": "",
+    "password": "",
     "host": "localhost",
     "port": "5432",
     "sslMode": "disable"
