@@ -4,7 +4,7 @@ Wisconsin Chess is a computer network program to play chess with others, where t
 
 ---
 
-You might not be impressed by the look of Wisconsin Chess. It's a work in progress that I believe has potential which I hope to build it into. Despite lacking equal refinement to complete games I do think it is a worthy chess toolbox now.
+You might not be impressed by the look of Wisconsin Chess. It's a work in progress that I believe has potential which I hope to build it into. Despite lacking equal refinement to the games you might be used to I do think it is a worthy chess toolbox now and a complete early version.
 
 Before starting a match you can replace standard chess pieces in your army with new kinds of pieces you get one of when completing each timed game. These extended-rules pieces are lost from your collection when taken by an opponent.
 
@@ -81,7 +81,7 @@ Start ```wichess``` with this run script which also starts and stops PostgreSQL 
 
 If you want other devices to be able to connect to your macOS computer then press "Allow" when asked if you want ```wichess``` to accept incoming network connections, or in System Preferences -> Security & Privacy -> Firewall -> Firewall Options set ```wichess``` to "Allow incoming connections".
 
-You can stop the ```RunLocal.sh``` safely (meaning PostgreSQL will be turned off correctly) with the control+c key combination.
+You can stop the ```RunLocal.sh``` script safely (meaning PostgreSQL will be turned off correctly) with the control+c key combination.
 
 While ```RunLocal.sh``` is active, with a web browser connect to ```http://localhost:8080``` then enter a username and password you'd like to use in the form that should appear. If this login page reloads when you try to continue then you might need a longer password, the username is already in use, or you entered the wrong password.
 
