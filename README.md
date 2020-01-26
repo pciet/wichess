@@ -156,6 +156,8 @@ This user interface implementation has only been tested on macOS with the Chrome
 
 I made electronic music for the game and these audio files were included in this repository for awhile. To make the download time more reasonable I've removed that very large directory from the repo history along with the rendered piece images. I'm currently applying my latest music mastering skills to improve the presentation of these recordings; before I'm done with that you can hear my favorites in my June 2019 "Typing Choice Tree" album at [matthewjuran.bandcamp.com/album/typing-choice-tree](https://matthewjuran.bandcamp.com/album/typing-choice-tree).
 
+A rewrite is being done with improvements like making the SQL easier to read, choosing more accurate identifiers, simplifying HTTP functionality and improving error handling, reducing code length and making smaller source files with easier to understand filenames, removing unnecessary packages like match, splitting the web page JavaScript into multiple files, and more. The ```rewrite``` folder has a partial rough draft of this where I started with the HTTP handlers.
+
 ## Credits
 
 ```wichess``` includes a snapshot of ```github.com/gorilla/websocket```, see ```vendor/github.com/gorilla/websocket/LICENSE``` for the copyright notice and license.
