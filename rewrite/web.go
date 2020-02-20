@@ -2,20 +2,21 @@ package main
 
 import (
 	"html/template"
+	"log"
 	"net/http"
 )
 
 var HTMLTemplates = map[string]*template.Template{}
 
-// This function should be called for all HTML templates in init functions and not concurrently.
+// All HTML templates are parsed with ParseHTMLTemplate in init functions.
 func ParseHTMLTemplate(file string) {
 	_, has := HTMLTemplates[file]
 	if has {
-		panic(file, "already parsed")
+		log.Panicln(file, "already parsed")
 	}
 	t, err := template.ParseFiles(file)
 	if err != nil {
-		panic(file, "failed to parse", file, "-", err)
+		log.Panicln("failed to parse", file, "-", err)
 	}
 	HTMLTemplates[file] = t
 }
@@ -23,7 +24,7 @@ func ParseHTMLTemplate(file string) {
 func WriteWebTemplate(w http.ResponseWriter, file string, data interface{}) {
 	t, has := HTMLTemplates[file]
 	if has == false {
-		panic(file, "template not parsed")
+		log.Panicln(file, "template not parsed")
 	}
 	err := t.Execute(w, data)
 	if err != nil {

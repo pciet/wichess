@@ -37,7 +37,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 func LoginAttemptHandler(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
-		DebugPrintln(err.Error())
+		DebugPrintln(err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -61,10 +61,12 @@ func LoginAttemptHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	key := Login(name, pass)
 	if key == "" {
-		panic("Login returned empty key")
+		DebugPrintln("bad login")
+		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
 	http.SetCookie(w, &http.Cookie{
-		Name:     key_cookie,
+		Name:     session_key_cookie,
 		Value:    key,
 		Path:     "/",
 		HttpOnly: true,

@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"log"
 
 	"github.com/pciet/wichess/rules"
 )
@@ -29,7 +30,7 @@ func LoadPiece(tx *sql.Tx, id PieceIdentifier, basicPiece rules.PieceKind, o rul
 		DebugPrintln("invalid request by", owner, "for piece with ID", id)
 		return Piece{}
 	} else if err != nil {
-		panic("failed to query database row:", err)
+		log.Panicln("failed to query database row:", err)
 	}
 
 	if basicPiece != rules.BasicKind(p.Kind) {
@@ -38,4 +39,54 @@ func LoadPiece(tx *sql.Tx, id PieceIdentifier, basicPiece rules.PieceKind, o rul
 	}
 
 	return p
+}
+
+func InsertNewPiece(tx *sql.Tx, k rules.PieceKind, owner string) {
+	result, err := tx.Exec(piece_insert, k, owner, 0, false)
+	if err != nil {
+		log.Panic(err)
+	}
+	count, err := result.RowsAffected()
+	if err != nil {
+		log.Panic(err)
+	}
+	if count != 1 {
+		log.Panicln(count, "rows affected by new piece insert for", owner)
+	}
+}
+
+func (p Piece) Encode() EncodedPiece {
+	var enc uint64
+	enc |= (uint64(p.ID) & encoded_piece_identifier_mask) << encoded_piece_identifier_bit
+	enc |= (uint64(p.Orientation) & encoded_piece_orientation_mask) << encoded_piece_orientation_bit
+	enc |= (uint64(btoi(p.Moved)) & encoded_piece_moved_mask) << encoded_piece_moved_bit
+	enc |= (uint64(p.Kind) & encoded_piece_kind_mask) << encoded_piece_kind_bit
+	return EncodedPiece(enc)
+}
+
+func (e EncodedPiece) Decode() Piece {
+	return Piece{
+		ID: PieceIdentifier((e >> encoded_piece_identifier_bit) & encoded_piece_identifier_mask),
+		Piece: rules.Piece{
+			Orientation: rules.Orientation((e >> encoded_piece_orientation_bit) & encoded_piece_orientation_mask),
+			Moved:       itob(int((e >> encoded_piece_moved_bit) & encoded_piece_moved_mask)),
+			Kind:        rules.PieceKind((e >> encoded_piece_kind_bit) & encoded_piece_kind_mask),
+		},
+	}
+}
+
+func btoi(b bool) int {
+	if b {
+		return 1
+	} else {
+		return 0
+	}
+}
+
+func itob(i int) bool {
+	if i == 0 {
+		return false
+	} else {
+		return true
+	}
 }

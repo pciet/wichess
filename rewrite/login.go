@@ -2,29 +2,33 @@ package main
 
 import (
 	"database/sql"
+	"log"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
-// The username and password are assumed to be valid by this function.
+// The session key is returned normally, or an empty string is returned if the password is incorrect.
 func Login(name, password string) string {
 	tx := DatabaseTransaction()
 	defer CommitTransaction(tx)
 
 	var c string
 	err := tx.QueryRow(player_crypt_query, name).Scan(&c)
-	if err == sql.ErrNoRows {
-		c = CreateLogin(tx, name, password)
-	} else if err != nil {
-		panic(err)
+	switch err {
+	case sql.ErrNoRows:
+		crypt, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+		if err != nil {
+			log.Panic(err)
+		}
+		NewPlayer(tx, name, string(crypt))
+	case nil:
+		err = bcrypt.CompareHashAndPassword([]byte(c), []byte(password))
+		if err != nil {
+			return ""
+		}
+	default:
+		log.Panic(err)
 	}
 
-	// if the password is correct then invalidate the existing session if present
-}
-
-func CreateLogin(tx *sql.Tx, name, password string) string {
-	crypt, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	if err != nil {
-		panic(err)
-	}
+	return NewSession(tx, name)
 }

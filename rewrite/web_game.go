@@ -6,7 +6,9 @@ import (
 
 const game_web_template = "web/html/game.html"
 
+/*
 func init() { ParseHTMLTemplate(game_web_template) }
+*/
 
 type GameWebTemplateData struct {
 	Name string

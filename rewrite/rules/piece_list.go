@@ -42,4 +42,7 @@ const (
 	RallyRook
 	FortifyRook
 	ExtendedRook
+	PieceKindCount // add new piece kinds between this and the previous
 )
+
+const BasicPieceKindCount = 6

@@ -27,12 +27,14 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	tx := DatabaseTransaction()
 	defer CommitTransaction(tx)
 
-	if PlayerHasTimedGame(tx, name) {
-		http.Redirect(w, r, TimedGameRelPath, http.StatusFound)
-		return
-	}
+	/*
+		if PlayerHasTimedGame(tx, name) {
+			http.Redirect(w, r, TimedGameRelPath, http.StatusFound)
+			return
+		}
+	*/
 
-	WriteIndexWebTemplate(w, IndexWebTemplateData{name, PlayerRecord(tx, name), PlayerFriendStatus(tx, name)})
+	WriteIndexWebTemplate(w, IndexWebTemplateData{name, LoadPlayerRecord(tx, name), LoadPlayerFriendStatus(tx, name)})
 }
 
 type IndexWebTemplateData struct {

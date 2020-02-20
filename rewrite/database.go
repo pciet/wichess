@@ -4,15 +4,16 @@ import (
 	"database/sql"
 	"encoding/json"
 	"io/ioutil"
+	"log"
 
 	_ "github.com/lib/pq"
 )
 
 const (
 	database_config_file = "dbconfig.json"
+
 	// https://github.com/pciet/wichess/issues/9
 	database_max_idle_conns = 10
-	// on macOS the fd limit is 256
 	database_max_open_conns = 50
 )
 
@@ -23,7 +24,7 @@ var Database *sql.DB
 func DatabaseTransaction() *sql.Tx {
 	tx, err := Database.Begin()
 	if err != nil {
-		panic(err)
+		log.Panic(err)
 	}
 	return tx
 }
@@ -31,7 +32,7 @@ func DatabaseTransaction() *sql.Tx {
 func CommitTransaction(tx *sql.Tx) {
 	err := tx.Commit()
 	if err != nil {
-		panic(err)
+		log.Panic(err)
 	}
 }
 
@@ -47,12 +48,12 @@ type DatabaseConfiguration struct {
 func InitializeDatabaseConnection() {
 	file, err := ioutil.ReadFile(database_config_file)
 	if err != nil {
-		panic(err)
+		log.Panic(err)
 	}
 	var config DatabaseConfiguration
 	err = json.Unmarshal(file, &config)
 	if err != nil {
-		panic(err)
+		log.Panic(err)
 	}
 	args := "dbname=" + config.Database + " host=" + config.Host + " port=" + config.Port + " sslmode=" + config.SslMode
 	if config.User != "" {
@@ -60,11 +61,11 @@ func InitializeDatabaseConnection() {
 	}
 	Database, err = sql.Open("postgres", args)
 	if err != nil {
-		panic(err)
+		log.Panic(err)
 	}
 	err = Database.Ping()
 	if err != nil {
-		panic(err)
+		log.Panic(err)
 	}
 	Database.SetMaxIdleConns(database_max_idle_conns)
 	Database.SetMaxOpenConns(database_max_open_conns)

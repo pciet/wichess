@@ -2,13 +2,16 @@ package main
 
 import (
 	"database/sql"
+	"log"
 	"time"
+
+	"github.com/pciet/wichess/rules"
 )
 
 // Returns a GameHeader with ID set to 0 if the game isn't found.
-func GameHeader(tx *sql.Tx, id GameIdentifier) GameHeader {
+func LoadGameHeader(tx *sql.Tx, id GameIdentifier) GameHeader {
 	h := GameHeader{ID: id}
-	err := tx.QueryRow(games_header_query, id).Scan(
+	err := tx.QueryRow(game_header_query, id).Scan(
 		&h.PrizePiece,
 		&h.Competitive,
 		&h.Recorded,
@@ -33,7 +36,7 @@ func GameHeader(tx *sql.Tx, id GameIdentifier) GameHeader {
 		DebugPrintln("found no games with id", id)
 		h.ID = 0
 	} else if err != nil {
-		panic("failed to query database row:", err)
+		log.Panicln("failed to query database row:", err)
 	}
 	return h
 }
@@ -49,8 +52,8 @@ func NewGame(tx *sql.Tx, white string, whiteArmy ArmyRequest, black string, blac
 				DebugPrintln("bad request to LoadPiece for player", name, "piece ID", with[i])
 				return false
 			}
+			(*to)[i] = p.Encode()
 		}
-		(*to)[i] = p.Encode()
 		return true
 	}
 
@@ -68,7 +71,7 @@ func NewGame(tx *sql.Tx, white string, whiteArmy ArmyRequest, black string, blac
 	// QueryRow instead of Exec: https://github.com/lib/pq/issues/24
 	var id GameIdentifier
 	err := tx.QueryRow(games_new_insert,
-		RandomPieceKind(),
+		rules.RandomSpecialPieceKind(),
 		competitive,
 		false,
 		false,
@@ -98,7 +101,7 @@ func NewGame(tx *sql.Tx, white string, whiteArmy ArmyRequest, black string, blac
 		bp[8], bp[9], bp[10], bp[11], bp[12], bp[13], bp[14], bp[15],
 	).Scan(&id)
 	if err != nil {
-		panic("failed to insert new game:", err)
+		log.Panicln("failed to insert new game:", err)
 	}
 
 	return id
@@ -108,8 +111,8 @@ func NewGame(tx *sql.Tx, white string, whiteArmy ArmyRequest, black string, blac
 // Returns a "" string if the game doesn't exist.
 // If the game is conceded then the player is always marked as active.
 func GameActiveAndOpponentName(tx *sql.Tx, id GameIdentifier, player string) (bool, string) {
-	var active, conceded bool
-	var white, black string
+	var conceded bool
+	var active, white, black string
 	err := tx.QueryRow(game_opponent_and_active_query, id).Scan(
 		&active,
 		&white,
@@ -120,7 +123,7 @@ func GameActiveAndOpponentName(tx *sql.Tx, id GameIdentifier, player string) (bo
 		DebugPrintln("no rows found for id", id, "and player", player)
 		return false, ""
 	} else if err != nil {
-		panic(err)
+		log.Panic(err)
 	}
 
 	var opponent string
@@ -129,7 +132,7 @@ func GameActiveAndOpponentName(tx *sql.Tx, id GameIdentifier, player string) (bo
 	} else if player == black {
 		opponent = white
 	} else {
-		panic("player", player, "doesn't match white", white, "or black", black)
+		log.Panicln("player", player, "doesn't match white", white, "or black", black)
 	}
 
 	if (active == player) || conceded {

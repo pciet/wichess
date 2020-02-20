@@ -1,16 +1,14 @@
 package main
 
-import (
-	"fmt"
-)
+import "fmt"
 
-const Debug = true
+const (
+	Debug    = true
+	DebugSQL = false
+)
 
 func DebugPrintln(a ...interface{}) {
 	if Debug {
-		_, err := fmt.Println(a...)
-		if err != nil {
-			panic(err.Error())
-		}
+		fmt.Println(a...)
 	}
 }

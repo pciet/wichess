@@ -1,15 +1,7 @@
 package main
 
-import ()
-
-const (
-	piece_table = "pieces"
-
-	piece_id       = "piece_id"
-	piece_kind     = "kind"
-	piece_owner    = "owner"
-	piece_reserved = "reserved"
-	piece_taken    = "taken"
+import (
+	"github.com/pciet/wichess/rules"
 )
 
 type PieceIdentifier int
@@ -19,10 +11,23 @@ type Piece struct {
 	rules.Piece
 }
 
-const piece_query_select = []string{
-	piece_owner,
-	piece_kind,
-	piece_taken,
+type AddressedPieceIdentifier struct {
+	ID PieceIdentifier
+	rules.BoardAddress
 }
 
-var piece_query = BuildSQLQuery(piece_query_select, piece_table, piece_id_key)
+type EncodedPiece uint64
+
+const (
+	encoded_piece_identifier_bit  = 0
+	encoded_piece_identifier_mask = 0xFFFFFFFF
+
+	encoded_piece_orientation_bit  = 32
+	encoded_piece_orientation_mask = 0x1
+
+	encoded_piece_moved_bit  = 33
+	encoded_piece_moved_mask = 0x1
+
+	encoded_piece_kind_bit  = 47
+	encoded_piece_kind_mask = 0xFFFF
+)
