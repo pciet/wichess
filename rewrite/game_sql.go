@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"strings"
 )
 
@@ -92,6 +93,9 @@ var (
 		s.WriteString(") RETURNING ")
 		s.WriteString(games_identifier)
 		s.WriteRune(';')
+		if DebugSQL {
+			log.Println("New game insert SQL:", s.String())
+		}
 		return s.String()
 	}()
 )

@@ -1,3 +1,7 @@
+body {
+    background-color: rgb(21,41,21);
+}
+
 #landscapemode {
     width: 15%;
 }
@@ -6,54 +10,67 @@
     height: 10%;
 }
 
+.modebox {
+    background-color: rgb(150,145,110);
+}
+
 #modeoptions {
     height: 20%;
+    background-color: rgb(80,55,50);
 }
 
 #record {
     height: 25%;
 }
 
-.armycell {
-
+#skinnyheader {
+    height: 20%;
 }
 
-.selectcell {
-
-}
-
-.pieceimg {
-
-}
-
-.armyrow {
-
+#armypicker, .pickercell {
+    vertical-align: top; // removes unwanted added vertical space
 }
 
 .armypick {
-
+    //border: 0.1em solid rgb(200,1,1);
 }
 
-.even {
-
+.pieceimg {
+    width: 100%;
+    height: 100%;
 }
 
-.odd {
-
+.computermodehorizontalcentering {
+    width: 30%;
 }
 
-.modebuttonselected {
-
+.buttonmargin {
+    padding: 1em;
 }
 
-.optionbutton {
-
+.buttonsurface {
+    border: 0.25em outset rgb(100,155,175);
+    border-radius: 0.15em;
+    background-color: rgb(5,65,150);
 }
 
-.friendbutton {
-
+.buttonverticalcentering {
+    height: 35%;
 }
 
-.timedbutton {
-
+.buttontext {
+    user-select: none;
+    text-align: center;
+    font: 16px serif;
+    color: rgb(180,235,255);
 }
+
+.buttonselected {
+    border: 0.25em outset rgb(200,255,255);
+    background-color: rgb(175,265,100);
+}
+
+.buttontextselected {
+    color: rgb(55,20,35);
+}
+

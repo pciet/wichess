@@ -117,7 +117,7 @@ func GameActiveAndOpponentName(tx *sql.Tx, id GameIdentifier, player string) (bo
 		&active,
 		&white,
 		&black,
-		conceded,
+		&conceded,
 	)
 	if err == sql.ErrNoRows {
 		DebugPrintln("no rows found for id", id, "and player", player)

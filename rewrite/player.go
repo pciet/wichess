@@ -15,7 +15,7 @@ func NewPlayer(tx *sql.Tx, name, crypt string) {
 		InitialRating,
 		0, 0, 0, 0, 0, 0, 0, 0)
 	if err != nil {
-		panic(err)
+		log.Panic(err)
 	}
 	count, err := result.RowsAffected()
 	if err != nil {

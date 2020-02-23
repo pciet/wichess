@@ -61,8 +61,9 @@ func LoginAttemptHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	key := Login(name, pass)
 	if key == "" {
-		DebugPrintln("bad login")
-		w.WriteHeader(http.StatusBadRequest)
+		DebugPrintln("bad password for", name)
+		// TODO: should this response be http.StatusUnauthorized or http.StatusBadRequest?
+		w.WriteHeader(http.StatusResetContent)
 		return
 	}
 	http.SetCookie(w, &http.Cookie{

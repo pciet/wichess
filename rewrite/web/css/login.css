@@ -1,0 +1,13 @@
+form {
+    margin: 0 auto;
+    width: 20em;
+
+    padding: 1em;
+    border: 1px solid yellow;
+    border-radius: 1em;
+}
+
+input {
+    font: 1em serif;
+    width: 100%;
+}
