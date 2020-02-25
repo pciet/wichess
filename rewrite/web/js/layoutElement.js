@@ -183,6 +183,8 @@ function allChildrenDimensions(parent, definedDimensions) {
     }
 
     if (totalDim > 100) {
+        console.log('parent:')
+        console.log(parent)
         throw new Error('sibling total dimension greater than 100%')
     }
 

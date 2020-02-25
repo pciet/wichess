@@ -61,7 +61,7 @@ body {
 .buttontext {
     user-select: none;
     text-align: center;
-    font: 16px serif;
+    font: 12pt serif;
     color: rgb(180,235,255);
 }
 

@@ -1,6 +1,8 @@
 import { removeNewlines, elementInteriorDimensions } from './layout.js'
 import { modes } from './indexDefinitions.js'
-import { armyPicker, button, selectButton } from './indexLayoutElements.js'
+import { armyPicker } from './indexLayoutElements.js'
+import { button, selectButton } from './button.js'
+import { record } from './index.js'
 
 export function layoutArmyPicker() {
     const parent = document.querySelector('#army')
@@ -11,7 +13,7 @@ export function layoutArmyPicker() {
     if (dims.width > dims.height) {
         centeringHorizontal = true
         squareDim = dims.height / 4
-        if ((squareDim*8) > dims.width) {
+        if ((squareDim*8) > dims.width) { // TODO: this was a hack to make it work, are these calculations optimal?
             squareDim = dims.width / 8
         }
         centeringDivWidth = ((dims.width - (8*squareDim)) / 2) + 'px'
@@ -40,7 +42,7 @@ export function layoutArmyPicker() {
     }
 }
 
-export function layoutModeOptions(layoutVars) {
+export function layoutModeOptions(mode) {
     const lmo = (html) => {
         let e = document.querySelector('#modeoptions')
         if (e === null) {
@@ -49,7 +51,7 @@ export function layoutModeOptions(layoutVars) {
         e.innerHTML = removeNewlines(html)
     }
 
-    switch (layoutVars.mode) {
+    switch (mode) {
         case modes.COMPUTER:
             selectButton('#computermode')
 
@@ -77,7 +79,7 @@ export function layoutModeOptions(layoutVars) {
         case modes.TIMED:
             selectButton('#timedmode')
 
-            let h = '<div id="record">+' + layoutVars.wins + ' -' + layoutVars.losses + ' =' + layoutVars.draws + '</div>' + `
+            let h = '<div id="record">+' + record.wins + ' -' + record.losses + ' =' + record.draws + '</div>' + `
                 <div id="timedbuttons">
             ` + button('modebutton', 'matched15', '15 MINUTE', true) + button('modebutton', 'matched5', '5 MINUTE', true) + `
                 </div>

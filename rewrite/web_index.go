@@ -7,7 +7,7 @@ import (
 const (
 	IndexRelPath = "/"
 
-	index_web_template = "web/html/index.html"
+	index_web_template = "web/html/index.tmpl"
 )
 
 func init() { ParseHTMLTemplate(index_web_template) }

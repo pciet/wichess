@@ -11,8 +11,7 @@ const ComputerRelPath = "/computer"
 // A Not Found (404) response means the game doesn't exist yet and should be requested for with a POST first.
 
 // The web browser page sends a POST to /computer with the army configuration to start a new game.
-// A Created (201) response means the game was created with the requested pieces.
-// A Found (302) response means the game already exists and the requested army configuration is discarded.
+// An OK (200) response means the game was created or already exists and the browser should go to /computer.
 // A Bad Request (400) response means the army configuration was invalid, or there's a mistake in this code.
 
 func ComputerHandler(w http.ResponseWriter, r *http.Request) {
@@ -65,8 +64,6 @@ func PostComputerHandler(w http.ResponseWriter, r *http.Request, player string) 
 
 	id := ComputerGameID(tx, player)
 	if id != 0 {
-		DebugPrintln(ComputerRelPath, "POST: game already found for player", player)
-		http.Redirect(w, r, ComputerRelPath, http.StatusFound)
 		return
 	}
 
@@ -75,6 +72,4 @@ func PostComputerHandler(w http.ResponseWriter, r *http.Request, player string) 
 		DebugPrintln(ComputerRelPath, "POST: failed to request computer match for player", player)
 		w.WriteHeader(http.StatusBadRequest)
 	}
-
-	w.WriteHeader(http.StatusCreated)
 }

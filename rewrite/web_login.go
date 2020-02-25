@@ -9,7 +9,7 @@ import (
 const (
 	LoginRelPath = "/login"
 
-	login_web_template = "web/html/login.html"
+	login_web_template = "web/html/login.tmpl"
 
 	form_player_name = "name"
 	form_password    = "password"

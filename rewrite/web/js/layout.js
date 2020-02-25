@@ -1,5 +1,5 @@
 import { layoutElement } from './layoutElement.js'
-export { addLayout, layout, removeNewlines, elementInteriorDimensions, layoutElement }
+export { addLayout, layout, removeNewlines, elementInteriorDimensions, layoutElement, scaleFont }
 
 const layouts = []
 
@@ -27,6 +27,7 @@ function pickLayout() {
     document.body.style.height = h + 'px'
 
     const ratio = w / h
+
     let use = undefined
 
     for (const l of layouts) {
@@ -80,4 +81,26 @@ function elementInteriorDimensions(e) {
         width: rect.width - (2*(p+b)),
         height: rect.height - (2*(p+b))
     }
+}
+
+function scaleFont() {
+    const pixelCount = window.innerWidth * window.innerHeight
+    const scale = (0.000001204819 * pixelCount) + 0.3
+    for (const s of document.styleSheets) {
+        for (const r of s.cssRules) {
+            if (r.selectorText !== 'html') {
+                continue
+            }
+            const fontSizeValue = r.style.getPropertyValue('font-size')
+            if (fontSizeValue === '') {
+                continue
+            }
+            if (fontSizeValue.includes('pt') === false) {
+                throw new Error('CSS html font-size not pt')
+            }
+            document.querySelector('html').style.fontSize = (parseFloat(fontSizeValue) * scale) + 'pt'
+            return
+        }
+    }
+    throw new Error('no CSS html rule that defines font-size')
 }

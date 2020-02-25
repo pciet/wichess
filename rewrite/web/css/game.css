@@ -1,0 +1,138 @@
+body {
+    background: linear-gradient(rgb(10,41,60), rgb(22,40,21));
+}
+
+a {
+    padding: 5px;
+}
+
+a:link, a:visited {
+    color: white;
+}
+
+#unsupported {
+    font-size: 1.5rem;
+}
+
+.floatingside {
+    width: 10%;
+}
+
+.widefloatingside {
+    width: 20%;
+}
+
+.verywidefloatingside {
+    width: 30%;
+}
+
+#floatingbar {
+    border: slim rgb(50,10,10);
+    border-radius: 5%;
+}
+
+#players {
+    background-color: rgb(55,50,40);
+    height: 20%;
+    border-radius: 0 0 5px 5px;
+}
+
+.name {
+    font-size: 2rem;
+    text-align: center;
+    color: rgb(255,230,220);
+    width: 75%;
+}
+
+.portraitname {
+    font-size: 2rem;
+    text-align: center;
+    color: rgb(255,230,220);
+    width: 40%;
+}
+
+.clock {
+    font-size: 2rem;
+    color: rgb(240,255,240);
+}
+
+#status {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    color: rgb(250,255,245);
+    background-color: rgb(50,35,20);
+    border-radius: 5px;
+}
+
+#controls {
+    background-color: rgb(1,20,50);
+    height: 20%;
+    padding: 0.3rem;
+    border-radius: 5px 5px 0 0;
+}
+
+#buttons {
+    width: 40%;
+}
+
+#squarenav {
+    width: 80%;
+}
+
+#description {
+    width: 40%;
+}
+
+.buttonmargin {
+    padding: 0.3rem;
+}
+
+.buttonsurface {
+    border: medium outset rgb(100,155,175);
+    border-radius: 5%;
+    background-color: rgb(5,65,150);
+}
+
+.buttonverticalcentering {
+    height: 15%;
+}
+
+.buttontext {
+    user-select: none;
+    text-align: center;
+    font-size: 1rem;
+    color: rgb(180,235,255);
+}
+
+#piece {
+    height: 50%;
+    text-align: center;
+    font-size: 1.2rem;
+    color: rgb(100,150,250);
+}
+
+.characteristic {
+    text-align: center;
+    font-style: italic;
+    font-size: 1rem;
+    color: rgb(70,150,150);
+}
+
+#boardrow {}
+
+#squarebuttonspacer {
+    height: 20%;
+}
+
+#board {
+    background-color: rgb(105,105,120);
+}
+
+.chesssquare {
+    border: thin solid rgb(10,30,20);
+}
+
+#portraitdesc {
+    width: 40%;
+}

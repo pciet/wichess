@@ -16,8 +16,8 @@ type GameHeader struct {
 	Conceded       bool            `json:"-"`
 	White          PlayerGameHeader
 	Black          PlayerGameHeader
-	Active         rules.Orientation
-	PreviousActive rules.Orientation
+	Active         string // TODO: make Active and PreviousActive rules.Orientation
+	PreviousActive string
 	From           int
 	To             int
 	DrawTurns      int `json:"-"`

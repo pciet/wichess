@@ -1,5 +1,5 @@
 import { modes } from './indexDefinitions.js'
-import { button } from './indexLayoutElements.js'
+import { button } from './button.js'
 
 export const indexLandscape = `
 <div class="inline modebox" id="landscapemode">

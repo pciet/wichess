@@ -32,6 +32,7 @@ func InitializeHTTP() {
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("web/css"))))
 	http.Handle("/img/", http.StripPrefix("/img/", http.FileServer(http.Dir("web/img"))))
 	http.Handle("/sound/", http.StripPrefix("/sound/", http.FileServer(http.Dir("web/sound"))))
+	http.Handle("/font/", http.StripPrefix("/font/", http.FileServer(http.Dir("web/fonts"))))
 
 	dt, ok := http.DefaultTransport.(*http.Transport)
 	if ok == false {

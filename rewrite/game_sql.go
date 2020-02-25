@@ -84,7 +84,7 @@ var (
 			}
 		}
 		s.WriteString(") VALUES (")
-		for i := 0; i < 64+len(game_header_selects); i++ {
+		for i := 1; i <= 64+len(game_header_selects); i++ {
 			fmt.Fprintf(&s, "$%d", i)
 			if i != 64+len(game_header_selects) {
 				s.WriteString(", ")
