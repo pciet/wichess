@@ -13,6 +13,12 @@ const (
 func init() { ParseHTMLTemplate(index_web_template) }
 
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/" {
+		DebugPrintln("attempt to access unsupported path", r.URL.Path)
+		// TODO: what should this status be?
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 	if r.Method != http.MethodGet {
 		DebugPrintln(IndexRelPath, "HTTP method", r.Method, "not GET")
 		w.WriteHeader(http.StatusBadRequest)

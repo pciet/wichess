@@ -4,18 +4,25 @@ import (
 	"log"
 )
 
+// Each piece has a kind which indicates its possible move sets and abilities.
 type PieceKind int
 
 type Piece struct {
-	Kind PieceKind
-	Orientation
-	Moved bool
+	Kind        PieceKind `json:"kind"`
+	Orientation `json:"orientation"`
+	Moved       bool `json:"moved"`
+
+	Swaps     bool `json:"-"`
+	Detonates bool `json:"-"`
+	Guards    bool `json:"-"`
+	Fortified bool `json:"-"`
+	Locks     bool `json:"-"`
 }
 
-func RandomSpecialPieceKind() PieceKind {
-	return PieceKind(randomSource.Int63n(int64(PieceKindCount-BasicPieceKindCount)) + 1 + BasicPieceKindCount)
-}
+func (a Piece) SameOrientation(as Piece) bool { return a.Orientation == as.Orientation }
+func (a Piece) FortifiedAgainst(t Piece) bool { return a.Fortified && (BasicKind(t.Kind) == Pawn) }
 
+// All special pieces are based on a normal piece, called the basic kind of the piece.
 func BasicKind(p PieceKind) PieceKind {
 	switch p {
 	case King:
@@ -34,4 +41,9 @@ func BasicKind(p PieceKind) PieceKind {
 		log.Panicln("unexpected piece kind", p)
 		return NoKind
 	}
+}
+
+// A special piece is one that's not from the normal chess set (king, queen, rook, bishop, knight, pawn).
+func RandomSpecialPieceKind() PieceKind {
+	return PieceKind(randomSource.Int63n(int64(PieceKindCount-BasicPieceKindCount)) + 1 + BasicPieceKindCount)
 }

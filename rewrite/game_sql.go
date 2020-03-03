@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"strconv"
 	"strings"
 )
 
@@ -59,6 +60,16 @@ var (
 
 	game_header_query = BuildSQLQuery(game_header_selects, games_table, games_identifier)
 
+	games_board_selects = func() []string {
+		s := make([]string, 64)
+		for i, _ := range s {
+			s[i] = "s" + strconv.Itoa(i)
+		}
+		return s
+	}()
+
+	games_board_query = BuildSQLQuery(games_board_selects, games_table, games_identifier)
+
 	game_opponent_and_active_query = BuildSQLQuery([]string{
 		games_active,
 		games_white,
@@ -98,4 +109,9 @@ var (
 		}
 		return s.String()
 	}()
+
+	game_with_player_exists_query = BuildSQLGeneralizedWhereQuery(nil, games_table,
+		games_identifier+"=$1 AND ("+games_white+"=$2 OR "+games_black+"=$2)")
+
+	game_turn_query = BuildSQLQuery([]string{games_turn}, games_table, games_identifier)
 )

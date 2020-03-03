@@ -32,11 +32,27 @@ type PlayerGameHeader struct {
 	ElapsedUpdated time.Time
 }
 
+type Board struct {
+	rules.Board      `json:"board"`
+	PieceIdentifiers []AddressedPieceIdentifier `json:"pieceIdentifiers"`
+}
+
 type Game struct {
 	GameHeader
-	rules.Game
-	PieceIdentifiers []AddressedPieceIdentifier
+	Board
 }
+
+type GameState uint
+
+const (
+	Incomplete GameState = iota
+	Check
+	Promotion
+	Checkmate
+	TimeOver
+	Drawn
+	Conceded
+)
 
 // value set for an initialized game with no move in from/to
 const no_move = 64

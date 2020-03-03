@@ -8,6 +8,37 @@ import (
 	"github.com/pciet/wichess/rules"
 )
 
+// If the returned Board has PieceIdentifiers set to nil then the game wasn't found.
+func LoadGameBoard(tx *sql.Tx, id GameIdentifier) Board {
+	var ep [64]EncodedPiece
+	epp := make([]interface{}, 64)
+	for i, _ := range ep {
+		epp[i] = &(ep[i])
+	}
+
+	err := tx.QueryRow(games_board_query, id).Scan(epp...)
+	if err == sql.ErrNoRows {
+		return Board{PieceIdentifiers: nil}
+	} else if err != nil {
+		log.Panic(err)
+	}
+
+	b := Board{PieceIdentifiers: make([]AddressedPieceIdentifier, 0, 8)}
+
+	for i, v := range ep {
+		p := v.Decode()
+		b.Board[i] = rules.Square(p.Piece)
+		if p.ID != 0 {
+			b.PieceIdentifiers = append(b.PieceIdentifiers, AddressedPieceIdentifier{
+				ID:           p.ID,
+				BoardAddress: rules.BoardAddressIndex(i).Address(),
+			})
+		}
+	}
+
+	return b
+}
+
 // Returns a GameHeader with ID set to 0 if the game isn't found.
 func LoadGameHeader(tx *sql.Tx, id GameIdentifier) GameHeader {
 	h := GameHeader{ID: id}
@@ -140,4 +171,27 @@ func GameActiveAndOpponentName(tx *sql.Tx, id GameIdentifier, player string) (bo
 	}
 
 	return false, opponent
+}
+
+func PlayerInGame(tx *sql.Tx, id GameIdentifier, name string) bool {
+	var s sql.NullString
+	err := tx.QueryRow(game_with_player_exists_query, id, name).Scan(&s)
+	if err == sql.ErrNoRows {
+		return false
+	} else if err != nil {
+		log.Panic(err)
+	}
+	return true
+}
+
+func GameTurnEqual(tx *sql.Tx, id GameIdentifier, turn int) bool {
+	var t int
+	err := tx.QueryRow(game_turn_query, id).Scan(&t)
+	if err != nil {
+		log.Panic(err)
+	}
+	if t == turn {
+		return true
+	}
+	return false
 }

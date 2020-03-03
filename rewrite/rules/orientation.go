@@ -1,6 +1,10 @@
 package rules
 
-// Orientation is which player owns the piece and indicates the direction of movement.
+import (
+	"log"
+)
+
+// Piece ownership and direction of travel is shown by orientation.
 type Orientation int
 
 const (
@@ -9,10 +13,12 @@ const (
 )
 
 func (an Orientation) String() string {
-	if an == White {
+	switch an {
+	case White:
 		return "white"
-	} else if an == Black {
+	case Black:
 		return "black"
 	}
-	return "undefined"
+	log.Panicln("unknown orientation", an)
+	return ""
 }

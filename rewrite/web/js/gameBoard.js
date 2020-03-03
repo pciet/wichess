@@ -1,4 +1,6 @@
-export function startBoardGET(gameID) {
+const board = [64]
+
+export function boardGET(gameID) {
     const r = new XMLHttpRequest()
     r.onload = readBoardGETResponse
     r.open('GET', '/games/' + gameID)
@@ -6,8 +8,26 @@ export function startBoardGET(gameID) {
 }
 
 function readBoardGETResponse(r) {
-    if (r.status !== 200) {
-        throw new Error('/games/ GET failed with status code ' + r.status)
+    if (r.target.status !== 200) {
+        throw new Error('/games/[id] GET failed with status code ' + r.target.status)
     }
-    console.log(r)
+
+    const b = JSON.parse(r.target.response)
+
+    for (let i = 0; i < 64; i++) {
+        board[i] = {
+            piece: b.board[i],
+            id: 0
+        }
+    }
+
+    for (let p of b.pieceIdentifiers) {
+        board[squareIndex(p.address)].id = p.id
+    }
+
+    console.log(board)
+}
+
+function squareIndex(address) {
+    return address.file + (address.rank * 8)
 }

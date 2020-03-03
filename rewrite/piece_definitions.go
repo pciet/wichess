@@ -12,8 +12,8 @@ type Piece struct {
 }
 
 type AddressedPieceIdentifier struct {
-	ID PieceIdentifier
-	rules.BoardAddress
+	ID                 PieceIdentifier `json:"id"`
+	rules.BoardAddress `json:"address"`
 }
 
 type EncodedPiece uint64

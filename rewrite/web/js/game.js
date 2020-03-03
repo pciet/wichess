@@ -1,8 +1,8 @@
 import { addLayout, layout, layoutElement, scaleFont } from './layout.js'
 import { landscape, landscapeFloating, landscapeWideFloating, landscapeVeryWideFloating, square, portrait, unsupportedWindowDimension } from './gameLayouts.js'
-import { startBoardGET } from './gameBoard.js'
+import { boardGET } from './gameBoard.js'
 
-startBoardGET(GameHeader.ID)
+boardGET(GameHeader.ID)
 
 const lowerSquareRatio = 0.8
 const upperSquareRatio = 1.5
