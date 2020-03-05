@@ -1,16 +1,18 @@
 package main
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
-	"strconv"
+
+	"github.com/pciet/wichess/rules"
 )
 
 const (
 	MovesRelPath = "/moves/"
 
 	TurnQuery = "turn"
+
+	OutdatedMovesRequest = "outdated"
 )
 
 // A GET to /moves/[game identifier]?turn=[turn number] responds with all available moves.
@@ -18,7 +20,7 @@ const (
 // The player must be one of the people matched in the game and have a valid session.
 // A Bad Request (400) response means the request was incorrect.
 
-func MovesHander(w http.ResponseWriter, r *http.Request) {
+func MovesHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		DebugPrintln(MovesRelPath, "HTTP method", r.Method, "not", http.MethodGet)
 		w.WriteHeader(http.StatusBadRequest)

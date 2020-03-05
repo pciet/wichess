@@ -12,6 +12,17 @@ const (
 	Black Orientation = 1
 )
 
+func (an Orientation) Opponent() Orientation {
+	switch an {
+	case White:
+		return Black
+	case Black:
+		return White
+	}
+	log.Panicln("unknown orientation", an)
+	return White
+}
+
 func (an Orientation) String() string {
 	switch an {
 	case White:

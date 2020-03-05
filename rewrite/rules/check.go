@@ -1,28 +1,34 @@
 package rules
 
-// TODO: does check need to use un-naive opponent moves?
-
-func (a Game) Check(active Orientation, naiveOpponentMoves []MoveSet) bool {
-	kl, _ := a.KingLocation(active)
-	for _, moveSet := range naiveOpponentMoves {
-		for _, move := range moveSet {
-			if move == kl {
-				return true
-			}
+func (a Board) InCheck(active Orientation, takes []Address) bool {
+	king := a.KingLocation(active)
+	for _, take := range takes {
+		if take == king {
+			return true
 		}
 	}
-
-	// TODO: isolate specific cases where indirect takes happens to reduce this computation
-
-	// some special piece moves cause indirect takes
-	for _, moveSet := range naiveOpponentMoves {
-		for _, move := range moveSet {
-			_, has := a.AfterMove(Opponent(active), moveSet.From, move).KingLocation(active)
-			if has == false {
-				return true
-			}
-		}
-	}
-
 	return false
+}
+
+func (a Game) RemoveMovesIntoCheck(moves []MoveSet, active Orientation) []MoveSet {
+	out := make([]MoveSet, 0, len(moves))
+
+	for _, moveset := range moves {
+		outset := MoveSet{moveset.From, make([]Address, 0, len(moveset.Moves))}
+		for _, move := range moveset.Moves {
+			ga := a.AfterMove(Move{moveset.From, move})
+			threats := MovesAddressSlice(ga.NaiveTakeMoves(active.Opponent()))
+
+			if (ga.Board.InCheck(active, threats)) || ga.Board.NoKing(active) {
+				continue
+			}
+
+			outset.Moves = append(outset.Moves, move)
+		}
+		if len(outset.Moves) == 0 {
+			continue
+		}
+		out = append(out, outset)
+	}
+	return out
 }

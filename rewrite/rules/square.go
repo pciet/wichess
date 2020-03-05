@@ -4,6 +4,8 @@ package rules
 // An empty square is indicated by the piece's Kind set to NoKind.
 type Square Piece
 
+func (a Square) FortifiedAgainst(t Square) bool { return a.Fortified && (BasicKind(t.Kind) == Pawn) }
+
 type AddressedSquare struct {
 	Address
 	Square
@@ -18,7 +20,7 @@ LOOP:
 		// either it needs to replace or be added
 		for i, bs := range base {
 			if bs.Address == s.Address {
-				bs[i].Square = s.Square
+				base[i].Square = s.Square
 				continue LOOP
 			}
 		}
@@ -32,4 +34,19 @@ func CombineAddressedSquares(a, b []AddressedSquare) []AddressedSquare {
 		a = append(a, s)
 	}
 	return a
+}
+
+func (a Square) String() string {
+	if a.Kind == NoKind {
+		return "empty"
+	}
+	k := ""
+	if IsBasicKind(a.Kind) == false {
+		k = "+"
+	}
+	m := ""
+	if a.Moved {
+		m = "moved "
+	}
+	return m + a.Orientation.String() + " " + k + a.Kind.String()
 }

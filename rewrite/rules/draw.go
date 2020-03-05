@@ -14,11 +14,11 @@ import (
 func (a Board) InsufficientMaterialDraw() bool {
 	w := make([]AddressedSquare, 0, 2)
 	b := make([]AddressedSquare, 0, 2)
-	for i, p := range Board {
+	for i, p := range a {
 		if p.Kind == NoKind {
 			continue
 		}
-		switch p.BasicKind() {
+		switch BasicKind(p.Kind) {
 		case Queen, Rook, Pawn:
 			return false
 		}
@@ -27,12 +27,12 @@ func (a Board) InsufficientMaterialDraw() bool {
 			if len(w) == 2 {
 				return false
 			}
-			w = append(w, AddressedSquare{AddressIndex(i).Address(), Square{p}})
+			w = append(w, AddressedSquare{AddressIndex(i).Address(), p})
 		case Black:
 			if len(b) == 2 {
 				return false
 			}
-			b = append(b, AddressedSquare{AddressIndex(i).Address(), Square{p}})
+			b = append(b, AddressedSquare{AddressIndex(i).Address(), p})
 		}
 	}
 
@@ -59,7 +59,7 @@ func (a Board) InsufficientMaterialDraw() bool {
 		} else {
 			bishop2 = b[0]
 		}
-		if (bishop1.BasicKind() != Bishop) || (bishop2.BasicKind() != Bishop) {
+		if (BasicKind(bishop1.Kind) != Bishop) || (BasicKind(bishop2.Kind) != Bishop) {
 			return false
 		}
 		if bishop1.SquareEven() != bishop2.SquareEven() {

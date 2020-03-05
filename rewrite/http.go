@@ -31,6 +31,9 @@ func InitializeHTTP() {
 	// Which piece is where on a game's board is initially loaded into the web browser with a GET to /games/[game identifier].
 	http.HandleFunc(GamesRelPath, GamesHandler)
 
+	// The webpages requests a calculation of all possible moves for a turn with a GET to /moves/[game identifier].
+	http.HandleFunc(MovesRelPath, MovesHandler)
+
 	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("web/js"))))
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("web/css"))))
 	http.Handle("/img/", http.StripPrefix("/img/", http.FileServer(http.Dir("web/img"))))

@@ -6,4 +6,6 @@ type Game struct {
 	Previous Move
 }
 
+var NoPreviousMove = Move{Address{0, 8}, Address{0, 8}}
+
 // TODO: should Board be a pointer? measure the cost of copying it for methods

@@ -4,11 +4,11 @@ package rules
 func (a Board) DetonateMove(changes, takes []AddressedSquare, m Move) ([]AddressedSquare, []AddressedSquare) {
 	takes = append(takes, AddressedSquare{m.From, a[m.From.Index()]})
 	takes = append(takes, AddressedSquare{m.To, a[m.To.Index()]})
-	changes = append(changes, AddressedSquare{m.From, EmptySquare()})
-	changes = append(changes, AddressedSquare{m.To, EmptySquare()})
+	changes = append(changes, AddressedSquare{m.From, Square{}})
+	changes = append(changes, AddressedSquare{m.To, Square{}})
 	(&a).ApplyChanges(changes)
 
-	var recusriveDetonate func(Address)
+	var recursiveDetonate func(Address)
 
 	recursiveDetonate = func(detonator Address) {
 		for _, s := range a.SurroundingSquares(detonator) {
@@ -16,7 +16,7 @@ func (a Board) DetonateMove(changes, takes []AddressedSquare, m Move) ([]Address
 				continue
 			}
 			takes = append(takes, s)
-			changes = append(changes, AddressedSquare{s.Address, EmptySquare()})
+			changes = append(changes, AddressedSquare{s.Address, Square{}})
 			a[s.Address.Index()].Kind = NoKind
 			if s.Detonates {
 				recursiveDetonate(s.Address)

@@ -27,11 +27,11 @@ func LoadGameBoard(tx *sql.Tx, id GameIdentifier) Board {
 
 	for i, v := range ep {
 		p := v.Decode()
-		b.Board[i] = rules.Square(p.Piece)
+		b.Board[i] = rules.Square(p.Piece.ApplyCharacteristics())
 		if p.ID != 0 {
 			b.PieceIdentifiers = append(b.PieceIdentifiers, AddressedPieceIdentifier{
-				ID:           p.ID,
-				BoardAddress: rules.BoardAddressIndex(i).Address(),
+				ID:      p.ID,
+				Address: rules.AddressIndex(i).Address(),
 			})
 		}
 	}

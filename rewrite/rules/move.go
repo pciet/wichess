@@ -7,7 +7,7 @@ import (
 func (a Game) AfterMove(m Move) Game {
 	d, _ := a.DoMove(m)
 	for _, s := range d {
-		a[s.Address.Index()] = s.Square
+		a.Board[s.Address.Index()] = s.Square
 	}
 	a.Previous = m
 	return a
@@ -36,7 +36,7 @@ func (a Board) DoMove(m Move) ([]AddressedSquare, []AddressedSquare) {
 
 	to := a[m.To.Index()]
 	if to.NotEmpty() {
-		if to.SameOrientation(from) {
+		if to.Orientation == from.Orientation {
 			changes = a.SwapMove(changes, m)
 		} else {
 			if to.Detonates {
@@ -71,13 +71,13 @@ func (a Board) DoMove(m Move) ([]AddressedSquare, []AddressedSquare) {
 func (a Board) NoTakeMove(changes []AddressedSquare, m Move) []AddressedSquare {
 	s := a[m.From.Index()]
 	s.Moved = true
-	changes = append(changes, AddressedSquare{m.From, EmptySquare()})
+	changes = append(changes, AddressedSquare{m.From, Square{}})
 	return append(changes, AddressedSquare{m.To, s})
 }
 
 func (a Board) TakeMove(changes, takes []AddressedSquare, m Move) ([]AddressedSquare, []AddressedSquare) {
 	s := a[m.From.Index()]
 	s.Moved = true
-	changes = append(changes, AddressedSquare{m.From, EmptySquare()})
+	changes = append(changes, AddressedSquare{m.From, Square{}})
 	return append(changes, AddressedSquare{m.To, s}), append(takes, AddressedSquare{m.To, a[m.To.Index()]})
 }

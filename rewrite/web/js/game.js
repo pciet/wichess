@@ -1,8 +1,10 @@
 import { addLayout, layout, layoutElement, scaleFont } from './layout.js'
 import { landscape, landscapeFloating, landscapeWideFloating, landscapeVeryWideFloating, square, portrait, unsupportedWindowDimension } from './gameLayouts.js'
 import { boardGET } from './gameBoard.js'
+import { movesGET } from './gameMoves.js'
 
 boardGET(GameHeader.ID)
+movesGET(GameHeader.ID, 1)
 
 const lowerSquareRatio = 0.8
 const upperSquareRatio = 1.5

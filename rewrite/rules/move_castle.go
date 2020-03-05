@@ -1,5 +1,9 @@
 package rules
 
+import (
+	"log"
+)
+
 func (a Board) IsCastleMove(m Move) bool {
 	s := a[m.From.Index()]
 	if (s.Kind != King) || s.Moved {
@@ -16,13 +20,13 @@ func (a Board) CastleMove(changes []AddressedSquare, m Move) []AddressedSquare {
 	var rookMove Move
 	switch m.To {
 	case Address{2, 0}:
-		rookMove = Move{{0, 0}, {3, 0}}
+		rookMove = Move{Address{0, 0}, Address{3, 0}}
 	case Address{6, 0}:
-		rookMove = Move{{7, 0}, {5, 0}}
+		rookMove = Move{Address{7, 0}, Address{5, 0}}
 	case Address{2, 7}:
-		rookMove = Move{{0, 7}, {3, 7}}
+		rookMove = Move{Address{0, 7}, Address{3, 7}}
 	case Address{6, 7}:
-		rookMove = Move{{7, 7}, {5, 7}}
+		rookMove = Move{Address{7, 7}, Address{5, 7}}
 	default:
 		log.Panicln("not a castle move", m, a)
 	}
@@ -33,8 +37,8 @@ func (a Board) CastleMove(changes []AddressedSquare, m Move) []AddressedSquare {
 	king.Moved = true
 	rook.Moved = true
 
-	changes = append(changes, AddressedSquare{m.From, EmptySquare()})
-	changes = append(changes, AddressedSquare{rookMove.From, EmptySquare()})
+	changes = append(changes, AddressedSquare{m.From, Square{}})
+	changes = append(changes, AddressedSquare{rookMove.From, Square{}})
 	changes = append(changes, AddressedSquare{rookMove.To, rook})
 	return append(changes, AddressedSquare{m.To, king})
 }

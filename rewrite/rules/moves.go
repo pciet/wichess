@@ -2,6 +2,8 @@ package rules
 
 // TODO: move results are all calculated here, so cache that for when a move is picked
 
+// TODO: moves needs to returns moves for both players
+
 func (a Game) Moves(active Orientation) ([]MoveSet, State) {
 	// promotion is part of the previous move
 	if a.PromotionNeeded() {
@@ -12,24 +14,20 @@ func (a Game) Moves(active Orientation) ([]MoveSet, State) {
 		return nil, Draw
 	}
 
-	moves, opponentMoves := a.NaiveMoves(active)
+	// calculate all moves the player can make without considering check
+	moves := a.NaiveMoves(active)
 
-	check := a.Check(active, opponentMoves)
+	// check is a threat of capture, which means takes into check count
+	threats := MovesAddressSlice(a.NaiveTakeMoves(active.Opponent()))
 
-	if check {
-		moves = a.RemoveCastling(active, moves)
+	check := a.Board.InCheck(active, threats)
+
+	if check == false {
+		moves = a.Board.AppendCastleMoves(moves, active, threats)
 	}
 
-	// remove all moves that would cause check
-	for i, moveSet := range moves {
-		for j, move := range moveSet {
-			ga := a.AfterMove(moveSet.From, move)
-			om, _ := ga.NaiveMoves(Opponent(active))
-			if ga.Check(active, om) {
-				moves = RemoveMove(moves, i, j)
-			}
-		}
-	}
+	// if the king is on a threatened square or taken after a move then that move is removed
+	moves = a.RemoveMovesIntoCheck(moves, active)
 
 	if len(moves) == 0 {
 		if check {
@@ -39,35 +37,4 @@ func (a Game) Moves(active Orientation) ([]MoveSet, State) {
 	}
 
 	return moves, Normal
-}
-
-// Moves that don't consider if they'll allow check aren't legal but are a first calculation.
-// Returns the active player's moves and the opponent's moves in separate slices.
-func (a Game) NaiveMoves(active Orientation) ([]MoveSet, []MoveSet) {
-	m := make([]MoveSet, 0, 16)
-	om := make([]MoveSet, 0, 16)
-
-	for i, p := range a.Board {
-		if p.Kind == NoKind {
-			continue
-		}
-		addr := AddressIndex(i).Address()
-		nm := a.NaiveMovesAt(addr)
-		if len(nm) == 0 {
-			continue
-		}
-		move := MoveSet{Addr, nm}
-		if p.Orientation == active {
-			m = append(m, move)
-		} else {
-			om = append(om, move)
-		}
-	}
-
-	return m, om
-}
-
-// Both castling and en passant are included in NaiveMovesAt.
-func (a Game) NaiveMovesAt(the Address) []Address {
-
 }

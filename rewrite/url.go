@@ -38,5 +38,5 @@ func ParseURLIntQuery(w http.ResponseWriter, r *http.Request, query string) int 
 		return 0
 	}
 
-	return v
+	return int(v)
 }

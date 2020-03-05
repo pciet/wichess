@@ -3,8 +3,8 @@ package rules
 func (a Board) GuardWillTake(target Square, guard AddressedSquare) bool {
 	return guard.NotEmpty() && guard.Guards &&
 		(guard.Orientation != target.Orientation) &&
-		(target.FortifiedAgainst(guard) == false) && (target.Locks == false) &&
-		(a.PieceLocked(guard) == false)
+		(target.FortifiedAgainst(guard.Square) == false) && (target.Locks == false) &&
+		(a.PieceLocked(guard.Address) == false)
 }
 
 func (a Board) GuardTakesDetonate(changes, takes []AddressedSquare, m Move, guard Address) ([]AddressedSquare, []AddressedSquare) {
@@ -14,7 +14,7 @@ func (a Board) GuardTakesDetonate(changes, takes []AddressedSquare, m Move, guar
 	guardDetonateChanges := make([]AddressedSquare, 0, 8)
 	guardDetonateTakes := make([]AddressedSquare, 0, 2)
 
-	guardDetonateChanges, guardDetonateTakes = a.DetonateMove(guardDetonateChanges, guardDetonateTakes, Move{guard.Address, m.To})
+	guardDetonateChanges, guardDetonateTakes = a.DetonateMove(guardDetonateChanges, guardDetonateTakes, Move{guard, m.To})
 
 	changes = MergeReplaceAddressedSquares(changes, guardDetonateChanges)
 	takes = CombineAddressedSquares(takes, guardDetonateTakes)
@@ -31,12 +31,12 @@ func (a Board) GuardTakesDetonate(changes, takes []AddressedSquare, m Move, guar
 }
 
 func (a Board) GuardChain(changes, takes []AddressedSquare, m Move, guard Address) ([]AddressedSquare, []AddressedSquare) {
-	changes = append(changes, AddressedSquare{guard, EmptySquare()})
+	changes = append(changes, AddressedSquare{guard, Square{}})
 	g := a[guard.Index()]
 	g.Moved = true
-	changes = append(changes, AddressedSquare{m.To, g.Square})
-	takes = append(takes, a[m.From.Index()])
-	previousGuard := g
+	changes = append(changes, AddressedSquare{m.To, g})
+	takes = append(takes, AddressedSquare{m.From, a[m.From.Index()]})
+	previousGuard := AddressedSquare{guard, g}
 
 	(&a).ApplyChanges(changes)
 
@@ -53,7 +53,7 @@ LOOP:
 			s.Moved = true
 			gchanges := make([]AddressedSquare, 0, 2)
 			gchanges = append(gchanges, AddressedSquare{m.To, s.Square})
-			gchanges = append(gchanges, AddressedSquare{s.Address, EmptySquare()})
+			gchanges = append(gchanges, AddressedSquare{s.Address, Square{}})
 			changes = MergeReplaceAddressedSquares(changes, gchanges)
 			continue LOOP
 		}
