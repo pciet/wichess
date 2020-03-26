@@ -1,8 +1,6 @@
 package rules
 
-import (
-	"strconv"
-)
+import "strconv"
 
 // Each square has an address.
 // File is the column, or X value, starting from the left.
@@ -11,8 +9,8 @@ import (
 // The left white rook is at 0,0, the right white rook is at 7,0.
 // The left black rook from that player's perspective is at 7,7.
 type Address struct {
-	File uint8 `json:"file"`
-	Rank uint8 `json:"rank"`
+	File uint8 `json:"f"`
+	Rank uint8 `json:"r"`
 }
 
 // Relative addressing is from the perspective of a square or piece instead of from the board.

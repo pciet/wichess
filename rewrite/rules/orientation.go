@@ -1,9 +1,5 @@
 package rules
 
-import (
-	"log"
-)
-
 // Piece ownership and direction of travel is shown by orientation.
 type Orientation int
 
@@ -19,7 +15,7 @@ func (an Orientation) Opponent() Orientation {
 	case Black:
 		return White
 	}
-	log.Panicln("unknown orientation", an)
+	Panic("unknown orientation", an)
 	return White
 }
 
@@ -30,6 +26,6 @@ func (an Orientation) String() string {
 	case Black:
 		return "black"
 	}
-	log.Panicln("unknown orientation", an)
+	Panic("unknown orientation", an)
 	return ""
 }

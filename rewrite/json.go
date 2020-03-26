@@ -2,17 +2,17 @@ package main
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 )
 
-// able to be marshalled to JSON
+// JSONMarshallable documents that an interface{} var should be
+// able to be marshalled into JSON using encoding/json.
 type JSONMarshallable interface{}
 
 func JSONResponse(w http.ResponseWriter, content JSONMarshallable) {
 	j, err := json.Marshal(content)
 	if err != nil {
-		log.Panic(err)
+		Panic(err)
 	}
 
 	w.Header().Set("Content-Type", "application/json")

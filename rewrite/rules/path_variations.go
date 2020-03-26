@@ -1,9 +1,6 @@
 package rules
 
-import (
-	"log"
-	"strings"
-)
+import "strings"
 
 // Most abilities and some rules (like en passant and castling) will cause changes or additions to these paths.
 
@@ -76,7 +73,7 @@ var PieceRelPaths = func() map[PieceKind]RelPathVariations {
 
 	for k, v := range m {
 		if v[NormalMove] == nil {
-			log.Panicln("no basic move paths defined for piece", k)
+			Panic("no basic move paths defined for piece", k)
 		}
 		if v[First] == nil {
 			v[First] = v[NormalMove]

@@ -1,16 +1,12 @@
 package rules
 
-import (
-	"log"
-)
-
 // Each piece has a kind which indicates its possible move sets and abilities.
 type PieceKind int
 
 type Piece struct {
-	Kind        PieceKind `json:"kind"`
-	Orientation `json:"orientation"`
-	Moved       bool `json:"moved"`
+	Kind        PieceKind `json:"k"`
+	Orientation `json:"o"`
+	Moved       bool `json:"m"`
 
 	Swaps     bool `json:"-"`
 	Detonates bool `json:"-"`
@@ -58,7 +54,7 @@ func (a Piece) ApplyCharacteristics() Piece {
 	case ReconPawn, ReconKnight, ReconBishop, ReconRook:
 		a.Recons = true
 	default:
-		log.Panicln("unknown piece kind", a.Kind, a)
+		Panic("unknown piece kind", a.Kind, a)
 	}
 	return a
 }
@@ -81,7 +77,7 @@ func BasicKind(p PieceKind) PieceKind {
 	case Pawn, SwapPawn, LockPawn, ReconPawn, DetonatePawn, GuardPawn, RallyPawn, FortifyPawn, ExtendedPawn:
 		return Pawn
 	default:
-		log.Panicln("unexpected piece kind", p)
+		Panic("unexpected piece kind", p)
 		return NoKind
 	}
 }

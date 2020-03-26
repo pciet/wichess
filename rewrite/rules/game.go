@@ -2,8 +2,8 @@ package rules
 
 // Both a board and previous move represents a game because of en passant.
 type Game struct {
-	Board
-	Previous Move
+	Board    `json:"b"`
+	Previous Move `json:"p"`
 }
 
 var NoPreviousMove = Move{Address{0, 8}, Address{0, 8}}

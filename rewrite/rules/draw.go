@@ -1,9 +1,5 @@
 package rules
 
-import (
-	"log"
-)
-
 // TODO: same position has occurred three times
 
 // Possible states for an insufficient material draw:
@@ -37,12 +33,12 @@ func (a Board) InsufficientMaterialDraw() bool {
 	}
 
 	if (len(w) == 0) || (len(b) == 0) {
-		log.Panic("side has no pieces")
+		Panic("side has no pieces")
 	}
 
 	if (len(w) == 1) && (len(b) == 1) {
 		if (w[0].Kind != King) || (b[0].Kind != King) {
-			log.Panic("side missing king")
+			Panic("side missing king")
 		}
 		return true
 	}

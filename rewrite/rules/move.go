@@ -1,7 +1,15 @@
 package rules
 
-import (
-	"log"
+type (
+	Move struct {
+		From Address `json:"f"`
+		To   Address `json:"t"`
+	}
+
+	MoveSet struct {
+		From  Address   `json:"f"`
+		Moves []Address `json:"m"`
+	}
 )
 
 func (a Game) AfterMove(m Move) Game {
@@ -28,7 +36,7 @@ func (a Game) AfterMove(m Move) Game {
 func (a Board) DoMove(m Move) ([]AddressedSquare, []AddressedSquare) {
 	from := a[m.From.Index()]
 	if from.Empty() {
-		log.Panicln("no piece for move", m, a)
+		Panic("no piece for move", m, a)
 	}
 
 	changes := make([]AddressedSquare, 0, 3)

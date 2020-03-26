@@ -6,6 +6,10 @@ import (
 	"github.com/pciet/wichess/rules"
 )
 
+func (g Game) Moves() ([]rules.MoveSet, rules.State) {
+
+}
+
 func MovesForGame(tx *sql.Tx, id GameIdentifier) ([]rules.MoveSet, rules.State) {
 	// TODO: just load the rules.Game
 
@@ -15,13 +19,17 @@ func MovesForGame(tx *sql.Tx, id GameIdentifier) ([]rules.MoveSet, rules.State) 
 		return nil, rules.Conceded
 	}
 
-	if h.TimeLoss() {
-		return nil, rules.TimeOver
-	}
+	/*
+		if h.TimeLoss() {
+			return nil, rules.TimeOver
+		}
+	*/
 
-	if h.DrawTurnsOver() {
-		return nil, rules.Draw
-	}
+	/*
+		if h.DrawTurnsOver() {
+			return nil, rules.Draw
+		}
+	*/
 
 	// TODO: rules.Game.Moves needs to return moves for both players for display
 	var o rules.Orientation

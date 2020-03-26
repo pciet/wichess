@@ -2,65 +2,64 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"strconv"
 	"strings"
 )
 
 const (
-	games_table = "games"
+	GamesTable = "games"
 
-	games_piece                 = "piece"
-	games_competitive           = "competitive"
-	games_recorded              = "recorded"
-	games_conceded              = "conceded"
-	games_white                 = "white"
-	games_white_acknowledge     = "white_ack"
-	games_white_latest_move     = "white_latestmove"
-	games_white_elapsed         = "white_elapsed"
-	games_white_elapsed_updated = "white_elapsedupdated"
-	games_black                 = "black"
-	games_black_acknowledge     = "black_ack"
-	games_black_latest_move     = "black_latestmove"
-	games_black_elapsed         = "black_elapsed"
-	games_black_elapsed_updated = "black_elapsedupdated"
-	games_active                = "active"
-	games_previous_active       = "previous_active"
-	games_from                  = "move_from"
-	games_to                    = "move_to"
-	games_draw_turns            = "draw_turns"
-	games_turn                  = "turn"
-	games_identifier            = "game_id"
+	GamesPiece               = "piece"
+	GamesCompetitive         = "competitive"
+	GamesRecorded            = "recorded"
+	GamesConceded            = "conceded"
+	GamesWhite               = "white"
+	GamesWhiteAcknowledge    = "white_ack"
+	GamesWhitLatestMove      = "white_latestmove"
+	GamesWhiteElapsed        = "white_elapsed"
+	GamesWhiteElapsedUpdated = "white_elapsedupdated"
+	GamesBlack               = "black"
+	GamesBlackAcknowledge    = "black_ack"
+	GamesBlackLatestMove     = "black_latestmove"
+	GamesBlackElapsed        = "black_elapsed"
+	GamesBlackElapsedUpdated = "black_elapsedupdated"
+	GamesActive              = "active"
+	GamesPreviousActive      = "previous_active"
+	GamesFrom                = "move_from"
+	GamesTo                  = "move_to"
+	GamesDrawTurns           = "draw_turns"
+	GamesTurn                = "turn"
+	GamesIdentifier          = "game_id"
 )
 
 var (
-	// these keys are used to select the game header values but also to generate the new game insert
-	game_header_selects = []string{
-		games_piece,
-		games_competitive,
-		games_recorded,
-		games_conceded,
-		games_white,
-		games_white_acknowledge,
-		games_white_latest_move,
-		games_white_elapsed,
-		games_white_elapsed_updated,
-		games_black,
-		games_black_acknowledge,
-		games_black_latest_move,
-		games_black_elapsed,
-		games_black_elapsed_updated,
-		games_active,
-		games_previous_active,
-		games_from,
-		games_to,
-		games_draw_turns,
-		games_turn,
+	// GameHeaderSelects are also used for the new game insert.
+	GamesHeaderSelects = []string{
+		GamesPiece,
+		GamesCompetitive,
+		GamesRecorded,
+		GamesConceded,
+		GamesWhite,
+		GamesWhiteAcknowledge,
+		GamesWhiteLatestMove,
+		GamesWhiteElapsed,
+		GamesWhiteElapsedUpdated,
+		GamesBlack,
+		GamesBlackAcknowledge,
+		GamesBlackLatestMove,
+		GamesBlackElapsed,
+		GamesBlackElapsedUpdated,
+		GamesActive,
+		GamesPreviousActive,
+		GamesFrom,
+		GamesTo,
+		GamesDrawTurns,
+		GamesTurn,
 	}
 
-	game_header_query = BuildSQLQuery(game_header_selects, games_table, games_identifier)
+	GamesHeaderQuery = SQLQuery(GamesHeaderSelect, GamesTable, GamesIdentifier)
 
-	games_board_selects = func() []string {
+	GamesBoardSelects = func() []string {
 		s := make([]string, 64)
 		for i, _ := range s {
 			s[i] = "s" + strconv.Itoa(i)
@@ -68,23 +67,24 @@ var (
 		return s
 	}()
 
-	games_board_query = BuildSQLQuery(games_board_selects, games_table, games_identifier)
+	GamesBoardQuery = SQLQuery(GamesBoardSelects, GamesTable, GamesIdentifier)
 
-	game_opponent_and_active_query = BuildSQLQuery([]string{
-		games_active,
-		games_white,
-		games_black,
-		games_conceded,
-	}, games_table, games_identifier)
+	GamesOpponentAndActiveQuery = SQLQuery([]string{
+		GamesActive,
+		GamesWhite,
+		GamesBlack,
+		GamesConceded,
+	}, GamesTable, GamesIdentifier)
 
-	// TODO: is there a useful generalized BuildSQL func to make with this?
-	games_new_insert = func() string {
+	// TODO: is there a useful generalized SQL func to make for GamesNewInsert?
+
+	GamesNewInsert = func() string {
 		var s strings.Builder
 
 		s.WriteString("INSERT INTO ")
-		s.WriteString(games_table)
+		s.WriteString(GamesTable)
 		s.WriteString(" (")
-		for _, v := range game_header_selects {
+		for _, v := range GamesHeaderSelects {
 			s.WriteString(v)
 			s.WriteString(", ")
 		}
@@ -95,23 +95,23 @@ var (
 			}
 		}
 		s.WriteString(") VALUES (")
-		for i := 1; i <= 64+len(game_header_selects); i++ {
+		for i := 1; i <= 64+len(GamesHeaderSelects); i++ {
 			fmt.Fprintf(&s, "$%d", i)
-			if i != 64+len(game_header_selects) {
+			if i != 64+len(GamesHeaderSelects) {
 				s.WriteString(", ")
 			}
 		}
 		s.WriteString(") RETURNING ")
-		s.WriteString(games_identifier)
+		s.WriteString(GamesIdentifier)
 		s.WriteRune(';')
 		if DebugSQL {
-			log.Println("New game insert SQL:", s.String())
+			fmt.Println("New game insert SQL:", s.String())
 		}
 		return s.String()
 	}()
 
-	game_with_player_exists_query = BuildSQLGeneralizedWhereQuery(nil, games_table,
-		games_identifier+"=$1 AND ("+games_white+"=$2 OR "+games_black+"=$2)")
+	GamesHasPlayerQuery = SQLGeneralizedWhereQuery(nil, GamesTable,
+		GamesIdentifier+"=$1 AND ("+GamesWhite+"=$2 OR "+GamesBlack+"=$2)")
 
-	game_turn_query = BuildSQLQuery([]string{games_turn}, games_table, games_identifier)
+	GamesTurnQuery = SQLQuery([]string{GamesTurn}, GamesTable, GamesIdentifier)
 )

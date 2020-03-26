@@ -1,5 +1,5 @@
 import { layoutElement } from './layoutElement.js'
-export { addLayout, layout, removeNewlines, elementInteriorDimensions, layoutElement, scaleFont }
+export { addLayout, layout, removeNewlines, elementInteriorDimensions, layoutElement, scaleFont, addCSSRuleProperty }
 
 const layouts = []
 
@@ -103,4 +103,19 @@ function scaleFont() {
         }
     }
     throw new Error('no CSS html rule that defines font-size')
+}
+
+// TODO: add style instead of throwing an error
+// TODO: allow setting multiple properties
+function addCSSRuleProperty(cssSelector, property, value) {
+    for (const s of document.styleSheets) {
+        for (const r of s.cssRules) {
+            if (r.selectorText !== cssSelector) {
+                continue
+            }
+            r.style.setProperty(property, value)
+            return
+        }
+    }
+    throw new Error('no CSS rule for selector ' + cssSelector)
 }

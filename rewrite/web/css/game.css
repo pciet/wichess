@@ -112,6 +112,11 @@ a:link, a:visited {
     color: rgb(100,150,250);
 }
 
+.pieceimg {
+    width: 100%;
+    height: 100%;
+}
+
 .characteristic {
     text-align: center;
     font-style: italic;
@@ -126,11 +131,31 @@ a:link, a:visited {
 }
 
 #board {
-    background-color: rgb(105,105,120);
+    background-color: rgb(15,5,0);
 }
 
 .chesssquare {
-    border: thin solid rgb(10,30,20);
+    border: thin solid rgb(200,185,145);
+}
+
+.hover {
+    background-color: rgb(70,60,55);
+    border: thin solid rgb(255,135,95);
+}
+
+.move {
+    background-color: rgb(80,70,65);
+    border: thin solid rgb(255,120,80);
+}
+
+.select {
+    background-color: rgb(70,60,55);
+    border: thin solid rgb(255,100,75);
+}
+
+.selectmove {
+    background: linear-gradient(0.33turn, rgb(60,91,100), rgb(102,90,71));
+    border: thin solid rgb(255,140,100);
 }
 
 #portraitdesc {

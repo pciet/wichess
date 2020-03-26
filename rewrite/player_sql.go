@@ -1,75 +1,61 @@
 package main
 
-import (
-	"fmt"
-)
+import "fmt"
 
 const (
-	player_table = "players"
+	PlayerTable = "players"
 
-	player_name   = "name"
-	player_crypt  = "crypt"
-	player_wins   = "wins"
-	player_losses = "losses"
-	player_draws  = "draws"
-	player_rating = "rating"
-	player_c5     = "c5"
-	player_c15    = "c15"
+	PlayerName   = "name"
+	PlayerCrypt  = "crypt"
+	PlayerWins   = "wins"
+	PlayerLosses = "losses"
+	PlayerDraws  = "draws"
+	PlayerRating = "rating"
+	PlayerC5     = "c5"
+	PlayerC15    = "c15"
 
-	player_friend_game_prefix = "f"
-	player_friend_game_count  = 6
-
-	friend_table = "friends"
-
-	friend_requester = "requester"
-	friend_setup     = "setup"
-	friend_friend    = "friend"
-	friend_slot      = "slot"
+	PlayerFriendGamePrefix = "f"
+	PlayerFriendGameCount  = 6
 )
 
 var (
-	FriendRows = func() []string {
-		s := make([]string, player_friend_game_count)
-		for i := 0; i < player_friend_game_count; i++ {
-			s[i] = fmt.Sprintf("%s%d", player_friend_game_prefix, i)
+	PlayerFriendRows = func() []string {
+		s := make([]string, PlayerFriendGameCount)
+		for i := 0; i < PlayerFriendGameCount; i++ {
+			s[i] = fmt.Sprintf("%s%d", PlayerFriendGamePrefix, i)
 		}
 		return s
 	}()
 
-	player_new_insert = BuildSQLInsert(player_table, func() []string {
+	PlayerNewInsert = SQLInsert(PlayerTable, func() []string {
 		s := []string{
-			player_name,
-			player_crypt,
-			player_wins,
-			player_losses,
-			player_draws,
-			player_rating,
-			player_c5,
-			player_c15,
+			PlayerName,
+			PlayerCrypt,
+			PlayerWins,
+			PlayerLosses,
+			PlayerDraws,
+			PlayerRating,
+			PlayerC5,
+			PlayerC15,
 		}
-		for _, v := range FriendRows {
+		for _, v := range PlayerFriendRows {
 			s = append(s, v)
 		}
 		return s
 	}())
 
-	player_record_query = BuildSQLQuery([]string{
-		player_wins,
-		player_losses,
-		player_draws,
-	}, player_table, player_name)
+	PlayerRecordQuery = SQLQuery([]string{
+		PlayerWins,
+		PlayerLosses,
+		PlayerDraws,
+	}, PlayerTable, PlayerName)
 
-	player_friend_games_query = BuildSQLQuery(FriendRows, player_table, player_name)
+	PlayerFriendGamesQuery = SQLQuery(PlayerFriendRows, PlayerTable, PlayerName)
 
-	friend_matching_query = BuildSQLQuery([]string{
-		friend_friend,
-		friend_slot,
-	}, friend_table, friend_requester)
+	PlayerTimedGameQuery = SQLQuery([]string{
+		PlayerC5,
+		PlayerC15,
+	}, PlayerTable, PlayerName)
 
-	player_timed_game_query = BuildSQLQuery([]string{
-		player_c5,
-		player_c15,
-	}, player_table, player_name)
-
-	player_crypt_query = BuildSQLQuery([]string{player_crypt}, player_table, player_name)
+	PlayerCryptQuery = SQLQuery([]string{PlayerCrypt}, PlayerTable, PlayerName)
 )

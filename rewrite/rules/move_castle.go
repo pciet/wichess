@@ -1,9 +1,5 @@
 package rules
 
-import (
-	"log"
-)
-
 func (a Board) IsCastleMove(m Move) bool {
 	s := a[m.From.Index()]
 	if (s.Kind != King) || s.Moved {
@@ -28,7 +24,7 @@ func (a Board) CastleMove(changes []AddressedSquare, m Move) []AddressedSquare {
 	case Address{6, 7}:
 		rookMove = Move{Address{7, 7}, Address{5, 7}}
 	default:
-		log.Panicln("not a castle move", m, a)
+		Panic("not a castle move", m, a)
 	}
 
 	rook := a[rookMove.From.Index()]

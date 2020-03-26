@@ -1,9 +1,6 @@
 package rules
 
-import (
-	"log"
-	"strings"
-)
+import "strings"
 
 // TODO: is it worth caching the calculation result of applying rel paths?
 
@@ -14,7 +11,7 @@ func AppliedRelPaths(f PieceKind, at Address, o Orientation) PathVariations {
 
 	rv, ok := PieceRelPaths[f]
 	if ok == false {
-		log.Panicln("no basic paths defined for piece", f)
+		Panic("no basic paths defined for piece", f)
 	}
 
 	offBoard := func(r RelAddress) (bool, Address) {
@@ -45,7 +42,7 @@ func AppliedRelPaths(f PieceKind, at Address, o Orientation) PathVariations {
 		paths := make([]Path, 0, len(relpaths))
 		for _, rp := range relpaths {
 			if len(rp) == 0 {
-				log.Panicln("zero length basic path for piece", f)
+				Panic("zero length basic path for piece", f)
 			}
 
 			off, _ := offBoard(rp[0])
@@ -73,7 +70,7 @@ func AppliedRelPaths(f PieceKind, at Address, o Orientation) PathVariations {
 // The resulting slice only has one of any path.
 func CombineRelPathSlices(s ...[]RelPath) []RelPath {
 	if len(s) == 0 {
-		log.Panic("no slices")
+		Panic("no slices")
 	}
 
 	z := s[0]

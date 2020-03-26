@@ -1,19 +1,20 @@
 package main
 
-import (
-	"database/sql"
-	"log"
-)
+import "database/sql"
 
-const computer_player_name = "Computer Player"
+const ComputerPlayerName = "Computer Player"
 
-func ComputerGameID(tx *sql.Tx, player string) GameIdentifier {
+var ComputerGameIdentifierQuery = SQLGeneralizedWhereQuery([]string{GamesIdentifier}, GamesTable,
+	GamesWhite+"=$1 AND "+GamesBlack+"='"+ComputerPlayerName+"'")
+
+// ComputerGameIdentifier gets the game identifier for the player's one computer opponent game.
+func ComputerGameIdentifier(tx *sql.Tx, player string) GameIdentifier {
 	var id GameIdentifier
-	err := tx.QueryRow(computer_game_id_query, player).Scan(&id)
+	err := tx.QueryRow(ComputerGameIdentifierQuery, player).Scan(&id)
 	if err == sql.ErrNoRows {
 		return 0
 	} else if err != nil {
-		log.Panicln("tx.QueryRow failed:", err)
+		Panic("tx.QueryRow failed:", err)
 	}
 	return id
 }

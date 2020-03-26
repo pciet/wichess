@@ -1,23 +1,20 @@
 package main
 
-import (
-	"net/http"
-)
+import "net/http"
 
 // TODO: make key cookie secure
 
 const (
-	LoginRelPath = "/login"
+	LoginPath        = "/login"
+	LoginWebTemplate = "web/html/login.tmpl"
 
-	login_web_template = "web/html/login.tmpl"
+	FormPlayerName = "name"
+	FormPassword   = "password"
 
-	form_player_name = "name"
-	form_password    = "password"
-
-	name_max_length = 64
+	NameMaxLength = 64
 )
 
-func init() { ParseHTMLTemplate(login_web_template) }
+func init() { ParseHTMLTemplate(LoginWebTemplate) }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
@@ -26,12 +23,12 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method != http.MethodGet {
-		DebugPrintln(LoginRelPath, "HTTP method", r.Method, "not GET")
+		DebugPrintln(LoginPath, "HTTP method", r.Method, "not GET")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	WriteWebTemplate(w, login_web_template, nil)
+	WriteWebTemplate(w, LoginWebTemplate, nil)
 }
 
 func LoginAttemptHandler(w http.ResponseWriter, r *http.Request) {
@@ -42,37 +39,35 @@ func LoginAttemptHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// TODO: verify README correctly describes username/password constraints
-	name := r.FormValue(form_player_name)
-	pass := r.FormValue(form_password)
+	name := r.FormValue(FormPlayerName)
+	pass := r.FormValue(FormPassword)
 	if (name == "") || (pass == "") {
 		DebugPrintln("missing username or password")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	if len(name) > name_max_length {
+	if len(name) > NameMaxLength {
 		DebugPrintln("username too long")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	if name == computer_player_name {
-		DebugPrintln("username matches", computer_player_name)
+	if name == ComputerPlayerName {
+		DebugPrintln("username matches", ComputerPlayerName)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	key := Login(name, pass)
 	if key == "" {
 		DebugPrintln("bad password for", name)
-		// TODO: should this response be http.StatusUnauthorized or http.StatusBadRequest?
-		w.WriteHeader(http.StatusResetContent)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	http.SetCookie(w, &http.Cookie{
-		Name:     session_key_cookie,
+		Name:     SessionKeyCookie,
 		Value:    key,
 		Path:     "/",
 		HttpOnly: true,
 		Secure:   false, // TODO: set true for TLS
 	})
-	// TODO: is http.StatusFound the right code?
-	http.Redirect(w, r, IndexRelPath, http.StatusFound)
+	http.Redirect(w, r, IndexRelPath, http.StatusSeeOther)
 }

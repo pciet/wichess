@@ -1,7 +1,7 @@
 package main
 
 import (
-	"log"
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -11,26 +11,26 @@ import (
 // TODO: generate SQL symbol constants from postgres_tables.sql
 // TODO: how to also simplify sql.Row.Scan?
 
-func BuildSQLGeneralizedWhereQuery(selects []string, table string, where string) string {
-	return BuildSQLQueryImplementation(selects, table, where, false)
+func SQLGeneralizedWhereQuery(selects []string, table string, where string) string {
+	return SQLQueryImplementation(selects, table, where, false)
 }
 
 // TODO: have strings.Builder at top here to avoid the extra + concatenation?
 
-func BuildSQLQuery(selects []string, table string, whereEquals string) string {
-	return BuildSQLQueryImplementation(selects, table, whereEquals+"=$1", false)
+func SQLQuery(selects []string, table string, whereEquals string) string {
+	return SQLQueryImplementation(selects, table, whereEquals+"=$1", false)
 }
 
-func BuildSQLForUpdateQuery(selects []string, table string, whereEquals string) string {
-	return BuildSQLQueryImplementation(selects, table, whereEquals+"=$1", true)
+func SQLForUpdateQuery(selects []string, table string, whereEquals string) string {
+	return SQLQueryImplementation(selects, table, whereEquals+"=$1", true)
 }
 
-func BuildSQLQueryImplementation(selects []string, table string, where string, forUpdate bool) string {
+func SQLQueryImplementation(selects []string, table string, where string, forUpdate bool) string {
 	if table == "" {
-		log.Panic("no table")
+		Panic("no table")
 	}
 	if where == "" {
-		log.Panic("no row selector")
+		Panic("no row selector")
 	}
 
 	var s strings.Builder
@@ -40,11 +40,11 @@ func BuildSQLQueryImplementation(selects []string, table string, where string, f
 		s.WriteString("null")
 	} else {
 		if len(selects) == 0 {
-			log.Panic("no selects")
+			Panic("no selects")
 		}
 		for i, v := range selects {
 			if v == "" {
-				log.Panicln("empty select at index", i)
+				Panicln("empty select at index", i)
 			}
 			s.WriteString(v)
 			if i != len(selects)-1 {
@@ -61,17 +61,17 @@ func BuildSQLQueryImplementation(selects []string, table string, where string, f
 	}
 	s.WriteRune(';')
 	if DebugSQL {
-		log.Println("SQL Query:", s.String())
+		fmt.Println("SQL Query:", s.String())
 	}
 	return s.String()
 }
 
-func BuildSQLInsert(table string, inserts []string) string {
+func SQLInsert(table string, inserts []string) string {
 	if table == "" {
-		log.Panic("no table")
+		Panic("no table")
 	}
 	if len(inserts) == 0 {
-		log.Panic("no inserts")
+		Panic("no inserts")
 	}
 
 	var s strings.Builder
@@ -81,7 +81,7 @@ func BuildSQLInsert(table string, inserts []string) string {
 	s.WriteString(" (")
 	for i, v := range inserts {
 		if v == "" {
-			log.Panicln("empty insert at index", i)
+			Panicln("empty insert at index", i)
 		}
 		s.WriteString(v)
 		if i != len(inserts)-1 {
@@ -98,20 +98,20 @@ func BuildSQLInsert(table string, inserts []string) string {
 	}
 	s.WriteString(");")
 	if DebugSQL {
-		log.Println("SQL Insert:", s.String())
+		fmt.Println("SQL Insert:", s.String())
 	}
 	return s.String()
 }
 
-func BuildSQLUpdate(table string, set string, whereEquals string) string {
+func SQLUpdate(table string, set string, whereEquals string) string {
 	if table == "" {
-		log.Panic("no table")
+		Panic("no table")
 	}
 	if set == "" {
-		log.Panic("no key to set")
+		Panic("no key to set")
 	}
 	if whereEquals == "" {
-		log.Panic("no where equals key")
+		Panic("no where equals key")
 	}
 
 	var s strings.Builder
@@ -124,7 +124,7 @@ func BuildSQLUpdate(table string, set string, whereEquals string) string {
 	s.WriteString(whereEquals)
 	s.WriteString(" = $2;")
 	if DebugSQL {
-		log.Println("SQL Update:", s.String())
+		fmt.Println("SQL Update:", s.String())
 	}
 	return s.String()
 }

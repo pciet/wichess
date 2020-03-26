@@ -1,28 +1,26 @@
 package main
 
-import ()
-
 const (
-	piece_table = "pieces"
+	PieceTable = "pieces"
 
-	piece_id       = "piece_id"
-	piece_kind     = "kind"
-	piece_owner    = "owner"
-	piece_reserved = "reserved"
-	piece_taken    = "taken"
+	PieceID       = "piece_id"
+	PieceKind     = "kind"
+	PieceOwner    = "owner"
+	PieceReserved = "reserved"
+	PieceTaken    = "taken"
 )
 
 var (
-	piece_query = BuildSQLQuery([]string{
-		piece_owner,
-		piece_kind,
-		piece_taken,
-	}, piece_table, piece_id)
+	PieceQuery = SQLQuery([]string{
+		PieceOwner,
+		PieceKind,
+		PieceTaken,
+	}, PieceTable, PieceID)
 
-	piece_insert = BuildSQLInsert(piece_table, []string{
-		piece_kind,
-		piece_owner,
-		piece_reserved,
-		piece_taken,
+	PieceInsert = SQLInsert(PieceTable, []string{
+		PieceKind,
+		PieceOwner,
+		PieceReserved,
+		PieceTaken,
 	})
 )

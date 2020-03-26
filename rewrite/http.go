@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"net/http"
 	"time"
 )
@@ -9,30 +8,37 @@ import (
 const (
 	// TODO: does this unnecessarily limit the maximum number of concurrent players on server hardware that can support more?
 	// github.com/pciet/wichess/issues/9 - 100 http + 100 postgres should be under macOS 256 limit
-	http_max_idle_conns    = 50
-	http_idle_conn_timeout = time.Duration(time.Minute * 5)
+	HTTPMaxIdleConns    = 50
+	HTTPIdleConnTimeout = time.Duration(time.Minute * 5)
 )
 
 func InitializeHTTP() {
 	// First when a new person connects to this program they are given a webpage to login with.
 	// If the username and password provided exist together in the database, or the username is new,
 	// then the person's web browser is issued a unique session key to be stored as a cookie.
-	http.HandleFunc(LoginRelPath, LoginHandler)
+	http.HandleFunc(LoginPath, LoginHandler)
 
 	// The index webpage is a place to choose what kind of match to play next. This is where the army is picked.
 	// If a timed game is in progress then the web browser is redirected to it.
 	// If the session key cookie is invalid then the web browser is redirected to the login page.
-	http.HandleFunc(IndexRelPath, IndexHandler)
+	http.Handle(IndexPath, IndexHandler)
 
 	// "Computer" is the artificial opponent mode, where the other player's moves are made automatically.
 	// In HTTP terms, this path's POST is used to setup the match and the GET is to load the game page.
-	http.HandleFunc(ComputerRelPath, ComputerHandler)
+	http.Handle(ComputerPath, ComputerHandler)
 
-	// Which piece is where on a game's board is initially loaded into the web browser with a GET to /games/[game identifier].
-	http.HandleFunc(GamesRelPath, GamesHandler)
+	// Which piece is where on a game's board is initially loaded into the web browser with a GET to /boards/[game identifier].
+	http.Handle(BoardsPath, BoardsHandler)
 
-	// The webpages requests a calculation of all possible moves for a turn with a GET to /moves/[game identifier].
-	http.HandleFunc(MovesRelPath, MovesHandler)
+	// The webpages requests a calculation of all possible moves for a turn with a GET to /moves/[game identifier]?turn=[turn number].
+	// The turn must be included to be sure the web browser and host are synchronized.
+	http.Handle(MovesPath, MovesHandler)
+
+	// A move is requested by POST to /move/[game identifier] with the move encoded as JSON in the request body.
+	http.Handle(MovePath, MoveHandler)
+
+	// An opponent is alerted to the board changes caused by a move asynchronously with a WebSocket message.
+	http.Handle(AlertPath, AlertWebSocketUpgradeHandler)
 
 	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("web/js"))))
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("web/css"))))
@@ -42,8 +48,8 @@ func InitializeHTTP() {
 
 	dt, ok := http.DefaultTransport.(*http.Transport)
 	if ok == false {
-		log.Panic("http.DefaultTransport.(*http.Transport) failed")
+		Panic("http.DefaultTransport.(*http.Transport) failed")
 	}
-	dt.MaxIdleConns = http_max_idle_conns
-	dt.IdleConnTimeout = http_idle_conn_timeout
+	dt.MaxIdleConns = HTTPMaxIdleConns
+	dt.IdleConnTimeout = HTTPIdleConnTimeout
 }

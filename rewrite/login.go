@@ -2,23 +2,26 @@ package main
 
 import (
 	"database/sql"
-	"log"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
-// The session key is returned normally, or an empty string is returned if the password is incorrect.
+// Login queries the database for the username and encrypted password.
+// The password argument is the unencrypted password which is then re-encrypted for
+// comparsion to the database value.
+// If the credentials are correct then a session key is returned, otherwise an empty
+// string is returned.
 func Login(name, password string) string {
 	tx := DatabaseTransaction()
-	defer CommitTransaction(tx)
+	defer tx.Commit()
 
 	var c string
-	err := tx.QueryRow(player_crypt_query, name).Scan(&c)
+	err := tx.QueryRow(PlayerCryptQuery, name).Scan(&c)
 	switch err {
 	case sql.ErrNoRows:
 		crypt, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 		if err != nil {
-			log.Panic(err)
+			Panic(err)
 		}
 		NewPlayer(tx, name, string(crypt))
 	case nil:
@@ -27,7 +30,7 @@ func Login(name, password string) string {
 			return ""
 		}
 	default:
-		log.Panic(err)
+		Panic(err)
 	}
 
 	return NewSession(tx, name)

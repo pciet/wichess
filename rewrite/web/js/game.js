@@ -1,28 +1,57 @@
-import { addLayout, layout, layoutElement, scaleFont } from './layout.js'
-import { landscape, landscapeFloating, landscapeWideFloating, landscapeVeryWideFloating, square, portrait, unsupportedWindowDimension } from './gameLayouts.js'
-import { boardGET } from './gameBoard.js'
-import { movesGET } from './gameMoves.js'
+// The webpage look varies depending on window size, done with the code in layout.js.
+import { addLayout, layout, scaleFont }  from './layout.js'
+import * as layouts from './gameLayouts.js'
+import { writeBoardImages, writeBoardMoves, writeBoardDimension } from './gameLayoutGenerate.js'
 
-boardGET(GameHeader.ID)
-movesGET(GameHeader.ID, 1)
+// A Wisconsin Chess board is a regular 8x8 chess board.
+const Board = [64]
+
+// Turns are numbered to guarantee synchronization with the host.
+let Turn = GameInformation.Turn
+
+let Moves = []
+
+const getBoardPromise = fetch('/boards/'+GameInformation.ID).then(r => r.json())
+const getMovesPromise = fetch('/moves/'+GameInformation.ID+'?turn='+Turn).then(r => r.json())
+
+const websocketPromise = new Promise(resolve => {
+    resolve(new WebSocket('ws://'+window.location.host+'/alert/'+GameInformation.Identifier))
+})
 
 const lowerSquareRatio = 0.8
 const upperSquareRatio = 1.5
 
-addLayout(lowerSquareRatio, portrait)
-addLayout(upperSquareRatio, square)
-addLayout(1.8, landscape)
-addLayout(2, landscapeFloating)
-addLayout(3, landscapeWideFloating)
-addLayout(3.4, landscapeVeryWideFloating)
-addLayout(1000, unsupportedWindowDimension)
+addLayout(lowerSquareRatio, layouts.portrait)
+addLayout(upperSquareRatio, layouts.square)
+addLayout(1.8, layouts.landscape)
+addLayout(2, layouts.landscapeFloating)
+addLayout(3, layouts.landscapeWideFloating)
+addLayout(3.4, layouts.landscapeVeryWideFloating)
+addLayout(1000, layouts.unsupportedWindowDimension)
 
-window.onload = layoutPage
+window.onload = () => {
+    Promise.all([getBoardPromise, getMovesPromise]).then(values => {
+        for (const a in values[0]) {
+            // TODO: host not send p JSON level?
+            Board[parseInt(a)] = values[0][a].p
+        }
+        Moves = values[1]
+        layoutPage()
+    })
+    websocketPromise.then(websocket => {
+        websocket.onmessage = event => {
+            console.log(JSON.parse(event.data))
+        }
+    }
+}
+
 window.onresize = layoutPage
 
 function layoutPage() {
-    setBoardDimension()
+    writeBoardDimension(lowerSquareRatio, upperSquareRatio)
     layout()
+    writeBoardImages(Board)
+    writeBoardMoves(Moves)
     scaleFont()
 
     document.querySelector('#back').onclick = () => {
@@ -30,51 +59,4 @@ function layoutPage() {
     }
 }
 
-// TODO: add style instead of returning false
-// TODO: allow setting multiple properties
-function addCSSRuleProperty(cssSelector, property, value) {
-    for (const s of document.styleSheets) {
-        for (const r of s.cssRules) {
-            if (r.selectorText !== cssSelector) {
-                continue
-            }
-            r.style.setProperty(property, value)
-            return true
-        }
-    }
-    return false
-}
 
-function setBoardDimension() {
-    let d
-    if (window.innerWidth < window.innerHeight) {
-        d = window.innerWidth
-    } else {
-        d = window.innerHeight
-    }
-
-    const r = window.innerWidth / window.innerHeight
-    if ((r <= upperSquareRatio) && (r > lowerSquareRatio)) {
-        d = d * 0.75
-        let ok = addCSSRuleProperty('#boardrow', 'height', ((d / window.innerHeight) * 100) + '%')
-        if (ok === false) {
-            throw new Error('no #boardrow CSS rule')
-        }
-        ok = addCSSRuleProperty('#board', 'height', '100%')
-        if (ok === false) {
-            throw new Error('no #board CSS rule')
-        }
-        addCSSRuleProperty('#board', 'width', ((d / window.innerWidth) * 100) + '%')
-        return
-    }
-
-    // if not the square layout then this:
-    let ok = addCSSRuleProperty('#board', 'width', ((d / window.innerWidth) * 100) + '%')
-    if (ok === false) {
-        throw new Error('no #board CSS rule')
-    }
-    ok = addCSSRuleProperty('#board', 'height', ((d / window.innerHeight) * 100) + '%')
-    if (ok === false) {
-        throw new Error('no #board CSS rule')
-    }
-}

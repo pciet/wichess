@@ -1,7 +1,6 @@
 package rules
 
 import (
-	"log"
 	"strconv"
 	"strings"
 )
@@ -40,7 +39,7 @@ func (a Board) KingLocation(of Orientation) Address {
 			return AddressIndex(i).Address()
 		}
 	}
-	log.Panicln("no king found for", of)
+	Panic("no king found for", of)
 	return Address{}
 }
 
