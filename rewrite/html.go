@@ -20,7 +20,7 @@ func ParseHTMLTemplate(file string) {
 	HTMLTemplates[file] = t
 }
 
-func WriteWebTemplate(w http.ResponseWriter, file string, data interface{}) {
+func WriteHTMLTemplate(w http.ResponseWriter, file string, data interface{}) {
 	t, has := HTMLTemplates[file]
 	if has == false {
 		Panic(file, "template not parsed")

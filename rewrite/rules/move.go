@@ -12,6 +12,23 @@ type (
 	}
 )
 
+var NoMove = Move{NoAddress, NoAddress}
+
+func (a Move) Forward(by Orientation) bool {
+	if by == White {
+		if a.From.Rank < a.To.Rank {
+			return true
+		}
+	} else if by == Black {
+		if a.From.Rank > a.To.Rank {
+			return true
+		}
+	} else {
+		Panic("orientation", by, "not white or black")
+	}
+	return false
+}
+
 func (a Game) AfterMove(m Move) Game {
 	d, _ := a.DoMove(m)
 	for _, s := range d {

@@ -14,20 +14,20 @@ const (
 )
 
 var MovesHandler = AuthenticRequestHandler{
-	Get: GameIdentifierParse(RequesterInGame(MovesGet), MovesPath),
+	Get: GameIdentifierParsed(RequesterInGame(MovesGet), MovesPath),
 }
 
 func MovesGet(w http.ResponseWriter, r *http.Request, tx *sql.Tx, id GameIdentifier) {
 	defer tx.Commit()
 
-	turn, err := ParseURLIntQuery(TurnQuery, r.URL.Query())
-	if err != nil {
-		DebugPrintln(MovesPath, "failed to parse turn query:", err)
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
 	/*
+		turn, err := ParseURLIntQuery(r.URL.Query(), TurnQuery)
+		if err != nil {
+			DebugPrintln(MovesPath, "failed to parse turn query:", err)
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
 		if GameTurnEqual(tx, id, turn) == false {
 			JSONResponse(w, OutdatedMovesRequest)
 			return

@@ -1,6 +1,6 @@
 package main
 
-import "log"
+import "fmt"
 
 const (
 	Debug    = true
@@ -9,6 +9,6 @@ const (
 
 func DebugPrintln(a ...interface{}) {
 	if Debug {
-		log.Println(a...)
+		fmt.Println(a...)
 	}
 }

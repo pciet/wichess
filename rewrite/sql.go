@@ -44,7 +44,7 @@ func SQLQueryImplementation(selects []string, table string, where string, forUpd
 		}
 		for i, v := range selects {
 			if v == "" {
-				Panicln("empty select at index", i)
+				Panic("empty select at index", i)
 			}
 			s.WriteString(v)
 			if i != len(selects)-1 {
@@ -61,7 +61,7 @@ func SQLQueryImplementation(selects []string, table string, where string, forUpd
 	}
 	s.WriteRune(';')
 	if DebugSQL {
-		fmt.Println("SQL Query:", s.String())
+		fmt.Println(s.String())
 	}
 	return s.String()
 }
@@ -81,7 +81,7 @@ func SQLInsert(table string, inserts []string) string {
 	s.WriteString(" (")
 	for i, v := range inserts {
 		if v == "" {
-			Panicln("empty insert at index", i)
+			Panic("empty insert at index", i)
 		}
 		s.WriteString(v)
 		if i != len(inserts)-1 {
@@ -98,7 +98,7 @@ func SQLInsert(table string, inserts []string) string {
 	}
 	s.WriteString(");")
 	if DebugSQL {
-		fmt.Println("SQL Insert:", s.String())
+		fmt.Println(s.String())
 	}
 	return s.String()
 }
@@ -124,7 +124,7 @@ func SQLUpdate(table string, set string, whereEquals string) string {
 	s.WriteString(whereEquals)
 	s.WriteString(" = $2;")
 	if DebugSQL {
-		fmt.Println("SQL Update:", s.String())
+		fmt.Println(s.String())
 	}
 	return s.String()
 }

@@ -26,7 +26,7 @@ type GameIdentifiedFunc func(http.ResponseWriter, *http.Request, *sql.Tx, GameId
 //
 // The path is expected to be formed as [pathPrefix][id]. For example, /games/867 has
 // pathPrefix /games/ and identifier 867.
-func GameIdentifierParsed(calls GameIdentifedFunc, pathPrefix string) AuthenticRequestHandlerFunc {
+func GameIdentifierParsed(calls GameIdentifiedFunc, pathPrefix string) AuthenticRequestHandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request, tx *sql.Tx, requester string) {
 		id, err := ParseURLGameIdentifier(r.URL.Path, pathPrefix)
 		if err != nil {

@@ -10,7 +10,7 @@ import (
 const BoardsPath = "/boards/"
 
 var BoardsHandler = AuthenticRequestHandler{
-	Get: GameIdentifierParse(RequesterInGame(BoardsGet), BoardsPath),
+	Get: GameIdentifierParsed(RequesterInGame(BoardsGet), BoardsPath),
 }
 
 type (

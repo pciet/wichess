@@ -6,7 +6,7 @@ import (
 )
 
 // This http.Handler type exists to avoid code repetition across most wichess HTTP paths.
-// The resulting generalized functionality is sometimes extended with functions like GameIdentifierParse.
+// The resulting functionality is sometimes extended with functions like GameIdentifierParse.
 
 // An AuthenticRequestHandlerFunc is used in an AuthenticRequestHandler.
 // The SQL transaction must be completed in the fuction.
@@ -72,6 +72,6 @@ func (an AuthenticRequestHandler) ServeHTTP(w http.ResponseWriter, r *http.Reque
 
 	err = tx.Rollback()
 	if err != sql.ErrTxDone {
-		Panic(r.URL.Path, "AuthenticRequestHandlerFunc for HTTP method", r.Method, "didn't end the SQL transaction")
+		Panic(r.URL.Path, "HTTP method", r.Method, "handler didn't complete the SQL transaction")
 	}
 }

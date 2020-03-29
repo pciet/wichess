@@ -16,7 +16,7 @@ const (
 // If none is found then an empty string is returned.
 func SessionRequester(tx *sql.Tx, sessionKey string) string {
 	var name string
-	err = tx.QueryRow(SessionNameQuery, sessionKey).Scan(&name)
+	err := tx.QueryRow(SessionNameQuery, sessionKey).Scan(&name)
 	if err == sql.ErrNoRows {
 		return ""
 	} else if err != nil {
@@ -25,8 +25,9 @@ func SessionRequester(tx *sql.Tx, sessionKey string) string {
 	return name
 }
 
-// NewSession returns a new session key that is also inserted into the database.
-func NewSession(tx *sql.Tx, name string) string {
+// NewSession returns a new session key for the user
+// that is also inserted into the database.
+func NewSession(tx *sql.Tx, username string) string {
 	k := make([]byte, SessionKeyLength)
 	count, err := rand.Read(k)
 	if err != nil {
@@ -38,9 +39,9 @@ func NewSession(tx *sql.Tx, name string) string {
 	key := base64.StdEncoding.EncodeToString(k)
 
 	var s sql.NullString // QueryRow panics without this argument
-	err = tx.QueryRow(SessionExistsQuery, name).Scan(&s)
+	err = tx.QueryRow(SessionExistsQuery, username).Scan(&s)
 	if err == sql.ErrNoRows {
-		_, err := tx.Exec(SessionInsert, name, []byte(key))
+		_, err := tx.Exec(SessionInsert, username, []byte(key))
 		if err != nil {
 			Panic(err)
 		}
@@ -49,7 +50,7 @@ func NewSession(tx *sql.Tx, name string) string {
 		Panic(err)
 	}
 
-	_, err = tx.Exec(SessionUpdate, []byte(key), name)
+	_, err = tx.Exec(SessionUpdate, []byte(key), username)
 	if err != nil {
 		Panic(err)
 	}

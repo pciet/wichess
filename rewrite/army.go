@@ -7,8 +7,8 @@ import (
 	"github.com/pciet/wichess/rules"
 )
 
-// The BasicArmy is the initial position for a regular
-// chess game in terms of Wisconsin Chess addressing.
+// The BasicArmy is the initial position of one side for a regular
+// chess game, addressed by Wisconsin Chess index.
 var BasicArmy = func() [16]rules.PieceKind {
 	var b [16]rules.PieceKind
 	for i := 0; i < 8; i++ {
@@ -32,6 +32,9 @@ var BasicArmy = func() [16]rules.PieceKind {
 
 // When a player requests a new game they specify which
 // of their pieces to include in an ArmyRequest.
+// The array index is the army square address index from
+// the perspective of the white player (see the BasicArmy var).
+// An ID of 0 means use the regular chess piece.
 type ArmyRequest [16]PieceIdentifier
 
 func DecodeArmyRequest(jsonBody io.Reader) (ArmyRequest, error) {

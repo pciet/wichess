@@ -7,43 +7,25 @@ import (
 )
 
 func (g Game) Moves() ([]rules.MoveSet, rules.State) {
-
-}
-
-func MovesForGame(tx *sql.Tx, id GameIdentifier) ([]rules.MoveSet, rules.State) {
-	// TODO: just load the rules.Game
-
-	h := LoadGameHeader(tx, id)
-
-	if h.Conceded {
+	if g.Header.Conceded {
 		return nil, rules.Conceded
 	}
 
 	/*
-		if h.TimeLoss() {
+		if g.Header.TimeLoss() {
 			return nil, rules.TimeOver
 		}
-	*/
 
-	/*
-		if h.DrawTurnsOver() {
+		if g.Header.DrawTurnsOver() {
 			return nil, rules.Draw
 		}
 	*/
 
-	// TODO: rules.Game.Moves needs to return moves for both players for display
-	var o rules.Orientation
-	if h.Active == h.White.Name {
-		o = rules.White
-	} else {
-		o = rules.Black
-	}
+	return rules.MakeGame(g.Board.Board,
+		rules.AddressIndex(g.Header.From), rules.AddressIndex(g.Header.To)).Moves(
+		ActiveOrientation(g.Header.Active, g.Header.White.Name, g.Header.Black.Name))
+}
 
-	return rules.Game{
-		Board: LoadGameBoard(tx, id).Board,
-		Previous: rules.Move{
-			From: rules.AddressIndex(h.From).Address(),
-			To:   rules.AddressIndex(h.To).Address(),
-		},
-	}.Moves(o)
+func MovesForGame(tx *sql.Tx, id GameIdentifier) ([]rules.MoveSet, rules.State) {
+	return LoadGame(tx, id).Moves()
 }

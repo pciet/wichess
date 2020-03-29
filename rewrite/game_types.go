@@ -38,13 +38,6 @@ type (
 		ElapsedUpdated time.Time
 	}
 
-	// A Board represents the 64 squares of an active game.
-	// Pieces that have an identifier (owned by a player) are also listed.
-	Board struct {
-		rules.Board      `json:"b"`
-		PieceIdentifiers []AddressedPieceIdentifier `json:"pi"`
-	}
-
 	Game struct {
 		Header GameHeader
 		Board

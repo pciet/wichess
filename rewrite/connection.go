@@ -8,7 +8,7 @@ import (
 
 type (
 	Connection struct {
-		Name            string
+		Username        string
 		*websocket.Conn // nil for no connection
 	}
 
@@ -18,11 +18,12 @@ type (
 )
 
 // TODO: test that the Connections map correctly grows and shrinks
+// TODO: documentation for sync suggests that channels can be a better sync mechanism
 
 var (
 	// All WebSocket connections for games are held in the Connections map.
 	Connections      = map[GameIdentifier]GameConnections{}
-	ConnectionsMutex = &sync.RWMutex{}
+	ConnectionsMutex = sync.RWMutex{}
 )
 
 // If the player is currently connected to the host for the specified game
@@ -36,14 +37,14 @@ func Connected(id GameIdentifier, player string) (*websocket.Conn, bool) {
 		return nil, false
 	}
 
-	if gcs[0].Name == player {
+	if gcs[0].Username == player {
 		if gcs[0].Conn == nil {
 			return nil, false
 		}
 		return gcs[0].Conn, true
 	}
 
-	if gcs[1].Name != player {
+	if gcs[1].Username != player {
 		Panic(player, "not in game", id)
 	}
 
@@ -77,13 +78,13 @@ func Connect(id GameIdentifier, player string, add *websocket.Conn) {
 		return c
 	}
 
-	if gcs[0].Name == player {
+	if gcs[0].Username == player {
 		gcs[0] = replace(gcs[0], add)
-	} else if gcs[1].Name == player {
+	} else if gcs[1].Username == player {
 		gcs[1] = replace(gcs[1], add)
-	} else if gcs[0].Name == "" {
+	} else if gcs[0].Username == "" {
 		gcs[0] = Connection{player, add}
-	} else if gcs[1].Name == "" {
+	} else if gcs[1].Username == "" {
 		gcs[1] = Connection{player, add}
 	} else {
 		Panic(player, "can't be put into game connections", gcs)
@@ -95,12 +96,11 @@ func Connect(id GameIdentifier, player string, add *websocket.Conn) {
 }
 
 // ConnectionCloseWait waits for the web browser to close the WebSocket then
-// updates the Connections map. The web browser is expected to never send a WebSocket message.
+// updates the Connections map. Any message received from the web browser
+// is assumed to be a close message.
 func ConnectionCloseWait(conn *websocket.Conn, id GameIdentifier, player string) {
-	_, _, err := conn.ReadMessage()
-	if err != websocket.CloseError {
-		DebugPrintln("got error or message other than a close from", player, "WebSocket:", err)
-	}
+	// blocks until close message received
+	conn.ReadMessage()
 
 	ConnectionsMutex.Lock()
 	defer ConnectionsMutex.Unlock()
@@ -111,7 +111,7 @@ func ConnectionCloseWait(conn *websocket.Conn, id GameIdentifier, player string)
 	}
 
 	close := func(c Connection) Connection {
-		err = c.Close()
+		err := c.Close()
 		if err != nil {
 			DebugPrintln("error when responding to WebSocket close for", player, ":", err)
 		}
@@ -119,9 +119,9 @@ func ConnectionCloseWait(conn *websocket.Conn, id GameIdentifier, player string)
 		return c
 	}
 
-	if gcs[0].Name == player {
+	if gcs[0].Username == player {
 		gcs[0] = close(gcs[0])
-	} else if gcs[1].Name == player {
+	} else if gcs[1].Username == player {
 		gcs[1] = close(gcs[1])
 	} else {
 		Panic(player, "closed untracked WebSocket in game", id)

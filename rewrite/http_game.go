@@ -1,17 +1,11 @@
 package main
 
-import "net/http"
-
 // The different game mode handlers use the same game template.
-const GameWebTemplate = "web/html/game.tmpl"
+const GameHTMLTemplate = "web/html/game.tmpl"
 
-func init() { ParseHTMLTemplate(GameWebTemplate) }
+func init() { ParseHTMLTemplate(GameHTMLTemplate) }
 
-type GameWebTemplateData struct {
+type GameHTMLTemplateData struct {
 	Name string
 	GameHeader
-}
-
-func WriteGameWebTemplate(w http.ResponseWriter, g GameWebTemplateData) {
-	WriteWebTemplate(w, GameWebTemplate, g)
 }

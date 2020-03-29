@@ -8,7 +8,7 @@ import (
 const AlertPath = "/alert/"
 
 var AlertWebSocketUpgradeHandler = AuthenticRequestHandler{
-	Get: GameIdentifierParse(PlayerNamed(AlertGet), AlertPath),
+	Get: GameIdentifierParsed(PlayerNamed(AlertGet), AlertPath),
 }
 
 func AlertGet(w http.ResponseWriter, r *http.Request, tx *sql.Tx, id GameIdentifier, player string) {

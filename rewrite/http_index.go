@@ -6,12 +6,20 @@ import (
 )
 
 const (
-	IndexPath        = "/"
-	IndexWebTemplate = "web/html/index.tmpl"
+	IndexPath         = "/"
+	IndexHTMLTemplate = "web/html/index.tmpl"
 )
 
 var IndexHandler = AuthenticRequestHandler{
 	Get: IndexGet,
+}
+
+func init() { ParseHTMLTemplate(IndexHTMLTemplate) }
+
+type IndexHTMLTemplateData struct {
+	Name string
+	PlayerRecord
+	PlayerFriendStatus
 }
 
 func IndexGet(w http.ResponseWriter, r *http.Request, tx *sql.Tx, requester string) {
@@ -24,21 +32,9 @@ func IndexGet(w http.ResponseWriter, r *http.Request, tx *sql.Tx, requester stri
 		}
 	*/
 
-	WriteIndexWebTemplate(IndexWebTemplateData{
+	WriteHTMLTemplate(w, IndexHTMLTemplate, IndexHTMLTemplateData{
 		requester,
 		LoadPlayerRecord(tx, requester),
 		LoadPlayerFriendStatus(tx, requester),
-	}, w)
+	})
 }
-
-type IndexWebTemplateData struct {
-	Name string
-	PlayerRecord
-	PlayerFriendStatus
-}
-
-func WriteIndexWebTemplate(t IndexWebTemplateData, w http.ResponseWriter) {
-	WriteWebTemplate(w, IndexWebTemplate, t)
-}
-
-func init() { ParseHTMLTemplate(IndexWebTemplate) }

@@ -1,9 +1,6 @@
 package rules
 
-import (
-	"fmt"
-	"log"
-)
+import "fmt"
 
 func MovesAddressSlice(the []MoveSet) []Address {
 	out := make([]Address, 0, len(the)*2)
@@ -21,6 +18,18 @@ func MovesAddressSlice(the []MoveSet) []Address {
 	return out
 }
 
+func MoveSetSliceHasMove(slice []MoveSet, m Move) bool {
+	for _, moveset := range slice {
+		for _, to := range moveset.Moves {
+			move := Move{moveset.From, to}
+			if move == m {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 func (a MoveSet) RemoveMove(to Address) MoveSet {
 	index := -1
 	for i, move := range a.Moves {
@@ -30,7 +39,7 @@ func (a MoveSet) RemoveMove(to Address) MoveSet {
 		}
 	}
 	if index == -1 {
-		log.Panicln("didn't find", to, "in", a)
+		Panic("didn't find", to, "in", a)
 	}
 	// assuming here that the order of Moves doesn't matter
 	a.Moves[index] = a.Moves[len(a.Moves)-1]
@@ -47,7 +56,7 @@ func RemoveMoveSet(ms []MoveSet, from Address) []MoveSet {
 		}
 	}
 	if index == -1 {
-		log.Panicln("didn't find", from, "MoveSet in", ms)
+		Panic("didn't find", from, "MoveSet in", ms)
 	}
 	ms[index] = ms[len(ms)-1]
 	return ms[:len(ms)-1]

@@ -36,7 +36,7 @@ type RequesterInGameFunc func(http.ResponseWriter, *http.Request, *sql.Tx, GameI
 //
 // The requester's name is not an argument to the customized handler (BoardsGet in
 // the above example), but if it's needed then use PlayerNamed instead.
-func RequesterInGame(calls RequesterInGameFunc) GameIdentifedFunc {
+func RequesterInGame(calls RequesterInGameFunc) GameIdentifiedFunc {
 	return func(w http.ResponseWriter, r *http.Request, tx *sql.Tx, id GameIdentifier, requester string) {
 		if GameHasPlayerHandler(w, tx, id, requester) == false {
 			return

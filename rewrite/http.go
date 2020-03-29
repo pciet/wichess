@@ -16,28 +16,30 @@ func InitializeHTTP() {
 	// First when a new person connects to this program they are given a webpage to login with.
 	// If the username and password provided exist together in the database, or the username is new,
 	// then the person's web browser is issued a unique session key to be stored as a cookie.
+	// All other handlers inspect the session key cookie value to be sure the request is authentic.
 	http.HandleFunc(LoginPath, LoginHandler)
 
-	// The index webpage is a place to choose what kind of match to play next. This is where the army is picked.
+	// The index webpage is a place to choose what kind of match to play. This is where the army is picked.
 	// If a timed game is in progress then the web browser is redirected to it.
-	// If the session key cookie is invalid then the web browser is redirected to the login page.
 	http.Handle(IndexPath, IndexHandler)
 
 	// "Computer" is the artificial opponent mode, where the other player's moves are made automatically.
-	// In HTTP terms, this path's POST is used to setup the match and the GET is to load the game page.
+	// In HTTP terms, this path's POST is used to setup the match and the GET is to load the game webpage.
 	http.Handle(ComputerPath, ComputerHandler)
 
-	// Which piece is where on a game's board is initially loaded into the web browser with a GET to /boards/[game identifier].
+	// Which piece is where on a game's board is initially loaded into the web browser
+	// with a GET to /boards/[game identifier].
 	http.Handle(BoardsPath, BoardsHandler)
 
-	// The webpages requests a calculation of all possible moves for a turn with a GET to /moves/[game identifier]?turn=[turn number].
-	// The turn must be included to be sure the web browser and host are synchronized.
+	// The webpages requests a calculation of all possible moves for a turn with a
+	// GET to /moves/[game identifier]?turn=[turn number].
+	// The turn number is included to guarantee the web browser and host are synchronized.
 	http.Handle(MovesPath, MovesHandler)
 
 	// A move is requested by POST to /move/[game identifier] with the move encoded as JSON in the request body.
 	http.Handle(MovePath, MoveHandler)
 
-	// An opponent is alerted to the board changes caused by a move asynchronously with a WebSocket message.
+	// An opponent is alerted to board changes caused by a move with a WebSocket message.
 	http.Handle(AlertPath, AlertWebSocketUpgradeHandler)
 
 	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("web/js"))))

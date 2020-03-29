@@ -9,3 +9,13 @@ type Game struct {
 var NoPreviousMove = Move{Address{0, 8}, Address{0, 8}}
 
 // TODO: should Board be a pointer? measure the cost of copying it for methods
+
+func MakeGame(b Board, previousFrom AddressIndex, previousTo AddressIndex) Game {
+	return Game{
+		Board: b,
+		Previous: Move{
+			From: previousFrom.Address(),
+			To:   previousTo.Address(),
+		},
+	}
+}

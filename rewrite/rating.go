@@ -1,11 +1,8 @@
 package main
 
-// See http://www.glicko.net/research/acjpaper.pdf for a description of the Elo rating system implemented here.
+import "math"
 
-import (
-	"log"
-	"math"
-)
+// Adapted from the Elo rating system as described in http://www.glicko.net/research/acjpaper.pdf
 
 const (
 	// The attenuation factor determines the weight this game has over all previous games.
@@ -21,7 +18,7 @@ const (
 
 func UpdatedRating(previous, opponent uint, score float64) uint {
 	if (score < 0) || (score > 1) {
-		log.Panicln("rating score", score, "out of bounds")
+		Panic("rating score", score, "out of bounds")
 	}
 	return previous + uint(RatingAttenuation*(score-ExpectedRatingScore(previous, opponent)))
 }

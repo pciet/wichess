@@ -14,7 +14,11 @@ func (a Board) AppendReconMoves(moves []Address, at Address) []Address {
 	}
 
 	for _, r := range possibleRecon {
-		p := a[r.Index()]
+		ra := r.Index()
+		if ra >= 64 {
+			continue
+		}
+		p := a[ra]
 		if (p.Kind == NoKind) ||
 			(s.Orientation != p.Orientation) ||
 			(p.Recons == false) {
@@ -27,7 +31,11 @@ func (a Board) AppendReconMoves(moves []Address, at Address) []Address {
 		} else {
 			reconMove = Address{r.File, r.Rank - 1}
 		}
-		mp := a[reconMove.Index()]
+		ra = reconMove.Index()
+		if ra >= 64 {
+			continue
+		}
+		mp := a[ra]
 		if mp.Kind == NoKind {
 			moves = append(moves, reconMove)
 			continue

@@ -22,23 +22,21 @@ func ComputerGet(w http.ResponseWriter, r *http.Request, tx *sql.Tx, requester s
 		return
 	}
 
-	WriteGameWebTemplate(w, GameWebTemplateData{requester, LoadGameHeader(tx, id)})
+	WriteHTMLTemplate(w, GameHTMLTemplate, GameHTMLTemplateData{requester, LoadGameHeader(tx, id)})
 }
 
 func ComputerPost(w http.ResponseWriter, r *http.Request, tx *sql.Tx, requester string) {
 	defer tx.Commit()
-	defer r.Body.Close()
+
+	id := ComputerGameIdentifier(tx, requester)
+	if id != 0 {
+		http.Redirect(w, r, ComputerPath, http.StatusSeeOther)
+		return
+	}
 
 	a, err := DecodeArmyRequest(r.Body)
 	if err != nil {
 		DebugPrintln(ComputerPath, "failed to decode request body for", requester, ":", err)
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	id := ComputerGameIdentifier(tx, requester)
-	if id != 0 {
-		DebugPrintln(ComputerPath, "game already exists for", requester)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}

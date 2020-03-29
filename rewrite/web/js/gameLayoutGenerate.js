@@ -8,14 +8,21 @@ export function writeBoardImages(board) {
         if (board[i] === undefined) {
             continue
         }
+        if (board[i].k === 0) {
+            continue
+        }
         writePieceImage(i, board[i])
     }
 }
 
-function writePieceImage(boardIndex, piece) {
+export function writePieceImage(boardIndex, piece) {
     let h = '<img class="pieceimg" src="/img/'
     h += pieceImageName(boardIndex, piece.k, piece.o) + '">'
     document.querySelector('#s'+boardIndex).innerHTML = h
+}
+
+export function removePieceImage(boardIndex) {
+    document.querySelector('#s'+boardIndex).innerHTML = ''
 }
 
 export function writeBoardMoves(moves) {

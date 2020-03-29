@@ -11,6 +11,8 @@ import (
 // comparsion to the database value.
 // If the credentials are correct then a session key is returned, otherwise an empty
 // string is returned.
+// If the username doesn't exist in the database then it and the encrypted password
+// are inserted.
 func Login(name, password string) string {
 	tx := DatabaseTransaction()
 	defer tx.Commit()

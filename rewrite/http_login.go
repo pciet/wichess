@@ -5,8 +5,8 @@ import "net/http"
 // TODO: make key cookie secure
 
 const (
-	LoginPath        = "/login"
-	LoginWebTemplate = "web/html/login.tmpl"
+	LoginPath         = "/login"
+	LoginHTMLTemplate = "web/html/login.tmpl"
 
 	FormPlayerName = "name"
 	FormPassword   = "password"
@@ -14,7 +14,7 @@ const (
 	NameMaxLength = 64
 )
 
-func init() { ParseHTMLTemplate(LoginWebTemplate) }
+func init() { ParseHTMLTemplate(LoginHTMLTemplate) }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
@@ -28,7 +28,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	WriteWebTemplate(w, LoginWebTemplate, nil)
+	WriteHTMLTemplate(w, LoginHTMLTemplate, nil)
 }
 
 func LoginAttemptHandler(w http.ResponseWriter, r *http.Request) {
@@ -69,5 +69,5 @@ func LoginAttemptHandler(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,
 		Secure:   false, // TODO: set true for TLS
 	})
-	http.Redirect(w, r, IndexRelPath, http.StatusSeeOther)
+	http.Redirect(w, r, IndexPath, http.StatusSeeOther)
 }

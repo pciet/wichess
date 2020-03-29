@@ -15,4 +15,5 @@ func PlayerTimedGameIdentifiers(tx *sql.Tx, name string) (t5, t15 GameIdentifier
 	if err != nil {
 		Panic(err)
 	}
+	return
 }

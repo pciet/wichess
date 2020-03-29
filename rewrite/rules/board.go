@@ -58,6 +58,19 @@ func (a *Board) ApplyChanges(c []AddressedSquare) {
 	}
 }
 
+func (a Board) PieceCount(of Orientation) int {
+	c := 0
+	for _, s := range a {
+		if s.Kind == NoKind {
+			continue
+		}
+		if s.Orientation == of {
+			c++
+		}
+	}
+	return c
+}
+
 func (a Board) String() string {
 	var s strings.Builder
 	for rank := 7; rank >= 0; rank-- {

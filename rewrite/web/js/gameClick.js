@@ -1,5 +1,6 @@
-import { squareElement } from './board.js'
+import { squareElement, boardIndex } from './board.js'
 import { doMove } from './gameMove.js'
+import { Moves } from './game.js'
 
 const hoverClass = 'hover'
 const moveClass = 'move'
@@ -12,21 +13,23 @@ export function writeSquareClick(fromIndex, toIndices) {
     const s = squareElement(fromIndex)
     s.moves = toIndices
 
-    s.addEventListener('mouseenter', event => {
+    s.mouseEnterFunc = event => {
         s.classList.add(hoverClass)
         for (const m of toIndices) {
             squareElement(m).classList.add(moveClass)
         }
-    })
+    }
+    s.addEventListener('mouseenter', s.mouseEnterFunc)
 
-    s.addEventListener('mouseleave', event => {
+    s.mouseLeaveFunc = event => {
         s.classList.remove(hoverClass)
         for (const m of toIndices) {
             squareElement(m).classList.remove(moveClass)
         }
-    })
+    }
+    s.addEventListener('mouseleave', s.mouseLeaveFunc)
 
-    s.addEventListener('click', () => {
+    s.clickFunc = () => {
         const removeMoveSelect = (fromSquare, toList) => {
             fromSquare.classList.remove(selectClass)
             for (const m of toList) {
@@ -57,9 +60,21 @@ export function writeSquareClick(fromIndex, toIndices) {
             ms.clickFunc = () => {
                 removeMoveSelect(squareElement(fromIndex), toIndices)
                 clicked = undefined
+                // handlers added back in doMove with new moves
+                removeAllSquareEventHandlers()
                 doMove(fromIndex, m)
             }
             ms.addEventListener('click', ms.clickFunc)
         }
-    })
+    }
+    s.addEventListener('click', s.clickFunc)
+}
+
+function removeAllSquareEventHandlers() {
+    for (let i = 0; i < Moves.length; i++) {
+        const s = squareElement(boardIndex(Moves[i].f.f, Moves[i].f.r))
+        s.removeEventListener('mouseenter', s.mouseEnterFunc)
+        s.removeEventListener('mouseleave', s.mouseLeaveFunc)
+        s.removeEventListener('click', s.clickFunc)
+    }
 }

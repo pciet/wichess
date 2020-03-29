@@ -15,7 +15,7 @@ const (
 	GamesConceded            = "conceded"
 	GamesWhite               = "white"
 	GamesWhiteAcknowledge    = "white_ack"
-	GamesWhitLatestMove      = "white_latestmove"
+	GamesWhiteLatestMove     = "white_latestmove"
 	GamesWhiteElapsed        = "white_elapsed"
 	GamesWhiteElapsedUpdated = "white_elapsedupdated"
 	GamesBlack               = "black"
@@ -57,7 +57,7 @@ var (
 		GamesTurn,
 	}
 
-	GamesHeaderQuery = SQLQuery(GamesHeaderSelect, GamesTable, GamesIdentifier)
+	GamesHeaderQuery = SQLQuery(GamesHeaderSelects, GamesTable, GamesIdentifier)
 
 	GamesBoardSelects = func() []string {
 		s := make([]string, 64)
@@ -105,7 +105,7 @@ var (
 		s.WriteString(GamesIdentifier)
 		s.WriteRune(';')
 		if DebugSQL {
-			fmt.Println("New game insert SQL:", s.String())
+			fmt.Println(s.String())
 		}
 		return s.String()
 	}()
@@ -114,4 +114,6 @@ var (
 		GamesIdentifier+"=$1 AND ("+GamesWhite+"=$2 OR "+GamesBlack+"=$2)")
 
 	GamesTurnQuery = SQLQuery([]string{GamesTurn}, GamesTable, GamesIdentifier)
+
+	GamesOpponentQuery = SQLQuery([]string{GamesWhite, GamesBlack}, GamesTable, GamesIdentifier)
 )

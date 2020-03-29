@@ -3,6 +3,10 @@ export function BoardAddress(file, rank) {
     this.rank = rank
 }
 
+export function boardIndex(file, rank) {
+    return boardAddressToIndex(new BoardAddress(file, rank))
+}
+
 export function boardIndexToAddress(index) {
     return new BoardAddress(index%8, Math.floor(index/8))
 }

@@ -2,8 +2,6 @@ package rules
 
 // TODO: move results are all calculated here, so cache that for when a move is picked
 
-// TODO: moves needs to returns moves for both players
-
 func (a Game) Moves(active Orientation) ([]MoveSet, State) {
 	// promotion is part of the previous move
 	if a.PromotionNeeded() {

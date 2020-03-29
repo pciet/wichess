@@ -27,6 +27,9 @@ func (an Address) Index() AddressIndex   { return AddressIndex(an.File + (8 * an
 func (an AddressIndex) File() uint8      { return uint8(an % 8) }
 func (an AddressIndex) Rank() uint8      { return uint8(an / 8) }
 func (an AddressIndex) Address() Address { return Address{an.File(), an.Rank()} }
+func (an AddressIndex) Int() int         { return int(an) }
+
+var NoAddress = Address{8, 8}
 
 func RemoveAddressSliceDuplicates(a []Address) []Address {
 	out := make([]Address, 0, len(a))

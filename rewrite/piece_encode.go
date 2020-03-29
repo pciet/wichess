@@ -1,7 +1,11 @@
 package main
 
+import "github.com/pciet/wichess/rules"
+
 // An EncodedPiece is piece information packed into 64 bits for storage in the database.
 type EncodedPiece uint64
+
+func (an EncodedPiece) Uint64() uint64 { return uint64(an) }
 
 const (
 	EncodedPieceIdentifierBit  = 0
@@ -28,11 +32,12 @@ func (p Piece) Encode() EncodedPiece {
 
 func (e EncodedPiece) Decode() Piece {
 	return Piece{
-		ID: PieceIdentifier(UnshiftedUint64(e, EncodedPieceIdentifierMask, EncodedPieceIdentifierBit)),
+		ID: PieceIdentifier(UnshiftedUint64(e.Uint64(), EncodedPieceIdentifierMask, EncodedPieceIdentifierBit)),
 		Piece: rules.Piece{
-			Orientation: rules.Orientation(UnshiftedUint64(e, EncodedPieceOrientationMask, EncodedPieceOrientationBit)),
-			Moved:       Itob(int(UnshiftedUint64(e, EncodedPieceMovedMask, EncodedPieceMovedBit))),
-			Kind:        rules.PieceKind(UnshiftedUint64(e, EncodedPieceKindMask, EncodedPieceKindBit)),
+			Orientation: rules.Orientation(UnshiftedUint64(e.Uint64(),
+				EncodedPieceOrientationMask, EncodedPieceOrientationBit)),
+			Moved: Itob(int(UnshiftedUint64(e.Uint64(), EncodedPieceMovedMask, EncodedPieceMovedBit))),
+			Kind:  rules.PieceKind(UnshiftedUint64(e.Uint64(), EncodedPieceKindMask, EncodedPieceKindBit)),
 		},
 	}
 }
