@@ -34,5 +34,9 @@ func (a Game) Moves(active Orientation) ([]MoveSet, State) {
 		return nil, Draw
 	}
 
+	if check {
+		return moves, Check
+	}
+
 	return moves, Normal
 }

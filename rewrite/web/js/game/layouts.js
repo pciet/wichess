@@ -1,5 +1,5 @@
-import { chessBoard } from './gameLayoutElements.js'
-import { button } from './button.js'
+import { chessBoard } from './board.js'
+import { button } from '../button.js'
 
 const landscapeBar = `
 <div id="players">
@@ -14,7 +14,7 @@ const landscapeBar = `
 </div>
 <div>
     <div></div>
-    <div id="status"><br>WISCONSIN CHESS</div>
+    <div id="condition"></div>
     <div></div>
 </div>
 <div id="controls">
@@ -94,7 +94,7 @@ export const square = `
         </div>
         <div>
             <div></div>
-            <div id="status"><br>WISCONSIN CHESS</div>
+            <div id="condition"></div>
             <div></div>
         </div>
     </div>
@@ -120,7 +120,7 @@ export const portrait = `
 <div>
     <div class="portraitname inline" id="whitename">White</div>
     <div class="clock inline" id="blackclock">5:00</div>
-    <div class="inline" id="status">WISCONSIN CHESS</div>
+    <div class="inline" id="condition"></div>
 </div>
 <div id="board">` + chessBoard() + `
 </div>

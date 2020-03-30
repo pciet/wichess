@@ -42,6 +42,10 @@ func InitializeHTTP() {
 	// An opponent is alerted to board changes caused by a move with a WebSocket message.
 	http.Handle(AlertPath, AlertWebSocketUpgradeHandler)
 
+	// A player acknowledges they've reviewed the final checkmate position and don't need to
+	// see it again with a GET of /acknowledge/[game identifier].
+	http.Handle(AcknowledgePath, AcknowledgeHandler)
+
 	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("web/js"))))
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("web/css"))))
 	http.Handle("/img/", http.StripPrefix("/img/", http.FileServer(http.Dir("web/img"))))

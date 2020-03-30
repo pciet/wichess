@@ -116,4 +116,19 @@ var (
 	GamesTurnQuery = SQLQuery([]string{GamesTurn}, GamesTable, GamesIdentifier)
 
 	GamesOpponentQuery = SQLQuery([]string{GamesWhite, GamesBlack}, GamesTable, GamesIdentifier)
+
+	GamesAcknowledgeUpdate = func() string {
+		var s strings.Builder
+		s.WriteString("UPDATE ")
+		s.WriteString(GamesTable)
+		s.WriteString(" SET $1=$2 WHERE ")
+		s.WriteString(GamesIdentifier)
+		s.WriteString("=$3;")
+		if DebugSQL {
+			fmt.Println(s.String())
+		}
+		return s.String()
+	}()
+
+	GamesDelete = SQLDelete(GamesTable, GamesIdentifier)
 )

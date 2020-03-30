@@ -7,8 +7,8 @@ type Square Piece
 func (a Square) FortifiedAgainst(t Square) bool { return a.Fortified && (BasicKind(t.Kind) == Pawn) }
 
 type AddressedSquare struct {
-	Address
-	Square
+	Address `json:"a"`
+	Square  `json:"p"`
 }
 
 func (a Square) NotEmpty() bool { return a.Kind != NoKind }

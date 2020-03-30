@@ -17,6 +17,11 @@ var MovesHandler = AuthenticRequestHandler{
 	Get: GameIdentifierParsed(RequesterInGame(MovesGet), MovesPath),
 }
 
+type MovesJSON struct {
+	Moves       []rules.MoveSet `json:"m,omitempty"`
+	rules.State `json:"s"`
+}
+
 func MovesGet(w http.ResponseWriter, r *http.Request, tx *sql.Tx, id GameIdentifier) {
 	defer tx.Commit()
 
@@ -36,12 +41,5 @@ func MovesGet(w http.ResponseWriter, r *http.Request, tx *sql.Tx, id GameIdentif
 
 	moves, state := MovesForGame(tx, id)
 
-	switch state {
-	case rules.Checkmate, rules.Draw, rules.Conceded, rules.TimeOver:
-		JSONResponse(w, state)
-	case rules.Normal, rules.Promotion, rules.Check:
-		JSONResponse(w, moves)
-	default:
-		Panic("unknown game state", state)
-	}
+	JSONResponse(w, MovesJSON{moves, state})
 }

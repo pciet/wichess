@@ -10,7 +10,7 @@ import (
 // Board addresses are 0-63, so 64 is not a normal address index.
 const NoMove = 64
 
-func Move(tx *sql.Tx, id GameIdentifier, m rules.Move, promotion rules.PieceKind) []AddressedPiece {
+func Move(tx *sql.Tx, id GameIdentifier, m rules.Move, promotion rules.PieceKind) []rules.AddressedSquare {
 	g := LoadGame(tx, id)
 	if g.Header.ID == 0 {
 		Panic("game", id, "not found")
@@ -55,7 +55,7 @@ func (g Game) MoveLegal(m rules.Move) bool {
 }
 
 // DoMove does the database interactions necessary to do a move. Illegal moves can be done.
-func (g Game) DoMove(tx *sql.Tx, m rules.Move, promotion rules.PieceKind) []AddressedPiece {
+func (g Game) DoMove(tx *sql.Tx, m rules.Move, promotion rules.PieceKind) []rules.AddressedSquare {
 	// TODO: changes, taken
 	changes, _ := g.Board.DoMove(m)
 
@@ -80,5 +80,15 @@ func (g Game) DoMove(tx *sql.Tx, m rules.Move, promotion rules.PieceKind) []Addr
 	// TODO: update piece database for timed games
 	//PieceTakesUpdate(tx, id, taken)
 
-	return uc
+	// TODO: remove this copy when ID determination is done
+	// main.Piece isn't needed past UpdateGame
+	squares := make([]rules.AddressedSquare, len(uc))
+	for i, s := range uc {
+		squares[i] = rules.AddressedSquare{
+			Address: s.Address,
+			Square:  rules.Square(s.Piece.Piece),
+		}
+	}
+
+	return squares
 }

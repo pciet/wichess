@@ -56,7 +56,7 @@ a:link, a:visited {
     color: rgb(240,255,240);
 }
 
-#status {
+#condition {
     text-align: center;
     font-size: 2rem;
     font-weight: bold;

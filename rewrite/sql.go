@@ -11,21 +11,21 @@ import (
 // TODO: generate SQL symbol constants from postgres_tables.sql
 // TODO: how to also simplify sql.Row.Scan?
 
-func SQLGeneralizedWhereQuery(selects []string, table string, where string) string {
+func SQLGeneralizedWhereQuery(selects []string, table, where string) string {
 	return SQLQueryImplementation(selects, table, where, false)
 }
 
 // TODO: have strings.Builder at top here to avoid the extra + concatenation?
 
-func SQLQuery(selects []string, table string, whereEquals string) string {
+func SQLQuery(selects []string, table, whereEquals string) string {
 	return SQLQueryImplementation(selects, table, whereEquals+"=$1", false)
 }
 
-func SQLForUpdateQuery(selects []string, table string, whereEquals string) string {
+func SQLForUpdateQuery(selects []string, table, whereEquals string) string {
 	return SQLQueryImplementation(selects, table, whereEquals+"=$1", true)
 }
 
-func SQLQueryImplementation(selects []string, table string, where string, forUpdate bool) string {
+func SQLQueryImplementation(selects []string, table, where string, forUpdate bool) string {
 	if table == "" {
 		Panic("no table")
 	}
@@ -103,7 +103,7 @@ func SQLInsert(table string, inserts []string) string {
 	return s.String()
 }
 
-func SQLUpdate(table string, set string, whereEquals string) string {
+func SQLUpdate(table, set, whereEquals string) string {
 	if table == "" {
 		Panic("no table")
 	}
@@ -126,5 +126,23 @@ func SQLUpdate(table string, set string, whereEquals string) string {
 	if DebugSQL {
 		fmt.Println(s.String())
 	}
+	return s.String()
+}
+
+func SQLDelete(table, whereEquals string) string {
+	if table == "" {
+		Panic("no table")
+	}
+	if whereEquals == "" {
+		Panic("no where equals key")
+	}
+
+	var s strings.Builder
+
+	s.WriteString("DELETE FROM ")
+	s.WriteString(table)
+	s.WriteString(" WHERE ")
+	s.WriteString(whereEquals)
+	s.WriteString("=$1;")
 	return s.String()
 }

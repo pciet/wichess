@@ -16,3 +16,7 @@ body {
 .inline {
     display: inline-block;
 }
+
+.hidden {
+    visibility: hidden;
+}

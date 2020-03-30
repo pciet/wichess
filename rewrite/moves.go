@@ -6,6 +6,8 @@ import (
 	"github.com/pciet/wichess/rules"
 )
 
+// TODO: is there less work that can be done to just get State?
+
 func (g Game) Moves() ([]rules.MoveSet, rules.State) {
 	if g.Header.Conceded {
 		return nil, rules.Conceded

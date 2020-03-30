@@ -1,8 +1,7 @@
-import { removeNewlines, elementInteriorDimensions } from './layout.js'
-import { modes } from './indexDefinitions.js'
-import { armyPicker } from './indexLayoutElements.js'
-import { button, selectButton } from './button.js'
-import { record } from './index.js'
+import { removeNewlines, elementInteriorDimensions } from '../layout.js'
+import { armyPicker } from './elements.js'
+import { button, selectButton } from '../button.js'
+import { record, Modes } from './index.js'
 
 export function layoutArmyPicker() {
     const parent = document.querySelector('#army')
@@ -52,7 +51,7 @@ export function layoutModeOptions(mode) {
     }
 
     switch (mode) {
-        case modes.COMPUTER:
+        case Modes.COMPUTER:
             selectButton('#computermode')
 
             lmo(`<div class="computermodehorizontalcentering inline"></div>
@@ -60,7 +59,7 @@ export function layoutModeOptions(mode) {
                  <div class="computermodehorizontalcentering inline"></div>`)
             break
 
-        case modes.FRIEND:
+        case Modes.FRIEND:
             selectButton('#friendmode')
 
             let friendHTML = '<div class="inline">'
@@ -76,7 +75,7 @@ export function layoutModeOptions(mode) {
 
             break
 
-        case modes.TIMED:
+        case Modes.TIMED:
             selectButton('#timedmode')
 
             let h = '<div id="record">+' + record.wins + ' -' + record.losses + ' =' + record.draws + '</div>' + `

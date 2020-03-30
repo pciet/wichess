@@ -1,9 +1,13 @@
 package main
 
+import "github.com/pciet/wichess/rules"
+
 // Alert is called to notify the opponent when a game has progressed.
 // Changes are expected to have already been committed to the database.
 // If the opponent is the computer player then their move is made.
-func Alert(in GameIdentifier, player string, ofChanges []AddressedPiece) {
+// A zero length ofChanges slice indicates the game is completed (no moves
+// could be made).
+func Alert(in GameIdentifier, player string, ofChanges []rules.AddressedSquare) {
 	if player == ComputerPlayerName {
 		Autoplay(in, ComputerPlayerName)
 		return

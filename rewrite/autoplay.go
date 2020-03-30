@@ -25,7 +25,13 @@ func Autoplay(id GameIdentifier, player string) {
 		ActiveOrientation(g.Header.Active, g.Header.White.Name, g.Header.Black.Name),
 	)
 
-	changes := g.DoMove(tx, move, promotion)
+	var changes []rules.AddressedSquare
+	if move == rules.NoMove {
+		// alert player to completed game with empty diff
+		changes = []rules.AddressedSquare{}
+	} else {
+		changes = g.DoMove(tx, move, promotion)
+	}
 
 	tx.Commit()
 
@@ -40,10 +46,11 @@ func Autoplay(id GameIdentifier, player string) {
 
 // The autoplay algorithm in AutoplayMove inspects all moves this turn and picks the best.
 // A random move is picked amongst ties. The returned PieceKind is the promotion pick if needed.
+// If the game is determined to be complete then rules.NoMove is returned.
 func AutoplayMove(g rules.Game, o rules.Orientation) (rules.Move, rules.PieceKind) {
 	moves, state := g.Moves(o)
 	if (state != rules.Normal) && (state != rules.Check) {
-		Panic("tried to calculate autoplay move when game already complete")
+		return rules.NoMove, rules.NoKind
 	}
 
 	var best rules.Move

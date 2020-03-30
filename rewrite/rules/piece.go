@@ -6,7 +6,7 @@ type PieceKind int
 type Piece struct {
 	Kind        PieceKind `json:"k"`
 	Orientation `json:"o"`
-	Moved       bool `json:"m"`
+	Moved       bool `json:"-"`
 
 	Swaps     bool `json:"-"`
 	Detonates bool `json:"-"`

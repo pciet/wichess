@@ -1,5 +1,5 @@
-import { squareElement, boardIndex } from './board.js'
-import { doMove } from './gameMove.js'
+import { squareElement, boardAddressToIndex } from './board.js'
+import { doMove } from './move.js'
 import { Moves } from './game.js'
 
 const hoverClass = 'hover'
@@ -72,7 +72,7 @@ export function writeSquareClick(fromIndex, toIndices) {
 
 function removeAllSquareEventHandlers() {
     for (let i = 0; i < Moves.length; i++) {
-        const s = squareElement(boardIndex(Moves[i].f.f, Moves[i].f.r))
+        const s = squareElement(boardAddressToIndex(Moves[i].from))
         s.removeEventListener('mouseenter', s.mouseEnterFunc)
         s.removeEventListener('mouseleave', s.mouseLeaveFunc)
         s.removeEventListener('click', s.clickFunc)

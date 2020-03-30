@@ -1,9 +1,15 @@
-const Orientation = {
+export function Piece(kind, orientation) {
+    this.kind = kind
+    this.orientation = orientation
+}
+
+export const Orientation = {
     WHITE: 0,
     BLACK: 1
 }
 
-const Kind = {
+export const Kind = {
+    NO_KIND: 0,
     KING: 1,
     QUEEN: 2,
     ROOK: 3,

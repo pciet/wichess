@@ -13,31 +13,19 @@ var BoardsHandler = AuthenticRequestHandler{
 	Get: GameIdentifierParsed(RequesterInGame(BoardsGet), BoardsPath),
 }
 
-type (
-	BoardJSON map[rules.AddressIndex]PieceJSON
-
-	PieceJSON struct {
-		rules.Piece     `json:"p"`
-		PieceIdentifier `json:"i,omitempty"`
-	}
-)
-
 func BoardsGet(w http.ResponseWriter, r *http.Request, tx *sql.Tx, id GameIdentifier) {
 	b := LoadGameBoard(tx, id)
 	tx.Commit()
 
-	jr := make(BoardJSON)
+	jr := make([]rules.AddressedSquare, 0, 32)
 	for i, s := range b.Board {
 		if s.Kind == rules.NoKind {
 			continue
 		}
-		jr[rules.AddressIndex(i)] = PieceJSON{rules.Piece(s), 0}
-	}
-	for _, pid := range b.PieceIdentifiers {
-		a := pid.Address.Index()
-		p := jr[a]
-		p.PieceIdentifier = pid.ID
-		jr[a] = p
+		jr = append(jr, rules.AddressedSquare{
+			rules.AddressIndex(i).Address(),
+			s,
+		})
 	}
 
 	JSONResponse(w, jr)
