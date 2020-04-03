@@ -53,6 +53,9 @@ function pickLayout() {
     return use
 }
 
+// If your dynamically added inline elements are spilling over to the next line then verify
+// that you are removing newlines. You'll see an added space between them otherwise.
+
 // stackoverflow.com/questions/10805125/how-to-remove-all-line-breaks-from-a-string
 // stackoverflow.com/questions/12014441/remove-every-white-space-between-tags-using-javascript
 function removeNewlines(html) {
@@ -74,12 +77,15 @@ function elementInteriorDimensions(e) {
         }
     }
 
-    const p = propValue('padding')
-    const b = propValue('border')
+    const paddingWidth = propValue('padding-left') + propValue('padding-right')
+    const paddingHeight = propValue('padding-top') + propValue('padding-bottom')
+    
+    const borderWidth = propValue('border-left-width') + propValue('border-right-width')
+    const borderHeight = propValue('border-top-width') + propValue('border-bottom-width')
 
     return {
-        width: rect.width - (2*(p+b)),
-        height: rect.height - (2*(p+b))
+        width: rect.width - (paddingWidth + borderWidth),
+        height: rect.height - (paddingHeight + borderHeight)
     }
 }
 

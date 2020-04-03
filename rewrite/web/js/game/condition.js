@@ -1,6 +1,12 @@
-import { State, Condition, gameDone } from './game.js'
+import { State, Condition, replaceCondition, gameDone } from './game.js'
 import { showAcknowledgeButton,
         hideAcknowledgeButton } from './acknowledge.js'
+import { showPromotion } from './promotion.js'
+
+export function replaceAndWriteGameCondition(cond) {
+    replaceCondition(cond)
+    writeGameCondition()
+}
 
 export function writeGameCondition() {
     if (gameDone() === true) {
@@ -16,6 +22,7 @@ export function writeGameCondition() {
         break
     case State.PROMOTION:
         h = 'PROMOTE'
+        showPromotion()
         break
     case State.CHECK:
         h = 'CHECK'

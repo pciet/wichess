@@ -113,9 +113,9 @@ var (
 	GamesHasPlayerQuery = SQLGeneralizedWhereQuery(nil, GamesTable,
 		GamesIdentifier+"=$1 AND ("+GamesWhite+"=$2 OR "+GamesBlack+"=$2)")
 
-	GamesTurnQuery = SQLQuery([]string{GamesTurn}, GamesTable, GamesIdentifier)
-
-	GamesOpponentQuery = SQLQuery([]string{GamesWhite, GamesBlack}, GamesTable, GamesIdentifier)
+	GamesTurnQuery           = SQLQuery([]string{GamesTurn}, GamesTable, GamesIdentifier)
+	GamesOpponentQuery       = SQLQuery([]string{GamesWhite, GamesBlack}, GamesTable, GamesIdentifier)
+	GamesPreviousActiveQuery = SQLQuery([]string{GamesPreviousActive}, GamesTable, GamesIdentifier)
 
 	GamesAcknowledgeUpdate = func() string {
 		var s strings.Builder

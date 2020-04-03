@@ -65,3 +65,14 @@ func GameOpponent(tx *sql.Tx, id GameIdentifier, of string) string {
 	}
 	return ""
 }
+
+func GamePreviousActive(tx *sql.Tx, id GameIdentifier) string {
+	var pa string
+	err := tx.QueryRow(GamesPreviousActiveQuery, id).Scan(&pa)
+	if err == sql.ErrNoRows {
+		return ""
+	} else if err != nil {
+		Panic(err)
+	}
+	return pa
+}

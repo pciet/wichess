@@ -14,12 +14,6 @@ var AcknowledgeHandler = AuthenticRequestHandler{
 func AcknowledgeGet(w http.ResponseWriter, r *http.Request, tx *sql.Tx, id GameIdentifier, player string) {
 	defer tx.Commit()
 
-	if GameHasPlayer(tx, id, player) == false {
-		DebugPrintln(AcknowledgePath, player, "not in game", id)
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
 	if GameComplete(tx, id) == false {
 		DebugPrintln(AcknowledgePath, player, "requested acknowledge of", id, "but not complete")
 		w.WriteHeader(http.StatusBadRequest)

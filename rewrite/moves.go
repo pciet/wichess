@@ -23,9 +23,21 @@ func (g Game) Moves() ([]rules.MoveSet, rules.State) {
 		}
 	*/
 
-	return rules.MakeGame(g.Board.Board,
-		rules.AddressIndex(g.Header.From), rules.AddressIndex(g.Header.To)).Moves(
-		ActiveOrientation(g.Header.Active, g.Header.White.Name, g.Header.Black.Name))
+	game := rules.MakeGame(g.Board.Board,
+		rules.AddressIndex(g.Header.From), rules.AddressIndex(g.Header.To))
+
+	active := ActiveOrientation(g.Header.Active, g.Header.White.Name, g.Header.Black.Name)
+
+	moves, state := game.Moves(active)
+	if state == rules.Promotion {
+		promoter, _ := game.Board.PromotionNeeded()
+		if promoter != active {
+			return []rules.MoveSet{}, rules.ReversePromotion
+		}
+		return []rules.MoveSet{}, state
+	}
+
+	return moves, state
 }
 
 func MovesForGame(tx *sql.Tx, id GameIdentifier) ([]rules.MoveSet, rules.State) {

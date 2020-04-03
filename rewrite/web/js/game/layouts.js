@@ -32,6 +32,15 @@ const landscapeBar = `
 </div>
 `
 
+export const promotion = `
+<div class="inline">
+` + button('promotebutton', 'queenprom', 'Queen', false) + button('promotebutton', 'rookprom', 'Rook', false) + `
+</div>
+<div class="inline">
+` + button('promotebutton', 'knightprom', 'Knight', false) + button('promotebutton', 'bishopprom', 'Bishop', false) + `
+</div>
+`
+
 export const landscape = `
 <div class="inline">
 ` + landscapeBar + `

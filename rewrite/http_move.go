@@ -9,20 +9,14 @@ import (
 	"github.com/pciet/wichess/rules"
 )
 
-const (
-	MovePath = "/move/"
-
-	MoveFormFrom    = "from"
-	MoveFormTo      = "to"
-	MoveFormPromote = "kind"
-)
+const MovePath = "/move/"
 
 var MoveHandler = AuthenticRequestHandler{
 	Post: GameIdentifierParsed(PlayerNamed(MovePost), MovePath),
 }
 
 // The webpage sends a move request in the MoveJSON format.
-// If a promotion is needed then p is nonzero and t is ignored.
+// If a promotion is requested then p is nonzero and f/t is ignored.
 type MoveJSON struct {
 	From      int `json:"f"`
 	To        int `json:"t"`
@@ -62,7 +56,7 @@ func MovePost(w http.ResponseWriter, r *http.Request, tx *sql.Tx, id GameIdentif
 		return
 	}
 
-	changes := Move(tx, id, move, promotionKind)
+	changes, promotionNeeded := Move(tx, id, player, move, promotionKind)
 	if (changes == nil) || (len(changes) == 0) {
 		tx.Commit()
 		DebugPrintln(MovePath, "bad move from", player, "for game", id, ":", move, promotionKind)
@@ -70,13 +64,30 @@ func MovePost(w http.ResponseWriter, r *http.Request, tx *sql.Tx, id GameIdentif
 		return
 	}
 
+	previousActive := GamePreviousActive(tx, id)
 	opponent := GameOpponent(tx, id, player)
 
 	tx.Commit()
 
-	go Alert(id, opponent, changes)
+	promotionWasReverse := false
+	if (promotionKind != rules.NoKind) && (previousActive != player) {
+		promotionWasReverse = true
+	}
 
-	JSONResponse(w, changes)
+	alertUpdate := Update{Squares: changes}
+	if promotionNeeded || promotionWasReverse {
+		alertUpdate.State = WaitUpdate
+	}
+	go Alert(id, opponent, alertUpdate)
+
+	responseUpdate := Update{Squares: changes}
+	if promotionNeeded {
+		responseUpdate.State = PromotionNeededUpdate
+	} else if promotionWasReverse {
+		responseUpdate.State = ContinueUpdate
+	}
+
+	JSONResponse(w, responseUpdate)
 }
 
 func ParseMove(m MoveJSON) (rules.Move, rules.PieceKind) {

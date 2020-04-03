@@ -1,10 +1,6 @@
-// The webpage look depends on window size, done with the 
-// layout.js engine and game/layouts.js input.
 import { addLayout, layout, scaleFont }  from '../layout.js'
 import * as layouts from './layouts.js'
 
-// More is done beyond layout.js to make the board the maximum
-// dimensions and to show piece movement.
 import { writeBoardDimension } from './board_dimensions.js'
 import { updateBoard } from './board_update.js'
 import { writeBoardImages } from './board_images.js'
@@ -12,9 +8,6 @@ import { writeBoardMoves } from './board_moves.js'
 
 import { writeGameCondition } from './condition.js'
 
-// Communication with the host is done both with HTTP
-// and WebSockets for moving request-response and 
-// asynchronous alerts for when an opponent moves.
 import { fetchBoardPromise } from './fetch_board.js'
 import { fetchMovesPromise } from './fetch_moves.js'
 import { webSocketPromise, webSocketOnMessage } from './websocket.js'
@@ -36,7 +29,8 @@ export const State = {
     CHECKMATE: 3,
     DRAW: 4,
     CONCEDED: 5,
-    TIME_OVER: 6
+    TIME_OVER: 6,
+    REVERSE_PROMOTION: 7
 }
 
 // The condition is the current game state.
@@ -92,13 +86,18 @@ window.onload = () => {
     })
 }
 
-window.onresize = layoutPage
+let resizeWait
+
+window.onresize = () => {
+    clearTimeout(resizeWait)
+    resizeWait = setTimeout(layoutPage, 150)
+}
 
 function layoutPage() {
     writeBoardDimension(lowerSquareRatio, upperSquareRatio)
     layout()
-    writeBoardImages(Board)
-    writeBoardMoves(Moves)
+    writeBoardImages()
+    writeBoardMoves()
     writeGameCondition()
     scaleFont()
 

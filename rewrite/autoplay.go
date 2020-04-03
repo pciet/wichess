@@ -7,6 +7,7 @@ import (
 )
 
 // Autoplay picks and does a move for a player then alerts the opponent.
+// If a promotion needs to be done then a queen is picked.
 func Autoplay(id GameIdentifier, player string) {
 	tx := DatabaseTransaction()
 
@@ -25,21 +26,28 @@ func Autoplay(id GameIdentifier, player string) {
 		ActiveOrientation(g.Header.Active, g.Header.White.Name, g.Header.Black.Name),
 	)
 
-	var changes []rules.AddressedSquare
-	if move == rules.NoMove {
+	var u Update
+	promotionNeeded := false
+	if (move == rules.NoMove) && (promotion == rules.NoKind) {
 		// alert player to completed game with empty diff
-		changes = []rules.AddressedSquare{}
+		u.Squares = []rules.AddressedSquare{}
 	} else {
-		changes = g.DoMove(tx, move, promotion)
+		u.Squares, promotionNeeded = g.DoMove(tx, move, promotion)
+		if promotionNeeded {
+			// if this is the promoting player then do it now
+			(&g.Board).ApplyChanges(u.Squares)
+			promoter, _ := g.Board.PromotionNeeded()
+			if PlayerWithOrientation(promoter,
+				g.Header.White.Name, g.Header.Black.Name) == player {
+				promUpdates, _ := g.DoMove(tx, rules.NoMove, rules.Queen)
+				u.Squares = rules.MergeReplaceAddressedSquares(u.Squares, promUpdates)
+			}
+		}
 	}
 
 	tx.Commit()
 
-	if changes == nil {
-		Panic("autoplay failed for", player)
-	}
-
-	go Alert(id, Opponent(player, g.Header.White.Name, g.Header.Black.Name), changes)
+	go Alert(id, Opponent(player, g.Header.White.Name, g.Header.Black.Name), u)
 }
 
 // Looking forward more than one move takes too much time.
@@ -51,6 +59,9 @@ func AutoplayMove(g rules.Game, o rules.Orientation) (rules.Move, rules.PieceKin
 	moves, state := g.Moves(o)
 	if (state != rules.Normal) && (state != rules.Check) {
 		return rules.NoMove, rules.NoKind
+	}
+	if state == rules.Promotion {
+		return rules.NoMove, rules.Queen
 	}
 
 	var best rules.Move
@@ -72,7 +83,7 @@ func AutoplayMove(g rules.Game, o rules.Orientation) (rules.Move, rules.PieceKin
 		}
 	}
 
-	return best, rules.Queen
+	return best, rules.NoKind
 }
 
 func AutoplayRating(g rules.Game, of rules.Move, by rules.Orientation) int {

@@ -11,9 +11,10 @@ import (
 
 // UpdateGame puts board changes into the database for a game,
 // updates the latest move, sets the draw turn count,
-// swaps the active player, and increments the turn number.
-func UpdateGame(tx *sql.Tx, id GameIdentifier,
-	white string, black string, active string,
+// sets the active player, and increments the turn number.
+// If the previous move shouldn't be updated, such as when the
+// promotion pick is done, then m is set to rules.NoMove.
+func UpdateGame(tx *sql.Tx, id GameIdentifier, active, previousActive string,
 	drawTurns int, turn int, m rules.Move, with []AddressedPiece) {
 	var s strings.Builder
 	s.WriteString("UPDATE ")
@@ -40,26 +41,24 @@ func UpdateGame(tx *sql.Tx, id GameIdentifier,
 		placeholder(false)
 	}
 
-	switch active {
-	case white:
-		args = append(args, black)
-	case black:
-		args = append(args, white)
-	default:
-		Panic("game", id, "active player",
-			active, "not the white or black player")
-	}
+	args = append(args, previousActive)
+	s.WriteString(GamesPreviousActive)
+	placeholder(false)
+
+	args = append(args, active)
 	s.WriteString(GamesActive)
 	placeholder(false)
 
-	// the move is recorded for future en passant calculation
-	args = append(args, m.From.Index())
-	s.WriteString(GamesFrom)
-	placeholder(false)
+	if m != rules.NoMove {
+		// the move is recorded for future en passant calculation
+		args = append(args, m.From.Index())
+		s.WriteString(GamesFrom)
+		placeholder(false)
 
-	args = append(args, m.To.Index())
-	s.WriteString(GamesTo)
-	placeholder(false)
+		args = append(args, m.To.Index())
+		s.WriteString(GamesTo)
+		placeholder(false)
+	}
 
 	// draw turns are reset or incremented depending on the move made
 	args = append(args, drawTurns)

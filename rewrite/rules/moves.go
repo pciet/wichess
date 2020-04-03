@@ -4,7 +4,8 @@ package rules
 
 func (a Game) Moves(active Orientation) ([]MoveSet, State) {
 	// promotion is part of the previous move
-	if a.PromotionNeeded() {
+	_, needed := a.PromotionNeeded()
+	if needed {
 		return nil, Promotion
 	}
 

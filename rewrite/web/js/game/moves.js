@@ -1,16 +1,19 @@
-import { Condition, replaceCondition, 
+import { Condition, replaceCondition, State,
         gameDone, replaceMoves } from './game.js'
-import { writeGameCondition } from './condition.js'
-import { writeBoardMoves } from './board_moves.js'
+import { replaceAndWriteGameCondition } from './condition.js'
+import { replaceAndWriteBoardMoves } from './board_moves.js'
+import { showPromotion } from './promotion.js'
 
 export function fetchedMoves(moves) {
     if (moves.state !== Condition) {
-        replaceCondition(moves.state)
-        writeGameCondition()
+        replaceAndWriteGameCondition(moves.state)
     }
 
-    if (gameDone() === true) { return }
+    if (gameDone() === true) {
+        return
+    }
 
-    replaceMoves(moves.moveSets)
-    writeBoardMoves(moves.moveSets)
+    if (moves.state !== State.PROMOTION) {
+        replaceAndWriteBoardMoves(moves.moveSets)
+    }
 }
