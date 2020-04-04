@@ -30,6 +30,13 @@ func MoveSetSliceHasMove(slice []MoveSet, m Move) bool {
 	return false
 }
 
+func RemoveDuplicateMoveSetMoves(slice []MoveSet) []MoveSet {
+	for i, ms := range slice {
+		slice[i].Moves = RemoveAddressSliceDuplicates(ms.Moves)
+	}
+	return slice
+}
+
 func (a MoveSet) RemoveMove(to Address) MoveSet {
 	index := -1
 	for i, move := range a.Moves {

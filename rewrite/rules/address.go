@@ -45,12 +45,31 @@ LOOP:
 	return out
 }
 
-// TODO: test case for SquareEven since it rarely matters
+func AddressSliceHasCount(a []Address, of Address) int {
+	count := 0
+	for _, addr := range a {
+		if addr == of {
+			count++
+		}
+	}
+	return count
+}
 
 func (an Address) SquareEven() bool {
-	if (an.File%2 + an.Rank%2) == 0 {
-		return false
+	if an.Rank%2 == 0 {
+		if an.File%2 == 0 {
+			return false
+		} else {
+			return true
+		}
+	} else {
+		if an.File%2 == 0 {
+			return true
+		} else {
+			return false
+		}
 	}
+	Panic("bad return")
 	return true
 }
 

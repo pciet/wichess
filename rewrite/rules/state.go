@@ -1,5 +1,7 @@
 package rules
 
+import "strconv"
+
 type State int
 
 const (
@@ -12,3 +14,25 @@ const (
 	TimeOver
 	ReversePromotion
 )
+
+func (a State) String() string {
+	switch a {
+	case Normal:
+		return "normal"
+	case Promotion:
+		return "promotion"
+	case Check:
+		return "check"
+	case Checkmate:
+		return "checkmate"
+	case Draw:
+		return "draw"
+	case Conceded:
+		return "conceded"
+	case TimeOver:
+		return "time over"
+	case ReversePromotion:
+		return "reverse promotion"
+	}
+	return strconv.Itoa(int(a))
+}

@@ -15,7 +15,7 @@ func (a Game) NaiveMoves(active Orientation) []MoveSet {
 		}
 		moves = append(moves, MoveSet{at, nm})
 	}
-	return moves
+	return RemoveDuplicateMoveSetMoves(moves)
 }
 
 func (a Game) NaiveMovesAt(the Address) []Address {
