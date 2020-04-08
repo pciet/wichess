@@ -30,7 +30,7 @@ I believe chess is a good intellectual training game and I hope you and others g
 
 For now Wisconsin Chess is intended for adults; despite in my understanding there not being anything particularly adult about the game perhaps there are unknown or unexpected effects on a person. Wisconsin Chess is not age rated or approved by any organization like the ESRB.
 
-This repository is not licenced beyond the base GitHub license. I don't think I included any easter eggs, practical jokes, backdoors, or intentional mistakes, I hope what you see is what you get.
+See the COPYRIGHT file for the copyright notice.
 
 If you decide to play Wisconsin Chess you should be aware that no network communication encryption is used, so you shouldn't use usernames or passwords you'd care about if they were seen by others. The passwords are encrypted in the database but the cryptography implementation is an old version of ```golang.org/x/crypto``` and may not be free of mistakes that have been fixed after 2017. **Because of this weak security I recommend that you don't run ```wichess``` on any computer that needs to be secure, and I recommend that you don't play Wisconsin Chess outside a local network.**
 
