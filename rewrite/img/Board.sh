@@ -1,9 +1,25 @@
 #!/bin/bash
 
-# Board.sh constructs and renders the POV-Ray scene for the
-# piece named in the single script argument.
+# Board.sh constructs and renders the POV-Ray scene of the piece
+# named in the input argument, where the piece is placed on all
+# 64 squares of the chess board defined in board.inc.
+# If a second argument "short" is included then a fast render is done.
+# Two boards are rendered, one for each the white and black materials.
 # A temporary file called boardrendertemp.pov is used.
 # The output is two image files wboard.png and bboard.png.
+
+if [ $# -eq 0 ]
+then
+    echo "Board.sh [piece name] [optional short]"
+    exit 1
+fi
+
+SHORT=false
+
+if [ $# -eq 2 ]
+then
+    SHORT=true
+fi
 
 if [[ ! -f ./$1.inc ]]
 then
@@ -39,7 +55,12 @@ Piece('$1')' > $POV
         PREFIX="b"
     fi
     
-    povray +I$POV +H$DIM +W$DIM Quality=8 +FN +A +O"$PREFIX"board.png
+    if [ "$SHORT" = true ]
+    then
+        povray +I$POV +H512 +W512 Quality=5 +FN +O"$PREFIX"board.png
+    else
+        povray +I$POV +H$DIM +W$DIM Quality=8 +FN +A +O"$PREFIX"board.png
+    fi
 
     rm $POV
 done

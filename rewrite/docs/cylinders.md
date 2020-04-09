@@ -15,4 +15,4 @@ height radius
   3      3
 ```
 
-Pawns kinds use the first three cylinders, specialists (rook, bishop, knight) also use the fourth, and the two sovereign pieces also use the fifth.
+Pawn kinds use the first three cylinders, specialists (rook, bishop, knight) also use the fourth, and the two sovereign pieces also use the fifth.

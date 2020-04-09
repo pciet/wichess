@@ -7,11 +7,11 @@ global_settings {
 }
 
 camera {
-    location <3,10,8>
+    location <3,10.5,8.2>
     up <0,0,1>
     right <1,0,0>
     sky <0,0,1>
-    look_at <0,0,3.85>
+    look_at <0,0,4.1>
 }
 
 light_source {

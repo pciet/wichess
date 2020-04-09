@@ -1,8 +1,24 @@
 #!/bin/bash
 
-#Look.sh constructs and renders the piece looks.
-#A temporary file lookrendertemp.pov is used.
-#The output is look.png.
+# Look.sh constructs and renders the piece look image,
+# which is a side view used in the army picker.
+# The first argument is the name of the piece, and an
+# optional "short" second argument will cause a fast render.
+# A temporary file lookrendertemp.pov is used.
+# The output is look.png.
+
+if [ $# -eq 0 ]
+then
+    echo "Look.sh [piece name] [optional short]"
+    exit 1
+fi
+
+SHORT=false
+
+if [ $# -eq 2 ]
+then
+    SHORT=true
+fi
 
 if [[ ! -f ./$1.inc ]]
 then
@@ -28,6 +44,11 @@ echo '#version 3.7;
 #include "'$1'.inc"
 object { '$1' }' > $POV
 
-povray +I$POV +H$DIM +W$DIM Quality=8 +FN +A +Olook.png
+if [ "$SHORT" = true ]
+then
+    povray +I$POV +H512 +W512 Quality=5 +FN +Olook.png
+else
+    povray +I$POV +H$DIM +W$DIM Quality=8 +FN +A +Olook.png
+fi
 
 rm $POV
