@@ -1,12 +1,11 @@
 import { Board } from './game.js'
-import { Kind, pieceImageName } from '../piece.js'
+import { Kind, Piece, Orientation, pieceImageName } from '../piece.js'
 
 export function writeBoardImages() {
+    console.log(Board.length)
     for (let i = 0; i < Board.length; i++) {
-        if (Board[i] === undefined) {
-            continue
-        }
-        if (Board[i].kind === Kind.NO_KIND) {
+        if ((Board[i] === undefined) || (Board[i].kind === Kind.NO_KIND)) {
+            writePieceImage(i, new Piece(Kind.NO_KIND, Orientation.WHITE))
             continue
         }
         writePieceImage(i, Board[i])
@@ -20,5 +19,5 @@ export function writePieceImage(boardIndex, piece) {
 }
 
 export function removePieceImage(boardIndex) {
-    document.querySelector('#s'+boardIndex).innerHTML = ''
+    writePieceImage(boardIndex, new Piece(Kind.NO_KIND, Orientation.WHITE))
 }

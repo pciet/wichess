@@ -1,5 +1,5 @@
 body {
-    background: linear-gradient(rgb(10,41,60), rgb(22,40,21));
+    background: linear-gradient(rgb(72,40,21), rgb(10,41,60));
 }
 
 a {
@@ -32,7 +32,7 @@ a:link, a:visited {
 }
 
 #players {
-    background-color: rgb(55,50,40);
+    background-color: rgb(15,30,60);
     height: 20%;
     border-radius: 0 0 5px 5px;
 }
@@ -40,36 +40,26 @@ a:link, a:visited {
 .name {
     font-size: 2rem;
     text-align: center;
-    color: rgb(255,230,220);
-    width: 75%;
-}
-
-.portraitname {
-    font-size: 2rem;
-    text-align: center;
-    color: rgb(255,230,220);
-    width: 40%;
-}
-
-.clock {
-    font-size: 2rem;
-    color: rgb(240,255,240);
+    color: rgb(205,180,160);
 }
 
 #condition {
     text-align: center;
-    font-size: 2rem;
+    font-size: 3rem;
     font-weight: bold;
     color: rgb(250,255,245);
     background-color: rgb(50,35,20);
-    border-radius: 5px;
+}
+
+#title {
+    color: rgb(130,75,60);
+    font-size: 2rem;
+    font-weight: normal;
 }
 
 #controls {
     background-color: rgb(1,20,50);
     height: 20%;
-    padding: 0.3rem;
-    border-radius: 5px 5px 0 0;
 }
 
 #buttons {
@@ -139,23 +129,23 @@ a:link, a:visited {
 }
 
 .hover {
+    opacity: 0.7;
     background-color: rgb(70,60,55);
-    border: thin solid rgb(255,135,95);
 }
 
 .move {
+    opacity: 0.4;
     background-color: rgb(80,70,65);
-    border: thin solid rgb(255,120,80);
 }
 
 .select {
+    opacity: 0.7;
     background-color: rgb(70,60,55);
-    border: thin solid rgb(255,100,75);
 }
 
 .selectmove {
+    opacity: 0.4;
     background: linear-gradient(0.33turn, rgb(60,91,100), rgb(102,90,71));
-    border: thin solid rgb(255,140,100);
 }
 
 #portraitdesc {

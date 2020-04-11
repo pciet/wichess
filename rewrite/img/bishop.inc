@@ -6,7 +6,7 @@
         torus {
             2.9, 0.1
             rotate <90,0,0>
-            scale <0,0,5>
+            scale <1,1,5>
         }
         material { TrimMaterial }
     }

@@ -11,3 +11,7 @@ input {
     font: 1em serif;
     width: 100%;
 }
+
+p {
+    text-align: center;
+}

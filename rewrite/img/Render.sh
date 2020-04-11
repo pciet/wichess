@@ -15,7 +15,7 @@ IMGDIR="../web/img"
 
 mkdir $IMGDIR
 
-PIECES=("pawn bishop")
+PIECES=("pawn" "bishop" "knight" "rook" "queen" "king")
 
 for p in "${PIECES[@]}"
 do
@@ -26,3 +26,9 @@ do
     ./Look.sh $p
     mv look.png "$IMGDIR"/look_"$p".png
 done
+
+./Board.sh empty
+./$CUT bboard.png $IMGDIR empty
+rm bboard.png wboard.png
+
+rm $CUT

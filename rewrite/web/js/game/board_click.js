@@ -1,6 +1,6 @@
 import { squareElement, boardAddressToIndex } from './board.js'
 import { doMove } from './move.js'
-import { Moves } from './game.js'
+import { Moves, Board } from './game.js'
 
 const hoverClass = 'hover'
 const moveClass = 'move'

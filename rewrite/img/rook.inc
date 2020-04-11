@@ -6,7 +6,7 @@
         torus {
             2.9, 0.1
             rotate <90,0,0>
-            scale <0,0,5>
+            scale <1,1,5>
         }
         material { TrimMaterial }
     }
@@ -45,8 +45,9 @@
             #local i = i+1;
         #end
         cylinder {
-            <0,0,5.999>,<0,0,8>,0.8
+            <0,0,5.5>,<0,0,8>,0.8
         }
     }
     material { PieceMaterial }
+    rotate <0,0,30>
 }

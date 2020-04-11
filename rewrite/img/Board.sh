@@ -59,7 +59,9 @@ Piece('$1')' > $POV
     then
         povray +I$POV +H512 +W512 Quality=5 +FN +O"$PREFIX"board.png
     else
-        povray +I$POV +H$DIM +W$DIM Quality=8 +FN +A +O"$PREFIX"board.png
+        # anti-aliasing, the +A argument, adds significant time to rendering
+        # and has been removed for now to speed this up
+        povray +I$POV +H$DIM +W$DIM Quality=8 +FN +O"$PREFIX"board.png
     fi
 
     rm $POV

@@ -6,14 +6,14 @@
         torus {
             2.9, 0.1
             rotate <90,0,0>
-            scale <0,0,5>
+            scale <1,1,5>
         }
         material { TrimMaterial }
     }
     lathe {
         cubic_spline
         4,
-        <4,0.4>,<2.7,0.4999>,<2.2,1.50001><1,3>
+        <4,0.4>,<2.7,0.4999>,<2.4,1.50001><1,3>
         rotate <90,0,0>
     }
     cylinder {
@@ -22,51 +22,52 @@
     lathe {
         cubic_spline
         4,
-        <8,0.8>,<1.8,1.4999>,<0.6,7>,<0.5,7.45>
+        <8,0.8>,<1.8,1.4999>,<0.7,7>,<1,7.45>
         rotate <90,0,0>
     }
     lathe {
         cubic_spline
         5,
-        <0,4.5>,<0.2,4.6>,<1.4,5>,<0.2,5.3>,<0,2.5>
+        <0,6>,<0.2,6.1>,<1.1,6.5>,<0.7,6.8>,<1,7>
         rotate <90,0,0>
-    }
-    difference {
-        cylinder {
-            <0,0,5>,<0,0,7>,1.2
-        }
-        #local i = 0;
-        #while (i < 50)
-            cylinder {
-                <0,0,4.9>,<0,0,7.1>,0.1
-                translate <1.2,0,0>
-                rotate <0,0,(360/50)*i>
-            }
-        #local i = i+1;
-        #end
-        material { TrimMaterial }
     }
     lathe {
         cubic_spline
         5,
-        <0,6.5>,<0.2,6.6>,<1.5,7>,<0.2,7.3>,<0,7.5>
+        <0,6.5>,<0.2,6.6>,<1.3,7>,<0.2,7.3>,<0,7.5>
         rotate <90,0,0>
-    }
-    difference {
-        cylinder {
-            <0,0,6.9999>,<0,0,8>,0.8
-        }
-        cone {
-            <0,0,7>, 0.7, <0,0,8>, 0.8
-            inverse
-        }
     }
     #local i = 0;
-    #while (i < 50)
+    #while (i < 17)
         sphere {
-            <0,0,8>,0.05
-            translate <0.8,0,0>
-            rotate <0,0,(360/50)*i>
+            <0,0,7>, 0.15
+            translate <1.2,0,0>
+            rotate <0,0,7>
+            rotate <0,0,(360/17)*i>
+            material { TrimMaterial }
+        }
+    #local i = i + 1;
+    #end
+    cone {
+        <0,0,7>, 0.7, <0,0,8>, 0.8
+    }
+    #local i = 0;
+    #while (i < 13)
+        sphere {
+            <0,0,8>,0.15
+            translate <0.7,0,0>
+            rotate <0,0,(360/13)*i>
+            material { TrimMaterial }
+        }
+    #local i = i + 1;
+    #end
+    #local i = 0;
+    #while (i < 15)
+        sphere {
+            <0,0,8>,0.1
+            translate <0.4,0,0>
+            rotate <0,0,10>
+            rotate <0,0,(360/15)*i>
             material { TrimMaterial }
         }
     #local i = i + 1;

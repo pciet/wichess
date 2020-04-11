@@ -1,3 +1,5 @@
+import { boardIndexToAddress } from './game/board.js'
+
 export function Piece(kind, orientation) {
     this.kind = kind
     this.orientation = orientation
@@ -55,6 +57,8 @@ export const Kind = {
 // TODO: convert these images names to just respond with what the host sends
 // TODO: like 0_1_0.png for a white king at 0,0
 
+// image names are like bbishop_1_5.png
+
 export function pieceImageName(addressIndex, kind, orientation) {
     //return orientation.toString()+'-'+kind.toString()+'-'+addressIndex.toString()+'.png'
     let name = ''
@@ -66,126 +70,152 @@ export function pieceImageName(addressIndex, kind, orientation) {
         throw new Error('unknown orientation ' + orientation)
     }
     switch (kind) {
+        case Kind.NO_KIND:
+            name = 'empty'
+            break
         case Kind.KING:
-            name += 'king';
-            break;
+            name += 'king'
+            break
         case Kind.QUEEN:
-            name += 'queen';
-            break;
+            name += 'queen'
+            break
         case Kind.ROOK:
-            name += 'rook';
-            break;
+            name += 'rook'
+            break
         case Kind.BISHOP:
-            name += 'bishop';
-            break;
+            name += 'bishop'
+            break
         case Kind.KNIGHT:
-            name += 'knight';
-            break;
+            name += 'knight'
+            break
         case Kind.PAWN:
-            name += 'pawn';
-            break;
+            name += 'pawn'
+            break
         case Kind.SWAP_PAWN:
-            name += 'swappawn';
-            break;
+            name += 'swappawn'
+            break
         case Kind.LOCK_PAWN:
-            name += 'lockpawn';
-            break;
+            name += 'lockpawn'
+            break
         case Kind.RECON_PAWN:
-            name += 'reconpawn';
-            break;
+            name += 'reconpawn'
+            break
         case Kind.DETONATE_PAWN:
-            name += 'detonatepawn';
-            break;
+            name += 'detonatepawn'
+            break
         case Kind.GUARD_PAWN:
-            name += 'guardpawn';
-            break;
+            name += 'guardpawn'
+            break
         case Kind.RALLY_PAWN:
-            name += 'rallypawn';
-            break;
+            name += 'rallypawn'
+            break
         case Kind.FORTIFY_PAWN:
-            name += 'fortifypawn';
-            break;
+            name += 'fortifypawn'
+            break
         case Kind.EXTENDED_PAWN:
-            name += 'extendedpawn';
-            break;
+            name += 'extendedpawn'
+            break
         case Kind.SWAP_KNIGHT:
-            name += 'swapknight';
-            break;
+            name += 'swapknight'
+            break
         case Kind.LOCK_KNIGHT:
-            name += 'lockknight';
-            break;
+            name += 'lockknight'
+            break
         case Kind.RECON_KNIGHT:
-            name += 'reconknight';
-            break;
+            name += 'reconknight'
+            break
         case Kind.DETONATE_KNIGHT:
-            name += 'detonateknight';
-            break;
+            name += 'detonateknight'
+            break
         case Kind.GUARD_KNIGHT:
-            name += 'guardknight';
-            break;
+            name += 'guardknight'
+            break
         case Kind.RALLY_KNIGHT:
-            name += 'rallyknight';
-            break;
+            name += 'rallyknight'
+            break
         case Kind.FORTIFY_KNIGHT:
-            name += 'fortifyknight';
-            break;
+            name += 'fortifyknight'
+            break
         case Kind.EXTENDED_KNIGHT:
-            name += 'extendedknight';
-            break;
+            name += 'extendedknight'
+            break
         case Kind.SWAP_BISHOP:
-            name += 'swapbishop';
-            break;
+            name += 'swapbishop'
+            break
         case Kind.LOCK_BISHOP:
-            name += 'lockbishop';
-            break;
+            name += 'lockbishop'
+            break
         case Kind.RECON_BISHOP:
-            name += 'reconbishop';
-            break;
+            name += 'reconbishop'
+            break
         case Kind.DETONATE_BISHOP:
-            name += 'detonatebishop';
-            break;
+            name += 'detonatebishop'
+            break
         case Kind.GHOST_BISHOP:
-            name += 'ghostbishop';
-            break;
+            name += 'ghostbishop'
+            break
         case Kind.GUARD_BISHOP:
-            name += 'guardbishop';
-            break;
+            name += 'guardbishop'
+            break
         case Kind.RALLY_BISHOP:
-            name += 'rallybishop';
-            break;
+            name += 'rallybishop'
+            break
         case Kind.FORTIFY_BISHOP:
-            name += 'fortifybishop';
-            break;
+            name += 'fortifybishop'
+            break
         case Kind.EXTENDED_BISHOP:
-            name += 'extendedbishop';
-            break;
+            name += 'extendedbishop'
+            break
         case Kind.SWAP_ROOK:
-            name += 'swaprook';
-            break;
+            name += 'swaprook'
+            break
         case Kind.LOCK_ROOK:
-            name += 'lockrook';
-            break;
+            name += 'lockrook'
+            break
         case Kind.RECON_ROOK:
-            name += 'reconrook';
-            break;
+            name += 'reconrook'
+            break
         case Kind.DETONATE_ROOK:
-            name += 'detonaterook';
-            break;
+            name += 'detonaterook'
+            break
         case Kind.GHOST_ROOK:
-            name += 'ghostrook';
-            break;
+            name += 'ghostrook'
+            break
         case Kind.GUARD_ROOK:
-            name += 'guardrook';
-            break;
+            name += 'guardrook'
+            break
         case Kind.RALLY_ROOK:
-            name += 'rallyrook';
-            break;
+            name += 'rallyrook'
+            break
         case Kind.FORTIFY_ROOK:
-            name += 'fortifyrook';
-            break;
+            name += 'fortifyrook'
+            break
         case Kind.EXTENDED_ROOK:
-            name += 'extendedrook';
-            break;
+            name += 'extendedrook'
+            break
     }
-    return name + '_' + addressIndex.toString() + '.png';
+    const addr = boardIndexToAddress(addressIndex)
+    return name + '_' + addr.file.toString() + '_' + addr.rank.toString() + '.png'
+}
+
+// TODO: reduce repetition
+
+// kindCharacteristics returns an array of one or two
+// characteristic name strings.
+export function kindCharacteristics(kind) {
+    switch (kind) {
+    case Kind.KNIGHT:
+        return ["Ghost", undefined]
+    case Kind.KING:
+        return ["Sovereign", undefined]
+    }
+    return [undefined, undefined]
+}
+
+const kindNames = [
+    "No Kind", "King", "Queen", "Rook",
+    "Bishop", "Knight", "Pawn"]
+
+export function kindName(kind) {
+    return kindNames[kind]
 }

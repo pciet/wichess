@@ -89,6 +89,7 @@ box {
             object {
                 P
                 translate <(i*10)+5,(j*10)+5,0>
+                no_reflection
             }
             #local j = j +1;
         #end

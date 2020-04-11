@@ -14,19 +14,22 @@
     }
 }
 
+// transparency/interior was removed from WhiteMaterial
+// because it multiplied rendering time too much.
+
+// reflection doesn't seem to add a big amount of
+// extra rendering time.
+
 #declare WhiteMaterial = material {
     texture {
-        pigment { rgbf <0.8,0.8,0.97,0.5> }
+        pigment { rgb <0.5,0.5,0.87> }
         finish {
+            ambient 0.15
             diffuse albedo 0.7
-            specular 0.7
-            roughness 0.1
+            specular 0.2
+            roughness 0.8
+            reflection 0.4
         }
-    }
-    interior {
-        ior 1.5
-        dispersion 1.08
-        caustics 0.5
     }
 }
 
@@ -38,8 +41,10 @@
             scale 0.08
         }
         finish {
+            ambient 0.3
             diffuse albedo 0.2
             specular 0.98
+            roughness 0.005
             metallic
         }
     }
@@ -61,11 +66,11 @@
             scale 0.08
         }
         finish {
-            ambient 0.1
-            diffuse albedo 0.5
+            ambient 0.03
+            diffuse albedo 0.8
             specular 0.7
             roughness 0.1
-            reflection 0.1
+            reflection 0.2
             metallic
         }
     }

@@ -5,20 +5,22 @@ import { writeBoardDimension } from './board_dimensions.js'
 import { updateBoard } from './board_update.js'
 import { writeBoardImages } from './board_images.js'
 import { writeBoardMoves } from './board_moves.js'
-
+import { writePlayersIndicator } from './players.js'
+import { writePieceCharacteristics} from './characteristics.js'
 import { writeGameCondition } from './condition.js'
 
 import { fetchBoardPromise } from './fetch_board.js'
 import { fetchMovesPromise } from './fetch_moves.js'
 import { webSocketPromise, webSocketOnMessage } from './websocket.js'
-
 import { fetchedMoves } from './moves.js'
+
+import { Kind} from '../piece.js'
 
 // The current board is represtened by this Board var.
 // The array is indexed by Wisconsin Chess address indices, 0-63.
 // If a board square is empty then the matching array element
 // is undefined or has kind set to Kind.NO_KIND from piece.js.
-export let Board = []
+export let Board
 
 // A game is in one of these six states, only continuing from
 // the abnormal states of promotion and check.
@@ -96,6 +98,19 @@ window.onresize = () => {
 function layoutPage() {
     writeBoardDimension(lowerSquareRatio, upperSquareRatio)
     layout()
+    for (let i = 0; i < 64; i++) {
+        document.querySelector('#s'+i).addEventListener('mouseover', () => {
+            const at = Board[i]
+            let k
+            if (at === undefined) {
+                k = Kind.NO_KIND
+            } else {
+                k = at.kind
+            }
+            writePieceCharacteristics(k)
+        })
+    }
+    writePlayersIndicator()
     writeBoardImages()
     writeBoardMoves()
     writeGameCondition()

@@ -48,7 +48,7 @@ if [ "$SHORT" = true ]
 then
     povray +I$POV +H512 +W512 Quality=5 +FN +Olook.png
 else
-    povray +I$POV +H$DIM +W$DIM Quality=8 +FN +A +Olook.png
+    povray +I$POV +H$DIM +W$DIM Quality=8 +FN +Olook.png
 fi
 
 rm $POV

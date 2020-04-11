@@ -84,6 +84,7 @@
     <1.25, .99>,
     <0, 1>,
     <0, 1.01>
+    material { TrimMaterial }
 }
 
 #declare Knight_Body = cylinder{
@@ -402,7 +403,7 @@
 #declare knight = merge {
     object{Knight_Base}
     object{Knight_Mid}
-    scale 1.3
-    rotate <90,0,0>
+    scale 1.28
+    rotate <90,0,90>
     material { PieceMaterial }
 }
