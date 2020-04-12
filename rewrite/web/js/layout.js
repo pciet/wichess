@@ -1,5 +1,5 @@
 import { layoutElement } from './layoutElement.js'
-export { addLayout, layout, removeNewlines, elementInteriorDimensions, layoutElement, scaleFont, addCSSRuleProperty }
+export { addLayout, layout, layoutSelector, removeNewlines, elementInteriorDimensions, layoutElement, scaleFont, addCSSRuleProperty }
 
 const layouts = []
 
@@ -13,6 +13,15 @@ function addLayout(maxAspectRatio, htmlString) {
 function layout() {
     document.body.innerHTML = pickLayout().html
     layoutElement(document.body)
+}
+
+// The layoutSelector function adds the string into 
+// the selector's element's innerHTML after removing all 
+// newlines, then calls layoutElement on the element.
+function layoutSelector(s, withString) {
+    const e = document.querySelector(s)
+    e.innerHTML = removeNewlines(withString)
+    layoutElement(e)
 }
 
 function pickLayout() {

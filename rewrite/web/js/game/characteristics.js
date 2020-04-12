@@ -1,20 +1,23 @@
-import { removeNewlines } from '../layout.js'
-import { layoutElement } from '../layoutElement.js'
-import { Kind, kindCharacteristics, kindName } from '../piece.js'
+import { layoutSelector } from '../layout.js'
+import { Pieces, NoKind } from '../pieceDefs.js'
+import { Characteristics } from '../pieceCharacteristics.js'
+import { promoting } from './promotion.js'
 
 export function writePieceCharacteristics(kind) {
-    const d = document.querySelector('#description')
+    if (promoting === true) {
+        return
+    }
     let t = ''
-    if (kind != Kind.NO_KIND) {
-        const cs = kindCharacteristics(kind)
-        t += '<div id="piece">'+kindName(kind)+'</div>'
+    if (kind != NoKind) {
+        t += '<div id="piece">'+Pieces[kind].name+'</div>'
+
+        const cs = Pieces[kind].characteristics
         if (cs[0] !== undefined) {
-            t += '<div class="characteristic">'+cs[0]+'</div>'
+            t += '<div class="characteristic">'+Characteristics[cs[0]].name+'</div>'
         }
         if (cs[1] !== undefined) {
-            t += '<div class="characteristic">'+cs[1]+'</div>'
+            t += '<div class="characteristic">'+Characteristics[cs[1]].name+'</div>'
         }
     }
-    d.innerHTML = removeNewlines(t)
-    layoutElement(d)
+    layoutSelector('#description', t)
 }

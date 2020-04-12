@@ -10,7 +10,9 @@ const landscapeBar = `
 </div>
 <div id="controls">
     <div class="inline">
-        ` + button('optionbutton', 'layoutbutton', 'L', false) + button('optionbutton', 'mute', 'M', false) + `
+        <div></div>
+        <div id="mute"></div>
+        <div></div>
     </div>
     <div class="inline" id="buttons">
         ` + button('navbutton', 'ack', 'Acknowledge', false) + button('navbutton', 'back', 'Back', false) + `
@@ -63,9 +65,7 @@ export const square = `
             <div class="inline" id="squarenav">
             ` + button('navbutton', 'ack', 'Acknowledge', true) + button('navbutton', 'back', 'Back', true) + `
             </div>
-            <div class="inline">
-            ` + button('optionbutton', 'layoutbutton', 'L', false) + button('optionbutton', 'mute', 'M', false) + `
-            </div>
+            <div class="inline" id="mute"></div>
         </div>
         <div id="squarebuttonspacer"></div>
     </div>
@@ -85,7 +85,8 @@ export const square = `
 
 export const portrait = `
 <div>
-` + button('optionbutton', 'layoutbutton', 'L', true) + button('optionbutton', 'mute', 'M', true) + button('navbutton', 'ack', 'Acknowledge', true) + button('navbutton', 'back', 'Back', true) + `
+    <div id="mute"></div>
+` + button('navbutton', 'ack', 'Acknowledge', true) + button('navbutton', 'back', 'Back', true) + `
 </div>
 <div>
     <div class="inline" id="players"></div>

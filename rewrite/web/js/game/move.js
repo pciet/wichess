@@ -2,6 +2,7 @@ import { updateBoard, parseBoardUpdate } from './board_update.js'
 import { fetchMoves } from './fetch_moves.js'
 import { State } from './game.js'
 import { replaceAndWriteGameCondition } from './condition.js'
+import { moveSound } from './audio.js'
 
 export function doMove(fromIndex, toIndex, promotion = undefined, reversePromotion = false) {
     let body
@@ -10,6 +11,8 @@ export function doMove(fromIndex, toIndex, promotion = undefined, reversePromoti
     } else {
         body = JSON.stringify({p: promotion})
     }
+
+    moveSound()
 
     fetch('/move/'+GameInformation.ID, {
         method: 'POST',

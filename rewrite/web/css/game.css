@@ -62,6 +62,12 @@ a:link, a:visited {
     height: 20%;
 }
 
+#mute {
+    text-align: center;
+    user-select: none;
+    font-size: 2rem;
+}
+
 #buttons {
     width: 40%;
 }

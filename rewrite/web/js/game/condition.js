@@ -2,8 +2,7 @@ import { State, Condition, replaceCondition, gameDone } from './game.js'
 import { showAcknowledgeButton,
         hideAcknowledgeButton } from './acknowledge.js'
 import { showPromotion } from './promotion.js'
-import { removeNewlines } from '../layout.js'
-import { layoutElement } from '../layoutElement.js'
+import { layoutSelector } from '../layout.js'
 
 export function replaceAndWriteGameCondition(cond) {
     replaceCondition(cond)
@@ -44,11 +43,9 @@ export function writeGameCondition() {
     default:
         throw new Error('unknown game state ' + Condition)
     }
-    const e = document.querySelector('#condition')
-    e.innerHTML = removeNewlines(`
+    layoutSelector('#condition', `
 <div></div>
 <div>`+h+`</div>
 <div></div>
 `)
-    layoutElement(e)
 }

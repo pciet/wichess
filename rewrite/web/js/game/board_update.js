@@ -1,7 +1,8 @@
 import { Board } from './game.js'
 import { boardIndex, BoardAddress, AddressedPiece } from './board.js'
 import { writePieceImage, removePieceImage } from './board_images.js'
-import { Kind, Piece } from '../piece.js'
+import { NoKind } from '../pieceDefs.js'
+import { Piece } from '../piece.js'
 
 // TODO: race condition if updateBoard is writing Board and layout is called
 
@@ -11,7 +12,7 @@ import { Kind, Piece } from '../piece.js'
 export function updateBoard(update) {
     for (const u of update) {
         const index = boardIndex(u.address.file, u.address.rank)
-        if (u.piece.kind === Kind.NO_KIND) {
+        if (u.piece.kind === NoKind) {
             Board[index] = undefined
             removePieceImage(index)
             continue

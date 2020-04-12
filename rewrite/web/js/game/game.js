@@ -14,12 +14,15 @@ import { fetchMovesPromise } from './fetch_moves.js'
 import { webSocketPromise, webSocketOnMessage } from './websocket.js'
 import { fetchedMoves } from './moves.js'
 
-import { Kind} from '../piece.js'
+import { fetchNextMoveSound, muted, 
+    setMuteIcon, toggleMute } from './audio.js'
+
+import { NoKind } from '../pieceDefs.js'
 
 // The current board is represtened by this Board var.
 // The array is indexed by Wisconsin Chess address indices, 0-63.
 // If a board square is empty then the matching array element
-// is undefined or has kind set to Kind.NO_KIND from piece.js.
+// is undefined or has kind set to NoKind from piece.js.
 export let Board
 
 // A game is in one of these six states, only continuing from
@@ -64,6 +67,8 @@ const boardPromise = fetchBoardPromise(GameInformation.ID)
 const movesPromise = fetchMovesPromise(GameInformation.ID, Turn)
 const websocketPromise = webSocketPromise(GameInformation.ID)
 
+fetchNextMoveSound()
+
 const lowerSquareRatio = 0.8
 const upperSquareRatio = 1.5
 
@@ -103,7 +108,7 @@ function layoutPage() {
             const at = Board[i]
             let k
             if (at === undefined) {
-                k = Kind.NO_KIND
+                k = NoKind
             } else {
                 k = at.kind
             }
@@ -114,7 +119,10 @@ function layoutPage() {
     writeBoardImages()
     writeBoardMoves()
     writeGameCondition()
+    setMuteIcon(muted())
     scaleFont()
+
+    document.querySelector('#mute').onclick = toggleMute 
 
     document.querySelector('#back').onclick = () => {
         window.location = '/'
