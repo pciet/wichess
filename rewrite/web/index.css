@@ -1,0 +1,90 @@
+body {
+    background-color: rgb(1,31,18);
+}
+
+#modepick {
+    width: 17%;
+    background-color: rgb(40,10,10);
+}
+
+#contentspacer {
+    width: 0%;
+    height: 0%;
+}
+
+#content {
+    border: 3px solid rgb(200,200,210);
+}
+
+.modebuttonmargin {
+    padding: 10px;
+}
+
+.modebutton {
+    border: 4px outset rgb(160,161,162);
+    border-radius: 2px;
+    color: rgb(185,120,100);
+    background-color: rgb(20,50,80);
+    font-size: 2rem;
+    text-align: center;
+    user-select: none;
+}
+
+.selected {
+    border: 4px outset rgb(233,255,235);
+    color: rgb(255,240,230);
+    background-color: rgb(210,130,110);
+}
+
+#play {
+    height: 12.5%;
+}
+
+#playbuttonmargin {
+    padding: 13px;
+}
+
+#playbutton {
+    border: 4px outset rgb(240,220,220);
+    border-radius: 2px;
+    color: rgb(245,255,237);
+    background-color: rgb(150,200,170);
+    font-size: 2rem;
+    text-align: center;
+    user-select: none;
+}
+
+#army {
+    height: 25%;
+}
+
+.armycell {
+    border: 1px solid rgb(245,245,255);
+}
+
+#picks {
+    padding: 20px;
+    text-align: center;
+}
+
+#pickspacer {
+    width: 5%;
+}
+
+.pickcell {
+    border: 4px outset rgb(240,240,210);
+}
+
+.collectioncell {
+    border: 1px solid rgb(220,248,210);
+}
+
+#collection {
+    height: 37.5%;
+    text-align: center;
+}
+
+.pieceimg {
+    width: 100%;
+    height: 100%;
+}

@@ -1,0 +1,22 @@
+/* the Linux Biolinum license is in the web/licenses directory of the source code repository at github.com/pciet/wichess */
+
+@font-face {
+    font-family: "Linux Biolinum";
+    src: url("/web/fonts/LinBiolinum_R.otf") format("opentype");
+}
+
+@font-face {
+    font-family: "Linux Biolinum";
+    font-weight: bold;
+    src: url("/web/fonts/LinBiolinum_RB.otf") format("opentype");
+}
+
+@font-face {
+    font-family: "Linux Biolinum";
+    font-style: italic;
+    src: url("/web/fonts/LinBiolinum_RI.otf") format("opentype");
+}
+
+html {
+    font-family: "Linux Biolinum";
+}

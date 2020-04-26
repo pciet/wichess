@@ -1,14 +1,6 @@
 CREATE TABLE Players (
     name VARCHAR(64) PRIMARY KEY,
-    crypt CHAR(64) UNIQUE NOT NULL,
-    wins INTEGER,
-    losses INTEGER,
-    draws INTEGER,
-    rating INTEGER,
-    c5 INTEGER, c15 INTEGER,
-    f0 INTEGER, f1 INTEGER,
-    f2 INTEGER, f3 INTEGER,
-    f4 INTEGER, f5 INTEGER
+    crypt CHAR(64) UNIQUE NOT NULL
 );
 
 CREATE TABLE Sessions (
@@ -16,30 +8,13 @@ CREATE TABLE Sessions (
     key BYTEA UNIQUE NOT NULL
 );
 
-CREATE TABLE Friends (
-    requester VARCHAR(64),
-    setup INTEGER[16],
-    friend VARCHAR(64),
-    slot SMALLINT,
-    PRIMARY KEY(requester, slot)
-);
-
 CREATE TABLE Games (
     game_id SERIAL PRIMARY KEY,
-    piece INTEGER,
-    competitive BOOLEAN,
-    recorded BOOLEAN,
     conceded BOOLEAN,
     white VARCHAR(64) NOT NULL,
     white_ack BOOLEAN,
-    white_latestmove TIMESTAMPTZ,
-    white_elapsed BIGINT,
-    white_elapsedupdated TIMESTAMPTZ,
     black VARCHAR(64) NOT NULL,
     black_ack BOOLEAN,
-    black_latestmove TIMESTAMPTZ,
-    black_elapsed BIGINT,
-    black_elapsedupdated TIMESTAMPTZ,
     active VARCHAR(64) NOT NULL,
     previous_active VARCHAR(64) NOT NULL,
     move_from SMALLINT,

@@ -1,0 +1,28 @@
+.inline {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.chesssquare {
+    width: 60px;
+    height: 60px;
+    background-color: lightgrey;
+    border: thin solid black;
+}
+
+img {
+    width: 100%;
+    height: 100%;
+}
+
+.fromSelected {
+    border: thin solid rgb(150,150,255);
+}
+
+.toSelected {
+    border: thin solid rgb(255,100,100);
+}
+
+.fromDefined {
+    border: thin solid rgb(255,255,100);
+}

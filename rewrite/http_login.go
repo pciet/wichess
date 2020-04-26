@@ -6,7 +6,7 @@ import "net/http"
 
 const (
 	LoginPath         = "/login"
-	LoginHTMLTemplate = "web/html/login.tmpl"
+	LoginHTMLTemplate = "html/login.tmpl"
 
 	FormPlayerName = "name"
 	FormPassword   = "password"

@@ -9,46 +9,29 @@ import (
 const (
 	GamesTable = "games"
 
-	GamesPiece               = "piece"
-	GamesCompetitive         = "competitive"
-	GamesRecorded            = "recorded"
-	GamesConceded            = "conceded"
-	GamesWhite               = "white"
-	GamesWhiteAcknowledge    = "white_ack"
-	GamesWhiteLatestMove     = "white_latestmove"
-	GamesWhiteElapsed        = "white_elapsed"
-	GamesWhiteElapsedUpdated = "white_elapsedupdated"
-	GamesBlack               = "black"
-	GamesBlackAcknowledge    = "black_ack"
-	GamesBlackLatestMove     = "black_latestmove"
-	GamesBlackElapsed        = "black_elapsed"
-	GamesBlackElapsedUpdated = "black_elapsedupdated"
-	GamesActive              = "active"
-	GamesPreviousActive      = "previous_active"
-	GamesFrom                = "move_from"
-	GamesTo                  = "move_to"
-	GamesDrawTurns           = "draw_turns"
-	GamesTurn                = "turn"
-	GamesIdentifier          = "game_id"
+	GamesPiece            = "piece"
+	GamesConceded         = "conceded"
+	GamesWhite            = "white"
+	GamesWhiteAcknowledge = "white_ack"
+	GamesBlack            = "black"
+	GamesBlackAcknowledge = "black_ack"
+	GamesActive           = "active"
+	GamesPreviousActive   = "previous_active"
+	GamesFrom             = "move_from"
+	GamesTo               = "move_to"
+	GamesDrawTurns        = "draw_turns"
+	GamesTurn             = "turn"
+	GamesIdentifier       = "game_id"
 )
 
 var (
 	// GameHeaderSelects are also used for the new game insert.
 	GamesHeaderSelects = []string{
-		GamesPiece,
-		GamesCompetitive,
-		GamesRecorded,
 		GamesConceded,
 		GamesWhite,
 		GamesWhiteAcknowledge,
-		GamesWhiteLatestMove,
-		GamesWhiteElapsed,
-		GamesWhiteElapsedUpdated,
 		GamesBlack,
 		GamesBlackAcknowledge,
-		GamesBlackLatestMove,
-		GamesBlackElapsed,
-		GamesBlackElapsedUpdated,
 		GamesActive,
 		GamesPreviousActive,
 		GamesFrom,

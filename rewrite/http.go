@@ -46,11 +46,8 @@ func InitializeHTTP() {
 	// see it again with a GET of /acknowledge/[game identifier].
 	http.Handle(AcknowledgePath, AcknowledgeHandler)
 
-	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("web/js"))))
-	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("web/css"))))
-	http.Handle("/img/", http.StripPrefix("/img/", http.FileServer(http.Dir("web/img"))))
-	http.Handle("/sound/", http.StripPrefix("/sound/", http.FileServer(http.Dir("web/sound"))))
-	http.Handle("/font/", http.StripPrefix("/font/", http.FileServer(http.Dir("web/fonts"))))
+	// All files used by the webpages, including JavaScript and CSS, is in the web folder.
+	http.Handle("/web/", http.StripPrefix("/web/", http.FileServer(http.Dir("web"))))
 
 	dt, ok := http.DefaultTransport.(*http.Transport)
 	if ok == false {

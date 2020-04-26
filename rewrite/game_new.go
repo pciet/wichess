@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"time"
 
 	"github.com/pciet/wichess/rules"
 )
@@ -37,25 +36,14 @@ func NewGame(tx *sql.Tx, losesPieces bool,
 		return 0
 	}
 
-	now := time.Now()
-
 	// QueryRow instead of Exec: https://github.com/lib/pq/issues/24
 	var id GameIdentifier
 	err := tx.QueryRow(GamesNewInsert,
-		rules.RandomSpecialPieceKind(),
-		losesPieces,
-		false,
 		false,
 		white,
 		false,
-		now,
-		time.Duration(0),
-		now,
 		black,
 		false,
-		now,
-		time.Duration(0),
-		now,
 		white,
 		black,
 		NoMove,

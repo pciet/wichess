@@ -1,20 +1,10 @@
 package main
 
-import (
-	"database/sql"
-
-	"github.com/pciet/wichess/rules"
-)
-
-const NewPlayerPieceCount = 3
+import "database/sql"
 
 func NewPlayer(tx *sql.Tx, name, crypt string) {
 	result, err := tx.Exec(PlayerNewInsert,
-		name,
-		crypt,
-		0, 0, 0,
-		InitialRating,
-		0, 0, 0, 0, 0, 0, 0, 0)
+		name, crypt)
 	if err != nil {
 		Panic(err)
 	}
@@ -24,9 +14,5 @@ func NewPlayer(tx *sql.Tx, name, crypt string) {
 	}
 	if count != 1 {
 		Panic(count, "rows affected by new player insert for", name)
-	}
-
-	for i := 0; i < NewPlayerPieceCount; i++ {
-		InsertNewPiece(tx, rules.RandomSpecialPieceKind(), name)
 	}
 }

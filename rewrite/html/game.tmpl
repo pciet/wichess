@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <meta charset="UTF-8">
+        <title>Wisconsin Chess</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="/web/font.css">
+        <link rel="stylesheet" type="text/css" href="/web/layout.css">
+        <link rel="stylesheet" type="text/css" href="/web/game.css">
+        <script type="text/javascript">
+            const GameInformation = {
+                ID: {{.GameHeader.ID}},
+                Conceded: {{.GameHeader.Conceded}},
+                White: {
+                    Name: {{.GameHeader.White.Name}},
+                    Acknowledge: {{.GameHeader.White.Acknowledge}},
+                },
+                Black: {
+                    Name: {{.GameHeader.Black.Name}},
+                    Acknowledge: {{.GameHeader.Black.Acknowledge}},
+                },
+                Active: {{.GameHeader.Active}},
+                Turn: {{.GameHeader.Turn}},
+                Player: {{.Name}}
+            }
+        </script>
+
+        <!-- everything happens in game.js -->
+        <script type="module" src="/web/game.js"></script>
+    </head>
+
+    <body>
+        <p>...</p>
+        <noscript>
+            <p>Welcome to Wisconsin Chess! To play your web browser must be able to run JavaScript.</p>
+        </noscript>
+    </body>
+
+</html>

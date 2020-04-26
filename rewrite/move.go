@@ -73,7 +73,7 @@ func (g Game) MoveLegal(m rules.Move) bool {
 // TODO: cleaner func signatures
 
 // DoMove does the database interactions necessary to do a move. Illegal moves can be done.
-// The board updates and if a promotion is needed is returned.
+// The board updates and if a promotion is needed are returned.
 func (g Game) DoMove(tx *sql.Tx, m rules.Move,
 	promotion rules.PieceKind) ([]rules.AddressedSquare, bool) {
 	// TODO: changes, taken

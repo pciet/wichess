@@ -51,20 +51,11 @@ func LoadGameBoard(tx *sql.Tx, id GameIdentifier) Board {
 func LoadGameHeader(tx *sql.Tx, id GameIdentifier) GameHeader {
 	h := GameHeader{ID: id}
 	err := tx.QueryRow(GamesHeaderQuery, id).Scan(
-		&h.PrizePiece,
-		&h.Competitive,
-		&h.Recorded,
 		&h.Conceded,
 		&h.White.Name,
 		&h.White.Acknowledge,
-		&h.White.LatestMove,
-		&h.White.Elapsed,
-		&h.White.ElapsedUpdated,
 		&h.Black.Name,
 		&h.Black.Acknowledge,
-		&h.Black.LatestMove,
-		&h.Black.Elapsed,
-		&h.Black.ElapsedUpdated,
 		&h.Active,
 		&h.PreviousActive,
 		&h.From,
