@@ -10,7 +10,7 @@ export let promoting = false
 export function showPromotion(reverse = false) {
     promoting = true
 
-    layoutSelector('#description', promotion)
+    layoutSelector('#descriptionmargin', promotion)
     
     document.querySelector('#queenprom').addEventListener('click', promClick(Queen, reverse))
     document.querySelector('#rookprom').addEventListener('click', promClick(Rook, reverse))

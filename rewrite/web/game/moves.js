@@ -15,7 +15,9 @@ export function fetchedMoves(moves) {
         return
     }
 
-    if (moves.state !== State.PROMOTION) {
+    if (moves.state === State.PROMOTION) {
+        showPromotion()
+    } else {
         replaceAndWriteBoardMoves(moves.moveSets)
     }
 }

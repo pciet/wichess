@@ -11,14 +11,18 @@ const landscapeBar = `
 </div>
 <div id="controls">
     <div class="inline">
-        <div></div>
-        <div id="mute"></div>
-        <div></div>
+        <div>
+            <div></div>
+            <div id="mute"></div>
+            <div></div>
+        </div>
+        `+button('navbutton', 'back', 'Back', false)+`
     </div>
     <div class="inline" id="buttons">
-        ` + button('navbutton', 'ack', 'Acknowledge', false) + button('navbutton', 'back', 'Back', false) + `
+        ` + button('navbutton', 'ack', 'Acknowledge', false) + `
     </div>
-    <div class="inline" id="description"></div>
+    <div class="inline" id="descriptionmargin">
+    </div>
 </div>
 `
 

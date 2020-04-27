@@ -64,12 +64,14 @@ func AutoplayMove(g rules.Game, o rules.Orientation) (rules.Move, rules.PieceKin
 		return rules.NoMove, rules.Queen
 	}
 
+	takes := rules.MovesAddressSlice(g.NaiveTakeMoves(o.Opponent()))
+
 	var best rules.Move
 	bestRating := -100
 	for _, moveset := range moves {
 		for _, moveTo := range moveset.Moves {
 			move := rules.Move{moveset.From, moveTo}
-			rating := AutoplayRating(g, move, o)
+			rating := AutoplayRating(g, move, o, takes)
 			if rating > bestRating {
 				bestRating = rating
 				best = move
@@ -86,7 +88,8 @@ func AutoplayMove(g rules.Game, o rules.Orientation) (rules.Move, rules.PieceKin
 	return best, rules.NoKind
 }
 
-func AutoplayRating(g rules.Game, of rules.Move, by rules.Orientation) int {
+func AutoplayRating(g rules.Game, of rules.Move,
+	by rules.Orientation, threats []rules.Address) int {
 	opponent := by.Opponent()
 	future := g.AfterMove(of)
 	_, state := future.Moves(opponent)
@@ -123,6 +126,13 @@ func AutoplayRating(g rules.Game, of rules.Move, by rules.Orientation) int {
 			rating += 2
 		case rules.Knight:
 			rating += 1
+		}
+	}
+
+	for _, t := range threats {
+		if t == of.To {
+			rating -= 3
+			break
 		}
 	}
 

@@ -5,9 +5,9 @@ export function button(buttonclass, id, text, inline) {
     }
     b += `">
             <div class="buttonsurface ` + buttonclass + `" id="` + id + `">
-                <div class="buttonverticalcentering"></div>
+                <div></div>
                 <div class="buttontext">` + text + `</div>
-                <div class="buttonverticalcentering"></div>
+                <div></div>
             </div>
         </div>
     `

@@ -25,7 +25,7 @@ export function writeGameCondition() {
         h = States[Condition].name
     }
 
-    if (Condition === States.PROMOTION) {
+    if (Condition === State.PROMOTION) {
         showPromotion()
     }
 

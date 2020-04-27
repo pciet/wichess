@@ -32,13 +32,19 @@ a:link, a:visited {
 }
 
 #players {
-    background-color: rgb(15,30,60);
-    height: 20%;
-    border-radius: 0 0 5px 5px;
+    height: 30%;
+}
+
+#versus {
+    height: 10%;
+    font-size: 1.2rem;
+    font-style: italic;
+    text-align: center;
+    color: rgb(140,60,60);
 }
 
 .name {
-    font-size: 2rem;
+    font-size: 1.9rem;
     text-align: center;
     color: rgb(205,180,160);
 }
@@ -58,7 +64,6 @@ a:link, a:visited {
 }
 
 #controls {
-    background-color: rgb(1,20,50);
     height: 20%;
 }
 
@@ -76,36 +81,33 @@ a:link, a:visited {
     width: 80%;
 }
 
-#description {
+#descriptionmargin {
     width: 40%;
+    padding: 5px;
+}
+
+#piece {
+    height: 50%;
+    text-align: center;
+    font-size: 1.3rem;
+    color: rgb(100,140,50);
 }
 
 .buttonmargin {
-    padding: 0.3rem;
+    padding: 10px;
 }
 
 .buttonsurface {
-    border: medium outset rgb(100,155,175);
+    border: medium outset rgb(80,135,125);
     border-radius: 5%;
-    background-color: rgb(5,65,150);
-}
-
-.buttonverticalcentering {
-    height: 15%;
+    background-color: rgb(5,35,120);
 }
 
 .buttontext {
     user-select: none;
     text-align: center;
     font-size: 1rem;
-    color: rgb(180,235,255);
-}
-
-#piece {
-    height: 50%;
-    text-align: center;
-    font-size: 1.2rem;
-    color: rgb(100,150,250);
+    color: rgb(190,200,210);
 }
 
 .pieceimg {
