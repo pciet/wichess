@@ -1,6 +1,7 @@
 package rules
 
-// Each piece has a kind which indicates its possible move sets and abilities.
+// PieceKind is a positive integer that
+// indiciates the piece's moves and characteristics.
 type PieceKind int
 
 type Piece struct {
@@ -8,15 +9,27 @@ type Piece struct {
 	Orientation `json:"o"`
 	Moved       bool `json:"-"`
 
-	Swaps     bool `json:"-"`
+	Swaps bool `json:"-"`
+
+	// Neutralizes
 	Detonates bool `json:"-"`
-	Guards    bool `json:"-"`
+
+	// Asserts
+	Guards bool `json:"-"`
+
 	Fortified bool `json:"-"`
 	Locks     bool `json:"-"`
-	Rallies   bool `json:"-"`
-	MustEnd   bool `json:"-"`
-	Ghost     bool `json:"-"`
-	Recons    bool `json:"-"`
+
+	// Enables
+	Rallies bool `json:"-"`
+
+	MustEnd bool `json:"-"`
+
+	// Quick
+	Ghost bool `json:"-"`
+
+	// Reveals
+	Recons bool `json:"-"`
 }
 
 var (
@@ -37,29 +50,21 @@ func (a Piece) ApplyCharacteristics() Piece {
 	switch a.Kind {
 	case King, Queen, Rook, Knight, Bishop, Pawn, NoKind:
 		break
-	case SwapPawn, SwapKnight, SwapBishop, SwapRook:
-		a.Swaps = true
-	case DetonatePawn, DetonateKnight, DetonateBishop, DetonateRook:
+	case War:
 		a.Detonates = true
-	case GuardPawn, GuardKnight, GuardBishop, GuardRook:
+	case Constructive:
 		a.Guards = true
-	case FortifyPawn, FortifyKnight, FortifyBishop, FortifyRook:
-		a.Fortified = true
-	case LockPawn, LockKnight, LockBishop, LockRook:
-		a.Locks = true
-	case RallyPawn, RallyKnight, RallyBishop, RallyRook:
-		a.Rallies = true
-	case GhostBishop, GhostRook:
-		a.Ghost = true
-	case ReconPawn, ReconKnight, ReconBishop, ReconRook:
+	case Form:
 		a.Recons = true
+		a.Rallies = true
 	default:
 		Panic("unknown piece kind", a.Kind, a)
 	}
 	return a
 }
 
-// All special pieces are based on a normal piece, called the basic kind of the piece.
+// All special pieces are based on a normal piece, called
+// the basic kind of the piece.
 func BasicKind(p PieceKind) PieceKind {
 	switch p {
 	case NoKind:
@@ -68,13 +73,13 @@ func BasicKind(p PieceKind) PieceKind {
 		return King
 	case Queen:
 		return Queen
-	case Rook, SwapRook, LockRook, ReconRook, DetonateRook, GhostRook, GuardRook, RallyRook, FortifyRook, ExtendedRook:
-		return Rook
-	case Bishop, SwapBishop, LockBishop, ReconBishop, DetonateBishop, GhostBishop, GuardBishop, RallyBishop, FortifyBishop, ExtendedBishop:
+	case Bishop:
 		return Bishop
-	case Knight, SwapKnight, LockKnight, ReconKnight, DetonateKnight, GuardKnight, RallyKnight, FortifyKnight, ExtendedKnight:
+	case Rook:
+		return Rook
+	case Knight, Constructive:
 		return Knight
-	case Pawn, SwapPawn, LockPawn, ReconPawn, DetonatePawn, GuardPawn, RallyPawn, FortifyPawn, ExtendedPawn:
+	case Pawn, War, Form:
 		return Pawn
 	default:
 		Panic("unexpected piece kind", p)
@@ -82,9 +87,9 @@ func BasicKind(p PieceKind) PieceKind {
 	}
 }
 
-// A special piece is one that's not from the normal chess set (king, queen, rook, bishop, knight, pawn).
 func RandomSpecialPieceKind() PieceKind {
-	return PieceKind(randomSource.Int63n(int64(PieceKindCount-BasicPieceKindCount)) + 1 + BasicPieceKindCount)
+	return PieceKind(randomSource.Int63n(
+		int64(PieceKindCount-BasicPieceKindCount-1)) + 1 + BasicPieceKindCount)
 }
 
 func IsBasicKind(p PieceKind) bool {
@@ -109,6 +114,12 @@ func (a PieceKind) String() string {
 		return "knight"
 	case Pawn:
 		return "pawn"
+	case War:
+		return "war"
+	case Constructive:
+		return "constructive"
+	case Form:
+		return "form"
 	default:
 		return "undefined"
 	}

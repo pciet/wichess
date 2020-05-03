@@ -6,42 +6,16 @@ const (
 	Queen
 	Rook
 	Bishop
+	// knights are quick (ghosts)
 	Knight
 	Pawn
-	SwapPawn // pawns and knights don't have a ghost kind
-	LockPawn
-	ReconPawn
-	DetonatePawn
-	GuardPawn
-	RallyPawn
-	FortifyPawn
-	ExtendedPawn
-	SwapKnight
-	LockKnight
-	ReconKnight
-	DetonateKnight
-	GuardKnight
-	RallyKnight
-	FortifyKnight
-	ExtendedKnight
-	SwapBishop
-	LockBishop
-	ReconBishop
-	DetonateBishop
-	GhostBishop
-	GuardBishop
-	RallyBishop
-	FortifyBishop
-	ExtendedBishop
-	SwapRook
-	LockRook
-	ReconRook
-	DetonateRook
-	GhostRook
-	GuardRook
-	RallyRook
-	FortifyRook
-	ExtendedRook
+	// pawn that neutralizes (detonates) but can only move
+	// one square forward for its first move
+	War
+	// pawn that reveals (recon) and enables (rallies)
+	Form
+	// knight that asserts (guards)
+	Constructive
 	PieceKindCount // add new piece kinds between this and the previous
 )
 

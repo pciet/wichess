@@ -1,7 +1,9 @@
 import { layoutSelector } from '../layout.js'
-import { pieceLookImageName, IDPiece } from '../piece.js'
-import { Pawn, Knight, Bishop, Rook, Queen, King } from '../pieceDefs.js'
+import { piecePickImageName, IDPiece } from '../piece.js'
+import { Pieces, Pawn, Knight, 
+    Bishop, Rook, Queen, King } from '../pieceDefs.js'
 import { Mode } from '../index.js'
+import { randomInt } from '../random.js'
 
 import { PageMode } from './mode.js'
 
@@ -51,10 +53,14 @@ export function addArmySelection(mode) {
 
 function addArmyPictures(selection) {
     for (let i = 0; i < 16; i++) {
-        let t = '<img class="pieceimg" src="/web/img/'
-        t += pieceLookImageName(selection[i].kind) + '">'
-        document.querySelector('#a'+i).innerHTML = t
+        addArmyPicture(i, selection[i].kind)
     }
+}
+
+function addArmyPicture(index, kind) {
+    let t = '<img class="pieceimg" src="/web/img/'
+    t += piecePickImageName(kind) + '">'
+    document.querySelector('#a'+index).innerHTML = t
 }
 
 export function armySelectionJSON() {
@@ -72,4 +78,57 @@ export function armySelectionJSON() {
         j[i] = s[i].id
     }
     return JSON.stringify(j)
+}
+
+export function armyDefaultAt(index) {
+    let k
+    switch (Mode) {
+    case PageMode.COMPUTER:
+        ComputerArmy[index].kind = DefaultArmy[index].kind
+        k = ComputerArmy[index].kind
+        ComputerArmy[index].id = 0
+        break
+    case PageMode.PUBLIC:
+        PublicArmy[index].kind = DefaultArmy[index].kind
+        k = PublicArmy[index].kind
+        PublicArmy[index].id = 0
+        break
+    }
+    addArmyPicture(index, k)
+}
+
+// randomArmyReplace returns the index that was replaced.
+// A random basic kind slot for the special kind is replaced.
+export function randomArmyReplace(kind) {
+    let slot
+    switch (Pieces[kind].basicKind) {
+    case Pawn:
+        slot = randomInt(7) + 8
+        break
+    case Rook:
+        if (randomInt(1) === 0) {
+            slot = 0
+        } else {
+            slot = 7
+        }
+        break
+    case Knight:
+        if (randomInt(1) === 0) {
+            slot = 1
+        } else {
+            slot = 6
+        }
+        break
+    case Bishop:
+        if (randomInt(1) === 0) {
+            slot = 2
+        } else {
+            slot = 5
+        }
+        break
+    default:
+        throw new Error("can't replace kind " + kind)
+    }
+    addArmyPicture(slot, kind)
+    return slot
 }

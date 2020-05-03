@@ -102,7 +102,7 @@ function interiorDimensions(e) {
 
 function scaleFont() {
     const pixelCount = window.innerWidth * window.innerHeight
-    const scale = (0.000001204819 * pixelCount) + 0.3
+    const scale = (0.0000012 * pixelCount) + 0.3
     for (const s of document.styleSheets) {
         for (const r of s.cssRules) {
             if (r.selectorText !== 'html') {

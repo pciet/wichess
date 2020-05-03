@@ -1,4 +1,4 @@
-import { addLayout, layout } from './layout.js'
+import { addLayout, layout, scaleFont } from './layout.js'
 
 import { PageMode, pickMode, modeClick } from './index/mode.js'
 import { landscape } from './index/layouts.js'
@@ -12,6 +12,7 @@ addLayout(100, landscape)
 function layoutPage() {
     layout()
     pickMode(Mode)
+    scaleFont()
 
     document.querySelector('#computer').onclick = modeClick(PageMode.COMPUTER)
     document.querySelector('#public').onclick = modeClick(PageMode.PUBLIC)

@@ -4,13 +4,15 @@ import { setMode, Mode } from '../index.js'
 import { addPublicMatches } from './public.js'
 import { addCollection } from './collection.js'
 import { addArmySelection } from './army.js'
-import { sizePickCells } from './pick.js'
+import { sizePickCells, addPickImages, addPickClicks } from './pick.js'
 import { content, playButton } from './layouts.js'
 import { addComputerPlayClick } from './computer.js'
 
 export const PageMode = {
-    COMPUTER: 0, // play against AI opponent with any pieces in your collection
-    PUBLIC: 1 // play against people with up to two pieces from a random pool
+    // play against AI opponent with any pieces in your collection
+    COMPUTER: 0, 
+    // play against people with up to two pieces from a random pool
+    PUBLIC: 1
 }
 
 export function pickMode(mode) {
@@ -41,6 +43,8 @@ export function pickMode(mode) {
 
     addArmySelection(mode)
     sizePickCells()
+    addPickImages()
+    addPickClicks()
 }
 
 export function modeClick(mode) {

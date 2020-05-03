@@ -130,6 +130,7 @@ a:link, a:visited {
 
 #board {
     background-color: rgb(15,5,0);
+    border: thin solid rgb(250,185,145);
 }
 
 .chesssquare {

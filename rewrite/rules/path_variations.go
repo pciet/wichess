@@ -42,32 +42,17 @@ var PieceRelPaths = func() map[PieceKind]RelPathVariations {
 				{{-1, 1}},
 			},
 		},
-		ExtendedPawn: {
-			First: {
-				{{0, 1}, {0, 2}, {0, 3}},
-			},
+		War: {
 			NormalMove: {
-				{{0, 1}, {0, 2}},
+				{{0, 1}},
 			},
 			RallyMove: {
-				{{0, 1}, {0, 2}, {0, 3}},
+				{{0, 1}, {0, 2}},
 			},
 			Take: {
 				{{1, 1}},
 				{{-1, 1}},
 			},
-		},
-		ExtendedKnight: {
-			NormalMove: TripleKnightPaths,
-			RallyMove:  ExtendedKnightRallyPaths,
-		},
-		ExtendedBishop: {
-			NormalMove: ExtendedBishopPaths,
-			RallyMove:  ExtendedBishopRallyPaths,
-		},
-		ExtendedRook: {
-			NormalMove: ExtendedRookPaths,
-			RallyMove:  ExtendedRookRallyPaths,
 		},
 	}
 
@@ -93,25 +78,8 @@ var PieceRelPaths = func() map[PieceKind]RelPathVariations {
 		}
 	}
 
-	assign(m[Rook], []PieceKind{
-		SwapRook, LockRook, ReconRook, DetonateRook,
-		GhostRook, GuardRook, RallyRook, FortifyRook,
-	})
-
-	assign(m[Bishop], []PieceKind{
-		SwapBishop, LockBishop, ReconBishop, DetonateBishop,
-		GhostBishop, GuardBishop, RallyBishop, FortifyBishop,
-	})
-
-	assign(m[Knight], []PieceKind{
-		SwapKnight, LockKnight, ReconKnight, DetonateKnight,
-		GuardKnight, RallyKnight, FortifyKnight,
-	})
-
-	assign(m[Pawn], []PieceKind{
-		SwapPawn, LockPawn, ReconPawn, DetonatePawn, GuardPawn,
-		RallyPawn, FortifyPawn,
-	})
+	assign(m[Pawn], []PieceKind{Form})
+	assign(m[Knight], []PieceKind{Constructive})
 
 	return m
 }()

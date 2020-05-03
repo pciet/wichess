@@ -1,6 +1,8 @@
 CREATE TABLE Players (
     name VARCHAR(64) PRIMARY KEY,
-    crypt CHAR(64) UNIQUE NOT NULL
+    crypt CHAR(64) UNIQUE NOT NULL,
+    left_piece INTEGER,
+    right_piece INTEGER
 );
 
 CREATE TABLE Sessions (

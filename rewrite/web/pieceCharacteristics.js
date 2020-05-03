@@ -1,13 +1,9 @@
 export const Characteristic = {
-    SOVEREIGN: 0,
-    GHOST: 1,
-    SWAP: 2,
-    LOCK: 3,
-    RECON: 4,
-    DETONATE: 5,
-    GUARD: 6,
-    RALLY: 7,
-    FORTIFY: 8
+    NEUTRALIZES: 0,
+    ASSERTS: 1,
+    ENABLES: 2,
+    QUICK: 3,
+    REVEALS: 4,
 }
 
 function CharDef(name, description) {
@@ -16,13 +12,9 @@ function CharDef(name, description) {
 }
 
 export const Characteristics = [
-    new CharDef('Sovereign', 'Putting this piece into checkmate wins the game.'),
-    new CharDef('Ghost', 'This piece can move over other pieces to get to a square.'),
-    new CharDef('Swap', 'This piece can swap squares with a friendly piece.'),
-    new CharDef('Lock', 'Opponent pieces adjacent to this piece cannot move.'),
-    new CharDef('Recon', 'Friendly pieces close behind this one can move to the square in front of it.'),
-    new CharDef('Detonate', 'When taken this piece takes all adjacent pieces.'),
-    new CharDef('Guard', 'When an opponent piece moves adjacent this piece takes that piece automatically.'),
-    new CharDef('Rally', 'Friendly pieces adjacent to this one gain additional moves.'),
-    new CharDef('Fortify', 'This piece cannot be taken by pawns.')
+    new CharDef('Neutralizes', 'When taken, surrounding pieces from both sides are also taken.'),
+    new CharDef('Asserts', 'This piece moves itself to take opponent pieces that move adjacent.'),
+    new CharDef('Enables', 'Adjacent pieces from the same side gain more moves.'),
+    new CharDef('Quick', 'This piece moves over other pieces.'),
+    new CharDef('Reveals', 'Ally pieces behind this piece can move to the square ahead.'),
 ]

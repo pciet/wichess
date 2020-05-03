@@ -37,3 +37,7 @@ export function pieceImageName(addressIndex, kind, orientation) {
 export function pieceLookImageName(kind) {
     return 'look_' + Pieces[kind].codeName + '.png'
 }
+
+export function piecePickImageName(kind) {
+    return 'pick_' + Pieces[kind].codeName + '.png'
+}

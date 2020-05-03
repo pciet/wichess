@@ -1,3 +1,8 @@
+body {
+    background-color: black;
+    color: rgb(180,200,205);
+}
+
 form {
     margin: 0 auto;
     width: 20em;
