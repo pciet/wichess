@@ -41,14 +41,8 @@ export function addArmySelection(mode) {
     }
     layoutSelector('#army', a)
 
-    switch (mode) {
-    case PageMode.COMPUTER:
-        addArmyPictures(ComputerArmy)
-        break
-    case PageMode.PUBLIC:
-        addArmyPictures(PublicArmy)
-        break
-    }
+    const army = armyForMode(Mode)
+    addArmyPictures(army)
 }
 
 function addArmyPictures(selection) {
@@ -65,15 +59,7 @@ function addArmyPicture(index, kind) {
 
 export function armySelectionJSON() {
     const j = []
-    let s
-    switch (Mode) {
-    case PageMode.COMPUTER:
-        s = ComputerArmy
-        break
-    case PageMode.PUBLIC:
-        s = PublicArmy
-        break
-    }
+    const s = armyForMode(Mode)
     for (let i = 0; i < 16; i++) {
         j[i] = s[i].id
     }
@@ -95,6 +81,7 @@ export function armyDefaultAt(index) {
         break
     }
     addArmyPicture(index, k)
+    document.querySelector('#a'+index).classList.remove('pickedarmycell')
 }
 
 // randomArmyReplace returns the index that was replaced.
@@ -104,31 +91,63 @@ export function randomArmyReplace(kind) {
     switch (Pieces[kind].basicKind) {
     case Pawn:
         slot = randomInt(7) + 8
+        if (slotTaken(slot) === true) {
+            slot++
+            if (slot === 16) {
+                slot = 8
+            }
+        }
         break
     case Rook:
-        if (randomInt(1) === 0) {
-            slot = 0
-        } else {
-            slot = 7
-        }
+        slot = notTakenSlot(0, 7)
         break
     case Knight:
-        if (randomInt(1) === 0) {
-            slot = 1
-        } else {
-            slot = 6
-        }
+        slot = notTakenSlot(1, 6)
         break
     case Bishop:
-        if (randomInt(1) === 0) {
-            slot = 2
-        } else {
-            slot = 5
-        }
+        slot = notTakenSlot(2, 5)
         break
     default:
         throw new Error("can't replace kind " + kind)
     }
+
     addArmyPicture(slot, kind)
+
+    // TODO: special pieces need to be identified
+    armyForMode(Mode)[slot] = new IDPiece(0, kind)
+
     return slot
+}
+
+function armyForMode(m) {
+    switch (m) {
+    case PageMode.COMPUTER:
+        return ComputerArmy
+    case PageMode.PUBLIC:
+        return PublicArmy
+    }
+    throw new Error('unknown page mode ' + m)
+}
+
+function notTakenSlot(left, right) {
+    if (slotTaken(left) === true) {
+        return right
+    } else if (slotTaken(right) === true) {
+        return left
+    } else {
+        if (randomInt(1) === 0) {
+            return left
+        } else {
+            return right
+        }
+    }
+}
+
+function slotTaken(slot) {
+    const a = armyForMode(Mode)
+    const kind = a[slot].kind
+    if (kind !== Pieces[kind].basicKind) {
+        return true
+    }
+    return false
 }

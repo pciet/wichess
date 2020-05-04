@@ -1,14 +1,19 @@
 export const landscape = `
 <div class="inline" id="modepick">
-    <div></div>
+    <div class="modepickspacer"></div>
     <div class="modebuttonmargin">
         <div class="modebutton" id="public"><br>Public</div>
     </div>
-    <div></div>
+    <div>
+        <div></div>
+        <div id="title">Wisconsin Chess</div>
+        <div id="name">`+Name+`</div>
+        <div></div>
+    </div>
     <div class="modebuttonmargin">
         <div class="modebutton" id="computer"><br>Computer</div>
     </div>
-    <div></div>
+    <div class="modepickspacer"></div>
 </div>
 <div class="inline" id="contentdiv">
     <div class="inline" id="contentspacer"></div>
