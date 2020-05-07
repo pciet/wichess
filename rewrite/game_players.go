@@ -66,13 +66,29 @@ func GameOpponent(tx *sql.Tx, id GameIdentifier, of string) string {
 	return ""
 }
 
+// GamePlayers returns the white and black player names in that order.
+func GamePlayers(tx *sql.Tx, id GameIdentifier) (string, string) {
+	var white, black string
+	err := tx.QueryRow(GamesPlayersQuery, id).Scan(&white, &black)
+	if err == sql.ErrNoRows {
+		return "", ""
+	} else if err != nil {
+		Panic(err)
+	}
+	return white, black
+}
+
 func GamePreviousActive(tx *sql.Tx, id GameIdentifier) string {
-	var pa string
+	var pa bool
 	err := tx.QueryRow(GamesPreviousActiveQuery, id).Scan(&pa)
 	if err == sql.ErrNoRows {
 		return ""
 	} else if err != nil {
 		Panic(err)
 	}
-	return pa
+	white, black := GamePlayers(tx, id)
+	if pa == false {
+		return white
+	}
+	return black
 }

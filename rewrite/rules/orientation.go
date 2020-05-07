@@ -29,3 +29,10 @@ func (an Orientation) String() string {
 	Panic("unknown orientation", an)
 	return ""
 }
+
+func BoolToOrientation(a bool) Orientation {
+	if a == false {
+		return White
+	}
+	return Black
+}

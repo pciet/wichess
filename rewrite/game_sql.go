@@ -2,26 +2,33 @@ package main
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
 )
 
 const (
 	GamesTable = "games"
 
-	GamesPiece            = "piece"
-	GamesConceded         = "conceded"
+	GamesIdentifier = "id"
+
+	GamesConceded = "conceded"
+
 	GamesWhite            = "white"
 	GamesWhiteAcknowledge = "white_ack"
+
 	GamesBlack            = "black"
 	GamesBlackAcknowledge = "black_ack"
-	GamesActive           = "active"
-	GamesPreviousActive   = "previous_active"
-	GamesFrom             = "move_from"
-	GamesTo               = "move_to"
-	GamesDrawTurns        = "draw_turns"
-	GamesTurn             = "turn"
-	GamesIdentifier       = "game_id"
+
+	GamesActive         = "active"
+	GamesPreviousActive = "previous_active"
+
+	GamesMoveFrom = "move_from"
+	GamesMoveTo   = "move_to"
+
+	GamesDrawTurns = "draw_turns"
+	GamesTurn      = "turn"
+
+	GamesBoard       = "board"
+	GamesBoardLength = 64
 )
 
 var (
@@ -34,23 +41,19 @@ var (
 		GamesBlackAcknowledge,
 		GamesActive,
 		GamesPreviousActive,
-		GamesFrom,
-		GamesTo,
+		GamesMoveFrom,
+		GamesMoveTo,
 		GamesDrawTurns,
 		GamesTurn,
 	}
 
-	GamesHeaderQuery = SQLQuery(GamesHeaderSelects, GamesTable, GamesIdentifier)
+	GamesHeaderQuery          = SQLQuery(GamesHeaderSelects, GamesTable, GamesIdentifier)
+	GamesHeaderForUpdateQuery = SQLForUpdateQuery(GamesHeaderSelects,
+		GamesTable, GamesIdentifier)
 
-	GamesBoardSelects = func() []string {
-		s := make([]string, 64)
-		for i, _ := range s {
-			s[i] = "s" + strconv.Itoa(i)
-		}
-		return s
-	}()
-
-	GamesBoardQuery = SQLQuery(GamesBoardSelects, GamesTable, GamesIdentifier)
+	GamesBoardQuery          = SQLQuery([]string{GamesBoard}, GamesTable, GamesIdentifier)
+	GamesBoardForUpdateQuery = SQLForUpdateQuery([]string{GamesBoard},
+		GamesTable, GamesIdentifier)
 
 	GamesOpponentAndActiveQuery = SQLQuery([]string{
 		GamesActive,
@@ -71,16 +74,11 @@ var (
 			s.WriteString(v)
 			s.WriteString(", ")
 		}
-		for i := 0; i < 64; i++ {
-			fmt.Fprintf(&s, "s%d", i)
-			if i != 63 {
-				s.WriteString(", ")
-			}
-		}
+		s.WriteString(GamesBoard)
 		s.WriteString(") VALUES (")
-		for i := 1; i <= 64+len(GamesHeaderSelects); i++ {
+		for i := 1; i <= len(GamesHeaderSelects)+1; i++ {
 			fmt.Fprintf(&s, "$%d", i)
-			if i != 64+len(GamesHeaderSelects) {
+			if i != (len(GamesHeaderSelects) + 1) {
 				s.WriteString(", ")
 			}
 		}
@@ -96,9 +94,13 @@ var (
 	GamesHasPlayerQuery = SQLGeneralizedWhereQuery(nil, GamesTable,
 		GamesIdentifier+"=$1 AND ("+GamesWhite+"=$2 OR "+GamesBlack+"=$2)")
 
-	GamesTurnQuery           = SQLQuery([]string{GamesTurn}, GamesTable, GamesIdentifier)
-	GamesOpponentQuery       = SQLQuery([]string{GamesWhite, GamesBlack}, GamesTable, GamesIdentifier)
-	GamesPreviousActiveQuery = SQLQuery([]string{GamesPreviousActive}, GamesTable, GamesIdentifier)
+	GamesTurnQuery     = SQLQuery([]string{GamesTurn}, GamesTable, GamesIdentifier)
+	GamesOpponentQuery = SQLQuery([]string{GamesWhite, GamesBlack},
+		GamesTable, GamesIdentifier)
+	GamesPreviousActiveQuery = SQLQuery([]string{GamesPreviousActive},
+		GamesTable, GamesIdentifier)
+	GamesPlayersQuery = SQLQuery([]string{GamesWhite, GamesBlack},
+		GamesTable, GamesIdentifier)
 
 	GamesAcknowledgeUpdate = func() string {
 		var s strings.Builder

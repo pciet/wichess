@@ -9,31 +9,32 @@ import (
 // Login queries the database for the username and encrypted password.
 // The password argument is the unencrypted password which is then re-encrypted for
 // comparsion to the database value.
-// If the credentials are correct then a session key is returned, otherwise an empty
-// string is returned.
+// If the credentials are correct then the player's ID in the players table and
+// a new session key are returned.
 // If the username doesn't exist in the database then it and the encrypted password
 // are inserted.
-func Login(name, password string) string {
+func Login(name, password string) (int, string) {
 	tx := DatabaseTransaction()
 	defer tx.Commit()
 
+	var id int
 	var c string
-	err := tx.QueryRow(PlayerCryptQuery, name).Scan(&c)
+	err := tx.QueryRow(PlayersCryptQuery, name).Scan(&id, &c)
 	switch err {
 	case sql.ErrNoRows:
 		crypt, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 		if err != nil {
 			Panic(err)
 		}
-		NewPlayer(tx, name, string(crypt))
+		id = NewPlayer(tx, name, string(crypt))
 	case nil:
 		err = bcrypt.CompareHashAndPassword([]byte(c), []byte(password))
 		if err != nil {
-			return ""
+			return 0, ""
 		}
 	default:
 		Panic(err)
 	}
 
-	return NewSession(tx, name)
+	return id, NewSession(tx, id)
 }

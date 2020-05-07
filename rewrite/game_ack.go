@@ -7,7 +7,7 @@ import "database/sql"
 // AcknowledgeGameComplete works improperly if called before the game
 // is actually complete.
 func AcknowledgeGameComplete(tx *sql.Tx, id GameIdentifier, player string) {
-	h := LoadGameHeader(tx, id)
+	h := LoadGameHeader(tx, id, true)
 	if ((player == h.White.Name) && h.Black.Acknowledge) ||
 		((player == h.Black.Name) && h.White.Acknowledge) ||
 		(h.Black.Name == ComputerPlayerName) {

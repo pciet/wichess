@@ -67,6 +67,10 @@ func SQLQueryImplementation(selects []string, table, where string, forUpdate boo
 }
 
 func SQLInsert(table string, inserts []string) string {
+	return SQLInsertReturning(table, inserts, "")
+}
+
+func SQLInsertReturning(table string, inserts []string, returns string) string {
 	if table == "" {
 		Panic("no table")
 	}
@@ -96,7 +100,13 @@ func SQLInsert(table string, inserts []string) string {
 			s.WriteString(", ")
 		}
 	}
-	s.WriteString(");")
+	if returns == "" {
+		s.WriteString(");")
+	} else {
+		s.WriteString(") RETURNING ")
+		s.WriteString(returns)
+		s.WriteRune(';')
+	}
 	if DebugSQL {
 		fmt.Println(s.String())
 	}

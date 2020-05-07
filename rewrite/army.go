@@ -34,8 +34,8 @@ var BasicArmy = func() [16]rules.PieceKind {
 // of their pieces to include in an ArmyRequest.
 // The array index is the army square address index from
 // the perspective of the white player (see the BasicArmy var).
-// An ID of 0 means use the regular chess piece.
-type ArmyRequest [16]PieceIdentifier
+// The NotInCollection value requests a regular piece.
+type ArmyRequest [16]CollectionSlot
 
 func DecodeArmyRequest(jsonBody io.Reader) (ArmyRequest, error) {
 	var a ArmyRequest

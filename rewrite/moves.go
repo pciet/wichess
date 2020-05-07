@@ -26,12 +26,10 @@ func (g Game) Moves() ([]rules.MoveSet, rules.State) {
 	game := rules.MakeGame(g.Board.Board,
 		rules.AddressIndex(g.Header.From), rules.AddressIndex(g.Header.To))
 
-	active := ActiveOrientation(g.Header.Active, g.Header.White.Name, g.Header.Black.Name)
-
-	moves, state := game.Moves(active)
+	moves, state := game.Moves(g.Header.Active)
 	if state == rules.Promotion {
 		promoter, _ := game.Board.PromotionNeeded()
-		if promoter != active {
+		if promoter != g.Header.Active {
 			return []rules.MoveSet{}, rules.ReversePromotion
 		}
 		return []rules.MoveSet{}, state
@@ -41,5 +39,5 @@ func (g Game) Moves() ([]rules.MoveSet, rules.State) {
 }
 
 func MovesForGame(tx *sql.Tx, id GameIdentifier) ([]rules.MoveSet, rules.State) {
-	return LoadGame(tx, id).Moves()
+	return LoadGame(tx, id, false).Moves()
 }

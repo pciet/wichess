@@ -11,13 +11,15 @@ var AlertWebSocketUpgradeHandler = AuthenticRequestHandler{
 	Get: GameIdentifierParsed(PlayerNamed(AlertGet), AlertPath),
 }
 
-func AlertGet(w http.ResponseWriter, r *http.Request, tx *sql.Tx, id GameIdentifier, player string) {
+func AlertGet(w http.ResponseWriter, r *http.Request, tx *sql.Tx,
+	id GameIdentifier, player string) {
 	tx.Commit()
 
 	conn, err := WebSocketUpgrade(w, r)
 	if err != nil {
 		DebugPrintln(err)
-		// the upgrade func in WebSocketUpgrade writes an error response, so nothing to add here
+		// the upgrade func in WebSocketUpgrade writes an
+		// error response, so nothing to add here
 		return
 	}
 

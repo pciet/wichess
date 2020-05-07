@@ -14,7 +14,7 @@ var BoardsHandler = AuthenticRequestHandler{
 }
 
 func BoardsGet(w http.ResponseWriter, r *http.Request, tx *sql.Tx, id GameIdentifier) {
-	b := LoadGameBoard(tx, id)
+	b := LoadGameBoard(tx, id, false)
 	tx.Commit()
 
 	jr := make([]rules.AddressedSquare, 0, 32)

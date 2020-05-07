@@ -56,18 +56,12 @@ func LoginAttemptHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	key := Login(name, pass)
-	if key == "" {
+	id, key := Login(name, pass)
+	if (key == "") || (id == 0) {
 		DebugPrintln("bad password for", name)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	http.SetCookie(w, &http.Cookie{
-		Name:     SessionKeyCookie,
-		Value:    key,
-		Path:     "/",
-		HttpOnly: true,
-		Secure:   false, // TODO: set true for TLS
-	})
+	CreateBrowserSession(w, id, key)
 	http.Redirect(w, r, IndexPath, http.StatusSeeOther)
 }

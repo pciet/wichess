@@ -2,9 +2,9 @@ package main
 
 import "github.com/pciet/wichess/rules"
 
-// A Board represents the 64 squares of an active game.
-// Pieces that have an identifier (special pieces collected by a player) are also listed.
+// A Board represents the 64 squares of an active game, along
+// with a list of the pieces that are in the players' collections.
 type Board struct {
 	rules.Board      `json:"b"`
-	PieceIdentifiers []AddressedPieceIdentifier `json:"pi"`
+	CollectionPieces []AddressedCollectionSlot `json:"pi"`
 }

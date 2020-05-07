@@ -22,7 +22,7 @@ func ComputerGet(w http.ResponseWriter, r *http.Request, tx *sql.Tx, requester s
 		return
 	}
 
-	WriteHTMLTemplate(w, GameHTMLTemplate, GameHTMLTemplateData{requester, LoadGameHeader(tx, id)})
+	WriteHTMLTemplate(w, GameHTMLTemplate, GameHTMLTemplateData{requester, LoadGameHeader(tx, id, false)})
 }
 
 func ComputerPost(w http.ResponseWriter, r *http.Request, tx *sql.Tx, requester string) {

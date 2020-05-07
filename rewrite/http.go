@@ -19,6 +19,9 @@ func InitializeHTTP() {
 	// All other handlers inspect the session key cookie value to be sure the request is authentic.
 	http.HandleFunc(LoginPath, LoginHandler)
 
+	// A login is ended by a GET to /quit with the session key cookie.
+	http.Handle(QuitPath, QuitHandler)
+
 	// The index webpage is a place to choose what kind of match to play. This is where the army is picked.
 	// If a timed game is in progress then the web browser is redirected to it.
 	http.Handle(IndexPath, IndexHandler)

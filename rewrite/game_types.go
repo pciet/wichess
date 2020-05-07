@@ -15,8 +15,8 @@ type (
 		Conceded       bool           `json:"-"`
 		White          GamePlayerHeader
 		Black          GamePlayerHeader
-		Active         string
-		PreviousActive string
+		Active         rules.Orientation
+		PreviousActive rules.Orientation
 		From           rules.AddressIndex
 		To             rules.AddressIndex
 		DrawTurns      int `json:"-"`

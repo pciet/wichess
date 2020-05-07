@@ -13,11 +13,11 @@ const NoMove = 64
 // Move returns the squares that changed and whether a following promotion is needed.
 func Move(tx *sql.Tx, id GameIdentifier, player string,
 	m rules.Move, promotion rules.PieceKind) ([]rules.AddressedSquare, bool) {
-	g := LoadGame(tx, id)
+	g := LoadGame(tx, id, true)
 	if g.Header.ID == 0 {
 		Panic("game", id, "not found")
 	}
-	if g.Header.Active != player {
+	if g.Header.Active != OrientationOf(player, g.Header.White.Name, g.Header.Black.Name) {
 		DebugPrintln(player, "not active", g.Header.Active)
 		return nil, false
 	}
@@ -25,8 +25,7 @@ func Move(tx *sql.Tx, id GameIdentifier, player string,
 	if promotion != rules.NoKind {
 		by, needed := g.Board.PromotionNeeded()
 		if (needed == false) ||
-			(by != ActiveOrientation(g.Header.Active,
-				g.Header.White.Name, g.Header.Black.Name)) {
+			(by != g.Header.Active) {
 			DebugPrintln("invalid promotion request by", player)
 			return nil, false
 		}
@@ -47,7 +46,7 @@ func (g Game) MoveLegal(m rules.Move) bool {
 		return false
 	}
 
-	if p.Orientation != ActiveOrientation(g.Header.Active, g.Header.White.Name, g.Header.Black.Name) {
+	if p.Orientation != g.Header.Active {
 		DebugPrintln("active player", g.Header.Active, "not moving player")
 		return false
 	}
@@ -85,14 +84,12 @@ func (g Game) DoMove(tx *sql.Tx, m rules.Move,
 		changes, _ = g.Board.DoMove(m)
 	}
 
-	// TODO: the piece ID must be determined here somehow so it's correctly put into the database
-
 	uc := make([]AddressedPiece, len(changes))
 	for i, s := range changes {
 		uc[i] = AddressedPiece{
 			Address: s.Address,
 			Piece: Piece{
-				ID:    0,
+				Slot:  NotInCollection,
 				Piece: rules.Piece(s.Square),
 			},
 		}
@@ -110,7 +107,7 @@ func (g Game) DoMove(tx *sql.Tx, m rules.Move,
 		active = promoterName
 	} else if promotion != rules.NoKind {
 		// if the promoter was not previous active then this is a reverse promotion
-		if promoterName != g.Header.PreviousActive {
+		if OrientationOf(promoterName, g.Header.White.Name, g.Header.Black.Name) != g.Header.PreviousActive {
 			active = promoterName
 		}
 		// otherwise a promotion does the regular active player swap
@@ -118,10 +115,11 @@ func (g Game) DoMove(tx *sql.Tx, m rules.Move,
 
 	// TODO: determine draw turn count (the 0 in UpdateGame)
 
-	UpdateGame(tx, g.Header.ID, active, g.Header.Active, 0, g.Header.Turn, m, uc)
+	UpdateGame(tx, g.Header.ID,
+		OrientationOf(active, g.Header.White.Name, g.Header.Black.Name),
+		g.Header.Active, 0, g.Header.Turn, m, uc)
 
-	// TODO: update piece database for timed games
-	//PieceTakesUpdate(tx, id, taken)
+	// TODO: PieceTakesUpdate(tx, id, taken)
 
 	// TODO: remove this copy when ID determination is done
 	// main.Piece isn't needed past UpdateGame

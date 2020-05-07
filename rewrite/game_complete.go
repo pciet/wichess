@@ -8,7 +8,7 @@ import (
 
 func GameComplete(tx *sql.Tx, id GameIdentifier) bool {
 	// TODO: write completion state into db when first calculated instead
-	_, state := LoadGame(tx, id).Moves()
+	_, state := LoadGame(tx, id, false).Moves()
 	if (state == rules.Normal) ||
 		(state == rules.Promotion) ||
 		(state == rules.Check) {

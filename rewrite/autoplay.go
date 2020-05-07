@@ -11,11 +11,11 @@ import (
 func Autoplay(id GameIdentifier, player string) {
 	tx := DatabaseTransaction()
 
-	g := LoadGame(tx, id)
+	g := LoadGame(tx, id, true)
 	if g.Header.ID == 0 {
 		Panic("game", id, "not found")
 	}
-	if g.Header.Active != player {
+	if g.Header.Active != OrientationOf(player, g.Header.White.Name, g.Header.Black.Name) {
 		Panic("tried to autoplay for inactive player", player)
 	}
 
@@ -23,7 +23,7 @@ func Autoplay(id GameIdentifier, player string) {
 		g.Board.Board,
 		rules.AddressIndex(g.Header.From),
 		rules.AddressIndex(g.Header.To)),
-		ActiveOrientation(g.Header.Active, g.Header.White.Name, g.Header.Black.Name),
+		g.Header.Active,
 	)
 
 	var u Update
@@ -47,7 +47,7 @@ func Autoplay(id GameIdentifier, player string) {
 
 	tx.Commit()
 
-	go Alert(id, Opponent(player, g.Header.White.Name, g.Header.Black.Name), u)
+	go Alert(id, Opponent(g.Header.Active, g.Header.White.Name, g.Header.Black.Name), u)
 }
 
 // Looking forward more than one move takes too much time.

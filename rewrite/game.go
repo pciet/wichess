@@ -3,41 +3,51 @@ package main
 import (
 	"database/sql"
 
+	"github.com/lib/pq"
 	"github.com/pciet/wichess/rules"
 )
 
-func LoadGame(tx *sql.Tx, id GameIdentifier) Game {
+func LoadGame(tx *sql.Tx, id GameIdentifier, forUpdate bool) Game {
 	return Game{
-		Header: LoadGameHeader(tx, id),
-		Board:  LoadGameBoard(tx, id),
+		Header: LoadGameHeader(tx, id, forUpdate),
+		Board:  LoadGameBoard(tx, id, forUpdate),
 	}
 }
 
 // LoadGameBoard loads from the database and prepares a Board.
 // If the game doesn't exist then the PieceIdentifiers field is nil.
-func LoadGameBoard(tx *sql.Tx, id GameIdentifier) Board {
-	var ep [64]EncodedPiece
-	epp := make([]interface{}, 64)
-	for i, _ := range ep {
-		epp[i] = &(ep[i])
+func LoadGameBoard(tx *sql.Tx, id GameIdentifier, forUpdate bool) Board {
+	var query string
+	if forUpdate {
+		query = GamesBoardForUpdateQuery
+	} else {
+		query = GamesBoardQuery
 	}
 
-	err := tx.QueryRow(GamesBoardQuery, id).Scan(epp...)
+	var values []sql.NullInt64
+	err := tx.QueryRow(query, id).Scan(pq.Array(&values))
 	if err == sql.ErrNoRows {
-		return Board{PieceIdentifiers: nil}
+		return Board{}
 	} else if err != nil {
 		Panic(err)
 	}
 
-	b := Board{PieceIdentifiers: make([]AddressedPieceIdentifier, 0, 8)}
+	if len(values) != 64 {
+		Panic(id, "read board with length", len(values))
+	}
 
-	for i, v := range ep {
-		p := v.Decode()
+	b := Board{CollectionPieces: make([]AddressedCollectionSlot, 0, 8)}
+
+	for i, v := range values {
+		if v.Valid == false {
+			Panic(id, "sql null at", i)
+		}
+		p := EncodedPiece(v.Int64).Decode()
 		b.Board[i] = rules.Square(p.Piece.ApplyCharacteristics())
-		if p.ID != 0 {
-			b.PieceIdentifiers = append(b.PieceIdentifiers,
-				AddressedPieceIdentifier{
-					ID:      p.ID,
+		if p.Slot != 0 {
+			b.CollectionPieces = append(b.CollectionPieces,
+				AddressedCollectionSlot{
+					Slot:    p.Slot,
 					Address: rules.AddressIndex(i).Address(),
 				})
 		}
@@ -48,16 +58,24 @@ func LoadGameBoard(tx *sql.Tx, id GameIdentifier) Board {
 
 // LoadGameHeader gets the header from the database. If the header isn't found
 // then the ID field is 0.
-func LoadGameHeader(tx *sql.Tx, id GameIdentifier) GameHeader {
+func LoadGameHeader(tx *sql.Tx, id GameIdentifier, forUpdate bool) GameHeader {
+	var query string
+	if forUpdate {
+		query = GamesHeaderForUpdateQuery
+	} else {
+		query = GamesHeaderQuery
+	}
+
 	h := GameHeader{ID: id}
-	err := tx.QueryRow(GamesHeaderQuery, id).Scan(
+	var active, previousActive bool
+	err := tx.QueryRow(query, id).Scan(
 		&h.Conceded,
 		&h.White.Name,
 		&h.White.Acknowledge,
 		&h.Black.Name,
 		&h.Black.Acknowledge,
-		&h.Active,
-		&h.PreviousActive,
+		&active,
+		&previousActive,
 		&h.From,
 		&h.To,
 		&h.DrawTurns,
@@ -68,6 +86,8 @@ func LoadGameHeader(tx *sql.Tx, id GameIdentifier) GameHeader {
 	} else if err != nil {
 		Panic("failed to query database row:", err)
 	}
+	h.Active = rules.BoolToOrientation(active)
+	h.PreviousActive = rules.BoolToOrientation(previousActive)
 	return h
 }
 

@@ -3,15 +3,11 @@ package main
 import (
 	"database/sql"
 	"net/http"
+	"strconv"
 )
 
 // This http.Handler type exists to avoid code repetition across most wichess HTTP paths.
 // The resulting functionality is sometimes extended with functions like GameIdentifierParse.
-
-// An AuthenticRequestHandlerFunc is used in an AuthenticRequestHandler.
-// The SQL transaction must be completed in the fuction.
-// The string argument is the requester's username.
-type AuthenticRequestHandlerFunc func(http.ResponseWriter, *http.Request, *sql.Tx, string)
 
 // An AuthenticRequestHandler confirms the authenticity of an HTTP request
 // by comparing its session key cookie to the session keys saved in the database.
@@ -26,6 +22,11 @@ type AuthenticRequestHandler struct {
 	Post AuthenticRequestHandlerFunc
 }
 
+// An AuthenticRequestHandlerFunc is used in an AuthenticRequestHandler.
+// The SQL transaction must be completed in the fuction.
+// The string argument is the player's username.
+type AuthenticRequestHandlerFunc func(http.ResponseWriter, *http.Request, *sql.Tx, string)
+
 // ServeHTTP makes AuthenticRequestHandler an http.Handler.
 func (an AuthenticRequestHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if ((r.Method == http.MethodGet) && (an.Get == nil)) ||
@@ -36,26 +37,41 @@ func (an AuthenticRequestHandler) ServeHTTP(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
+	pid, err := r.Cookie(PlayerIDCookie)
+	if err == http.ErrNoCookie {
+		ClearBrowserSession(w, r)
+		return
+	} else if err != nil {
+		Panic(r.URL.Path, "failed to read player ID cookie", PlayerIDCookie, ":", err)
+	}
+
 	sc, err := r.Cookie(SessionKeyCookie)
 	if err == http.ErrNoCookie {
 		ClearBrowserSession(w, r)
 		return
 	} else if err != nil {
-		Panic(r.URL.Path, "failed to read session key cookie", SessionKeyCookie, "from HTTP request:", err)
+		Panic(r.URL.Path, "failed to read session key cookie", SessionKeyCookie, ":", err)
 	}
 
-	if len(sc.Value) == 0 {
-		DebugPrintln(r.URL.Path, "session key cookie", SessionKeyCookie, "length zero")
+	playerID, err := strconv.Atoi(pid.Value)
+	if err != nil {
+		DebugPrintln(r.URL.Path, "couldn't parse player ID cookie", PlayerIDCookie, ":", err)
 		ClearBrowserSession(w, r)
 		return
 	}
 
 	tx := DatabaseTransaction()
 
-	name := SessionRequester(tx, sc.Value)
+	key := PlayersSessionKey(tx, playerID)
+	if (key == "") || (key != sc.Value) {
+		tx.Commit()
+		ClearBrowserSession(w, r)
+		return
+	}
+
+	name := PlayerName(tx, playerID)
 	if name == "" {
 		tx.Commit()
-		DebugPrintln(r.URL.Path, "no username associated with session key", sc.Value)
 		ClearBrowserSession(w, r)
 		return
 	}

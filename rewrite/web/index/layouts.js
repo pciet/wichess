@@ -1,8 +1,9 @@
+import { button } from '../button.js'
+
 export const landscape = `
 <div class="inline" id="modepick">
-    <div class="modepickspacer"></div>
-    <div class="modebuttonmargin">
-        <div class="modebutton" id="public"><br>Public</div>
+    <div id="logoutdiv">
+        <a href="/quit">` + button('', 'logout', 'Quit', false) + `</a>
     </div>
     <div>
         <div></div>
@@ -11,9 +12,12 @@ export const landscape = `
         <div></div>
     </div>
     <div class="modebuttonmargin">
-        <div class="modebutton" id="computer"><br>Computer</div>
+        <div class="modebutton" id="public"><br>Public</div>
     </div>
     <div class="modepickspacer"></div>
+    <div class="modebuttonmargin">
+        <div class="modebutton" id="computer"><br>Computer</div>
+    </div>
 </div>
 <div class="inline" id="contentdiv">
     <div class="inline" id="contentspacer"></div>

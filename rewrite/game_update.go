@@ -14,7 +14,7 @@ import (
 // sets the active player, and increments the turn number.
 // If the previous move shouldn't be updated, such as when the
 // promotion pick is done, then m is set to rules.NoMove.
-func UpdateGame(tx *sql.Tx, id GameIdentifier, active, previousActive string,
+func UpdateGame(tx *sql.Tx, id GameIdentifier, active, previousActive rules.Orientation,
 	drawTurns int, turn int, m rules.Move, with []AddressedPiece) {
 	var s strings.Builder
 	s.WriteString("UPDATE ")
@@ -36,8 +36,11 @@ func UpdateGame(tx *sql.Tx, id GameIdentifier, active, previousActive string,
 
 	for _, p := range with {
 		args = append(args, p.Piece.Encode())
-		s.WriteRune('s')
-		s.WriteString(strconv.Itoa(p.Address.Index().Int()))
+		s.WriteString(GamesBoard)
+		s.WriteRune('[')
+		// Postgres arrays are indexed 1-(n+1) instead of 0-n
+		s.WriteString(strconv.Itoa(p.Address.Index().Int() + 1))
+		s.WriteRune(']')
 		placeholder(false)
 	}
 
@@ -52,11 +55,11 @@ func UpdateGame(tx *sql.Tx, id GameIdentifier, active, previousActive string,
 	if m != rules.NoMove {
 		// the move is recorded for future en passant calculation
 		args = append(args, m.From.Index())
-		s.WriteString(GamesFrom)
+		s.WriteString(GamesMoveFrom)
 		placeholder(false)
 
 		args = append(args, m.To.Index())
-		s.WriteString(GamesTo)
+		s.WriteString(GamesMoveTo)
 		placeholder(false)
 	}
 
@@ -78,6 +81,7 @@ func UpdateGame(tx *sql.Tx, id GameIdentifier, active, previousActive string,
 
 	if DebugSQL {
 		fmt.Println(s.String())
+		fmt.Println(args)
 	}
 
 	r, err := tx.Exec(s.String(), args...)
