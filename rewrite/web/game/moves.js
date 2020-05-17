@@ -1,5 +1,4 @@
-import { Condition, replaceCondition,
-        gameDone, replaceMoves } from '../game.js'
+import { Condition, replaceCondition, gameDone, replaceMoves } from '../game.js'
 
 import { State } from './state.js'
 import { replaceAndWriteGameCondition } from './condition.js'

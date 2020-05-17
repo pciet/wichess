@@ -12,7 +12,7 @@ var AlertWebSocketUpgradeHandler = AuthenticRequestHandler{
 }
 
 func AlertGet(w http.ResponseWriter, r *http.Request, tx *sql.Tx,
-	id GameIdentifier, player string) {
+	id GameIdentifier, requester Player) {
 	tx.Commit()
 
 	conn, err := WebSocketUpgrade(w, r)
@@ -23,5 +23,5 @@ func AlertGet(w http.ResponseWriter, r *http.Request, tx *sql.Tx,
 		return
 	}
 
-	Connect(id, player, conn)
+	Connect(id, requester.Name, conn)
 }

@@ -22,12 +22,12 @@ type IndexHTMLTemplateData struct {
 	RightPiece int
 }
 
-func IndexGet(w http.ResponseWriter, r *http.Request, tx *sql.Tx, requester string) {
-	left, right := PlayerPiecePicks(tx, requester)
+func IndexGet(w http.ResponseWriter, r *http.Request, tx *sql.Tx, requester Player) {
+	left, right := PlayerPiecePicks(tx, requester.Name)
 	tx.Commit()
 
 	WriteHTMLTemplate(w, IndexHTMLTemplate, IndexHTMLTemplateData{
-		Name:       requester,
+		Name:       requester.Name,
 		LeftPiece:  int(left),
 		RightPiece: int(right),
 	})

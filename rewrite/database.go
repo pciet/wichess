@@ -45,7 +45,8 @@ func InitializeDatabaseConnection() {
 	if err != nil {
 		Panic(err)
 	}
-	args := "dbname=" + config.Database + " host=" + config.Host + " port=" + config.Port + " sslmode=" + config.SslMode
+	args := "dbname=" + config.Database + " host=" + config.Host + " port=" + config.Port +
+		" sslmode=" + config.SslMode
 	if config.User != "" {
 		args += " user=" + config.User + " password=" + config.Password
 	}

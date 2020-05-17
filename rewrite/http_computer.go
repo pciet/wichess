@@ -9,39 +9,36 @@ const ComputerPath = "/computer"
 
 var ComputerHandler = AuthenticRequestHandler{
 	Get:  ComputerGet,
-	Post: ComputerPost,
+	Post: ArmyParsed(ComputerPost),
 }
 
-func ComputerGet(w http.ResponseWriter, r *http.Request, tx *sql.Tx, requester string) {
+func ComputerGet(w http.ResponseWriter, r *http.Request, tx *sql.Tx, requester Player) {
 	defer tx.Commit()
 
-	id := ComputerGameIdentifier(tx, requester)
+	id := ComputerGameIdentifier(tx, requester.Name)
 	if id == 0 {
 		DebugPrintln(ComputerPath, "game not found for", requester)
 		http.NotFound(w, r)
 		return
 	}
 
-	WriteHTMLTemplate(w, GameHTMLTemplate, GameHTMLTemplateData{requester, LoadGameHeader(tx, id, false)})
+	WriteHTMLTemplate(w, GameHTMLTemplate,
+		GameHTMLTemplateData{requester.Name, LoadGameHeader(tx, id, false)})
 }
 
-func ComputerPost(w http.ResponseWriter, r *http.Request, tx *sql.Tx, requester string) {
+func ComputerPost(w http.ResponseWriter, r *http.Request, tx *sql.Tx,
+	requester Player, a ArmyRequest) {
+
 	defer tx.Commit()
 
-	id := ComputerGameIdentifier(tx, requester)
+	// TODO: http handler pattern for computer game id
+	id := ComputerGameIdentifier(tx, requester.Name)
 	if id != 0 {
 		http.Redirect(w, r, ComputerPath, http.StatusSeeOther)
 		return
 	}
 
-	a, err := DecodeArmyRequest(r.Body)
-	if err != nil {
-		DebugPrintln(ComputerPath, "failed to decode request body for", requester, ":", err)
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	id = NewGame(tx, false, requester, a, ComputerPlayerName, ArmyRequest{})
+	id = NewGame(tx, a, RegularArmyRequest, requester, Player{ComputerPlayerName, 0})
 	if id == 0 {
 		DebugPrintln(ComputerPath, "bad army request for", requester)
 		w.WriteHeader(http.StatusBadRequest)

@@ -45,19 +45,18 @@ func LoadGameBoard(tx *sql.Tx, id GameIdentifier, forUpdate bool) Board {
 		p := EncodedPiece(v.Int64).Decode()
 		b.Board[i] = rules.Square(p.Piece.ApplyCharacteristics())
 		if p.Slot != 0 {
-			b.CollectionPieces = append(b.CollectionPieces,
-				AddressedCollectionSlot{
-					Slot:    p.Slot,
-					Address: rules.AddressIndex(i).Address(),
-				})
+			b.CollectionPieces = append(b.CollectionPieces, AddressedCollectionSlot{
+				Slot:    p.Slot,
+				Address: rules.AddressIndex(i).Address(),
+			})
 		}
 	}
 
 	return b
 }
 
-// LoadGameHeader gets the header from the database. If the header isn't found
-// then the ID field is 0.
+// LoadGameHeader gets the header from the database.
+// If the header isn't found then the ID field is 0.
 func LoadGameHeader(tx *sql.Tx, id GameIdentifier, forUpdate bool) GameHeader {
 	var query string
 	if forUpdate {
@@ -72,8 +71,12 @@ func LoadGameHeader(tx *sql.Tx, id GameIdentifier, forUpdate bool) GameHeader {
 		&h.Conceded,
 		&h.White.Name,
 		&h.White.Acknowledge,
+		&h.White.Left,
+		&h.White.Right,
 		&h.Black.Name,
 		&h.Black.Acknowledge,
+		&h.Black.Left,
+		&h.Black.Right,
 		&active,
 		&previousActive,
 		&h.From,

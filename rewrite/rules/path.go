@@ -4,8 +4,9 @@ import "strings"
 
 // TODO: is it worth caching the calculation result of applying rel paths?
 
-// Paths relative to the piece are applied to the board in AppliedRelPaths which returns board addresses.
-// Interaction of pieces is not considered. Paths that leave the board are truncated.
+// Paths relative to the piece are applied to the board in AppliedRelPaths which returns
+// board addresses. Interaction of pieces is not considered. Paths that leave the board
+// are truncated.
 func AppliedRelPaths(f PieceKind, at Address, o Orientation) PathVariations {
 	var out PathVariations
 

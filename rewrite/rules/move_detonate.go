@@ -1,7 +1,8 @@
 package rules
 
 // Taking a detonating piece will cause adjacent detonators to also detonate.
-func (a Board) DetonateMove(changes, takes []AddressedSquare, m Move) ([]AddressedSquare, []AddressedSquare) {
+func (a Board) DetonateMove(changes, takes []AddressedSquare,
+	m Move) ([]AddressedSquare, []AddressedSquare) {
 	takes = append(takes, AddressedSquare{m.From, a[m.From.Index()]})
 	takes = append(takes, AddressedSquare{m.To, a[m.To.Index()]})
 	changes = append(changes, AddressedSquare{m.From, Square{}})

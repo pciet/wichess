@@ -5,8 +5,8 @@ import (
 	"net/http"
 )
 
-// JSONMarshallable documents that an interface{} var should be
-// able to be marshalled into JSON using encoding/json.
+// JSONMarshallable documents that an interface{} var should be able to be marshalled into
+// JSON using encoding/json.
 type JSONMarshallable interface{}
 
 func JSONResponse(w http.ResponseWriter, content JSONMarshallable) {

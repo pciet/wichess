@@ -1,7 +1,8 @@
 package rules
 
 // Each piece has sets of possible paths that depend on the position.
-// In the host these are represented as paths of relative addresses before application to a position.
+// In the host these are represented as paths of relative addresses before application
+// to a position.
 
 var (
 	KnightPaths = []RelPath{

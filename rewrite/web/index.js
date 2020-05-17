@@ -1,7 +1,6 @@
 import { addLayout, layout, scaleFont } from './layout.js'
 
-import { PageMode, pickMode, modeClick,
-    savePageMode, savedPageMode } from './index/mode.js'
+import { PageMode, pickMode, modeClick, savePageMode, savedPageMode } from './index/mode.js'
 import { landscape } from './index/layouts.js'
 
 export let Mode = savedPageMode()

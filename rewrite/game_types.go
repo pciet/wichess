@@ -6,8 +6,6 @@ type (
 	// Each game has a unique GameIdentifier used to find it in the database.
 	GameIdentifier int
 
-	// TODO: make Active and PreviousActive rules.Orientation
-
 	// A GameHeader is associated with a Board to describe the current status of a game.
 	// The header does not have any information about the board position (which piece is where).
 	GameHeader struct {
@@ -26,6 +24,10 @@ type (
 	GamePlayerHeader struct {
 		Name        string
 		Acknowledge bool `json:"-"`
+		// if a player chooses their left and/or right random pick pieces then they will be added
+		// to the player's collection if they complete the game
+		Left  rules.PieceKind `json:"-"`
+		Right rules.PieceKind `json:"-"`
 	}
 
 	Game struct {

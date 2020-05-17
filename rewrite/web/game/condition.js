@@ -2,8 +2,7 @@ import { Condition, replaceCondition, gameDone } from '../game.js'
 import { layoutSelector } from '../layout.js'
 
 import { State, States } from './state.js'
-import { showAcknowledgeButton,
-        hideAcknowledgeButton } from './acknowledge.js'
+import { showAcknowledgeButton, hideAcknowledgeButton } from './acknowledge.js'
 import { showPromotion } from './promotion.js'
 
 export function replaceAndWriteGameCondition(cond) {

@@ -2,7 +2,10 @@ package main
 
 import "database/sql"
 
-const ComputerPlayerName = "Computer Player"
+const (
+	ComputerPlayerName = "Computer Player"
+	ComputerPlayerID   = 0
+)
 
 var ComputerGameIdentifierQuery = SQLGeneralizedWhereQuery([]string{GamesIdentifier}, GamesTable,
 	GamesWhite+"=$1 AND "+GamesBlack+"='"+ComputerPlayerName+"'")

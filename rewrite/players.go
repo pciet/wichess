@@ -7,12 +7,19 @@ import (
 	"github.com/pciet/wichess/rules"
 )
 
+// TODO: change players table database access to use ID when available
+
+type Player struct {
+	Name string
+	ID   int
+}
+
 // NewPlayer inserts a database row then returns the player's ID.
 func NewPlayer(tx *sql.Tx, name, crypt string) int {
+	left, right := rules.TwoDifferentSpecialPieces()
 	var id int
 	err := tx.QueryRow(PlayersNewInsert,
-		name, crypt,
-		rules.RandomSpecialPieceKind(), rules.RandomSpecialPieceKind(),
+		name, crypt, left, right,
 		pq.Array([CollectionCount]EncodedPiece{}),
 		0, 0,
 	).Scan(&id)

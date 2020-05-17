@@ -44,7 +44,8 @@ func (a Game) NaiveMovesAt(the Address) []Address {
 	return moves
 }
 
-// TODO: NaiveTakeMoves and NaiveTakeMovesAt are mostly copied from the above two funcs, don't repeat
+// TODO: NaiveTakeMoves and NaiveTakeMovesAt are mostly copied from the above two funcs,
+// don't repeat
 
 func (a Game) NaiveTakeMoves(active Orientation) []MoveSet {
 	moves := make([]MoveSet, 0, 16)

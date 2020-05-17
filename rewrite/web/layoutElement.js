@@ -94,7 +94,8 @@ function childrenDefinedDimensions(parent) {
     return dims
 }
 
-// Returns undefined if no dimensions are defined for this selector, or returns {width, height} percentages with maybe one undefined.
+// Returns undefined if no dimensions are defined for this selector, or returns {width, height} 
+// percentages with maybe one undefined.
 function cssDimensions(selector) {
     let rule = undefined
     for (const s of document.styleSheets) {

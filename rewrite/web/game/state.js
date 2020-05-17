@@ -1,5 +1,5 @@
-// A game is in one of these six states, only continuing from
-// the abnormal states of promotion, reverse promotion, and check.
+// A game is in one of these six states, only continuing from the abnormal states of 
+// promotion, reverse promotion, and check.
 export const State = {
     NORMAL: 0,
     PROMOTION: 1,

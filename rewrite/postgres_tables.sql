@@ -7,7 +7,7 @@ CREATE TABLE players (
 
     left_kind INTEGER,
     right_kind INTEGER,
-    collection BIGINT[24],
+    collection BIGINT[21],
 
     computer_streak INTEGER,
     best_computer_streak INTEGER
@@ -20,9 +20,13 @@ CREATE TABLE games (
 
     white VARCHAR(24),
     white_ack BOOLEAN,
+    white_left_kind INTEGER,
+    white_right_kind INTEGER,
 
     black VARCHAR(24),
     black_ack BOOLEAN,
+    black_left_kind INTEGER,
+    black_right_kind INTEGER,
 
     -- 0/false for white,
     -- 1/true for black

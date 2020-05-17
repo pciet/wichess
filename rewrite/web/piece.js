@@ -6,8 +6,15 @@ export function Piece(kind, orientation) {
     this.orientation = orientation
 }
 
-export function IDPiece(id, kind) {
-    this.id = id
+// These constants indicate to the host where this piece can be found in a player's collection. 
+// NoSlot means it's a basic piece, left and right are the random picks, and a positive integer 
+// is in the collection. See docs/collection.md for more details.
+export const NoSlot = 0
+export const LeftPick = -1
+export const RightPick = -2
+
+export function CollectionPiece(slot, kind) {
+    this.slot = slot
     this.kind = kind
 }
 

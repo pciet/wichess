@@ -1,5 +1,5 @@
 import { interiorDimensions } from '../layout.js'
-import { pieceLookImageName } from '../piece.js'
+import { pieceLookImageName, LeftPick, RightPick } from '../piece.js'
 import { Mode } from '../index.js'
 
 import { PageMode } from './mode.js'
@@ -76,7 +76,13 @@ function pickClick(selector, imgselector, kind, right, slot = undefined) {
         document.querySelector(imgselector).classList.add('picked')
         let index
         if (slot === undefined) {
-            index = randomArmyReplace(kind)
+            let collectionSlot
+            if (right === false) {
+                collectionSlot = LeftPick
+            } else {
+                collectionSlot = RightPick
+            }
+            index = randomArmyReplace(kind, collectionSlot)
         } else {
             index = slot
         }

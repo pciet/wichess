@@ -9,13 +9,13 @@ import (
 // This http.Handler type exists to avoid code repetition across most wichess HTTP paths.
 // The resulting functionality is sometimes extended with functions like GameIdentifierParse.
 
-// An AuthenticRequestHandler confirms the authenticity of an HTTP request
-// by comparing its session key cookie to the session keys saved in the database.
-// If the key doesn't match any sessions then the requester gets an HTTP error
-// code response and must start a new session at /login.
-// If the request is authentic (there's a matching session key) then the requester's
-// username and an open database transaction are passed to the handler function
-// matching the HTTP method.
+// An AuthenticRequestHandler confirms the authenticity of an HTTP request by comparing its
+// session key cookie to the session keys saved in the database.
+// If the key doesn't match any sessions then the requester gets an HTTP error code response
+// and must start a new session at /login.
+// If the request is authentic (there's a matching session key) then the requester's username, a
+// database ID for the players table, and an open database transaction are passed to the handler
+// function matching the HTTP method.
 // If a function isn't set for an HTTP method then that method is not allowed.
 type AuthenticRequestHandler struct {
 	Get  AuthenticRequestHandlerFunc
@@ -24,8 +24,7 @@ type AuthenticRequestHandler struct {
 
 // An AuthenticRequestHandlerFunc is used in an AuthenticRequestHandler.
 // The SQL transaction must be completed in the fuction.
-// The string argument is the player's username.
-type AuthenticRequestHandlerFunc func(http.ResponseWriter, *http.Request, *sql.Tx, string)
+type AuthenticRequestHandlerFunc func(http.ResponseWriter, *http.Request, *sql.Tx, Player)
 
 // ServeHTTP makes AuthenticRequestHandler an http.Handler.
 func (an AuthenticRequestHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -76,11 +75,13 @@ func (an AuthenticRequestHandler) ServeHTTP(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
+	p := Player{name, playerID}
+
 	switch r.Method {
 	case http.MethodGet:
-		an.Get(w, r, tx, name)
+		an.Get(w, r, tx, p)
 	case http.MethodPost:
-		an.Post(w, r, tx, name)
+		an.Post(w, r, tx, p)
 	default:
 		// the method should have been rejected by the starting if
 		Panic(r.URL.Path, r.Method, "HTTP method not caught by AuthenticRequestHandler")

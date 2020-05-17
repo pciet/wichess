@@ -14,9 +14,13 @@ const (
 
 	GamesWhite            = "white"
 	GamesWhiteAcknowledge = "white_ack"
+	GamesWhiteLeftKind    = "white_left_kind"
+	GamesWhiteRightKind   = "white_right_kind"
 
 	GamesBlack            = "black"
 	GamesBlackAcknowledge = "black_ack"
+	GamesBlackLeftKind    = "black_left_kind"
+	GamesBlackRightKind   = "black_right_kind"
 
 	GamesActive         = "active"
 	GamesPreviousActive = "previous_active"
@@ -37,8 +41,12 @@ var (
 		GamesConceded,
 		GamesWhite,
 		GamesWhiteAcknowledge,
+		GamesWhiteLeftKind,
+		GamesWhiteRightKind,
 		GamesBlack,
 		GamesBlackAcknowledge,
+		GamesBlackLeftKind,
+		GamesBlackRightKind,
 		GamesActive,
 		GamesPreviousActive,
 		GamesMoveFrom,

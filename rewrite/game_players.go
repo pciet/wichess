@@ -2,12 +2,11 @@ package main
 
 import "database/sql"
 
-// GamesActiveAndOpponentName queries the database to show if
-// this player is the active player and get the opponent name.
+// GamesActiveAndOpponentName queries the database to show if this player is the active player
+// and get the opponent name.
 // An empty string is returned if the game doesn't exist.
 // If the game is conceded then the player is always indicated as active.
-func GameActiveAndOpponentName(tx *sql.Tx, id GameIdentifier,
-	player string) (bool, string) {
+func GameActiveAndOpponentName(tx *sql.Tx, id GameIdentifier, player string) (bool, string) {
 	var conceded bool
 	var active, white, black string
 	err := tx.QueryRow(GamesOpponentAndActiveQuery, id).Scan(

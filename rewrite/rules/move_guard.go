@@ -7,14 +7,16 @@ func (a Board) GuardWillTake(target Square, guard AddressedSquare) bool {
 		(a.PieceLocked(guard.Address) == false)
 }
 
-func (a Board) GuardTakesDetonate(changes, takes []AddressedSquare, m Move, guard Address) ([]AddressedSquare, []AddressedSquare) {
+func (a Board) GuardTakesDetonate(changes, takes []AddressedSquare, m Move,
+	guard Address) ([]AddressedSquare, []AddressedSquare) {
 	// treat this like another move
 	(&a).ApplyChanges(changes)
 
 	guardDetonateChanges := make([]AddressedSquare, 0, 8)
 	guardDetonateTakes := make([]AddressedSquare, 0, 2)
 
-	guardDetonateChanges, guardDetonateTakes = a.DetonateMove(guardDetonateChanges, guardDetonateTakes, Move{guard, m.To})
+	guardDetonateChanges, guardDetonateTakes = a.DetonateMove(guardDetonateChanges,
+		guardDetonateTakes, Move{guard, m.To})
 
 	changes = MergeReplaceAddressedSquares(changes, guardDetonateChanges)
 	takes = CombineAddressedSquares(takes, guardDetonateTakes)
@@ -30,7 +32,8 @@ func (a Board) GuardTakesDetonate(changes, takes []AddressedSquare, m Move, guar
 	return changes, takes
 }
 
-func (a Board) GuardChain(changes, takes []AddressedSquare, m Move, guard Address) ([]AddressedSquare, []AddressedSquare) {
+func (a Board) GuardChain(changes, takes []AddressedSquare, m Move,
+	guard Address) ([]AddressedSquare, []AddressedSquare) {
 	changes = append(changes, AddressedSquare{guard, Square{}})
 	g := a[guard.Index()]
 	g.Moved = true

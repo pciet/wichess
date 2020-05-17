@@ -23,12 +23,13 @@ type MoveJSON struct {
 	Promotion int `json:"p"`
 }
 
-func MovePost(w http.ResponseWriter, r *http.Request, tx *sql.Tx, id GameIdentifier, player string) {
+func MovePost(w http.ResponseWriter, r *http.Request, tx *sql.Tx,
+	id GameIdentifier, requester Player) {
 	var body bytes.Buffer
 	_, err := body.ReadFrom(http.MaxBytesReader(w, r.Body, 1024))
 	if err != nil {
 		tx.Commit()
-		DebugPrintln(MovePath, "body read failed for", player, ":", err)
+		DebugPrintln(MovePath, "body read failed for", requester, ":", err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -37,13 +38,13 @@ func MovePost(w http.ResponseWriter, r *http.Request, tx *sql.Tx, id GameIdentif
 	err = json.Unmarshal(body.Bytes(), &mj)
 	if err != nil {
 		tx.Commit()
-		DebugPrintln(MovePath, "failed to unmarshal json for", player, ":", err)
+		DebugPrintln(MovePath, "failed to unmarshal json for", requester, ":", err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	if (mj.From == 0) && (mj.To == 0) && (mj.Promotion == 0) {
 		tx.Commit()
-		DebugPrintln(MovePath, "all zero move request from", player)
+		DebugPrintln(MovePath, "all zero move request from", requester)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -51,26 +52,27 @@ func MovePost(w http.ResponseWriter, r *http.Request, tx *sql.Tx, id GameIdentif
 	move, promotionKind := ParseMove(mj)
 	if move == rules.NoMove {
 		tx.Commit()
-		DebugPrintln(MovePath, "failed to parse move by", player)
+		DebugPrintln(MovePath, "failed to parse move by", requester)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	changes, promotionNeeded := Move(tx, id, player, move, promotionKind)
+	changes, promotionNeeded := Move(tx, id, requester.Name, move, promotionKind)
 	if (changes == nil) || (len(changes) == 0) {
 		tx.Commit()
-		DebugPrintln(MovePath, "bad move from", player, "for game", id, ":", move, promotionKind)
+		DebugPrintln(MovePath,
+			"bad move from", requester, "for game", id, ":", move, promotionKind)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	previousActive := GamePreviousActive(tx, id)
-	opponent := GameOpponent(tx, id, player)
+	opponent := GameOpponent(tx, id, requester.Name)
 
 	tx.Commit()
 
 	promotionWasReverse := false
-	if (promotionKind != rules.NoKind) && (previousActive != player) {
+	if (promotionKind != rules.NoKind) && (previousActive != requester.Name) {
 		promotionWasReverse = true
 	}
 

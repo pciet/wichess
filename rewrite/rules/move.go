@@ -100,9 +100,11 @@ func (a Board) NoTakeMove(changes []AddressedSquare, m Move) []AddressedSquare {
 	return append(changes, AddressedSquare{m.To, s})
 }
 
-func (a Board) TakeMove(changes, takes []AddressedSquare, m Move) ([]AddressedSquare, []AddressedSquare) {
+func (a Board) TakeMove(changes, takes []AddressedSquare,
+	m Move) ([]AddressedSquare, []AddressedSquare) {
 	s := a[m.From.Index()]
 	s.Moved = true
 	changes = append(changes, AddressedSquare{m.From, Square{}})
-	return append(changes, AddressedSquare{m.To, s}), append(takes, AddressedSquare{m.To, a[m.To.Index()]})
+	return append(changes, AddressedSquare{m.To, s}), append(takes,
+		AddressedSquare{m.To, a[m.To.Index()]})
 }

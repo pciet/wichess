@@ -28,22 +28,17 @@ var (
 		PlayersBestComputerStreak,
 	}, PlayersIdentifier)
 
-	PlayersNameQuery = SQLQuery([]string{PlayersName},
-		PlayersTable, PlayersIdentifier)
-	PlayersIdentifierQuery = SQLQuery([]string{PlayersIdentifier},
+	PlayersNameQuery       = SQLQuery([]string{PlayersName}, PlayersTable, PlayersIdentifier)
+	PlayersIdentifierQuery = SQLQuery([]string{PlayersIdentifier}, PlayersTable, PlayersName)
+
+	PlayersCryptQuery = SQLQuery([]string{PlayersIdentifier, PlayersCrypt},
 		PlayersTable, PlayersName)
 
-	PlayersCryptQuery = SQLQuery([]string{PlayersIdentifier,
-		PlayersCrypt}, PlayersTable, PlayersName)
-
-	PlayersSessionUpdate = SQLUpdate(PlayersTable,
-		PlayersSession, PlayersIdentifier)
-	PlayersSessionQuery = SQLQuery([]string{PlayersSession},
-		PlayersTable, PlayersIdentifier)
+	PlayersSessionUpdate = SQLUpdate(PlayersTable, PlayersSession, PlayersIdentifier)
+	PlayersSessionQuery  = SQLQuery([]string{PlayersSession}, PlayersTable, PlayersIdentifier)
 
 	PlayersPiecePicksQuery = SQLQuery([]string{
 		PlayersLeftKind, PlayersRightKind}, PlayersTable, PlayersName)
 
-	PlayersCollectionQuery = SQLQuery([]string{PlayersCollection},
-		PlayersTable, PlayersIdentifier)
+	PlayersCollectionQuery = SQLQuery([]string{PlayersCollection}, PlayersTable, PlayersIdentifier)
 )

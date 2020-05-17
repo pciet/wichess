@@ -1,7 +1,6 @@
 import { layoutElement } from './layoutElement.js'
-export { addLayout, layout, layoutSelector, 
-    removeNewlines, interiorDimensions, 
-    layoutElement, scaleFont, addCSSRuleProperty }
+export { addLayout, layout, layoutSelector, removeNewlines, interiorDimensions, layoutElement, 
+    scaleFont, addCSSRuleProperty }
 
 const layouts = []
 
@@ -17,9 +16,8 @@ function layout() {
     layoutElement(document.body)
 }
 
-// The layoutSelector function adds the string into 
-// the selector's element's innerHTML after removing all 
-// newlines, then calls layoutElement on the element.
+// The layoutSelector function adds the string into the selector's element's innerHTML after 
+// removing all newlines, then calls layoutElement on the element.
 function layoutSelector(s, withString) {
     const e = document.querySelector(s)
     e.innerHTML = removeNewlines(withString)
@@ -115,7 +113,8 @@ function scaleFont() {
             if (fontSizeValue.includes('pt') === false) {
                 throw new Error('CSS html font-size not pt')
             }
-            document.querySelector('html').style.fontSize = (parseFloat(fontSizeValue) * scale) + 'pt'
+            document.querySelector('html').style.fontSize = 
+                (parseFloat(fontSizeValue) * scale) + 'pt'
             return
         }
     }

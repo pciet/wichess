@@ -1,7 +1,6 @@
 package rules
 
-// PieceKind is a positive integer that
-// indiciates the piece's moves and characteristics.
+// PieceKind is a positive integer that indiciates the piece's moves and characteristics.
 type PieceKind int
 
 type Piece struct {
@@ -63,8 +62,7 @@ func (a Piece) ApplyCharacteristics() Piece {
 	return a
 }
 
-// All special pieces are based on a normal piece, called
-// the basic kind of the piece.
+// All special pieces are based on a normal piece, called the basic kind of the piece.
 func BasicKind(p PieceKind) PieceKind {
 	switch p {
 	case NoKind:
@@ -123,4 +121,27 @@ func (a PieceKind) String() string {
 	default:
 		return "undefined"
 	}
+}
+
+func TwoDifferentSpecialPieces() (PieceKind, PieceKind) {
+	pa := RandomSpecialPieceKind()
+	pb := RandomSpecialPieceKind()
+	if pa == pb {
+		pb++
+		if pb == PieceKindCount {
+			pb = BasicPieceKindCount + 1
+		}
+	}
+	return pa, pb
+}
+
+func DifferentSpecialPiece(than PieceKind) PieceKind {
+	p := RandomSpecialPieceKind()
+	if p == than {
+		p++
+		if p == PieceKindCount {
+			p = BasicPieceKindCount + 1
+		}
+	}
+	return p
 }

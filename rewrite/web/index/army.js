@@ -1,7 +1,6 @@
 import { layoutSelector } from '../layout.js'
-import { piecePickImageName, IDPiece } from '../piece.js'
-import { Pieces, Pawn, Knight, 
-    Bishop, Rook, Queen, King } from '../pieceDefs.js'
+import { piecePickImageName, CollectionPiece, NoSlot } from '../piece.js'
+import { Pieces, Pawn, Knight,  Bishop, Rook, Queen, King } from '../pieceDefs.js'
 import { Mode } from '../index.js'
 import { randomInt } from '../random.js'
 
@@ -9,25 +8,25 @@ import { PageMode } from './mode.js'
 
 let DefaultArmy = []
 
-DefaultArmy[0] = new IDPiece(0, Rook)
-DefaultArmy[7] = new IDPiece(0, Rook)
-DefaultArmy[1] = new IDPiece(0, Knight)
-DefaultArmy[6] = new IDPiece(0, Knight)
-DefaultArmy[2] = new IDPiece(0, Bishop)
-DefaultArmy[5] = new IDPiece(0, Bishop)
-DefaultArmy[3] = new IDPiece(0, Queen)
-DefaultArmy[4] = new IDPiece(0, King)
+DefaultArmy[8] = new CollectionPiece(NoSlot, Rook)
+DefaultArmy[15] = new CollectionPiece(NoSlot, Rook)
+DefaultArmy[9] = new CollectionPiece(NoSlot, Knight)
+DefaultArmy[14] = new CollectionPiece(NoSlot, Knight)
+DefaultArmy[10] = new CollectionPiece(NoSlot, Bishop)
+DefaultArmy[13] = new CollectionPiece(NoSlot, Bishop)
+DefaultArmy[11] = new CollectionPiece(NoSlot, Queen)
+DefaultArmy[12] = new CollectionPiece(NoSlot, King)
 
-for (let i = 8; i < 16; i++) {
-    DefaultArmy[i] = new IDPiece(0, Pawn)
+for (let i = 0; i < 8; i++) {
+    DefaultArmy[i] = new CollectionPiece(NoSlot, Pawn)
 }
 
 let ComputerArmy = []
 let PublicArmy = []
 
 for (let i = 0; i < 16; i++) {
-    ComputerArmy[i] = new IDPiece(DefaultArmy[i].id, DefaultArmy[i].kind)
-    PublicArmy[i] = new IDPiece(DefaultArmy[i].id, DefaultArmy[i].kind)
+    ComputerArmy[i] = new CollectionPiece(DefaultArmy[i].slot, DefaultArmy[i].kind)
+    PublicArmy[i] = new CollectionPiece(DefaultArmy[i].slot, DefaultArmy[i].kind)
 }
 
 export function addArmySelection(mode) {
@@ -35,7 +34,7 @@ export function addArmySelection(mode) {
     for (let i = 0; i < 2; i++) {
         a += '<div>'
         for (let j = 0; j < 8; j++) {
-            a += '<div class="inline armycell" id="a'+((8*(1-i))+j)+'"></div>'
+            a += '<div class="inline armycell" id="a'+((8*i)+j)+'"></div>'
         }
         a += '</div>'
     }
@@ -57,11 +56,12 @@ function addArmyPicture(index, kind) {
     document.querySelector('#a'+index).innerHTML = t
 }
 
+// The army selection is only made of collection slot integers.
 export function armySelectionJSON() {
     const j = []
     const s = armyForMode(Mode)
     for (let i = 0; i < 16; i++) {
-        j[i] = s[i].id
+        j[i] = s[i].slot
     }
     return JSON.stringify(j)
 }
@@ -72,40 +72,41 @@ export function armyDefaultAt(index) {
     case PageMode.COMPUTER:
         ComputerArmy[index].kind = DefaultArmy[index].kind
         k = ComputerArmy[index].kind
-        ComputerArmy[index].id = 0
+        ComputerArmy[index].slot = NoSlot
         break
     case PageMode.PUBLIC:
         PublicArmy[index].kind = DefaultArmy[index].kind
         k = PublicArmy[index].kind
-        PublicArmy[index].id = 0
+        PublicArmy[index].slot = NoSlot
         break
     }
     addArmyPicture(index, k)
     document.querySelector('#a'+index).classList.remove('pickedarmycell')
 }
 
-// randomArmyReplace returns the index that was replaced.
-// A random basic kind slot for the special kind is replaced.
-export function randomArmyReplace(kind) {
+// A random basic kind for the special kind is replaced.
+// randomArmyReplace returns the army index that was replaced.
+export function randomArmyReplace(kind, collectionSlot) {
+    // This slot is the army slot, not the collection slot.
     let slot
     switch (Pieces[kind].basicKind) {
     case Pawn:
-        slot = randomInt(7) + 8
+        slot = randomInt(7)
         if (slotTaken(slot) === true) {
             slot++
-            if (slot === 16) {
-                slot = 8
+            if (slot === 8) {
+                slot = 0
             }
         }
         break
     case Rook:
-        slot = notTakenSlot(0, 7)
+        slot = notTakenSlot(8, 15)
         break
     case Knight:
-        slot = notTakenSlot(1, 6)
+        slot = notTakenSlot(9, 14)
         break
     case Bishop:
-        slot = notTakenSlot(2, 5)
+        slot = notTakenSlot(10, 13)
         break
     default:
         throw new Error("can't replace kind " + kind)
@@ -113,8 +114,9 @@ export function randomArmyReplace(kind) {
 
     addArmyPicture(slot, kind)
 
-    // TODO: special pieces need to be identified
-    armyForMode(Mode)[slot] = new IDPiece(0, kind)
+    // The two random picks aren't in the collection. This means the army configuration can 
+    // have special pieces that don't have a slot, which is a case the host looks for.
+    armyForMode(Mode)[slot] = new CollectionPiece(collectionSlot, kind)
 
     return slot
 }

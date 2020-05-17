@@ -63,7 +63,8 @@ func (a Board) InsufficientMaterialDraw() bool {
 		}
 	}
 
-	// because pieces besides king, bishop, and knight were filtered out, here it must be a true 1v2 case
+	// because pieces besides king, bishop, and knight were filtered out, here it must be
+	// a true 1v2 case
 
 	return true
 }

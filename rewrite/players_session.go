@@ -8,8 +8,8 @@ import (
 
 const SessionKeyLength = 64
 
-// NewSession generates a unique session key, updates
-// the player's database row with it, and returns it.
+// NewSession generates a unique session key, updates the player's database row with it, and
+// returns it.
 func NewSession(tx *sql.Tx, playerID int) string {
 	k := make([]byte, SessionKeyLength)
 	count, err := rand.Read(k)
@@ -29,9 +29,8 @@ func NewSession(tx *sql.Tx, playerID int) string {
 	return key
 }
 
-// PlayersSessionKey queries the database for the player's
-// current session key. If the column is null (no session)
-// or the player doesn't exist then an empty string is returned.
+// PlayersSessionKey queries the database for the player's current session key. If the column
+// is null (no session) or the player doesn't exist then an empty string is returned.
 func PlayersSessionKey(tx *sql.Tx, playerID int) string {
 	var key sql.NullString
 	err := tx.QueryRow(PlayersSessionQuery, playerID).Scan(&key)

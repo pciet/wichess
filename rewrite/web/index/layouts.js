@@ -12,11 +12,19 @@ export const landscape = `
         <div></div>
     </div>
     <div class="modebuttonmargin">
-        <div class="modebutton" id="public"><br>Public</div>
+        <div class="modebutton" id="public">
+            <div></div>
+            <div>Public</div>
+            <div></div>
+        </div>
     </div>
     <div class="modepickspacer"></div>
     <div class="modebuttonmargin">
-        <div class="modebutton" id="computer"><br>Computer</div>
+        <div class="modebutton" id="computer">
+            <div></div>
+            <div>Computer</div>
+            <div></div>
+        </div>
     </div>
 </div>
 <div class="inline" id="contentdiv">
@@ -29,7 +37,11 @@ export const playButton = `
 <div id="play">
     <div class="inline"></div>
     <div class="inline" id="playbuttonmargin">
-        <div id="playbutton">Play</div>
+        <div id="playbutton">
+            <div class="playspacer"></div>
+            <div>Play</div>
+            <div class="playspacer"></div>
+        </div>
     </div>
     <div class="inline"></div>
 </div>

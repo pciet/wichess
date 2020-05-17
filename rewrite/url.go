@@ -7,8 +7,8 @@ import (
 )
 
 // ParseURLGameIdentifier expects the URL path to look like [pathPrefix][ID integer to be parsed].
-// For the example URL http://localhost:8080/games/513 the pathPrefix argument should be /games/ and
-// urlPath /games/513 which will return 513 as a GameIdentifier.
+// For the example URL http://localhost:8080/games/513 the pathPrefix argument should be /games/
+// and urlPath /games/513 which will return 513 as a GameIdentifier.
 func ParseURLGameIdentifier(urlPath, pathPrefix string) (GameIdentifier, error) {
 	id, err := strconv.ParseInt(urlPath[len(pathPrefix):len(urlPath)], 10, 0)
 	if err != nil {

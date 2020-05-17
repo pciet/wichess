@@ -7,12 +7,11 @@ import (
 )
 
 // Login queries the database for the username and encrypted password.
-// The password argument is the unencrypted password which is then re-encrypted for
-// comparsion to the database value.
-// If the credentials are correct then the player's ID in the players table and
-// a new session key are returned.
-// If the username doesn't exist in the database then it and the encrypted password
-// are inserted.
+// The password argument is the unencrypted password which is then re-encrypted for comparsion
+// to the database value.
+// If the credentials are correct then the player's ID in the players table and a new session
+// key are returned.
+// If the username doesn't exist in the database then it and the encrypted password are inserted.
 func Login(name, password string) (int, string) {
 	tx := DatabaseTransaction()
 	defer tx.Commit()

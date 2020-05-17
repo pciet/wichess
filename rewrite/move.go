@@ -107,7 +107,8 @@ func (g Game) DoMove(tx *sql.Tx, m rules.Move,
 		active = promoterName
 	} else if promotion != rules.NoKind {
 		// if the promoter was not previous active then this is a reverse promotion
-		if OrientationOf(promoterName, g.Header.White.Name, g.Header.Black.Name) != g.Header.PreviousActive {
+		if OrientationOf(promoterName,
+			g.Header.White.Name, g.Header.Black.Name) != g.Header.PreviousActive {
 			active = promoterName
 		}
 		// otherwise a promotion does the regular active player swap

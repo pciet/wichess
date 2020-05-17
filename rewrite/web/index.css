@@ -42,6 +42,7 @@ a {
     border-radius: 4px;
     color: rgb(150,120,200);
     background-color: rgb(20,10,30);
+    box-shadow: -2px -3px 1px rgb(50,50,50);
     font-size: 1.1rem;
     text-align: center;
     user-select: none;
@@ -66,19 +67,21 @@ a {
 }
 
 .modebutton {
-    border: 4px outset rgb(160,161,162);
-    border-radius: 2px;
-    color: rgb(185,120,100);
-    background-color: rgb(20,50,80);
+    border: thick outset rgb(130,131,102);
+    border-radius: 10px;
+    color: rgb(105,90,100);
+    background-color: rgb(10,40,60);
+    box-shadow: -3px -4px 1px black;
     font-size: 2rem;
     text-align: center;
     user-select: none;
 }
 
 .selected {
-    border: 4px outset rgb(233,255,235);
-    color: rgb(255,240,230);
+    border: thick outset rgb(233,255,235);
+    color: rgb(225,255,235);
     background-color: rgb(210,130,110);
+    box-shadow: 0 0 0 black;
 }
 
 #play {
@@ -94,9 +97,14 @@ a {
     border-radius: 2px;
     color: rgb(245,255,237);
     background-color: rgb(150,200,170);
+    box-shadow: -1px 0 10px rgb(210,210,200);
     font-size: 2rem;
     text-align: center;
     user-select: none;
+}
+
+.playspacer {
+    height: 15%;
 }
 
 #army {
@@ -129,6 +137,7 @@ a {
         rgba(200,200,5,0.2) 20px,
         rgb(10,5,200) 5px
     );
+    box-shadow: -1px 0 10px rgb(200,200,195);
 }
 
 .collectioncell {

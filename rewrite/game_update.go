@@ -9,11 +9,10 @@ import (
 	"github.com/pciet/wichess/rules"
 )
 
-// UpdateGame puts board changes into the database for a game,
-// updates the latest move, sets the draw turn count,
-// sets the active player, and increments the turn number.
-// If the previous move shouldn't be updated, such as when the
-// promotion pick is done, then m is set to rules.NoMove.
+// UpdateGame puts board changes into the database for a game, updates the latest move, sets
+// the draw turn count, sets the active player, and increments the turn number.
+// If the previous move shouldn't be updated, such as when the promotion pick is done, then m is
+// set to rules.NoMove.
 func UpdateGame(tx *sql.Tx, id GameIdentifier, active, previousActive rules.Orientation,
 	drawTurns int, turn int, m rules.Move, with []AddressedPiece) {
 	var s strings.Builder

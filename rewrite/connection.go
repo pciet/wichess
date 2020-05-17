@@ -12,8 +12,8 @@ type (
 		*websocket.Conn // nil for no connection
 	}
 
-	// Each game can have a WebSocket connection for each player,
-	// represented as an unordered array called GameConnections.
+	// Each game can have a WebSocket connection for each player, represented as an unordered
+	// array called GameConnections.
 	GameConnections [2]Connection
 )
 
@@ -26,8 +26,8 @@ var (
 	ConnectionsMutex = sync.RWMutex{}
 )
 
-// If the player is currently connected to the host for the specified game
-// then that WebSocket is returned by Connected, otherwise false is returned.
+// If the player is currently connected to the host for the specified game then that WebSocket
+// is returned by Connected, otherwise false is returned.
 func Connected(id GameIdentifier, player string) (*websocket.Conn, bool) {
 	ConnectionsMutex.RLock()
 	defer ConnectionsMutex.RUnlock()
@@ -95,9 +95,8 @@ func Connect(id GameIdentifier, player string, add *websocket.Conn) {
 	go ConnectionCloseWait(add, id, player)
 }
 
-// ConnectionCloseWait waits for the web browser to close the WebSocket then
-// updates the Connections map. Any message received from the web browser
-// is assumed to be a close message.
+// ConnectionCloseWait waits for the web browser to close the WebSocket then updates the
+// Connections map. Any message received from the web browser is assumed to be a close message.
 func ConnectionCloseWait(conn *websocket.Conn, id GameIdentifier, player string) {
 	// blocks until close message received
 	conn.ReadMessage()

@@ -7,46 +7,22 @@ import (
 	"github.com/pciet/wichess/rules"
 )
 
-// NewGame creates a new game in the database, including loading the requested
-// pieces from the database. If a piece request isn't valid then 0 is returned.
-func NewGame(tx *sql.Tx, losesPieces bool,
-	white string, whiteArmy ArmyRequest,
-	black string, blackArmy ArmyRequest) GameIdentifier {
-	var wp, bp [16]EncodedPiece
-
-	enc := func(to *[16]EncodedPiece, with ArmyRequest,
-		o rules.Orientation, name string) bool {
-		var c Collection
-		if name != ComputerPlayerName {
-			c = PlayerCollection(tx, PlayerID(tx, name))
-		}
-		for i := 0; i < 16; i++ {
-			p := ConfigurePiece(c[i], BasicArmy[i], o)
-			if p.Kind == rules.NoKind {
-				DebugPrintln("bad request to LoadPiece for player",
-					name, "piece ID", with[i])
-				return false
-			}
-			(*to)[i] = p.Encode()
-		}
-		return true
-	}
-
-	ok := enc(&wp, whiteArmy, rules.White, white)
-	if ok == false {
-		return 0
-	}
-	ok = enc(&bp, blackArmy, rules.Black, black)
-	if ok == false {
+// NewGame inserts a row in the games table with the requested armies. If an army request is
+// invalid then no effects occur and a 0 is returned. See ReserveArmies for the criteria of a
+// valid army request.
+func NewGame(tx *sql.Tx, wa, ba ArmyRequest, white, black Player) GameIdentifier {
+	wp, wpicks, bp, bpicks, err := ReserveArmies(tx, wa, ba, white.ID, black.ID)
+	if err != nil {
+		DebugPrintln("NewGame called ReserveArmies:", white, wa, "vs", black, ba, ":", err)
 		return 0
 	}
 
 	// QueryRow instead of Exec: https://github.com/lib/pq/issues/24
 	var id GameIdentifier
-	err := tx.QueryRow(GamesNewInsert,
+	err = tx.QueryRow(GamesNewInsert,
 		false,
-		white, false,
-		black, false,
+		white.Name, false, wpicks.Left, wpicks.Right,
+		black.Name, false, bpicks.Left, bpicks.Right,
 		rules.White, rules.Black,
 		NoMove, NoMove,
 		0, 1,
@@ -62,6 +38,7 @@ func NewGame(tx *sql.Tx, losesPieces bool,
 		}),
 	).Scan(&id)
 	if err != nil {
+		DebugPrintln(GamesNewInsert)
 		Panic("failed to insert new game:", err)
 	}
 

@@ -6,8 +6,7 @@ import (
 )
 
 // A GameIdentifiedFunc is the input for GameIdentifierParsed.
-// The string argument is the requester's name from AuthenticRequestHandler.
-type GameIdentifiedFunc func(http.ResponseWriter, *http.Request, *sql.Tx, GameIdentifier, string)
+type GameIdentifiedFunc func(http.ResponseWriter, *http.Request, *sql.Tx, GameIdentifier, Player)
 
 // TODO: id in query instead of path
 
@@ -21,13 +20,14 @@ type GameIdentifiedFunc func(http.ResponseWriter, *http.Request, *sql.Tx, GameId
 //    Post: GameIdentifierParsed(StatsPost, StatisticsPath),
 //  }
 //
-//  func StatsGet(w http.ResponseWriter, r *http.Request, tx *sql.Tx, id GameIdentifier, requester string) {
+//  func StatsGet(w http.ResponseWriter, r *http.Request, tx *sql.Tx,
+//		id GameIdentifier, requester Player) {
 //    // customized StatisticsPath get handling here
 //
-// The path is expected to be formed as [pathPrefix][id]. For example, /games/867 has
-// pathPrefix /games/ and identifier 867.
+// The path is expected to be formed as [pathPrefix][id]. For example, /games/867 has pathPrefix
+// /games/ and identifier 867.
 func GameIdentifierParsed(calls GameIdentifiedFunc, pathPrefix string) AuthenticRequestHandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request, tx *sql.Tx, requester string) {
+	return func(w http.ResponseWriter, r *http.Request, tx *sql.Tx, requester Player) {
 		id, err := ParseURLGameIdentifier(r.URL.Path, pathPrefix)
 		if err != nil {
 			tx.Commit()

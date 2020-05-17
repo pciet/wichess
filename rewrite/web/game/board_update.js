@@ -7,9 +7,9 @@ import { writePieceImage, removePieceImage } from './board_images.js'
 
 // TODO: race condition if updateBoard is writing Board and layout is called
 
-// A board update, either from a WebSocket alert message or the HTTP response
-// to /move, is always a non-zero array of addressed pieces.
-// The input update var should first be parsed by parseBoardUpdate.
+// A board update, either from a WebSocket alert message or the HTTP response to /move, is 
+// always a non-zero array of addressed pieces. The input update var should first be parsed 
+// by parseBoardUpdate.
 export function updateBoard(update) {
     for (const u of update) {
         const index = boardIndex(u.address.file, u.address.rank)

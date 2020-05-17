@@ -28,10 +28,12 @@ const landscapeBar = `
 
 export const promotion = `
 <div class="inline">
-` + button('promotebutton', 'queenprom', 'Queen', false) + button('promotebutton', 'rookprom', 'Rook', false) + `
+` + button('promotebutton', 'queenprom', 'Queen', false) + 
+    button('promotebutton', 'rookprom', 'Rook', false) + `
 </div>
 <div class="inline">
-` + button('promotebutton', 'knightprom', 'Knight', false) + button('promotebutton', 'bishopprom', 'Bishop', false) + `
+` + button('promotebutton', 'knightprom', 'Knight', false) + 
+    button('promotebutton', 'bishopprom', 'Bishop', false) + `
 </div>
 `
 
@@ -68,7 +70,8 @@ export const square = `
         <div id="squarebuttonspacer"></div>
         <div>
             <div class="inline" id="squarenav">
-            ` + button('navbutton', 'ack', 'Acknowledge', true) + button('navbutton', 'back', 'Back', true) + `
+            ` + button('navbutton', 'ack', 'Acknowledge', true) + 
+                button('navbutton', 'back', 'Back', true) + `
             </div>
             <div class="inline" id="mute"></div>
         </div>
@@ -91,7 +94,8 @@ export const square = `
 export const portrait = `
 <div>
     <div id="mute"></div>
-` + button('navbutton', 'ack', 'Acknowledge', true) + button('navbutton', 'back', 'Back', true) + `
+` + button('navbutton', 'ack', 'Acknowledge', true) + 
+    button('navbutton', 'back', 'Back', true) + `
 </div>
 <div>
     <div class="inline" id="players"></div>
@@ -108,7 +112,8 @@ export const unsupportedWindowDimension = `
 <div class="inline"></div>
 <div class="inline" id="unsupported">
     <div></div>
-    <div>This window is set to an unsupported dimension.<br>If this is a desktop window then resize it.</div>
+    <div>This window is set to an unsupported dimension.<br>If this is a desktop window then 
+    resize it.</div>
     <div></div>
 </div>
 <div class="inline"></div>

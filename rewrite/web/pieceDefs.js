@@ -1,7 +1,6 @@
 import { Characteristic } from './pieceCharacteristics.js'
 
-function PieceDef(codeName, name, basicKind = NoKind,
-    char1 = undefined, char2 = undefined) {
+function PieceDef(codeName, name, basicKind = NoKind, char1 = undefined, char2 = undefined) {
     this.codeName = codeName
     this.name = name
     this.basicKind = basicKind
@@ -28,8 +27,7 @@ export const Pieces = [
     new PieceDef('knight', 'Knight', Knight, Characteristic.QUICK),
     new PieceDef('pawn', 'Pawn', Pawn),
     new PieceDef('war', 'War', Pawn, Characteristic.NEUTRALIZES),
-    new PieceDef('formpawn', 'Form', Pawn, 
-        Characteristic.REVEALS, Characteristic.ENABLES),
+    new PieceDef('formpawn', 'Form', Pawn, Characteristic.REVEALS, Characteristic.ENABLES),
     new PieceDef('constructive', 'Constructive', Knight, 
         Characteristic.QUICK, Characteristic.ASSERTS)
 ]

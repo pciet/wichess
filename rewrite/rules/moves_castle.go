@@ -1,7 +1,8 @@
 package rules
 
 // The king should not be in check when AppendCastleMoves is called.
-func (a Board) AppendCastleMoves(moves []MoveSet, by Orientation, opponentThreats []Address) []MoveSet {
+func (a Board) AppendCastleMoves(moves []MoveSet, by Orientation,
+	opponentThreats []Address) []MoveSet {
 	var king Address
 	if by == White {
 		king = WhiteKingStart

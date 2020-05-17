@@ -4,8 +4,7 @@ import { setMode, Mode } from '../index.js'
 import { addPublicMatches } from './public.js'
 import { addCollection } from './collection.js'
 import { addArmySelection } from './army.js'
-import { sizePickCells, addPickImages,
-    addPickClicks, selectExistingPicks } from './pick.js'
+import { sizePickCells, addPickImages, addPickClicks, selectExistingPicks } from './pick.js'
 import { content, playButton } from './layouts.js'
 import { addComputerPlayClick } from './computer.js'
 
@@ -38,10 +37,8 @@ export function pickMode(mode) {
         addPublicMatches()
         break
     case PageMode.COMPUTER:
-        // TODO: collection feature
-        //layoutSelector('#content', playButton + content + '<div id="collection"></div>')
-        //addCollection()
-        layoutSelector('#content', playButton + content + '<div></div>')
+        layoutSelector('#content', playButton + content + '<div id="collection"></div>')
+        addCollection()
         addComputerPlayClick()
         break
     }

@@ -2,7 +2,8 @@ package rules
 
 import "strings"
 
-// Most abilities and some rules (like en passant and castling) will cause changes or additions to these paths.
+// Most abilities and some rules (like en passant and castling) will cause changes or
+// additions to these paths.
 
 // Lookup a piece's relative path variations by keying PieceRelPaths with the PieceKind.
 // If first, rally, or take are nil then the move paths are used.

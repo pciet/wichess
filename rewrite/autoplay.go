@@ -19,8 +19,7 @@ func Autoplay(id GameIdentifier, player string) {
 		Panic("tried to autoplay for inactive player", player)
 	}
 
-	move, promotion := AutoplayMove(rules.MakeGame(
-		g.Board.Board,
+	move, promotion := AutoplayMove(rules.MakeGame(g.Board.Board,
 		rules.AddressIndex(g.Header.From),
 		rules.AddressIndex(g.Header.To)),
 		g.Header.Active,
@@ -37,8 +36,8 @@ func Autoplay(id GameIdentifier, player string) {
 			// if this is the promoting player then do it now
 			(&g.Board).ApplyChanges(u.Squares)
 			promoter, _ := g.Board.PromotionNeeded()
-			if PlayerWithOrientation(promoter,
-				g.Header.White.Name, g.Header.Black.Name) == player {
+			if PlayerWithOrientation(promoter, g.Header.White.Name,
+				g.Header.Black.Name) == player {
 				promUpdates, _ := g.DoMove(tx, rules.NoMove, rules.Queen)
 				u.Squares = rules.MergeReplaceAddressedSquares(u.Squares, promUpdates)
 			}

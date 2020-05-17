@@ -4,7 +4,9 @@ package rules
 // An empty square is indicated by the piece's Kind set to NoKind.
 type Square Piece
 
-func (a Square) FortifiedAgainst(t Square) bool { return a.Fortified && (BasicKind(t.Kind) == Pawn) }
+func (a Square) FortifiedAgainst(t Square) bool {
+	return a.Fortified && (BasicKind(t.Kind) == Pawn)
+}
 
 type AddressedSquare struct {
 	Address `json:"a"`
