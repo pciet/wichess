@@ -29,12 +29,14 @@ func (a Game) NaiveMovesAt(the Address) []Address {
 
 	moves := make([]Address, 0, 8)
 
-	if a.Board.PieceRallied(the) {
-		moves = a.Board.AppendNaiveMoves(moves, pathvariations[RallyMove], the)
-	} else if s.Moved == false {
+	if s.Moved == false {
 		moves = a.Board.AppendNaiveMoves(moves, pathvariations[First], the)
 	} else {
 		moves = a.Board.AppendNaiveMoves(moves, pathvariations[NormalMove], the)
+	}
+
+	if a.Board.PieceRallied(the) {
+		moves = a.Board.AppendNaiveMoves(moves, pathvariations[RallyMove], the)
 	}
 
 	moves = a.Board.AppendNaiveTakeMoves(moves, pathvariations[Take], the)

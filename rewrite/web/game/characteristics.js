@@ -22,9 +22,9 @@ export function writePieceCharacteristics(kind) {
 <div>`
     const cs = Pieces[kind].characteristics
     if (cs[0] !== undefined) {
-        t += '<div class="characteristic">'+Characteristics[cs[0]].name+'</div>'
+        t += '<div class="characteristic">'+Characteristics[cs[0]]+'</div>'
         if (cs[1] !== undefined) {
-            t += '<div class="characteristic">'+Characteristics[cs[1]].name+'</div>'
+            t += '<div class="characteristic">'+Characteristics[cs[1]]+'</div>'
         }
     }
     t += '</div>'

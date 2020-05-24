@@ -1,57 +1,29 @@
-import { chessBoard } from '../wichess/game/board.js'
-import { Pieces } from '../wichess/pieceDefs.js'
-import { Orientation } from '../wichess/piece.js'
-import { States } from '../wichess/game/state.js'
+// The layout of the position builder for the available moves test are added as the interface
+// progresses.
+// Initially only a select list of categories (named matching a tag used in the associated 
+// filename) and a load button are shown.
+// When loaded a select list of the cases in the file is shown with another load button, and 
+// next to that is a text input and a new button for adding a new case instead of inspecting 
+// an existing one.
+// When load or new is pressed then the interface is shown with selection of the active 
+// orientation, selection of the expected game state, selection of the previous move, a board 
+// with all of the pieces shown (each with a kind, orientation, and if it's moved), followed
+// by controls for adding or changing pieces, a button to start picking the previous move, and
+// a button to start picking moves for a piece.
+// At the bottom is a save button that writes out the category file and removes the position
+// interface so that just the case list and new field are shown again.
 
-import { addBoardPiecePickHandlers } from './piecePick.js'
-import { addMovesButtons } from './moves.js'
-import { prevFromClick, prevToClick } from './prev.js'
+import { writeCategorySelectList, addCategoryLoadButtonHandler } from './categories.js'
 
-// For building a test case, the first thing done is placing pieces
-// onto the board to define the position.
+writeCategorySelectList()
+addCategoryLoadButtonHandler()
 
-export let board = []
-
-for (let i = 0; i < 64; i++) {
-    board[i] = undefined
+export function selectValue(selector) {
+    const s = document.querySelector(selector)
+    return parseInt(s.options[s.selectedIndex].value)
 }
 
-export function addPiece(index, kind) {
-    board[index] = kind
+export function selectValueString(selector) {
+    const s = document.querySelector(selector)
+    return s.options[s.selectedIndex].value
 }
-
-document.querySelector('#board').innerHTML = chessBoard()
-
-let pieceList = '<select id="piecechoice">'
-for (let i = 0; i < Pieces.length; i++) {
-    pieceList += '<option value="'+i+'">'+Pieces[i].name+'</option>'
-}
-pieceList += '</select>'
-document.querySelector('#pieceselect').innerHTML = pieceList
-
-addBoardPiecePickHandlers()
-
-// For a position, building a test case mostly is defining the set
-// of available moves. A "from" square is picked (which must have
-// a piece), then a set of squares that can be moved to is picked.
-
-addMovesButtons()
-
-export function addMoveSet(from, tos) {
-    console.log(from)
-    console.log(tos)
-}
-
-// A test case also has other information, like what state the game
-// engine should say when calculating the position's moves, or what
-// the previous move was (used for en passant).
-
-let stateList = '<select id="statechoice">'
-for (let i = 0; i < States.length; i++) {
-    stateList += '<option value="'+i+'">'+States[i].name+'</option>'
-}
-stateList += '</select>'
-document.querySelector('#stateselect').innerHTML = stateList
-
-document.querySelector('#prevfrom').onclick = prevFromClick
-document.querySelector('#prevto').onclick = prevToClick

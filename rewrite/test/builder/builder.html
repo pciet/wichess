@@ -7,44 +7,11 @@
         <script type="module" src="web/builder.js"></script>
     </head>
     <body>
-        <div id="board"></div>
-        <div>
-            <div class="inline" id="orientationselect">
-                <select id="orientationchoice">
-                    <option value="0">White</option>
-                    <option value="1">Black</option>
-                </select>
-            </div>
-            <div class="inline" id="pieceselect"></div>
-            <div class="inline" id="moves"></div>
-            <div class="inline" id="next"></div>
+        <div class="optionrow">
+            <label for="categories">Category:</label>
+            <select class="inline" id="categories"></select>
+            <button class="inline" id="loadcategory" type="button">Load</button>
         </div>
-        <br>
-        <div>
-            <label for="active">Active:</label>
-            <select class="inline" id="active">
-                <option value="0">White</option>
-                <option value="1">Black</option>
-            </select>
-            <div class="inline" id="stateselect"></div>
-            <button class="inline" id="prevfrom" type="button">Prev From</button>
-            <button class="inline" id="prevto" type="button">Prev To</button>
-            <button class="inline" id="test" type="button">Test</button>
-        </div>
-        <br>
-        <div>
-            <label for="casename">Case Name:</label>
-            <input class="inline" type="text" id="casename">
-            <button class="inline" id="save" type="button">Save</button>
-        </div>
-        <br>
-        <div>
-            <label for="cases">Cases:</label>
-            <select class="inline" id="cases">
-                <option value="0">Case 1</option>
-                <option value="1">Case 2</option>
-            </select>
-            <button class="inline" id="load" type="button">Load</button>
-        </div>
+        <div id="content"></div>
     </body>
 </html>

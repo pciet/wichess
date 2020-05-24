@@ -19,7 +19,7 @@ func (a Game) RemoveMovesIntoCheck(moves []MoveSet, active Orientation) []MoveSe
 			ga := a.AfterMove(Move{moveset.From, move})
 			threats := MovesAddressSlice(ga.NaiveTakeMoves(active.Opponent()))
 
-			if (ga.Board.InCheck(active, threats)) || ga.Board.NoKing(active) {
+			if ga.Board.NoKing(active) || ga.Board.InCheck(active, threats) {
 				continue
 			}
 

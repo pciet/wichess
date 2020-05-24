@@ -1,6 +1,40 @@
+@font-face {
+    font-family: "Linux Biolinum";
+    src: url("/wichess/fonts/LinBiolinum_R.otf") format("opentype");
+}
+
+html {
+    font-family: "Linux Biolinum";
+    font-size: 14pt;
+}
+
+button, select, input {
+    font-family: inherit;
+    font-size: 12pt;
+}
+
+button {
+    border-radius: 3px;
+    box-shadow: 1px 1px 0 black;
+}
+
 .inline {
     display: inline-block;
     vertical-align: top;
+}
+
+#to, #from {
+    padding: 5px;
+    border: thin solid black;
+}
+
+.pickmove {
+    background-color: green;
+    color: white;
+}
+
+.optionrow {
+    margin: 10px;
 }
 
 .chesssquare {
@@ -8,6 +42,7 @@
     height: 60px;
     background-color: lightgrey;
     border: thin solid black;
+    box-sizing: border-box;
 }
 
 img {
@@ -15,14 +50,16 @@ img {
     height: 100%;
 }
 
+.fromDefined {
+    border: solid rgb(255,255,100);
+}
+
 .fromSelected {
-    border: thin solid rgb(150,150,255);
+    border: solid rgb(150,200,255);
 }
 
 .toSelected {
-    border: thin solid rgb(255,100,100);
+    border: dotted rgb(255,80,50);
 }
 
-.fromDefined {
-    border: thin solid rgb(255,255,100);
-}
+

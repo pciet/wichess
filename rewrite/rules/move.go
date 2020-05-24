@@ -108,3 +108,7 @@ func (a Board) TakeMove(changes, takes []AddressedSquare,
 	return append(changes, AddressedSquare{m.To, s}), append(takes,
 		AddressedSquare{m.To, a[m.To.Index()]})
 }
+
+func (a Move) String() string {
+	return "from " + a.From.String() + " to " + a.To.String()
+}

@@ -29,4 +29,12 @@ type (
 	}
 )
 
+func (a Collection) Kinds() [CollectionCount]rules.PieceKind {
+	var out [CollectionCount]rules.PieceKind
+	for i, p := range a {
+		out[i] = p.Kind
+	}
+	return out
+}
+
 func (a CollectionSlot) Int() int { return int(a) }

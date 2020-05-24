@@ -7,6 +7,8 @@ type EncodedPiece uint64
 
 func (an EncodedPiece) Uint64() uint64 { return uint64(an) }
 
+// TODO: add InUse
+
 const (
 	EncodedPieceCollectionSlotBit  = 0
 	EncodedPieceCollectionSlotMask = 0xFF

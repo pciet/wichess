@@ -22,5 +22,7 @@ func AcknowledgeGet(w http.ResponseWriter, r *http.Request, tx *sql.Tx,
 		return
 	}
 
+	AddGamePicksToPlayerCollection(tx, requester, id)
+
 	AcknowledgeGameComplete(tx, id, requester.Name)
 }

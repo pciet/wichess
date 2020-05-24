@@ -110,6 +110,11 @@ var (
 	GamesPlayersQuery = SQLQuery([]string{GamesWhite, GamesBlack},
 		GamesTable, GamesIdentifier)
 
+	GamesWhitePicksQuery = SQLQuery([]string{GamesWhiteLeftKind, GamesWhiteRightKind},
+		GamesTable, GamesIdentifier)
+	GamesBlackPicksQuery = SQLQuery([]string{GamesBlackLeftKind, GamesBlackRightKind},
+		GamesTable, GamesIdentifier)
+
 	GamesAcknowledgeUpdate = func() string {
 		var s strings.Builder
 		s.WriteString("UPDATE ")

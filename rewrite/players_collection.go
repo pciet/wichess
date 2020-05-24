@@ -10,6 +10,86 @@ import (
 	"github.com/pciet/wichess/rules"
 )
 
+// TODO: this file is too long
+
+func AddGamePicksToPlayerCollection(tx *sql.Tx, pl Player, gameID GameIdentifier) {
+	left, right := PicksInGameForPlayer(tx, gameID, pl.Name)
+	need1 := false
+	if (left == rules.NoKind) && (right == rules.NoKind) {
+		return
+	} else if (left == rules.NoKind) || (right == rules.NoKind) {
+		need1 = true
+	}
+
+	c := PlayerCollection(tx, pl.ID)
+
+	indexA, indexB := -1, -1
+	for i, p := range c {
+		if p.Kind != rules.NoKind {
+			continue
+		}
+		if indexA == -1 {
+			indexA = i
+			if need1 {
+				break
+			}
+			continue
+		}
+		indexB = i
+		break
+	}
+
+	if indexA == -1 {
+		// collection is full, don't add
+		return
+	}
+
+	if (need1 == false) && (indexB == -1) {
+		// want to add two pieces but only one slot available, just add one
+		need1 = true
+	}
+
+	// +1 to index to correctly address SQL array index
+	indexA++
+	indexB++
+
+	update := func(index int, kind rules.PieceKind) {
+		arrStr := PlayersCollection + "[" + strconv.Itoa(index) + "]"
+		u := SQLUpdate(PlayersTable, arrStr, PlayersIdentifier)
+		piece := Piece{
+			Piece: rules.Piece{
+				Kind: kind,
+			},
+		}.Encode()
+		r, err := tx.Exec(u, piece, pl.ID)
+		if err != nil {
+			DebugPrintln(u)
+			DebugPrintln(kind, piece, pl.ID)
+			Panic(err)
+		}
+		c, err := r.RowsAffected()
+		if err != nil {
+			Panic(err)
+		}
+		if c != 1 {
+			Panic(c, "rows affected by", u)
+		}
+	}
+
+	if need1 {
+		var k rules.PieceKind
+		if left == rules.NoKind {
+			k = right
+		} else {
+			k = left
+		}
+		update(indexA, k)
+	} else {
+		update(indexA, left)
+		update(indexB, right)
+	}
+}
+
 func PlayerCollection(tx *sql.Tx, playerID int) Collection {
 	var values []sql.NullInt64
 	err := tx.QueryRow(PlayersCollectionQuery, playerID).Scan(pq.Array(&values))

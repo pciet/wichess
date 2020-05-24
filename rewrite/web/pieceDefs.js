@@ -24,10 +24,9 @@ export const Pieces = [
     new PieceDef('queen', 'Queen', Queen),
     new PieceDef('rook', 'Rook', Rook),
     new PieceDef('bishop', 'Bishop', Bishop),
-    new PieceDef('knight', 'Knight', Knight, Characteristic.QUICK),
+    new PieceDef('knight', 'Knight', Knight),
     new PieceDef('pawn', 'Pawn', Pawn),
     new PieceDef('war', 'War', Pawn, Characteristic.NEUTRALIZES),
     new PieceDef('formpawn', 'Form', Pawn, Characteristic.REVEALS, Characteristic.ENABLES),
-    new PieceDef('constructive', 'Constructive', Knight, 
-        Characteristic.QUICK, Characteristic.ASSERTS)
+    new PieceDef('constructive', 'Constructive', Knight, Characteristic.ASSERTS)
 ]
