@@ -1,8 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# Board.sh constructs and renders the POV-Ray scene of the piece
-# named in the input argument, where the piece is placed on all
-# 64 squares of the chess board defined in board.inc.
+# Board.sh constructs and renders the POV-Ray scene of the piece named in the input argument, 
+# where the piece is placed on all 64 squares of the chess board defined in board.inc.
 # If a second argument "short" is included then a fast render is done.
 # Two boards are rendered, one for each the white and black materials.
 # A temporary file called boardrendertemp.pov is used.
@@ -59,8 +58,8 @@ Piece('$1')' > $POV
     then
         povray +I$POV +H512 +W512 Quality=5 +FN +O"$PREFIX"board.png
     else
-        # anti-aliasing, the +A argument, adds significant time to rendering
-        # and has been removed for now to speed this up
+        # anti-aliasing, the +A argument, adds significant time to rendering and has been 
+        # removed for now to speed this up
         povray +I$POV +H$DIM +W$DIM Quality=8 +FN +O"$PREFIX"board.png
     fi
 

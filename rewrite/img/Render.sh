@@ -1,8 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# For each piece render with the black and white textures
-# on the board and split the image with the cut program
-# into the web/img folder. The look image is also rendered.
+# For each piece render with the black and white textures on the board and split the image 
+# with the cut program into the web/img folder. The look image is also rendered.
+
+# TODO: catch errors, especially from bad povray installation
 
 CUT="cut"
 

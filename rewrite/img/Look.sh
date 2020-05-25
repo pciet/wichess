@@ -1,10 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# Look.sh constructs and renders the piece look image,
-# which is a side view used in the army picker.
-# The first argument is the name of the piece, and an
-# optional "short" second argument will cause a fast render.
-# A temporary file lookrendertemp.pov is used.
+# Look.sh constructs and renders the piece look image, which is a side view used in the 
+# army picker. The first argument is the name of the piece, and an optional "short" second 
+# argument will cause a fast render. A temporary file lookrendertemp.pov is used.
 # The output is look.png.
 
 if [ $# -eq 0 ]

@@ -1,11 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Pick.sh makes the army picker view of pieces.
-# The first arg is the piece name, and "short" is
-# optionally second for a fast rough render.
+# The first arg is the piece name, and "short" is optionally second for a fast rough render.
 
-# A temporary file pickrendertemp.pov is used.
-# The output is pick.png.
+# A temporary file pickrendertemp.pov is used. The output is pick.png.
 
 if [ $# -eq 0 ]
 then
