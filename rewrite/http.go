@@ -58,6 +58,10 @@ func InitializeHTTP() {
 	// All files used by the webpages, including JavaScript and CSS, is in the web folder.
 	http.Handle("/web/", http.StripPrefix("/web/", http.FileServer(http.Dir("web"))))
 
+	http.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "web/favicon.ico")
+	})
+
 	dt, ok := http.DefaultTransport.(*http.Transport)
 	if ok == false {
 		Panic("http.DefaultTransport.(*http.Transport) failed")

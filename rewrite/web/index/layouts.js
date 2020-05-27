@@ -14,7 +14,7 @@ export const landscape = `
     <div class="modebuttonmargin">
         <div class="modebutton" id="public">
             <div></div>
-            <div>Public</div>
+            <div>People</div>
             <div></div>
         </div>
     </div>
@@ -53,5 +53,60 @@ export const content = `
     <div class="inline pickcell" id="leftpick"></div>
     <div class="inline" id="pickspacer"></div>
     <div class="inline pickcell" id="rightpick"></div>
+</div>
+`
+
+export const publicMatching = `
+<div class="inline">
+    <div class="playerbuttonmargin">
+        <div class="playerbutton" id="p0">
+            <div></div>
+            <div>Recent Opponent 1</div>
+            <div></div>
+        </div>
+    </div>
+    <div class="playerbuttonmargin">
+        <div class="playerbutton" id="p1">
+            <div></div>
+            <div>Recent Opponent 2</div>
+            <div></div>
+        </div>
+    </div>
+    <div class="playerbuttonmargin">
+        <div class="playerbutton" id="p2">
+            <div></div>
+            <div>Recent Opponent 3</div>
+            <div></div>
+        </div>
+    </div>
+    <div class="playerbuttonmargin">
+        <div class="playerbutton" id="p3">
+            <div></div>
+            <div>Recent Opponent 4</div>
+            <div></div>
+        </div>
+    </div>
+    <div class="playerbuttonmargin">
+        <div class="playerbutton" id="p4">
+            <div></div>
+            <div>Recent Opponent 5</div>
+            <div></div>
+        </div>
+    </div>
+</div>
+<div class="inline" id="matchingspacer"></div>
+<div class="inline">
+    <div></div>
+    <div id="opponentinputmargin">
+        <input type="text" id="opponent">
+    </div>
+    <span id="opponentlabel">Type opponent's username.</span>
+    <div id="matchbuttonmargin">
+        <div id="match">
+            <div></div>
+            <div>New Match</div>
+            <div></div>
+        </div>
+    </div>
 </div>
 `

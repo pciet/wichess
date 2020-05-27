@@ -7,6 +7,11 @@ const muteKey = 'mute'
 const unmutedChar = '&#x1f50a;'
 const mutedChar = '&#x1f507;'
 
+const filter = audio.createBiquadFilter()
+filter.type = 'highshelf'
+filter.frequency.value = 2500
+filter.gain.value = -6
+
 export function muted() {
     if (window.localStorage.getItem(muteKey) === 'true') {
         return true
@@ -35,7 +40,8 @@ export function setMuteIcon(isMuted) {
 
 export function fetchNextMoveSound() {
     moveAudio = audio.createBufferSource()
-    moveAudio.connect(audio.destination)
+    moveAudio.connect(filter)
+    filter.connect(audio.destination)
     fetch('/web/sound/click'+Math.floor(Math.random()*soundCount)+'.wav').then(
         r => r.arrayBuffer()).then(r => {
         audio.decodeAudioData(r, b => {

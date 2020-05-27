@@ -161,3 +161,70 @@ a {
 .picked {
     opacity: 0.2;
 }
+
+#publics {
+    height: 50%;
+}
+
+#opponentinputmargin {
+    padding: 7px;
+}
+
+#opponent {
+    padding: 2px;
+    display: block;
+    font: inherit;
+    font-size: 1.5rem;
+    border: thick outset rgb(155,125,128);
+    border-radius: 2px;
+}
+
+#opponentlabel {
+    display: block;
+    font-size: 1.4rem;
+    color: rgb(230,245,255);
+    text-align: center;
+}
+
+#matchbuttonmargin {
+    padding: 10px;
+    height: 40%;
+}
+
+#match {
+    border: thick outset rgb(255,125,128);
+    border-radius: 7px;
+    color: rgb(255,240,245);
+    background-color: rgb(50,80,200);
+    box-shadow: 0px -4px 10px rgb(255,125,128);
+    font-size: 2.2rem;
+    text-align: center;
+    user-select: none;
+}
+
+.playerbuttonmargin {
+    padding: 5px;
+}
+
+.playerbutton {
+    border: thick outset rgb(105,75,78);
+    border-radius: 7px;
+    color: rgb(55,120,145);
+    font-style: italic;
+    background-color: rgb(20,50,70);
+    font-size: 1.4rem;
+    text-align: center;
+    user-select: none;
+}
+
+.playernamed {
+    border: thick outset rgb(255,125,128);
+    color: rgb(255,240,245);
+    font-style: normal;
+    background-color: rgb(50,80,200);
+    box-shadow: 0px -4px 10px rgb(255,125,128);
+}
+
+#matchingspacer {
+    width: 10%;
+}

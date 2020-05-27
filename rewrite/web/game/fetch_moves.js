@@ -24,6 +24,10 @@ export function fetchMovesPromise(gameID, turnNumber) {
         for (const ms of r.m) {
             const tos = []
             for (const to of ms.m) {
+                if ((to.f < 0) || (to.f > 7) || (to.r < 0) || (to.r > 7)) {
+                    throw new Error('host calculated bad move, from ' + ms.f.f + '-' + ms.f.r +
+                        ' to ' + to.f + '-' + to.r)
+                }
                 tos.push(new BoardAddress(to.f, to.r))
             }
             moveSets.push(new MoveSet(new BoardAddress(ms.f.f, ms.f.r), tos))

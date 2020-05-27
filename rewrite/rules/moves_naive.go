@@ -41,6 +41,8 @@ func (a Game) NaiveMovesAt(the Address) []Address {
 
 	moves = a.Board.AppendNaiveTakeMoves(moves, pathvariations[Take], the)
 	moves = a.AppendEnPassantMove(moves, the)
+
+	// TODO: only look at recon moves when the piece has the recon characteristic
 	moves = a.Board.AppendReconMoves(moves, the)
 
 	return moves

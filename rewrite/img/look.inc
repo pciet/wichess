@@ -1,5 +1,4 @@
-// look.inc is a POV-Ray scene for showing a
-// detailed full piece picture. The piece geometry
+// look.inc is a POV-Ray scene for showing a detailed full piece picture. The piece geometry
 // follows the inclusion of this file.
 
 global_settings {

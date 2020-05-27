@@ -1,4 +1,4 @@
-#!/usr/local/env bash
+#!/usr/bin/env bash
 
 stop_pg () {
     pg_ctl -D database/data stop

@@ -19,7 +19,8 @@ func (a Game) RemoveMovesIntoCheck(moves []MoveSet, active Orientation) []MoveSe
 			ga := a.AfterMove(Move{moveset.From, move})
 			threats := MovesAddressSlice(ga.NaiveTakeMoves(active.Opponent()))
 
-			if ga.Board.NoKing(active) || ga.Board.InCheck(active, threats) {
+			if ga.Board.NoKing(active) || ga.Board.InCheck(active, threats) ||
+				ga.Board.ThreatenedDetonatorAdjacent(threats, ga.Board.KingLocation(active)) {
 				continue
 			}
 
@@ -31,4 +32,23 @@ func (a Game) RemoveMovesIntoCheck(moves []MoveSet, active Orientation) []MoveSe
 		out = append(out, outset)
 	}
 	return out
+}
+
+// TODO: test cases for an opponent detonator next to king, can the king be improperly removed?
+
+func (a Board) ThreatenedDetonatorAdjacent(threats []Address, at Address) bool {
+	piece := a[at.Index()]
+	for _, as := range a.SurroundingSquares(at) {
+		p := a[as.Address.Index()]
+		if (p.Kind == NoKind) || (piece.Orientation != p.Orientation) || (p.Detonates == false) {
+			continue
+		}
+		for _, addr := range threats {
+			if addr != as.Address {
+				continue
+			}
+			return true
+		}
+	}
+	return false
 }

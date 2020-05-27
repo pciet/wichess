@@ -5,6 +5,8 @@ CREATE TABLE players (
     crypt CHAR(64),
     session BYTEA,
 
+    recent_opponents INTEGER[5],
+
     left_kind INTEGER,
     right_kind INTEGER,
     collection BIGINT[21],

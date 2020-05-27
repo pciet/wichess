@@ -1,5 +1,4 @@
-// This cylinder object shows the maximum
-// size a piece can be.
+// This cylinder object shows the maximum size a piece can be.
 
 #include "board.inc"
 

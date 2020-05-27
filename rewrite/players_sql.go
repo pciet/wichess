@@ -9,6 +9,8 @@ const (
 	PlayersCrypt   = "crypt"
 	PlayersSession = "session"
 
+	PlayersRecentOpponents = "recent_opponents"
+
 	PlayersLeftKind   = "left_kind"
 	PlayersRightKind  = "right_kind"
 	PlayersCollection = "collection"
@@ -41,4 +43,7 @@ var (
 		PlayersLeftKind, PlayersRightKind}, PlayersTable, PlayersName)
 
 	PlayersCollectionQuery = SQLQuery([]string{PlayersCollection}, PlayersTable, PlayersIdentifier)
+
+	PlayersRecentOpponentsQuery = SQLQuery([]string{PlayersRecentOpponents},
+		PlayersTable, PlayersIdentifier)
 )

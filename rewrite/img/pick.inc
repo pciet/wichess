@@ -1,5 +1,4 @@
-// pick.inc is used to generate the images used
-// on the index page in the army configuration.
+// pick.inc is used to generate the images used on the index page in the army configuration.
 
 #include "materials.inc"
 

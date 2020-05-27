@@ -35,15 +35,13 @@ func main() {
 	}
 
 	bounds := board.Bounds()
-	if (bounds.Min.X != 0) || (bounds.Min.Y != 0) ||
-		(bounds.Max.X != bounds.Max.Y) {
+	if (bounds.Min.X != 0) || (bounds.Min.Y != 0) || (bounds.Max.X != bounds.Max.Y) {
 		fmt.Println(os.Args[1], "bad bounds", bounds)
 		os.Exit(1)
 	}
 
 	if board.ColorModel() != color.RGBAModel {
-		fmt.Println(os.Args[1], "color model", board.ColorModel(),
-			"not", color.RGBAModel)
+		fmt.Println(os.Args[1], "color model", board.ColorModel(), "not", color.RGBAModel)
 		os.Exit(1)
 	}
 

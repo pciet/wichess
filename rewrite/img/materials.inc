@@ -14,11 +14,10 @@
     }
 }
 
-// transparency/interior was removed from WhiteMaterial
-// because it multiplied rendering time too much.
+// transparency/interior was removed from WhiteMaterial because it multiplied rendering time 
+// too much.
 
-// reflection doesn't seem to add a big amount of
-// extra rendering time.
+// reflection doesn't seem to add a big amount of extra rendering time.
 
 #declare WhiteMaterial = material {
     texture {

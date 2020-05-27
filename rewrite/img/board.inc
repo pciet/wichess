@@ -1,6 +1,5 @@
-// board.inc is a complete POV-Ray scene, where the Piece macro
-// is used by a .pov file to add a piece to all 64 squares
-// on the board for rendering.
+// board.inc is a complete POV-Ray scene, where the Piece macro is used by a .pov file to add 
+// a piece to all 64 squares on the board for rendering.
 
 global_settings {
     assumed_gamma 1.0
@@ -24,8 +23,7 @@ box {
     }
 }
 
-// Adding texture/normal to the square background
-// multiplies the filesize almost 5x. Ripples and
+// Adding texture/normal to the square background multiplies the filesize almost 5x. Ripples and
 // bozo normals looked good though.
 
 #declare OddTexture = texture {
