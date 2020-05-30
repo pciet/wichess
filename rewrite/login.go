@@ -12,11 +12,11 @@ import (
 // If the credentials are correct then the player's ID in the players table and a new session
 // key are returned.
 // If the username doesn't exist in the database then it and the encrypted password are inserted.
-func Login(name, password string) (int, string) {
+func Login(name, password string) (PlayerIdentifier, string) {
 	tx := DatabaseTransaction()
 	defer tx.Commit()
 
-	var id int
+	var id PlayerIdentifier
 	var c string
 	err := tx.QueryRow(PlayersCryptQuery, name).Scan(&id, &c)
 	switch err {

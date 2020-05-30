@@ -12,6 +12,14 @@ import (
 
 // TODO: this file is too long
 
+func PlayerPiecePicks(tx *sql.Tx, name string) (left, right rules.PieceKind) {
+	err := tx.QueryRow(PlayersPiecePicksQuery, name).Scan(&left, &right)
+	if err != nil {
+		Panic(err)
+	}
+	return
+}
+
 func AddGamePicksToPlayerCollection(tx *sql.Tx, pl Player, gameID GameIdentifier) {
 	left, right := PicksInGameForPlayer(tx, gameID, pl.Name)
 	need1 := false
@@ -90,22 +98,22 @@ func AddGamePicksToPlayerCollection(tx *sql.Tx, pl Player, gameID GameIdentifier
 	}
 }
 
-func PlayerCollection(tx *sql.Tx, playerID int) Collection {
+func PlayerCollection(tx *sql.Tx, id PlayerIdentifier) Collection {
 	var values []sql.NullInt64
-	err := tx.QueryRow(PlayersCollectionQuery, playerID).Scan(pq.Array(&values))
+	err := tx.QueryRow(PlayersCollectionQuery, id).Scan(pq.Array(&values))
 	if err != nil {
-		DebugPrintln(PlayersCollectionQuery, playerID)
+		DebugPrintln(PlayersCollectionQuery, id)
 		Panic(err)
 	}
 
 	if len(values) != CollectionCount {
-		Panic(playerID, "bad collection length", len(values))
+		Panic(id, "bad collection length", len(values))
 	}
 
 	var c Collection
 	for i, v := range values {
 		if v.Valid == false {
-			Panic(playerID, "sql null at", i)
+			Panic(id, "sql null at", i)
 		}
 		c[i] = EncodedPiece(v.Int64).Decode()
 	}
@@ -115,7 +123,7 @@ func PlayerCollection(tx *sql.Tx, playerID int) Collection {
 // PlayersSelectedCollectionPieces returns a decoded subset of all collection pieces for a player.
 // The kinds of the left and right picks are always returned. If a requested collection slot is
 // outside the array range then a panic occurs.
-func PlayerSelectedCollectionPieces(tx *sql.Tx, playerID int,
+func PlayerSelectedCollectionPieces(tx *sql.Tx, id PlayerIdentifier,
 	slots []CollectionSlot) ([]Piece, rules.PieceKind, rules.PieceKind) {
 
 	var s strings.Builder
@@ -151,10 +159,10 @@ func PlayerSelectedCollectionPieces(tx *sql.Tx, playerID int,
 	values = append(values, &left)
 	values = append(values, &right)
 
-	err := tx.QueryRow(s.String(), playerID).Scan(values...)
+	err := tx.QueryRow(s.String(), id).Scan(values...)
 	if err != nil {
 		DebugPrintln(s.String())
-		DebugPrintln("player ID =", playerID)
+		DebugPrintln("player ID =", id)
 		Panic(err)
 	}
 
@@ -171,7 +179,7 @@ func PlayerSelectedCollectionPieces(tx *sql.Tx, playerID int,
 
 // PlayerCollectionFlagInUse flags pieces in the player's collection to be in use, and it updates
 // the pick piece slots if one or both slot is indicated to be used.
-func PlayerCollectionFlagInUse(tx *sql.Tx, playerID int,
+func PlayerCollectionFlagInUse(tx *sql.Tx, id PlayerIdentifier,
 	slots []CollectionSlot, kinds []rules.PieceKind,
 	left, right rules.PieceKind, replaceLeft, replaceRight bool) {
 
@@ -251,7 +259,7 @@ func PlayerCollectionFlagInUse(tx *sql.Tx, playerID int,
 	s.WriteString("=$")
 	s.WriteString(strconv.Itoa(i))
 	s.WriteRune(';')
-	args = append(args, playerID)
+	args = append(args, id)
 
 	if DebugSQL {
 		fmt.Println(s.String())

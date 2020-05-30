@@ -1,4 +1,5 @@
 import { publicMatching } from './layouts.js'
+import { armySelectionJSON } from './army.js'
 
 import { layoutSelector } from '../layout.js'
 
@@ -18,6 +19,18 @@ export function addPublicMatches() {
     }
 
     document.querySelector('#match').onclick = () => {
-        console.log(document.querySelector('#opponent').value)
+        const opponent = document.querySelector('#opponent').value
+        if (opponent === '') {
+            return
+        }
+        fetch('/people?o='+encodeURIComponent(opponent), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: armySelectionJSON()
+        }).then(r => r.json()).then(id => {
+            window.location = '/people/'+id.id
+        })
     }
 }

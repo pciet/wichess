@@ -14,7 +14,7 @@ import (
 // slots have their kinds returned.
 // If either army is invalid then an error is returned and there are no database effects.
 func ReserveArmies(tx *sql.Tx, wa, ba ArmyRequest,
-	whiteID, blackID int) (EncodedArmy, RandomPicks, EncodedArmy, RandomPicks, error) {
+	whiteID, blackID PlayerIdentifier) (EncodedArmy, RandomPicks, EncodedArmy, RandomPicks, error) {
 
 	whiteReservation, whiteLeft, whiteRight, err := MakeArmyReservation(tx, whiteID, wa)
 	if err != nil {
@@ -53,10 +53,10 @@ func ReserveArmies(tx *sql.Tx, wa, ba ArmyRequest,
 // MakeArmyReservation does one query to the player's database row to get information needed to
 // encode the pieces for insertion into the games table. Both random pick slots are always queried
 // and the kinds returned for use in ReserveArmy to replace without duplication.
-func MakeArmyReservation(tx *sql.Tx,
-	playerID int, r ArmyRequest) ([16]rules.PieceKind, rules.PieceKind, rules.PieceKind, error) {
+func MakeArmyReservation(tx *sql.Tx, id PlayerIdentifier,
+	r ArmyRequest) ([16]rules.PieceKind, rules.PieceKind, rules.PieceKind, error) {
 
-	if playerID == ComputerPlayerID {
+	if id == ComputerPlayerID {
 		return BasicArmy, rules.NoKind, rules.NoKind, nil
 	}
 
@@ -70,14 +70,14 @@ func MakeArmyReservation(tx *sql.Tx,
 		case LeftPick:
 			if left == true {
 				return [16]rules.PieceKind{}, rules.NoKind, rules.NoKind,
-					fmt.Errorf("multiple left pick requests for %v", playerID)
+					fmt.Errorf("multiple left pick requests for %v", id)
 			}
 			left = true
 			continue
 		case RightPick:
 			if right == true {
 				return [16]rules.PieceKind{}, rules.NoKind, rules.NoKind,
-					fmt.Errorf("multiple right pick requests for %v", playerID)
+					fmt.Errorf("multiple right pick requests for %v", id)
 			}
 			right = true
 			continue
@@ -85,13 +85,13 @@ func MakeArmyReservation(tx *sql.Tx,
 
 		if request > CollectionCount {
 			return [16]rules.PieceKind{}, rules.NoKind, rules.NoKind,
-				fmt.Errorf("request %v for %v out of collection bounds", request, playerID)
+				fmt.Errorf("request %v for %v out of collection bounds", request, id)
 		}
 
 		for _, alreadyRequested := range collectionRequests {
 			if alreadyRequested == request {
 				return [16]rules.PieceKind{}, rules.NoKind, rules.NoKind,
-					fmt.Errorf("duplicate collection request %v from %v", request, playerID)
+					fmt.Errorf("duplicate collection request %v from %v", request, id)
 			}
 		}
 
@@ -99,7 +99,7 @@ func MakeArmyReservation(tx *sql.Tx,
 		collectionRequests = append(collectionRequests, request)
 	}
 
-	collectionPieces, leftKind, rightKind := PlayerSelectedCollectionPieces(tx, playerID,
+	collectionPieces, leftKind, rightKind := PlayerSelectedCollectionPieces(tx, id,
 		collectionRequests)
 
 	var out [16]rules.PieceKind
@@ -120,7 +120,7 @@ func MakeArmyReservation(tx *sql.Tx,
 		p := collectionPieces[collectionPiecesIndex]
 		if p.InUse {
 			return [16]rules.PieceKind{}, rules.NoKind, rules.NoKind,
-				fmt.Errorf("collection piece %v for %v in use", p, playerID)
+				fmt.Errorf("collection piece %v for %v in use", p, id)
 		}
 		collectionPiecesIndex++
 		out[i] = p.Kind
@@ -132,7 +132,7 @@ func MakeArmyReservation(tx *sql.Tx,
 // ReserveArmy updates the player's database row with the requested collection pieces flagged to
 // be in use, it replaces random pick slots that are used, and all pieces, whether in the
 // collection or not, are encoded for insertion into the games table.
-func ReserveArmy(tx *sql.Tx, playerID int, o rules.Orientation,
+func ReserveArmy(tx *sql.Tx, id PlayerIdentifier, o rules.Orientation,
 	pieces [16]rules.PieceKind, left, right rules.PieceKind, r ArmyRequest) EncodedArmy {
 
 	collectionSlotsToUpdate := make([]CollectionSlot, 0, 4)
@@ -163,11 +163,11 @@ func ReserveArmy(tx *sql.Tx, playerID int, o rules.Orientation,
 		collectionSlotKinds = append(collectionSlotKinds, pieces[i])
 	}
 
-	if playerID == ComputerPlayerID {
+	if id == ComputerPlayerID {
 		return army
 	}
 
-	PlayerCollectionFlagInUse(tx, playerID,
+	PlayerCollectionFlagInUse(tx, id,
 		collectionSlotsToUpdate, collectionSlotKinds, left, right, replaceLeft, replaceRight)
 
 	return army

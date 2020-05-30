@@ -59,23 +59,25 @@ func (an AuthenticRequestHandler) ServeHTTP(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
+	id := PlayerIdentifier(playerID)
+
 	tx := DatabaseTransaction()
 
-	key := PlayersSessionKey(tx, playerID)
+	key := PlayersSessionKey(tx, id)
 	if (key == "") || (key != sc.Value) {
 		tx.Commit()
 		ClearBrowserSession(w, r)
 		return
 	}
 
-	name := PlayerName(tx, playerID)
+	name := PlayerName(tx, id)
 	if name == "" {
 		tx.Commit()
 		ClearBrowserSession(w, r)
 		return
 	}
 
-	p := Player{name, playerID}
+	p := Player{name, id}
 
 	switch r.Method {
 	case http.MethodGet:

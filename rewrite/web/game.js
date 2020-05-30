@@ -92,13 +92,14 @@ function layoutPage() {
     for (let i = 0; i < 64; i++) {
         document.querySelector('#s'+i).addEventListener('mouseover', () => {
             const at = Board[i]
-            let k
+            let k, o
             if (at === undefined) {
                 k = NoKind
             } else {
                 k = at.kind
+                o = at.orientation
             }
-            writePieceCharacteristics(k)
+            writePieceCharacteristics(k, o)
         })
     }
     writePlayersIndicator()
@@ -110,9 +111,14 @@ function layoutPage() {
 
     document.querySelector('#mute').onclick = toggleMute 
 
-    document.querySelector('#back').onclick = () => {
-        window.location = '/'
-    }
+    const back = document.querySelector('#back')
+    back.onclick = () => { window.location = '/' }
+    back.addEventListener('mouseenter', () => { 
+        document.querySelector('#back').classList.add('backhover')
+    })
+    back.addEventListener('mouseleave', () => {
+        document.querySelector('#back').classList.remove('backhover') 
+    })
 
     document.querySelector('#ack').onclick = () => {
         fetch('/acknowledge/'+GameInformation.ID).then(() => {

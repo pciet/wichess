@@ -4,10 +4,10 @@ import { chessBoard } from './board.js'
 
 const landscapeBar = `
 <div id="players"></div>
-<div>
-    <div></div>
+<div id="conditionmargin">
+    <div class="conditionspacer"></div>
     <div id="condition"></div>
-    <div></div>
+    <div class="conditionspacer"></div>
 </div>
 <div id="controls">
     <div class="inline">
@@ -16,24 +16,63 @@ const landscapeBar = `
             <div id="mute"></div>
             <div></div>
         </div>
-        `+button('navbutton', 'back', 'Back', false)+`
+        <div id="backmargin">
+            <div id="back">
+                <div></div>
+                <div id="backtext">&#8592;</div>
+                <div></div>
+            </div>
+        </div>
     </div>
     <div class="inline" id="buttons">
-        ` + button('navbutton', 'ack', 'Acknowledge', false) + `
+        <div></div>
+        <div id="ackmargin">
+            <div id="ack">
+                <div></div>
+                <div id="acktext">&#x2713;</div>
+                <div></div>
+            </div>
+        </div>
     </div>
-    <div class="inline" id="descriptionmargin">
+    <div class="inline" id="descriptiondiv">
+        <div id="descriptionmargin"></div>
+        <div id="descriptionbottomspacer"></div>
     </div>
 </div>
 `
 
 export const promotion = `
 <div class="inline">
-` + button('promotebutton', 'queenprom', 'Queen', false) + 
-    button('promotebutton', 'rookprom', 'Rook', false) + `
+    <div class="promotemargin">
+        <div class="promotebutton" id="queenprom">
+            <div></div>
+            <div class="promotetext">Queen</div>
+            <div></div>
+        </div>
+    </div>
+    <div class="promotemargin">
+        <div class="promotebutton" id="rookprom">
+            <div></div>
+            <div class="promotetext">Rook</div>
+            <div></div>
+        </div>
+    </div>
 </div>
 <div class="inline">
-` + button('promotebutton', 'knightprom', 'Knight', false) + 
-    button('promotebutton', 'bishopprom', 'Bishop', false) + `
+    <div class="promotemargin">
+        <div class="promotebutton" id="knightprom">
+            <div></div>
+            <div class="promotetext">Knight</div>
+            <div></div>
+        </div>
+    </div>
+    <div class="promotemargin">
+        <div class="promotebutton" id="bishopprom">
+            <div></div>
+            <div class="promotetext">Bishop</div>
+            <div></div>
+        </div>
+    </div>
 </div>
 `
 
@@ -70,8 +109,8 @@ export const square = `
         <div id="squarebuttonspacer"></div>
         <div>
             <div class="inline" id="squarenav">
-            ` + button('navbutton', 'ack', 'Acknowledge', true) + 
-                button('navbutton', 'back', 'Back', true) + `
+            ` + button('navbutton', 'ack', '&#x2713;', true) + 
+                button('navbutton', 'back', '&#8592;', true) + `
             </div>
             <div class="inline" id="mute"></div>
         </div>
@@ -94,8 +133,8 @@ export const square = `
 export const portrait = `
 <div>
     <div id="mute"></div>
-` + button('navbutton', 'ack', 'Acknowledge', true) + 
-    button('navbutton', 'back', 'Back', true) + `
+` + button('navbutton', 'ack', '&#x2713;', true) + 
+    button('navbutton', 'back', '&#8592;', true) + `
 </div>
 <div>
     <div class="inline" id="players"></div>

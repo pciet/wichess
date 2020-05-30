@@ -2,6 +2,8 @@ import { Moves, Board } from '../game.js'
 
 import { squareElement, boardAddressToIndex } from './board.js'
 import { doMove } from './move.js'
+import { showSelectedPieceCharacteristics, 
+    unshowSelectedPieceCharacteristics } from './characteristics.js'
 
 const hoverClass = 'hover'
 const moveClass = 'move'
@@ -32,6 +34,7 @@ export function writeSquareClick(fromIndex, toIndices) {
 
     s.clickFunc = () => {
         const removeMoveSelect = (fromSquare, toList) => {
+            unshowSelectedPieceCharacteristics(fromSquare)
             fromSquare.classList.remove(selectClass)
             for (const m of toList) {
                 const ms = squareElement(m)
@@ -54,12 +57,14 @@ export function writeSquareClick(fromIndex, toIndices) {
         }
 
         clicked = fromIndex
+        showSelectedPieceCharacteristics(fromIndex)
         s.classList.add(selectClass)
         for (const m of toIndices) {
             const ms = squareElement(m)
             ms.classList.add(selectMoveClass)
             ms.clickFunc = () => {
                 removeMoveSelect(squareElement(fromIndex), toIndices)
+                unshowSelectedPieceCharacteristics()
                 clicked = undefined
                 // handlers added back in doMove with new moves
                 removeAllSquareEventHandlers()

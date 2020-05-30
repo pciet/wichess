@@ -10,10 +10,10 @@ const (
 	SessionKeyCookie = "k"
 )
 
-func CreateBrowserSession(w http.ResponseWriter, playerID int, sessionKey string) {
+func CreateBrowserSession(w http.ResponseWriter, id PlayerIdentifier, sessionKey string) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     PlayerIDCookie,
-		Value:    strconv.Itoa(playerID),
+		Value:    strconv.Itoa(id.Int()),
 		Path:     "/",
 		HttpOnly: true,
 		Secure:   false,

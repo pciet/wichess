@@ -9,15 +9,17 @@ import (
 
 // TODO: change players table database access to use ID when available
 
+type PlayerIdentifier int
+
 type Player struct {
 	Name string
-	ID   int
+	ID   PlayerIdentifier
 }
 
 // NewPlayer inserts a database row then returns the player's ID.
-func NewPlayer(tx *sql.Tx, name, crypt string) int {
+func NewPlayer(tx *sql.Tx, name, crypt string) PlayerIdentifier {
 	left, right := rules.TwoDifferentSpecialPieces()
-	var id int
+	var id PlayerIdentifier
 	err := tx.QueryRow(PlayersNewInsert,
 		name, crypt, left, right,
 		pq.Array([CollectionCount]EncodedPiece{}),
@@ -29,9 +31,9 @@ func NewPlayer(tx *sql.Tx, name, crypt string) int {
 	return id
 }
 
-func PlayerName(tx *sql.Tx, playerID int) string {
+func PlayerName(tx *sql.Tx, id PlayerIdentifier) string {
 	var name string
-	err := tx.QueryRow(PlayersNameQuery, playerID).Scan(&name)
+	err := tx.QueryRow(PlayersNameQuery, id).Scan(&name)
 	if err == sql.ErrNoRows {
 		return ""
 	} else if err != nil {
@@ -41,8 +43,8 @@ func PlayerName(tx *sql.Tx, playerID int) string {
 }
 
 // PlayerID returns -1 if the name doesn't match a database row.
-func PlayerID(tx *sql.Tx, name string) int {
-	var id int
+func PlayerID(tx *sql.Tx, name string) PlayerIdentifier {
+	var id PlayerIdentifier
 	err := tx.QueryRow(PlayersIdentifierQuery, name).Scan(&id)
 	if err == sql.ErrNoRows {
 		DebugPrintln(PlayersIdentifierQuery, name)
@@ -53,10 +55,6 @@ func PlayerID(tx *sql.Tx, name string) int {
 	return id
 }
 
-func PlayerPiecePicks(tx *sql.Tx, name string) (left, right rules.PieceKind) {
-	err := tx.QueryRow(PlayersPiecePicksQuery, name).Scan(&left, &right)
-	if err != nil {
-		Panic(err)
-	}
-	return
+func (a PlayerIdentifier) Int() int {
+	return int(a)
 }

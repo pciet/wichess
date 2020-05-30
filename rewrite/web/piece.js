@@ -23,6 +23,15 @@ export const Orientation = {
     BLACK: 1
 }
 
+export function orientationString(orientation) {
+    if (orientation === Orientation.WHITE) {
+        return 'White'
+    } else if (orientation === Orientation.BLACK) {
+        return 'Black'
+    }
+    throw new Error('orientation ' + orientation + ' not white or black')
+}
+
 export function pieceImageName(addressIndex, kind, orientation) {
     let name = ''
     if (orientation == Orientation.WHITE) {

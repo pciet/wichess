@@ -21,19 +21,28 @@ func ParseURLGameIdentifier(urlPath, pathPrefix string) (GameIdentifier, error) 
 // Starting with just the URL path in the example /moves?turn=21 to parse turn then
 // queryKey is turn and from is the url.Values member of (*http.Request var).URL.Query().
 func ParseURLIntQuery(from url.Values, queryKey string) (int, error) {
-	q, has := from[queryKey]
-	if has == false {
-		return 0, fmt.Errorf("%v not in URL queries", queryKey)
+	intstring, err := ParseURLQuery(from, queryKey)
+	if err != nil {
+		return 0, err
 	}
 
-	if len(q) != 1 {
-		return 0, fmt.Errorf("%v has %v values instead of 1", queryKey, len(q))
-	}
-
-	v, err := strconv.ParseInt(q[0], 10, 0)
+	v, err := strconv.ParseInt(intstring, 10, 0)
 	if err != nil {
 		return 0, err
 	}
 
 	return int(v), nil
+}
+
+func ParseURLQuery(from url.Values, queryKey string) (string, error) {
+	q, has := from[queryKey]
+	if has == false {
+		return "", fmt.Errorf("%v not in URL queries", queryKey)
+	}
+
+	if len(q) != 1 {
+		return "", fmt.Errorf("%v has %v values instead of 1", queryKey, len(q))
+	}
+
+	return q[0], nil
 }
