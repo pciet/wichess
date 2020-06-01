@@ -12,7 +12,7 @@ export function setMode(mode) {
 
 addLayout(100, landscape)
 
-function layoutPage() {
+export function layoutPage() {
     layout()
     pickMode(Mode)
     scaleFont()

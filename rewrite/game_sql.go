@@ -115,18 +115,8 @@ var (
 	GamesBlackPicksQuery = SQLQuery([]string{GamesBlackLeftKind, GamesBlackRightKind},
 		GamesTable, GamesIdentifier)
 
-	GamesAcknowledgeUpdate = func() string {
-		var s strings.Builder
-		s.WriteString("UPDATE ")
-		s.WriteString(GamesTable)
-		s.WriteString(" SET $1=$2 WHERE ")
-		s.WriteString(GamesIdentifier)
-		s.WriteString("=$3;")
-		if DebugSQL {
-			fmt.Println(s.String())
-		}
-		return s.String()
-	}()
+	GamesAcknowledgeWhiteUpdate = SQLUpdate(GamesTable, GamesWhiteAcknowledge, GamesIdentifier)
+	GamesAcknowledgeBlackUpdate = SQLUpdate(GamesTable, GamesBlackAcknowledge, GamesIdentifier)
 
 	GamesDelete = SQLDelete(GamesTable, GamesIdentifier)
 )

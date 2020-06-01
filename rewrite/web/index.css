@@ -228,3 +228,41 @@ a {
 #matchingspacer {
     width: 10%;
 }
+
+.matchcancelspacer {
+    height: 20%;
+}
+
+.matchingtext {
+    display: block;
+    text-align: center;
+    font-size: 1.2rem;
+    font-style: italic;
+    color: rgb(240,50,50);
+}
+
+.matchingplayer {
+    text-align: center;
+    font-size: 2.2rem;
+    color: rgb(190,190,255);
+}
+
+#cancelbuttonmargin {
+    padding: 5px;
+}
+
+#cancelbutton {
+    border: thick outset rgb(150,255,180);
+    border-radius: 5px;
+    color: rgb(220,255,235);
+    background: linear-gradient(to bottom right, rgb(80,50,10), rgb(70,20,1));
+    background-color: rgb(80,50,10);
+    box-shadow: -5px -5px 1px black;
+    user-select: none;
+    text-align: center;
+    font-size: 1.5rem;
+}
+
+.cancelbuttonspacer {
+    width: 20%;
+}

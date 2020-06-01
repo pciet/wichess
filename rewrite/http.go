@@ -41,6 +41,7 @@ func InitializeHTTP() {
 	// if there's a timeout by the opponent not requesting. A GET to /people?id=GameID loads
 	// the game webpage for the match.
 	http.Handle(PeoplePath, MatchPeopleHandler)
+	http.Handle(PeopleRootPath, MatchPeopleHandler)
 
 	// Which piece is where on a game's board is initially loaded into the web browser with a
 	// GET to /boards/[game identifier].

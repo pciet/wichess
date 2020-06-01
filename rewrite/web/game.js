@@ -14,16 +14,45 @@ import { fetchMovesPromise } from './game/fetch_moves.js'
 import { webSocketPromise, webSocketOnMessage } from './game/websocket.js'
 import { fetchedMoves } from './game/moves.js'
 
-import { fetchNextMoveSound, muted, 
-    setMuteIcon, toggleMute } from './game/audio.js'
+import { fetchNextMoveSound, muted, setMuteIcon, toggleMute } from './game/audio.js'
 
+import { Orientation } from './piece.js'
 import { NoKind } from './pieceDefs.js'
 import { State } from './game/state.js'
 
-// The current board is represtened by this Board var.
-// The array is indexed by Wisconsin Chess address indices, 0-63.
-// If a board square is empty then the matching array element
-// is undefined or has kind set to NoKind from piece.js.
+export let PlayerOrientation
+
+if (GameInformation.Player === GameInformation.White.Name) {
+    PlayerOrientation = Orientation.WHITE
+} else if (GameInformation.Player === GameInformation.Black.Name) {
+    PlayerOrientation = Orientation.BLACK
+} else {
+    throw new Error(GameInformation.Player + ' not white or black player')
+}
+
+export let ActiveOrientation
+
+if (GameInformation.Active === 'white') {
+    ActiveOrientation = Orientation.WHITE
+} else if (GameInformation.Active === 'black') {
+    ActiveOrientation = Orientation.BLACK
+} else {
+    throw new Error('unknown orientation value ' + GameInformation.Active)
+}
+
+export function switchActive() {
+    if (ActiveOrientation === Orientation.WHITE) {
+        ActiveOrientation = Orientation.BLACK
+    } else if (ActiveOrientation === Orientation.BLACK) {
+        ActiveOrientation = Orientation.WHITE
+    } else {
+        throw new Error('active orientation ' + ActiveOrientation + ' not white or black')
+    }
+}
+
+// The current board is represtened by this Board var. The array is indexed by Wisconsin Chess 
+// address indices, 0-63. If a board square is empty then the matching array element is undefined 
+// or has kind set to NoKind from piece.js.
 export let Board
 
 // The condition is the current game state.

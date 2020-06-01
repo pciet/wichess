@@ -14,16 +14,16 @@ func AcknowledgeGameComplete(tx *sql.Tx, id GameIdentifier, player string) {
 		return
 	}
 
-	var ackKey string
+	var exec string
 	if player == h.White.Name {
-		ackKey = GamesWhiteAcknowledge
+		exec = GamesAcknowledgeWhiteUpdate
 	} else if player == h.Black.Name {
-		ackKey = GamesBlackAcknowledge
+		exec = GamesAcknowledgeBlackUpdate
 	} else {
 		Panic("GameHasPlayer shows", player, "in", id, ", but player not in header")
 	}
 
-	r, err := tx.Exec(GamesAcknowledgeUpdate, ackKey, true, id)
+	r, err := tx.Exec(exec, true, id)
 	if err != nil {
 		Panic(err)
 	}
@@ -33,6 +33,6 @@ func AcknowledgeGameComplete(tx *sql.Tx, id GameIdentifier, player string) {
 		Panic(err)
 	}
 	if c != 1 {
-		Panic(c, "rows affected by", GamesAcknowledgeUpdate)
+		Panic(c, "rows affected by", exec)
 	}
 }

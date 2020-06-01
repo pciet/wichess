@@ -110,3 +110,29 @@ export const publicMatching = `
     </div>
 </div>
 `
+
+export const matchPending = `
+    <div class="matchcancelspacer"></div>
+    <div>
+        <div class="inline"></div>
+        <div class="inline">
+            <span class="matchingtext">Matching</span>
+            <div class="matchingplayer" id="matchingopponent"></div>
+            <span class="matchingtext">against</span>
+            <div class="matchingplayer" id="matchingplayer"></div>
+            <div>
+                <div class="inline cancelbuttonspacer"></div>
+                <div class="inline" id="cancelbuttonmargin">
+                    <div id="cancelbutton">
+                        <div></div>
+                        <div>Cancel</div>
+                        <div></div>
+                    </div>
+                </div>
+                <div class="inline cancelbuttonspacer"></div>
+            </div>
+        </div>
+        <div class="inline"></div>
+    </div>
+    <div class="matchcancelspacer"></div>
+`

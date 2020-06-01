@@ -14,7 +14,7 @@ const (
 )
 
 var MovesHandler = AuthenticRequestHandler{
-	Get: GameIdentifierParsed(RequesterInGame(MovesGet), MovesPath),
+	Get: GameIdentifierParsed(PlayerNamed(MovesGet), MovesPath),
 }
 
 type MovesJSON struct {
@@ -22,9 +22,11 @@ type MovesJSON struct {
 	rules.State `json:"s"`
 }
 
-func MovesGet(w http.ResponseWriter, r *http.Request, tx *sql.Tx, id GameIdentifier) {
-	defer tx.Commit()
+func MovesGet(w http.ResponseWriter, r *http.Request, tx *sql.Tx,
+	id GameIdentifier, requester Player) {
 
+	// TODO: turn number isn't currently used, does the rewrite still have the race condition that
+	// made that counting necessary?
 	/*
 		turn, err := ParseURLIntQuery(r.URL.Query(), TurnQuery)
 		if err != nil {
@@ -40,6 +42,21 @@ func MovesGet(w http.ResponseWriter, r *http.Request, tx *sql.Tx, id GameIdentif
 	*/
 
 	moves, state := MovesForGame(tx, id)
+
+	if (state == rules.Check) || (state == rules.Draw) || (state == rules.Checkmate) {
+		var alertState string
+		switch state {
+		case rules.Check:
+			alertState = CheckCalculatedUpdate
+		case rules.Draw:
+			alertState = DrawCalculatedUpdate
+		case rules.Checkmate:
+			alertState = CheckmateCalculatedUpdate
+		}
+		go Alert(id, GameOpponent(tx, id, requester.Name), Update{nil, alertState})
+	}
+
+	tx.Commit()
 
 	JSONResponse(w, MovesJSON{moves, state})
 }

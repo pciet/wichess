@@ -1,4 +1,5 @@
-import { Condition, replaceCondition, gameDone, replaceMoves } from '../game.js'
+import { PlayerOrientation, ActiveOrientation, Condition, replaceCondition, 
+    gameDone, replaceMoves } from '../game.js'
 
 import { State } from './state.js'
 import { replaceAndWriteGameCondition } from './condition.js'
@@ -10,7 +11,7 @@ export function fetchedMoves(moves) {
         replaceAndWriteGameCondition(moves.state)
     }
 
-    if (gameDone() === true) {
+    if ((gameDone() === true) || (PlayerOrientation !== ActiveOrientation)) {
         return
     }
 

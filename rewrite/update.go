@@ -6,12 +6,15 @@ import "github.com/pciet/wichess/rules"
 // representation and to indicate promotion communication variations as described
 // by docs/promotion.md.
 type Update struct {
-	Squares []rules.AddressedSquare `json:"d"` // diff
+	Squares []rules.AddressedSquare `json:"d,omitempty"` // diff
 	State   string                  `json:"s,omitempty"`
 }
 
 const (
-	PromotionNeededUpdate = "p"
-	WaitUpdate            = "w"
-	ContinueUpdate        = "c"
+	PromotionNeededUpdate     = "p"
+	WaitUpdate                = "w"
+	ContinueUpdate            = "c"
+	CheckCalculatedUpdate     = "ch"
+	DrawCalculatedUpdate      = "dr"
+	CheckmateCalculatedUpdate = "chm"
 )

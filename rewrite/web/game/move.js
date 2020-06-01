@@ -4,6 +4,8 @@ import { State } from './state.js'
 import { replaceAndWriteGameCondition } from './condition.js'
 import { moveSound } from './audio.js'
 
+import { switchActive } from '../game.js'
+
 export function doMove(fromIndex, toIndex, promotion = undefined, reversePromotion = false) {
     let body
     if (promotion === undefined) {
@@ -13,6 +15,7 @@ export function doMove(fromIndex, toIndex, promotion = undefined, reversePromoti
     }
 
     moveSound()
+    replaceAndWriteGameCondition(State.NORMAL)
 
     fetch('/move/'+GameInformation.ID, {
         method: 'POST',
@@ -37,7 +40,7 @@ export function doMove(fromIndex, toIndex, promotion = undefined, reversePromoti
                 throw new Error('unexpected /move response update state ' + moveResponse.s)
             }
         } else {
-            //switchActive()
+            switchActive()
         }
     })
 }

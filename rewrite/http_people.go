@@ -6,21 +6,24 @@ import (
 )
 
 const (
-	PeoplePath = "/people/"
+	PeoplePath     = "/people/"
+	PeopleRootPath = "/people"
 
 	RequestedOpponentQuery = "o"
 )
 
 var MatchPeopleHandler = AuthenticRequestHandler{
-	Get:  GameIdentifierParsed(RequesterInGame(PeopleGet), PeoplePath),
+	Get:  GameIdentifierParsed(PlayerNamed(PeopleGet), PeoplePath),
 	Post: ArmyParsed(PeoplePost),
 }
 
-func PeopleGet(w http.ResponseWriter, r *http.Request, tx *sql.Tx, id GameIdentifier) {
-	// TODO: need this player's name?
-	WriteHTMLTemplate(w, GameHTMLTemplate,
-		GameHTMLTemplateData{"", LoadGameHeader(tx, id, false)})
+func PeopleGet(w http.ResponseWriter, r *http.Request, tx *sql.Tx,
+	id GameIdentifier, requester Player) {
+
+	h := LoadGameHeader(tx, id, false)
 	tx.Commit()
+
+	WriteHTMLTemplate(w, GameHTMLTemplate, GameHTMLTemplateData{requester.Name, h})
 }
 
 type PeoplePostJSON struct {
@@ -52,7 +55,7 @@ func PeoplePost(w http.ResponseWriter, r *http.Request, tx *sql.Tx,
 
 	gameID := RequestOpponent(opponentID, requester.ID, a)
 	if gameID != 0 {
-		JSONResponse(w, PeoplePostJSON{gameID})
 		close(done)
 	}
+	JSONResponse(w, PeoplePostJSON{gameID})
 }
