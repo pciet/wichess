@@ -76,7 +76,7 @@ export function writeSquareClick(fromIndex, toIndices) {
     s.addEventListener('click', s.clickFunc)
 }
 
-function removeAllSquareEventHandlers() {
+export function removeAllSquareEventHandlers() {
     for (let i = 0; i < Moves.length; i++) {
         const s = squareElement(boardAddressToIndex(Moves[i].from))
         s.removeEventListener('mouseenter', s.mouseEnterFunc)

@@ -22,8 +22,9 @@ export function addPublicMatches() {
             continue
         }
         const pb = document.querySelector('#p'+i)
-        pb.innerHTML = RecentOpponents[i]
         pb.classList.add('playernamed')
+        pb.onclick = () => { matchOnClick(RecentOpponents[i]) }
+        layoutSelector('#p'+i, '<div></div><div>'+RecentOpponents[i]+'</div><div></div>')
     }
 
     document.querySelector('#match').onclick = () => {
@@ -31,35 +32,38 @@ export function addPublicMatches() {
         if (opponent === '') {
             return
         }
-
-        matching = opponent
-        addMatching()
-        cancelController = new AbortController()
-
-        fetch('/people?o='+encodeURIComponent(opponent), {
-            method: 'POST',
-            signal: cancelController.signal,
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: armySelectionJSON()
-        }).then(r => r.json()).then(r => {
-            if (r.id === 0) {
-                // then there was a timeout
-                cancelMatching()
-            } else {
-                // otherwise a new game is ready to be played
-                window.location = '/people/'+r.id
-            }
-        }).catch(err => {
-            if (err.name === 'AbortError') {
-                // not an error, player pressed the matching cancel button
-                cancelMatching()
-                return
-            }
-            console.error(err)
-        })
+        matchOnClick(opponent)
     }
+}
+
+function matchOnClick(opponent) {
+    matching = opponent
+    addMatching()
+    cancelController = new AbortController()
+
+    fetch('/people?o='+encodeURIComponent(opponent), {
+        method: 'POST',
+        signal: cancelController.signal,
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: armySelectionJSON()
+    }).then(r => r.json()).then(r => {
+        if (r.id === 0) {
+            // then there was a timeout
+            cancelMatching()
+        } else {
+            // otherwise a new game is ready to be played
+            window.location = '/people/'+r.id
+        }
+    }).catch(err => {
+        if (err.name === 'AbortError') {
+            // not an error, player pressed the matching cancel button
+            cancelMatching()
+            return
+        }
+        console.error(err)
+    })
 }
 
 function cancelMatching() {

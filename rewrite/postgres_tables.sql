@@ -6,6 +6,7 @@ CREATE TABLE players (
     session BYTEA,
 
     recent_opponents INTEGER[5],
+    people_game INTEGER,
 
     left_kind INTEGER,
     right_kind INTEGER,

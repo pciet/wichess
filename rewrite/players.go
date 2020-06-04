@@ -47,7 +47,6 @@ func PlayerID(tx *sql.Tx, name string) PlayerIdentifier {
 	var id PlayerIdentifier
 	err := tx.QueryRow(PlayersIdentifierQuery, name).Scan(&id)
 	if err == sql.ErrNoRows {
-		DebugPrintln(PlayersIdentifierQuery, name)
 		return -1
 	} else if err != nil {
 		Panic(err)
@@ -55,6 +54,4 @@ func PlayerID(tx *sql.Tx, name string) PlayerIdentifier {
 	return id
 }
 
-func (a PlayerIdentifier) Int() int {
-	return int(a)
-}
+func (a PlayerIdentifier) Int() int { return int(a) }

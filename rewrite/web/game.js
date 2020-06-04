@@ -68,6 +68,10 @@ export function gameDone() {
     return false
 }
 
+if (GameInformation.Conceded === true) {
+    Condition = State.CONCEDED
+}
+
 // Turns are numbered to guarantee synchronization with the host.
 export let Turn = GameInformation.Turn
 
@@ -141,7 +145,18 @@ function layoutPage() {
     document.querySelector('#mute').onclick = toggleMute 
 
     const back = document.querySelector('#back')
-    back.onclick = () => { window.location = '/' }
+    if (window.location.pathname.includes('people')) {
+        // In people mode back is disabled because the game must be completed or conceded before
+        // going back to the index page. The button is changed to a concede button.
+        document.querySelector('#backtext').innerHTML = '&#x2718;'
+        back.onclick = () => {
+            fetch('/concede/'+GameInformation.ID).then(() => { window.location = '/' })
+        }
+    } else {
+        document.querySelector('#backtext').innerHTML = '&#8592;'
+        back.onclick = () => { window.location = '/' }
+
+    }
     back.addEventListener('mouseenter', () => { 
         document.querySelector('#back').classList.add('backhover')
     })

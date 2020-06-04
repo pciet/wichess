@@ -38,10 +38,14 @@ func InitializeHTTP() {
 	// Players match against each other in the People mode by typing in their opponent's username,
 	// or by clicking on a recent opponent's name that's displayed. This causes a POST to
 	// /people?o=PlayersName which returns the game ID when the opponent does the same or an error
-	// if there's a timeout by the opponent not requesting. A GET to /people?id=GameID loads
+	// if there's a timeout by the opponent not requesting. A GET to /people/[game identifier] loads
 	// the game webpage for the match.
 	http.Handle(PeoplePath, MatchPeopleHandler)
 	http.Handle(PeopleRootPath, MatchPeopleHandler)
+
+	// A people game can be conceded by clicking on the concede button, which does a GET to
+	// /concede/[game identifier].
+	http.Handle(ConcedePath, ConcedeHandler)
 
 	// Which piece is where on a game's board is initially loaded into the web browser with a
 	// GET to /boards/[game identifier].

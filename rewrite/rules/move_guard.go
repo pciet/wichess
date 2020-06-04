@@ -58,6 +58,7 @@ LOOP:
 			gchanges = append(gchanges, AddressedSquare{m.To, s.Square})
 			gchanges = append(gchanges, AddressedSquare{s.Address, Square{}})
 			changes = MergeReplaceAddressedSquares(changes, gchanges)
+			(&a).ApplyChanges(gchanges)
 			continue LOOP
 		}
 		break

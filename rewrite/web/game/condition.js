@@ -4,6 +4,7 @@ import { layoutSelector } from '../layout.js'
 import { State, States } from './state.js'
 import { showAcknowledgeButton, hideAcknowledgeButton } from './acknowledge.js'
 import { showPromotion } from './promotion.js'
+import { removeAllSquareEventHandlers } from './board_click.js'
 
 export function replaceAndWriteGameCondition(cond) {
     replaceCondition(cond)
@@ -13,6 +14,10 @@ export function replaceAndWriteGameCondition(cond) {
 export function writeGameCondition() {
     if (gameDone() === true) {
         showAcknowledgeButton()
+        removeAllSquareEventHandlers()
+        if (Condition === State.CONCEDED) {
+            document.querySelector('#back').hidden = true
+        }
     } else {
         hideAcknowledgeButton()
     }

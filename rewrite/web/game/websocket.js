@@ -49,6 +49,10 @@ export function webSocketOnMessage(event) {
         // prev move caused checkmate
         replaceAndWriteGameCondition(State.CHECKMATE)
         break
+    case 'co':
+        // opponent conceded
+        replaceAndWriteGameCondition(State.CONCEDED)
+        break
     default:
         throw new Error('unknown alert state: ' + alert)
     }

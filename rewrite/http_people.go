@@ -33,15 +33,14 @@ type PeoplePostJSON struct {
 func PeoplePost(w http.ResponseWriter, r *http.Request, tx *sql.Tx,
 	requester Player, a ArmyRequest) {
 
+	tx.Commit()
+
 	requestedOpponent, err := ParseURLQuery(r.URL.Query(), RequestedOpponentQuery)
 	if err != nil {
 		DebugPrintln(PeoplePath, "couldn't parse", RequestedOpponentQuery, ":", err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-
-	opponentID := PlayerID(tx, requestedOpponent)
-	tx.Commit()
 
 	done := make(chan struct{})
 	clientCanceled := r.Context().Done()
@@ -53,9 +52,15 @@ func PeoplePost(w http.ResponseWriter, r *http.Request, tx *sql.Tx,
 		}
 	}()
 
-	gameID := RequestOpponent(opponentID, requester.ID, a)
+	gameID, opponentID := RequestOpponent(requestedOpponent, requester, a)
 	if gameID != 0 {
+		// game was successfully created
 		close(done)
+		go AddPlayerRecentOpponent(requester.ID, opponentID)
+		tx = DatabaseTransaction()
+		UpdatePlayerActivePeopleGame(tx, requester.ID, gameID)
+		tx.Commit()
 	}
+	// a gameID of 0 is normal and a signal to the webpage
 	JSONResponse(w, PeoplePostJSON{gameID})
 }

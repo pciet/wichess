@@ -25,4 +25,8 @@ func AcknowledgeGet(w http.ResponseWriter, r *http.Request, tx *sql.Tx,
 	AddGamePicksToPlayerCollection(tx, requester, id)
 
 	AcknowledgeGameComplete(tx, id, requester.Name)
+
+	if PlayerActivePeopleGame(tx, requester.ID) == id {
+		UpdatePlayerActivePeopleGame(tx, requester.ID, 0)
+	}
 }

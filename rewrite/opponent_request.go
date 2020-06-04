@@ -8,7 +8,7 @@ import (
 const OpponentRequestTimeoutSeconds = 120
 
 type OpponentRequest struct {
-	Opponent PlayerIdentifier
+	Opponent string
 	With     ArmyRequest
 	Notify   chan GameIdentifier
 }
@@ -30,35 +30,46 @@ func EndOpponentRequest(requester PlayerIdentifier) {
 
 // RequestOpponent blocks until the opponent requests this player, a timeout occurs, or
 // EndOpponentRequest is called from another goroutine. If the players successfully match then
-// a new game is created and the identifier for it returned, or 0 is returned otherwise.
-func RequestOpponent(opponent, requester PlayerIdentifier, with ArmyRequest) GameIdentifier {
+// a new game is created and the identifier for it returned, or 0 is returned otherwise. The
+// opponent is named by string so that the match is successful even if the username hasn't been
+// created yet. The opponent's player ID is also returned.
+func RequestOpponent(opponent string, requester Player,
+	with ArmyRequest) (GameIdentifier, PlayerIdentifier) {
 	OpponentRequestsLock.Lock()
-	opp, has := OpponentRequests[requester]
+	opp, has := OpponentRequests[requester.ID]
 	if has {
 		OpponentRequestsLock.Unlock()
 		DebugPrintln(requester, "already has opponent request for", opp.Opponent, "not", opponent)
-		return 0
+		return 0, 0
 	}
+
+	// TODO: does this lock cause bad delays because of this database communication?
+	tx := DatabaseTransaction()
+	oppID := PlayerID(tx, opponent)
+	tx.Commit()
 
 	// does the opponent already have a request for this player?
 	// if so then create a new game and notify that opponent of the GameIdentifier
-	oppReq, has := OpponentRequests[opponent]
-	if has && (oppReq.Opponent == requester) {
-		delete(OpponentRequests, opponent)
+	oppReq, has := OpponentRequests[oppID]
+	if has && (oppID == -1) {
+		Panic("PlayerID -1 value meaning no player in DB in OpponentRequests map")
+	}
+	if has && (oppReq.Opponent == requester.Name) {
+		delete(OpponentRequests, oppID)
 		OpponentRequestsLock.Unlock()
 
-		tx := DatabaseTransaction()
-		id := NewGame(tx, with, oppReq.With,
-			Player{PlayerName(tx, requester), requester},
-			Player{PlayerName(tx, opponent), opponent})
+		// TODO: if player can be deleted then there's a race here from above PlayerID read
+
+		tx = DatabaseTransaction()
+		id := NewGame(tx, with, oppReq.With, requester, Player{opponent, oppID})
 		tx.Commit()
 
 		oppReq.Notify <- id
-		return id
+		return id, oppID
 	}
 
 	ready := make(chan GameIdentifier)
-	OpponentRequests[requester] = OpponentRequest{opponent, with, ready}
+	OpponentRequests[requester.ID] = OpponentRequest{opponent, with, ready}
 	OpponentRequestsLock.Unlock()
 
 	var id GameIdentifier
@@ -68,8 +79,16 @@ func RequestOpponent(opponent, requester PlayerIdentifier, with ArmyRequest) Gam
 	}
 
 	OpponentRequestsLock.Lock()
-	delete(OpponentRequests, requester)
+	delete(OpponentRequests, requester.ID)
 	OpponentRequestsLock.Unlock()
 
-	return id
+	tx = DatabaseTransaction()
+	oppID = PlayerID(tx, opponent)
+	tx.Commit()
+
+	if oppID == -1 {
+		Panic("unexpected missing player ID for", opponent)
+	}
+
+	return id, oppID
 }

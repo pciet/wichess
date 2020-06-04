@@ -43,7 +43,8 @@ func MovesGet(w http.ResponseWriter, r *http.Request, tx *sql.Tx,
 
 	moves, state := MovesForGame(tx, id)
 
-	if (state == rules.Check) || (state == rules.Draw) || (state == rules.Checkmate) {
+	if (GameHasPlayer(tx, id, ComputerPlayerName) == false) &&
+		((state == rules.Check) || (state == rules.Draw) || (state == rules.Checkmate)) {
 		var alertState string
 		switch state {
 		case rules.Check:

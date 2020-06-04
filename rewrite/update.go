@@ -17,4 +17,5 @@ const (
 	CheckCalculatedUpdate     = "ch"
 	DrawCalculatedUpdate      = "dr"
 	CheckmateCalculatedUpdate = "chm"
+	ConcededUpdate            = "co"
 )

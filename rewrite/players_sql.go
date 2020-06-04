@@ -10,6 +10,7 @@ const (
 	PlayersSession = "session"
 
 	PlayersRecentOpponents = "recent_opponents"
+	PlayersPeopleGame      = "people_game"
 
 	PlayersLeftKind   = "left_kind"
 	PlayersRightKind  = "right_kind"
@@ -46,4 +47,9 @@ var (
 
 	PlayersRecentOpponentsQuery = SQLQuery([]string{PlayersRecentOpponents},
 		PlayersTable, PlayersIdentifier)
+	PlayersRecentOpponentsUpdate = SQLUpdate(PlayersTable,
+		PlayersRecentOpponents, PlayersIdentifier)
+
+	PlayersPeopleGameQuery  = SQLQuery([]string{PlayersPeopleGame}, PlayersTable, PlayersIdentifier)
+	PlayersPeopleGameUpdate = SQLUpdate(PlayersTable, PlayersPeopleGame, PlayersIdentifier)
 )

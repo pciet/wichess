@@ -19,7 +19,7 @@ const landscapeBar = `
         <div id="backmargin">
             <div id="back">
                 <div></div>
-                <div id="backtext">&#8592;</div>
+                <div id="backtext"></div>
                 <div></div>
             </div>
         </div>

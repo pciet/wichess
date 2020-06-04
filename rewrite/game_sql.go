@@ -118,5 +118,7 @@ var (
 	GamesAcknowledgeWhiteUpdate = SQLUpdate(GamesTable, GamesWhiteAcknowledge, GamesIdentifier)
 	GamesAcknowledgeBlackUpdate = SQLUpdate(GamesTable, GamesBlackAcknowledge, GamesIdentifier)
 
+	GamesConcededUpdate = SQLUpdate(GamesTable, GamesConceded, GamesIdentifier)
+
 	GamesDelete = SQLDelete(GamesTable, GamesIdentifier)
 )

@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"net/http"
+	"strconv"
 
 	"github.com/pciet/wichess/rules"
 )
@@ -27,6 +28,16 @@ type IndexHTMLTemplateData struct {
 }
 
 func IndexGet(w http.ResponseWriter, r *http.Request, tx *sql.Tx, requester Player) {
+	peopleGameID := PlayerActivePeopleGame(tx, requester.ID)
+	if peopleGameID != 0 {
+		// if there's an active people game then the index webpage is disallowed until the
+		// game is completed
+		tx.Commit()
+		http.Redirect(w, r,
+			PeoplePath+strconv.Itoa(int(peopleGameID)), http.StatusTemporaryRedirect)
+		return
+	}
+
 	left, right := PlayerPiecePicks(tx, requester.Name)
 	collection := PlayerCollection(tx, requester.ID)
 	opp := PlayerRecentOpponents(tx, requester.ID)
