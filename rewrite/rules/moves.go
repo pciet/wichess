@@ -17,7 +17,7 @@ func (a Game) Moves(active Orientation) ([]MoveSet, State) {
 	moves := a.NaiveMoves(active)
 
 	// check is a threat of capture, which means takes into check count
-	threats := MovesAddressSlice(a.NaiveTakeMoves(active.Opponent()))
+	threats := MovesAddressSlice(a.NaiveMoves(active.Opponent()))
 
 	check := a.Board.InCheck(active, threats)
 

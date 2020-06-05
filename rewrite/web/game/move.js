@@ -3,6 +3,7 @@ import { fetchMoves } from './fetch_moves.js'
 import { State } from './state.js'
 import { replaceAndWriteGameCondition } from './condition.js'
 import { moveSound } from './audio.js'
+import { pauseWebSocket, unpauseWebSocket } from './websocket.js'
 
 import { switchActive } from '../game.js'
 
@@ -16,6 +17,10 @@ export function doMove(fromIndex, toIndex, promotion = undefined, reversePromoti
 
     moveSound()
     replaceAndWriteGameCondition(State.NORMAL)
+
+    // if the opponent move alert is received before the move response then the board will
+    // be in an incorrect state
+    pauseWebSocket()
 
     fetch('/move/'+GameInformation.ID, {
         method: 'POST',
@@ -42,5 +47,6 @@ export function doMove(fromIndex, toIndex, promotion = undefined, reversePromoti
         } else {
             switchActive()
         }
+        unpauseWebSocket()
     })
 }

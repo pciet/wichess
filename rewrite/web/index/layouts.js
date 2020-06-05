@@ -8,7 +8,7 @@ export const landscape = `
     <div>
         <div></div>
         <div id="title">Wisconsin Chess</div>
-        <div id="name">`+Name+`</div>
+        <div id="name">`+window.Name+`</div>
         <div></div>
     </div>
     <div class="modebuttonmargin">

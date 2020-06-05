@@ -89,10 +89,11 @@ const websocketPromise = webSocketPromise(GameInformation.ID)
 fetchNextMoveSound()
 
 const lowerSquareRatio = 0.8
-const upperSquareRatio = 1.5
+const upperSquareRatio = 1.2
 
 addLayout(lowerSquareRatio, layouts.portrait)
 addLayout(upperSquareRatio, layouts.square)
+addLayout(1.5, layouts.fatLandscape) // includes iPad landscape ratio
 addLayout(1.8, layouts.landscape)
 addLayout(2, layouts.landscapeFloating)
 addLayout(3, layouts.landscapeWideFloating)
@@ -150,11 +151,15 @@ function layoutPage() {
         // going back to the index page. The button is changed to a concede button.
         document.querySelector('#backtext').innerHTML = '&#x2718;'
         back.onclick = () => {
-            fetch('/concede/'+GameInformation.ID).then(() => { window.location = '/' })
+            fetch('/concede/'+GameInformation.ID).then(() => {
+                window.location = '/' 
+            })
         }
     } else {
         document.querySelector('#backtext').innerHTML = '&#8592;'
-        back.onclick = () => { window.location = '/' }
+        back.onclick = () => {
+            window.location = '/'
+        }
 
     }
     back.addEventListener('mouseenter', () => { 

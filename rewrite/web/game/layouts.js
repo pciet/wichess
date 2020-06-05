@@ -41,6 +41,46 @@ const landscapeBar = `
 </div>
 `
 
+const fatLandscapeBar = `
+<div id="players"></div>
+<div id="fatconditionmargin">
+    <div class="conditionspacer"></div>
+    <div id="condition"></div>
+    <div class="conditionspacer"></div>
+</div>
+<div id="controls">
+    <div id="fatlandscapedescription">
+        <div id="descriptionmargin"></div>
+    </div>
+    <div>
+        <div class="inline">
+            <div>
+                <div></div>
+                <div id="mute"></div>
+                <div></div>
+            </div>
+            <div id="backmargin">
+                <div id="back">
+                    <div></div>
+                    <div id="backtext"></div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
+        <div class="inline" id="buttons">
+            <div></div>
+            <div id="ackmargin">
+                <div id="ack">
+                    <div></div>
+                    <div id="acktext">&#x2713;</div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+`
+
 export const promotion = `
 <div class="inline">
     <div class="promotemargin">
@@ -73,6 +113,14 @@ export const promotion = `
             <div></div>
         </div>
     </div>
+</div>
+`
+
+export const fatLandscape = `
+<div class="inline">
+` + fatLandscapeBar + `
+</div>
+<div class="inline" id="board">` + chessBoard() + `
 </div>
 `
 

@@ -10,10 +10,12 @@ let selectedPiece
 
 export function showSelectedPieceCharacteristics(addrIndex) {
     selectedPiece = Board[addrIndex]
+    writePieceCharacteristics(selectedPiece.kind, selectedPiece.orientation)
 }
 
 export function unshowSelectedPieceCharacteristics() {
     selectedPiece = undefined
+    writePieceCharacteristics(NoKind)
 }
 
 export function writePieceCharacteristics(kind, orientation = undefined) {

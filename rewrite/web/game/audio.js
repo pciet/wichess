@@ -1,6 +1,10 @@
 import { layoutSelector } from '../layout.js'
 
-const audio = new AudioContext()
+if (window.hasOwnProperty('webkitAudioContext')) {
+    window.AudioContext = webkitAudioContext
+}
+
+const audio = new AudioContext() 
 let moveAudio
 const soundCount = 325
 const muteKey = 'mute'

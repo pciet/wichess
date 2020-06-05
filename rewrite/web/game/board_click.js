@@ -25,6 +25,7 @@ export function writeSquareClick(fromIndex, toIndices) {
     s.addEventListener('mouseenter', s.mouseEnterFunc)
 
     s.mouseLeaveFunc = event => {
+        unshowSelectedPieceCharacteristics()
         s.classList.remove(hoverClass)
         for (const m of toIndices) {
             squareElement(m).classList.remove(moveClass)
@@ -34,13 +35,14 @@ export function writeSquareClick(fromIndex, toIndices) {
 
     s.clickFunc = () => {
         const removeMoveSelect = (fromSquare, toList) => {
-            unshowSelectedPieceCharacteristics(fromSquare)
+            unshowSelectedPieceCharacteristics()
             fromSquare.classList.remove(selectClass)
             for (const m of toList) {
                 const ms = squareElement(m)
                 ms.removeEventListener('click', ms.clickFunc)
                 ms.classList.remove(selectMoveClass)
             }
+            s.mouseLeaveFunc()
         }
 
         // if this square is clicked then just deselect it

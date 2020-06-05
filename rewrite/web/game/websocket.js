@@ -12,7 +12,26 @@ export function webSocketPromise(gameID) {
     })
 }
 
+let paused = false
+let queue = []
+
+export function pauseWebSocket() { paused = true }
+
+export function unpauseWebSocket() {
+    // assumes this function cannot be interrupted, all messages will be processed before anything
+    // else happens
+    paused = false
+    const l = queue.length
+    for (let i = 0; i < l; i++) {
+        webSocketOnMessage(queue.shift())
+    }
+}
+
 export function webSocketOnMessage(event) {
+    if (paused === true) {
+        queue.push(event)
+        return
+    }
     const alert = JSON.parse(event.data)
 
     if ((alert.d !== undefined) && (alert.d.length !== 0)) {
@@ -57,3 +76,4 @@ export function webSocketOnMessage(event) {
         throw new Error('unknown alert state: ' + alert)
     }
 }
+
