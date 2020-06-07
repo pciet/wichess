@@ -1,6 +1,6 @@
 import { layoutElement } from './layoutElement.js'
-export { addLayout, layout, layoutSelector, removeNewlines, interiorDimensions, layoutElement, 
-    scaleFont, addCSSRuleProperty }
+export { addLayout, removeLayout, layout, layoutSelector, removeNewlines, interiorDimensions, 
+    layoutElement, scaleFont, addCSSRuleProperty }
 
 const layouts = []
 
@@ -9,6 +9,17 @@ function addLayout(maxAspectRatio, htmlString) {
         maxRatio: maxAspectRatio,
         html: removeNewlines(htmlString)
     })
+}
+
+function removeLayout(maxAspectRatio) {
+    for (let i = 0; i < layouts.length; i++) {
+        if (layouts[i].maxRatio !== maxAspectRatio) {
+            continue
+        }
+        layouts.splice(i, 1)
+        return
+    }
+    throw new Error('no layout with maxAspectRatio ' + maxAspectRatio)
 }
 
 function layout() {

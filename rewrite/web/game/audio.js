@@ -35,10 +35,11 @@ export function toggleMute() {
 }
 
 export function setMuteIcon(isMuted) {
+    const m = document.querySelector('#mutetext')
     if (isMuted === false) {
-        layoutSelector('#mute', unmutedChar)
+        m.innerHTML = unmutedChar
     } else {
-        layoutSelector('#mute', mutedChar)
+        m.innerHTML = mutedChar
     }
 }
 

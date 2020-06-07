@@ -9,7 +9,7 @@ export function addCollection() {
     for (let i = 0; i < 3; i++) {
         a += '<div>'
         for (let j = 0; j < 7; j++) {
-            a += '<div class="inline collectioncell" id="c'+((7*i)+j)+'"></div>'
+            a += '<div class="inline collectioncell noselect" id="c'+((7*i)+j)+'"></div>'
         }
         a += '</div>'
     }
@@ -24,7 +24,7 @@ export function addCollection() {
         if (Collection[i] == NoKind) {
             continue
         }
-        document.querySelector('#c'+i).innerHTML = '<img class="pieceimg" src="/web/img/' +
+        document.querySelector('#c'+i).innerHTML = '<img class="pieceimg noselect" src="/web/img/' +
             pieceLookImageName(Collection[i]) + '">'
     }
 }

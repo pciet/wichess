@@ -34,7 +34,7 @@ export function addArmySelection(mode) {
     for (let i = 0; i < 2; i++) {
         a += '<div>'
         for (let j = 0; j < 8; j++) {
-            a += '<div class="inline armycell" id="a'+((8*i)+j)+'"></div>'
+            a += '<div class="inline armycell noselect" id="a'+((8*i)+j)+'"></div>'
         }
         a += '</div>'
     }
@@ -51,7 +51,7 @@ function addArmyPictures(selection) {
 }
 
 function addArmyPicture(index, kind) {
-    let t = '<img class="pieceimg" src="/web/img/'
+    let t = '<img class="pieceimg noselect" src="/web/img/'
     t += piecePickImageName(kind) + '">'
     document.querySelector('#a'+index).innerHTML = t
 }

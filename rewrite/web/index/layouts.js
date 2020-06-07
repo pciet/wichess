@@ -14,7 +14,7 @@ export const landscape = `
     <div class="modebuttonmargin">
         <div class="modebutton" id="public">
             <div></div>
-            <div>People</div>
+            <div class="noselect">People</div>
             <div></div>
         </div>
     </div>
@@ -22,7 +22,7 @@ export const landscape = `
     <div class="modebuttonmargin">
         <div class="modebutton" id="computer">
             <div></div>
-            <div>Computer</div>
+            <div class="noselect">Computer</div>
             <div></div>
         </div>
     </div>
@@ -39,7 +39,7 @@ export const playButton = `
     <div class="inline" id="playbuttonmargin">
         <div id="playbutton">
             <div class="playspacer"></div>
-            <div>Play</div>
+            <div class="noselect">Play</div>
             <div class="playspacer"></div>
         </div>
     </div>
@@ -50,9 +50,9 @@ export const playButton = `
 export const content = `
 <div id="army"></div>
 <div id="picks">
-    <div class="inline pickcell" id="leftpick"></div>
+    <div class="inline noselect pickcell" id="leftpick"></div>
     <div class="inline" id="pickspacer"></div>
-    <div class="inline pickcell" id="rightpick"></div>
+    <div class="inline noselect pickcell" id="rightpick"></div>
 </div>
 `
 
@@ -61,35 +61,35 @@ export const publicMatching = `
     <div class="playerbuttonmargin">
         <div class="playerbutton" id="p0">
             <div></div>
-            <div>Recent Opponent 1</div>
+            <div class="noselect">Recent Opponent 1</div>
             <div></div>
         </div>
     </div>
     <div class="playerbuttonmargin">
         <div class="playerbutton" id="p1">
             <div></div>
-            <div>Recent Opponent 2</div>
+            <div class="noselect">Recent Opponent 2</div>
             <div></div>
         </div>
     </div>
     <div class="playerbuttonmargin">
         <div class="playerbutton" id="p2">
             <div></div>
-            <div>Recent Opponent 3</div>
+            <div class="noselect">Recent Opponent 3</div>
             <div></div>
         </div>
     </div>
     <div class="playerbuttonmargin">
         <div class="playerbutton" id="p3">
             <div></div>
-            <div>Recent Opponent 4</div>
+            <div class="noselect">Recent Opponent 4</div>
             <div></div>
         </div>
     </div>
     <div class="playerbuttonmargin">
         <div class="playerbutton" id="p4">
             <div></div>
-            <div>Recent Opponent 5</div>
+            <div class="noselect">Recent Opponent 5</div>
             <div></div>
         </div>
     </div>
@@ -104,7 +104,7 @@ export const publicMatching = `
     <div id="matchbuttonmargin">
         <div id="match">
             <div></div>
-            <div>New Match</div>
+            <div class="noselect">New Match</div>
             <div></div>
         </div>
     </div>
@@ -118,14 +118,14 @@ export const matchPending = `
         <div class="inline">
             <span class="matchingtext">Matching</span>
             <div class="matchingplayer" id="matchingopponent"></div>
-            <span class="matchingtext">against</span>
+            <span class="noselect matchingtext">against</span>
             <div class="matchingplayer" id="matchingplayer"></div>
             <div>
                 <div class="inline cancelbuttonspacer"></div>
                 <div class="inline" id="cancelbuttonmargin">
                     <div id="cancelbutton">
                         <div></div>
-                        <div>Cancel</div>
+                        <div class="noselect">Cancel</div>
                         <div></div>
                     </div>
                 </div>

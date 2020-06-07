@@ -34,10 +34,6 @@ a {
     height: 0%;
 }
 
-#content {
-    /*border: 3px solid rgb(200,200,210);*/
-}
-
 #logout {
     border-radius: 4px;
     color: rgb(150,120,200);
@@ -45,7 +41,6 @@ a {
     box-shadow: -2px -3px 1px rgb(50,50,50);
     font-size: 1.1rem;
     text-align: center;
-    user-select: none;
 }
 
 #logoutspacer {
@@ -74,7 +69,6 @@ a {
     box-shadow: -3px -4px 1px black;
     font-size: 2rem;
     text-align: center;
-    user-select: none;
 }
 
 .selected {
@@ -100,7 +94,6 @@ a {
     box-shadow: -1px 0 10px rgb(210,210,200);
     font-size: 2rem;
     text-align: center;
-    user-select: none;
 }
 
 .playspacer {
@@ -199,7 +192,6 @@ a {
     box-shadow: 0px -4px 10px rgb(255,125,128);
     font-size: 2.2rem;
     text-align: center;
-    user-select: none;
 }
 
 .playerbuttonmargin {
@@ -214,7 +206,6 @@ a {
     background-color: rgb(20,50,70);
     font-size: 1.4rem;
     text-align: center;
-    user-select: none;
 }
 
 .playernamed {
@@ -258,7 +249,6 @@ a {
     background: linear-gradient(to bottom right, rgb(80,50,10), rgb(70,20,1));
     background-color: rgb(80,50,10);
     box-shadow: -5px -5px 1px black;
-    user-select: none;
     text-align: center;
     font-size: 1.5rem;
 }

@@ -4,7 +4,7 @@ export function button(buttonclass, id, text, inline) {
         b += ' inline'
     }
     b += `">
-            <div class="buttonsurface ` + buttonclass + `" id="` + id + `">
+            <div class="buttonsurface noselect ` + buttonclass + `" id="` + id + `">
                 <div></div>
                 <div class="buttontext">` + text + `</div>
                 <div></div>

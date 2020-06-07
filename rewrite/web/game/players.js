@@ -1,17 +1,14 @@
-import { layoutSelector } from '../layout.js'
-
 export function writePlayersIndicator() {
-    layoutSelector('#players', `
-<div>
-    <div></div>
-    <div class="name" id="blackname">`+GameInformation.Black.Name+`</div>
-    <div></div>
-</div>
-<div id="versus">against</div>
-<div>
-    <div></div>
-    <div class="name" id="whitename">`+GameInformation.White.Name+`</div>
-    <div></div>
-</div>
-`)
+    document.querySelector('#blacknametext').innerHTML = GameInformation.Black.Name
+    document.querySelector('#whitenametext').innerHTML = GameInformation.White.Name
+}
+
+export const ComputerPlayerName = 'Computer Player'
+
+export function hasComputerPlayer() {
+    if ((GameInformation.Black.Name === ComputerPlayerName) ||
+        (GameInformation.White.Name === ComputerPlayerName)) {
+        return true
+    }
+    return false
 }

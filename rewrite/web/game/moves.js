@@ -1,6 +1,7 @@
 import { PlayerOrientation, ActiveOrientation, Condition, replaceCondition, 
-    gameDone, replaceMoves } from '../game.js'
+    gameDone, replaceMoves, Moves } from '../game.js'
 
+import { boardAddressToIndex } from './board.js'
 import { State } from './state.js'
 import { replaceAndWriteGameCondition } from './condition.js'
 import { replaceAndWriteBoardMoves } from './board_moves.js'
@@ -20,4 +21,30 @@ export function fetchedMoves(moves) {
     } else {
         replaceAndWriteBoardMoves(moves.moveSets)
     }
+}
+
+export function addShowMovesHandler() {
+    const sm = document.querySelector('#showmoves')
+    sm.onclick = () => {
+        if (ActiveOrientation !== PlayerOrientation) {
+            return
+        }
+        showMoveablePieces()
+        sm.onclick = () => {
+            unshowMoveablePieces()
+        }
+    }
+}
+
+export function showMoveablePieces() {
+    for (const move of Moves) {
+        document.querySelector('#s'+boardAddressToIndex(move.from)).classList.add('moveable')
+    }
+}
+
+export function unshowMoveablePieces() {
+    for (const move of Moves) {
+        document.querySelector('#s'+boardAddressToIndex(move.from)).classList.remove('moveable')
+    }
+    addShowMovesHandler()
 }

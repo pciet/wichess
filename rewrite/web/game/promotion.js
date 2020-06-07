@@ -1,16 +1,16 @@
 import { NoKind, Queen, Rook, Bishop, Knight } from '../pieceDefs.js'
 import { layoutSelector } from '../layout.js'
 
-import { promotion } from './layouts.js'
+import { promotion, players } from './layouts.js'
 import { doMove } from './move.js'
-import { writePieceCharacteristics } from './characteristics.js'
+import { writePlayersIndicator } from './players.js'
 
 export let promoting = false
 
 export function showPromotion(reverse = false) {
     promoting = true
 
-    layoutSelector('#descriptionmargin', promotion)
+    layoutSelector('#playernames', promotion)
     
     document.querySelector('#queenprom').addEventListener('click', promClick(Queen, reverse))
     document.querySelector('#rookprom').addEventListener('click', promClick(Rook, reverse))
@@ -23,7 +23,7 @@ function promClick(kind, reverse) {
         promoting = false
         // a reverse promotion is followed by another move
         doMove(0, 0, kind, reverse)
-        // this will remove the promotion html
-        writePieceCharacteristics(NoKind)
+        layoutSelector('#playernames', players)
+        writePlayersIndicator()
     }
 }

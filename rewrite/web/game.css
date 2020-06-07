@@ -31,124 +31,71 @@ a:link, a:visited {
     border-radius: 5%;
 }
 
-#conditionmargin {
+#navigation {
+    height: 15%;
+}
+
+#playernames {
     height: 30%;
 }
 
-#fatconditionmargin {
-    height: 20%;
+#controls {
+    height: 25%;
 }
 
-#players {
-    height: 30%;
-}
-
-#fatlandscapedescription {
-    height: 45%;
-}
-
-#versus {
-    height: 10%;
+#against {
     font-size: 1.2rem;
     font-style: italic;
     text-align: center;
     color: rgb(140,60,60);
 }
 
-.name {
+#blacknametext, #whitenametext {
     font-size: 1.9rem;
     text-align: center;
     color: rgb(205,180,160);
 }
 
-#condition {
+#status {
+    font-size: 2rem;
     text-align: center;
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: rgb(250,255,245);
+    color: rgb(130,75,60);
     background-color: rgb(50,35,20);
 }
 
-.conditionspacer {
+.statusindicating {
+    font-size: 2.3rem;
+    color: rgb(250,255,245);
+    font-weight: bold;
+}
+
+.statusverticalmargin {
     height: 20%;
 }
 
-#title {
-    color: rgb(130,75,60);
+#mutetext, #showmovestext, #swapinterfacetext {
     font-size: 2rem;
-    font-weight: normal;
-}
-
-#mute {
     text-align: center;
-    user-select: none;
-    font-size: 2rem;
+    color: rgb(180,180,200);
 }
 
-#squarenav {
-    width: 80%;
-}
-
-#descriptiondiv {
-    width: 50%;
-}
-
-#descriptionmargin {
-    padding: 5px;
-}
-
-#descriptionbottomspacer {
-    height: 10%;
-}
-
-#description {
-    padding: 5px;
-}
-
-#piecemargin {
-    height: 20%;
-}
-
-#piece {
-    height: 50%;
+#showmovestext {
+    font-size: 3.5rem;
     text-align: center;
-    font-size: 1.7rem;
-    color: rgb(100,120,50);
+    color: rgb(180,170,175);
 }
 
-#orientation {
-    text-align: center;
-    font-size: 1.5rem;
-    color: rgb(100,130,120);
-    height: 20%;
-}
-
-.characteristic {
-    text-align: center;
-    font-style: italic;
-    font-size: 1.5rem;
-    color: rgb(70,150,150);
-}
-
-#backmargin {
+#backconcedemargin {
     padding: 10px;
 }
 
-#back {
-    border: medium outset rgb(180,135,25);
-    border-radius: 5px;
-    background-color: rgb(85,35,120);
-    opacity: 0.4;
-}
-
-#backtext {
-    user-select: none;
-    text-align: center;
+#backconcedetext {
     font-size: 2rem;
     color: rgb(190,200,210);
+    text-align: center;
 }
 
-#back.backhover {
+#backconcede.backconcedehover {
     opacity: 0.9;
 }
 
@@ -157,19 +104,18 @@ a:link, a:visited {
 }
 
 #ack {
-    border: medium outset rgb(255,225,205);
+    border: outset rgb(255,225,235);
     border-radius: 5px;
     background: linear-gradient(rgb(200,50,10), rgb(20,135,120));
 }
 
 #acktext {
-    user-select: none;
-    text-align: center;
     font-size: 2rem;
+    text-align: center;
     color: rgb(190,230,255);
 }
 
-.promotemargin {
+#queenprommargin, #rookprommargin, #bishopprommargin, #knightprommargin {
     padding: 10px;
 }
 
@@ -179,8 +125,7 @@ a:link, a:visited {
     border-radius: 5px;
 }
 
-.promotetext {
-    user-select: none;
+#queenpromtext, #rookpromtext, #bishoppromtext, #knightpromtext {
     text-align: center;
     font-size: 1.4rem;
     color: rgb(210,255,190);
@@ -225,6 +170,10 @@ a:link, a:visited {
     opacity: 0.2;
     background: black;
     outline: thick solid rgb(200,125,145);
+}
+
+.moveable {
+    border: thick groove rgb(255,50,100);
 }
 
 #portraitdesc {

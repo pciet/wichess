@@ -2,153 +2,115 @@ import { button } from '../button.js'
 
 import { chessBoard } from './board.js'
 
-const landscapeBar = `
-<div id="players"></div>
-<div id="conditionmargin">
-    <div class="conditionspacer"></div>
-    <div id="condition"></div>
-    <div class="conditionspacer"></div>
-</div>
-<div id="controls">
-    <div class="inline">
-        <div>
-            <div></div>
-            <div id="mute"></div>
-            <div></div>
-        </div>
-        <div id="backmargin">
-            <div id="back">
-                <div></div>
-                <div id="backtext"></div>
-                <div></div>
-            </div>
-        </div>
-    </div>
-    <div class="inline" id="buttons">
+// ct stands for "centered text", a div structure compatible with layout.js that can be used
+// to vertically and horizontally center text in a styled box. Use the padding of #[id]margin
+// for margin, text is in #[id]text, and any classes in the argument are applied to #[id].
+// The click handler should be applied to #[id] to create a button.
+function ct(id, classes = '', inline = false, noselect = true, text = '') {
+    let t = '<div '
+    if (inline === true) {
+        t += 'class="inline" '
+    }
+    t += `id="`+id+`margin">
+    <div `
+    if (classes !== '') {
+    t += 'class="'+classes+'" '
+    }
+    t += `id="`+id+`">
         <div></div>
-        <div id="ackmargin">
-            <div id="ack">
-                <div></div>
-                <div id="acktext">&#x2713;</div>
-                <div></div>
-            </div>
-        </div>
-    </div>
-    <div class="inline" id="descriptiondiv">
-        <div id="descriptionmargin"></div>
-        <div id="descriptionbottomspacer"></div>
+    <div `
+    if (noselect === true) {
+        t += 'class="noselect" '
+    }
+    t += `id="`+id+`text">`
+    if (text !== '') {
+        t += text
+    }
+    return t + `</div>
+        <div></div>
     </div>
 </div>
 `
+}
 
-const fatLandscapeBar = `
-<div id="players"></div>
-<div id="fatconditionmargin">
-    <div class="conditionspacer"></div>
-    <div id="condition"></div>
-    <div class="conditionspacer"></div>
+export const players = ct('blackname', 'playername', false, false) + `
+<div>
+    <div></div>
+    <div class="noselect" id="against">against</div>
+    <div></div>
 </div>
+` + ct('whitename', 'playername', false, false)
+
+const landscapeBar = `
+<div id="navigation">
+    ` + ct('backconcede', 'navbutton', true) + ct('ack', 'navbutton', true) + `
+</div>
+<div id="playernames">` + players + `</div>
 <div id="controls">
-    <div id="fatlandscapedescription">
-        <div id="descriptionmargin"></div>
+    ` + ct('showmoves', 'control', true) + `
+    <div class="inline">
+        ` + ct('swapinterface', 'control') + ct('mute', 'control') + `
     </div>
-    <div>
-        <div class="inline">
-            <div>
-                <div></div>
-                <div id="mute"></div>
-                <div></div>
-            </div>
-            <div id="backmargin">
-                <div id="back">
-                    <div></div>
-                    <div id="backtext"></div>
-                    <div></div>
-                </div>
-            </div>
-        </div>
-        <div class="inline" id="buttons">
-            <div></div>
-            <div id="ackmargin">
-                <div id="ack">
-                    <div></div>
-                    <div id="acktext">&#x2713;</div>
-                    <div></div>
-                </div>
-            </div>
-        </div>
-    </div>
+</div>
+<div id="statusbox">
+    <div class="statusverticalmargin"></div>
+    ` + ct('status') + `
+    <div class="statusverticalmargin"></div>
 </div>
 `
 
+// Promotion temporarily replaces #playernames with the choice buttons.
 export const promotion = `
 <div class="inline">
-    <div class="promotemargin">
-        <div class="promotebutton" id="queenprom">
-            <div></div>
-            <div class="promotetext">Queen</div>
-            <div></div>
-        </div>
-    </div>
-    <div class="promotemargin">
-        <div class="promotebutton" id="rookprom">
-            <div></div>
-            <div class="promotetext">Rook</div>
-            <div></div>
-        </div>
-    </div>
+    ` + ct('queenprom', 'promotebutton', false, true, 'Queen') + 
+    ct('rookprom', 'promotebutton', false, true, 'Rook') + `
 </div>
 <div class="inline">
-    <div class="promotemargin">
-        <div class="promotebutton" id="knightprom">
-            <div></div>
-            <div class="promotetext">Knight</div>
-            <div></div>
-        </div>
-    </div>
-    <div class="promotemargin">
-        <div class="promotebutton" id="bishopprom">
-            <div></div>
-            <div class="promotetext">Bishop</div>
-            <div></div>
-        </div>
-    </div>
-</div>
-`
-
-export const fatLandscape = `
-<div class="inline">
-` + fatLandscapeBar + `
-</div>
-<div class="inline" id="board">` + chessBoard() + `
+    ` + ct('knightprom', 'promotebutton', false, true, 'Knight') +
+    ct('bishopprom', 'promotebutton', false, true, 'Bishop') + `
 </div>
 `
 
 export const landscape = `
-<div class="inline">
-` + landscapeBar + `
-</div>
-<div class="inline" id="board">` + chessBoard() + `
-</div>
-`
+<div class="inline">` + landscapeBar + `</div>
+<div class="inline" id="board">` + chessBoard() + `</div>`
+
+export const reverseLandscape = `
+<div class="inline" id="board">` + chessBoard() + `</div>
+<div class="inline">` + landscapeBar + `</div>`
 
 function floatingLandscape(sideClassName) {
     return `
-    <div class="inline">
-        <div class="` + sideClassName + ` inline"></div>
-        <div class="inline" id="floatingbar">
-        ` + landscapeBar + `
-        </div>
-        <div class="` + sideClassName + ` inline"></div>
+<div class="inline">
+    <div class="` + sideClassName + ` inline"></div>
+    <div class="inline" id="floatingbar">
+    ` + landscapeBar + `
     </div>
-    <div class="inline" id="board">` + chessBoard() + `
-    </div>        
-    `
+    <div class="` + sideClassName + ` inline"></div>
+</div>
+<div class="inline" id="board">` + chessBoard() + `</div>`
+}
+
+function reverseFloatingLandscape(sideClassName) {
+    return `
+<div class="inline" id="board">` + chessBoard() + `</div>
+<div class="inline">
+    <div class="` + sideClassName + ` inline"></div>
+    <div class="inline" id="floatingbar">
+    ` + landscapeBar + `
+    </div>
+    <div class="` + sideClassName + ` inline"></div>
+</div>`
 }
 
 export const landscapeFloating = floatingLandscape('floatingside')
 export const landscapeWideFloating = floatingLandscape('widefloatingside')
 export const landscapeVeryWideFloating = floatingLandscape('verywidefloatingside')
+
+export const reverseLandscapeFloating = reverseFloatingLandscape('floatingside')
+export const reverseLandscapeWideFloating = reverseFloatingLandscape('widefloatingside')
+export const reverseLandscapeVeryWideFloating = 
+    reverseFloatingLandscape('verywidefloatinglandscape')
 
 export const square = `
 <div id="squaretop">

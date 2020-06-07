@@ -1,4 +1,5 @@
 import { updateBoard, parseBoardUpdate } from './board_update.js'
+import { unshowMoveablePieces } from './moves.js'
 import { fetchMoves } from './fetch_moves.js'
 import { State } from './state.js'
 import { replaceAndWriteGameCondition } from './condition.js'
@@ -16,6 +17,7 @@ export function doMove(fromIndex, toIndex, promotion = undefined, reversePromoti
     }
 
     moveSound()
+    unshowMoveablePieces()
     replaceAndWriteGameCondition(State.NORMAL)
 
     // if the opponent move alert is received before the move response then the board will

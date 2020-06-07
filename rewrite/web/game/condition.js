@@ -1,4 +1,5 @@
-import { Condition, replaceCondition, gameDone } from '../game.js'
+import { PlayerOrientation, ActiveOrientation, 
+    Condition, replaceCondition, gameDone } from '../game.js'
 import { layoutSelector } from '../layout.js'
 
 import { State, States } from './state.js'
@@ -16,26 +17,23 @@ export function writeGameCondition() {
         showAcknowledgeButton()
         removeAllSquareEventHandlers()
         if (Condition === State.CONCEDED) {
-            document.querySelector('#back').hidden = true
+            document.querySelector('#backconcede').hidden = true
         }
+        document.querySelector('#controls').hidden = true
     } else {
         hideAcknowledgeButton()
     }
 
-    let h
+    const s = document.querySelector('#statustext')
     if (Condition === State.NORMAL) {
-        h = '<div id="title">Wisconsin Chess</div>'
+        s.innerHTML = 'Wisconsin Chess'
+        s.classList.remove('statusindicating')
     } else {
-        h = States[Condition].name
+        s.innerHTML = States[Condition].name
+        s.classList.add('statusindicating')
     }
 
-    if (Condition === State.PROMOTION) {
+    if ((Condition === State.PROMOTION) && (PlayerOrientation === ActiveOrientation)) {
         showPromotion()
     }
-
-    layoutSelector('#condition', `
-<div></div>
-<div>`+h+`</div>
-<div></div>
-`)
 }

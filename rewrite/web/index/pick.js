@@ -20,11 +20,11 @@ export function sizePickCells() {
 }
 
 export function addPickImages() {
-    let t = '<img class="pieceimg" id="leftpickimg" src="/web/img/'
+    let t = '<img class="pieceimg noselect" id="leftpickimg" src="/web/img/'
     t += pieceLookImageName(LeftPiece) + '">'
     document.querySelector('#leftpick').innerHTML = t
 
-    t = '<img class="pieceimg" id="rightpickimg" src="web/img/'
+    t = '<img class="pieceimg noselect" id="rightpickimg" src="web/img/'
     t += pieceLookImageName(RightPiece) + '">'
     document.querySelector('#rightpick').innerHTML = t
 }

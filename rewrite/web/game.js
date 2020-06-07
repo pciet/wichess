@@ -1,18 +1,20 @@
 import { addLayout, layout, scaleFont }  from './layout.js'
 import * as layouts from './game/layouts.js'
 
+import { initializeHandedness, swapHandedness } from './game/layouts_handedness.js'
+
 import { writeBoardDimension } from './game/board_dimensions.js'
 import { updateBoard } from './game/board_update.js'
 import { writeBoardImages } from './game/board_images.js'
 import { writeBoardMoves } from './game/board_moves.js'
-import { writePlayersIndicator } from './game/players.js'
-import { writePieceCharacteristics} from './game/characteristics.js'
+import { writePlayersIndicator, hasComputerPlayer } from './game/players.js'
 import { writeGameCondition } from './game/condition.js'
 
 import { fetchBoardPromise } from './game/fetch_board.js'
 import { fetchMovesPromise } from './game/fetch_moves.js'
 import { webSocketPromise, webSocketOnMessage } from './game/websocket.js'
-import { fetchedMoves } from './game/moves.js'
+import { fetchedMoves, addShowMovesHandler, 
+    showMoveablePieces, unshowMoveablePieces } from './game/moves.js'
 
 import { fetchNextMoveSound, muted, setMuteIcon, toggleMute } from './game/audio.js'
 
@@ -47,6 +49,19 @@ export function switchActive() {
         ActiveOrientation = Orientation.WHITE
     } else {
         throw new Error('active orientation ' + ActiveOrientation + ' not white or black')
+    }
+    showMovesVisibility()
+}
+
+function showMovesVisibility() {
+    if (hasComputerPlayer() === true) {
+        return
+    }
+    const s = document.querySelector('#showmoves')
+    if (ActiveOrientation === PlayerOrientation) {
+        s.classList.remove('hidden')
+    } else {
+        s.classList.add('hidden')
     }
 }
 
@@ -91,18 +106,23 @@ fetchNextMoveSound()
 const lowerSquareRatio = 0.8
 const upperSquareRatio = 1.2
 
+export const landscapeRatio = 1.8
+export const floatingLandscapeRatio = 2
+export const wideFloatingLandscapeRatio = 3
+export const veryWideFloatingLandscapeRatio = 3.4
+
 addLayout(lowerSquareRatio, layouts.portrait)
 addLayout(upperSquareRatio, layouts.square)
-addLayout(1.5, layouts.fatLandscape) // includes iPad landscape ratio
-addLayout(1.8, layouts.landscape)
-addLayout(2, layouts.landscapeFloating)
-addLayout(3, layouts.landscapeWideFloating)
-addLayout(3.4, layouts.landscapeVeryWideFloating)
+addLayout(landscapeRatio, layouts.landscape)
+addLayout(floatingLandscapeRatio, layouts.landscapeFloating)
+addLayout(wideFloatingLandscapeRatio, layouts.landscapeWideFloating)
+addLayout(veryWideFloatingLandscapeRatio, layouts.landscapeVeryWideFloating)
 addLayout(1000, layouts.unsupportedWindowDimension)
 
 window.onload = () => {
     boardPromise.then(b => {
         Board = b
+        initializeHandedness()
         layoutPage()
         return movesPromise
     }).then(m => {
@@ -120,7 +140,7 @@ window.onresize = () => {
     resizeWait = setTimeout(layoutPage, 150)
 }
 
-function layoutPage() {
+export function layoutPage() {
     writeBoardDimension(lowerSquareRatio, upperSquareRatio)
     layout()
     for (let i = 0; i < 64; i++) {
@@ -133,7 +153,6 @@ function layoutPage() {
                 k = at.kind
                 o = at.orientation
             }
-            writePieceCharacteristics(k, o)
         })
     }
     writePlayersIndicator()
@@ -143,32 +162,41 @@ function layoutPage() {
     setMuteIcon(muted())
     scaleFont()
 
+    document.querySelector('#swapinterfacetext').innerHTML = '&#x21BA;'
+    document.querySelector('#swapinterface').onclick = swapHandedness
+
+    document.querySelector('#showmovestext').innerHTML = '&#x2318;'
+
+    addShowMovesHandler()
+    showMovesVisibility()
+
     document.querySelector('#mute').onclick = toggleMute 
 
-    const back = document.querySelector('#back')
+    const back = document.querySelector('#backconcede')
     if (window.location.pathname.includes('people')) {
         // In people mode back is disabled because the game must be completed or conceded before
         // going back to the index page. The button is changed to a concede button.
-        document.querySelector('#backtext').innerHTML = '&#x2718;'
+        document.querySelector('#backconcedetext').innerHTML = '&#x2718;'
         back.onclick = () => {
             fetch('/concede/'+GameInformation.ID).then(() => {
                 window.location = '/' 
             })
         }
     } else {
-        document.querySelector('#backtext').innerHTML = '&#8592;'
+        document.querySelector('#backconcedetext').innerHTML = '&#8592;'
         back.onclick = () => {
             window.location = '/'
         }
 
     }
     back.addEventListener('mouseenter', () => { 
-        document.querySelector('#back').classList.add('backhover')
+        document.querySelector('#backconcede').classList.add('backconcedehover')
     })
     back.addEventListener('mouseleave', () => {
-        document.querySelector('#back').classList.remove('backhover') 
+        document.querySelector('#backconcede').classList.remove('backconcedehover') 
     })
 
+    document.querySelector('#acktext').innerHTML = '&#x2713;'
     document.querySelector('#ack').onclick = () => {
         fetch('/acknowledge/'+GameInformation.ID).then(() => {
             window.location = '/'

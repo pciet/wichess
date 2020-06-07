@@ -3,6 +3,9 @@ import { fetchMoves } from './fetch_moves.js'
 import { showPromotion } from './promotion.js'
 import { replaceAndWriteGameCondition } from './condition.js'
 import { State } from './state.js'
+import { unshowMoveablePieces } from './moves.js'
+import { moveSound } from './audio.js'
+import { ComputerPlayerName } from './players.js'
 
 import { switchActive } from '../game.js'
 
@@ -33,6 +36,11 @@ export function webSocketOnMessage(event) {
         return
     }
     const alert = JSON.parse(event.data)
+    unshowMoveablePieces()
+
+    if (window.GameInformation.Black.Name !== ComputerPlayerName) {
+        moveSound()
+    }
 
     if ((alert.d !== undefined) && (alert.d.length !== 0)) {
         updateBoard(parseBoardUpdate(alert.d))
