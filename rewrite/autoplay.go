@@ -30,7 +30,9 @@ func Autoplay(id GameIdentifier, player string) {
 	if (move == rules.NoMove) && (promotion == rules.NoKind) {
 		// alert player to completed game with empty diff
 		u.Squares = []rules.AddressedSquare{}
+		u.FromMove = rules.NoMove
 	} else {
+		u.FromMove = move
 		u.Squares, promotionNeeded = g.DoMove(tx, move, promotion)
 		if promotionNeeded {
 			// if this is the promoting player then do it now

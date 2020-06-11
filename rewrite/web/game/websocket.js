@@ -1,13 +1,14 @@
+import { boardIndex } from './board.js'
 import { updateBoard, parseBoardUpdate } from './board_update.js'
 import { fetchMoves } from './fetch_moves.js'
 import { showPromotion } from './promotion.js'
 import { replaceAndWriteGameCondition } from './condition.js'
 import { State } from './state.js'
-import { unshowMoveablePieces } from './moves.js'
+import { unshowMoveablePieces, unshowPreviousMove } from './moves.js'
 import { moveSound } from './audio.js'
 import { ComputerPlayerName } from './players.js'
 
-import { switchActive } from '../game.js'
+import { switchActive, replacePreviousMove } from '../game.js'
 
 export function webSocketPromise(gameID) {
     return new Promise(resolve => {
@@ -37,13 +38,22 @@ export function webSocketOnMessage(event) {
     }
     const alert = JSON.parse(event.data)
     unshowMoveablePieces()
+    unshowPreviousMove()
 
-    if (window.GameInformation.Black.Name !== ComputerPlayerName) {
+    if ((window.GameInformation.Black.Name !== ComputerPlayerName) &&
+        (window.GameInformation.White.Name !== ComputerPlayerName)) {
         moveSound()
     }
 
     if ((alert.d !== undefined) && (alert.d.length !== 0)) {
         updateBoard(parseBoardUpdate(alert.d))
+    }
+
+    // no previous move is defined if alert.m is equal to rules.NoMove
+    const pFromIndex = boardIndex(alert.m.f.f, alert.m.f.r)
+    const pToIndex = boardIndex(alert.m.t.f, alert.m.t.r)
+    if ((pFromIndex !== 64) && (pToIndex !== 64)) {
+        replacePreviousMove(pFromIndex, pToIndex)
     }
 
     if (alert.s === undefined) {

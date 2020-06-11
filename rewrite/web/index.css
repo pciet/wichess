@@ -1,3 +1,7 @@
+* {
+    touch-action: none;
+}
+
 body {
     background: linear-gradient(rgb(11,25,18), rgb(21,25,28));
 }

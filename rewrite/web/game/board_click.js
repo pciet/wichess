@@ -2,6 +2,8 @@ import { Moves, Board } from '../game.js'
 
 import { squareElement, boardAddressToIndex } from './board.js'
 import { doMove } from './move.js'
+import { moveablePiecesShown, unshowMoveablePieces, 
+    previousMoveShown, unshowPreviousMove } from './moves.js'
 
 const hoverClass = 'hover'
 const moveClass = 'move'
@@ -52,6 +54,14 @@ export function writeSquareClick(fromIndex, toIndices) {
         if (clicked !== undefined) {
             const os = squareElement(clicked)
             removeMoveSelect(os, os.moves)
+        }
+
+        if (moveablePiecesShown === true) {
+            unshowMoveablePieces()
+        }
+
+        if (previousMoveShown === true) {
+            unshowPreviousMove()
         }
 
         clicked = fromIndex

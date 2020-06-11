@@ -23,7 +23,7 @@ function promClick(kind, reverse) {
         promoting = false
         // a reverse promotion is followed by another move
         doMove(0, 0, kind, reverse)
-        layoutSelector('#playernames', players)
+        layoutSelector('#playernames', players())
         writePlayersIndicator()
     }
 }

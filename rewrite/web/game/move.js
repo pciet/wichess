@@ -1,12 +1,12 @@
 import { updateBoard, parseBoardUpdate } from './board_update.js'
-import { unshowMoveablePieces } from './moves.js'
+import { unshowMoveablePieces, unshowPreviousMove } from './moves.js'
 import { fetchMoves } from './fetch_moves.js'
 import { State } from './state.js'
 import { replaceAndWriteGameCondition } from './condition.js'
 import { moveSound } from './audio.js'
 import { pauseWebSocket, unpauseWebSocket } from './websocket.js'
 
-import { switchActive } from '../game.js'
+import { switchActive, replacePreviousMove } from '../game.js'
 
 export function doMove(fromIndex, toIndex, promotion = undefined, reversePromotion = false) {
     let body
@@ -18,6 +18,7 @@ export function doMove(fromIndex, toIndex, promotion = undefined, reversePromoti
 
     moveSound()
     unshowMoveablePieces()
+    unshowPreviousMove()
     replaceAndWriteGameCondition(State.NORMAL)
 
     // if the opponent move alert is received before the move response then the board will
@@ -32,6 +33,9 @@ export function doMove(fromIndex, toIndex, promotion = undefined, reversePromoti
         },
         body: body
     }).then(r => r.json()).then(moveResponse => {
+        if (promotion === undefined) {
+            replacePreviousMove(fromIndex, toIndex)
+        }
         updateBoard(parseBoardUpdate(moveResponse.d))
         if ('s' in moveResponse) {
             switch (moveResponse.s) {

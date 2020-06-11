@@ -1,5 +1,15 @@
+* {
+    touch-action: none;
+}
+
 body {
+    opacity: 0;
+    transition: opacity 2.5s;
     background: linear-gradient(rgb(72,40,21), rgb(10,41,60));
+}
+
+.visible {
+    opacity: 1;
 }
 
 a {
@@ -32,15 +42,23 @@ a:link, a:visited {
 }
 
 #navigation {
-    height: 15%;
+    height: 8%;
 }
 
 #playernames {
-    height: 30%;
+    height: 24%;
 }
 
 #controls {
-    height: 25%;
+    height: 16%;
+}
+
+#selectedpiece {
+    height: 16%;
+}
+
+#bottomtakes, #toptakes {
+    height: 8%;
 }
 
 #against {
@@ -57,7 +75,7 @@ a:link, a:visited {
 }
 
 #status {
-    font-size: 2rem;
+    font-size: 1.8rem;
     text-align: center;
     color: rgb(130,75,60);
     background-color: rgb(50,35,20);
@@ -70,49 +88,35 @@ a:link, a:visited {
 }
 
 .statusverticalmargin {
-    height: 20%;
+    height: 5%;
 }
 
-#mutetext, #showmovestext, #swapinterfacetext {
+#mutetext, #whitespacetext, #swapinterfacetext, #swapplayerstext {
     font-size: 2rem;
     text-align: center;
     color: rgb(180,180,200);
 }
 
-#showmovestext {
-    font-size: 3.5rem;
+#showmovestext, #showprevtext {
+    font-size: 2rem;
     text-align: center;
     color: rgb(180,170,175);
 }
 
-#backconcedemargin {
-    padding: 10px;
+#ackmargin {
+    padding: 2px;
 }
 
-#backconcedetext {
-    font-size: 2rem;
+#acktext {
+    font-size: 1.5rem;
     color: rgb(190,200,210);
     text-align: center;
-}
-
-#backconcede.backconcedehover {
-    opacity: 0.9;
-}
-
-#ackmargin {
-    padding: 10px;
 }
 
 #ack {
     border: outset rgb(255,225,235);
     border-radius: 5px;
     background: linear-gradient(rgb(200,50,10), rgb(20,135,120));
-}
-
-#acktext {
-    font-size: 2rem;
-    text-align: center;
-    color: rgb(190,230,255);
 }
 
 #queenprommargin, #rookprommargin, #bishopprommargin, #knightprommargin {
@@ -132,23 +136,72 @@ a:link, a:visited {
 }
 
 .pieceimg {
+    position: absolute;
     width: 100%;
     height: 100%;
 }
 
+.pieceback {
+    z-index: 1;
+}
+
+.piecefront {
+    z-index: 2;
+}
+
+.animatepiece {
+    animation-duration: 0.6s;
+    animation-name: pieceappear;
+}
+
+@keyframes pieceappear {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.removeanimatepiece {
+    animation-duration: 0.3s;
+    animation-name: piecedisappear;
+    opacity: 0;
+}
+
+@keyframes piecedisappear {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+#board {}
 #boardrow {}
 
 #squarebuttonspacer {
     height: 20%;
 }
 
-#board {
-    background-color: rgb(15,5,0);
-    border: thin solid rgb(250,185,145);
+.boardvertspace {
+    height: 8%;
+}
+
+.boardhorzspace {
+    width: 16%;
+}
+
+#boardbox {
+    background-color: rgb(21,5,30);
+    border: thin solid rgb(200,185,145);
 }
 
 .chesssquare {
     border: thin solid rgb(200,185,145);
+    position: relative;
+    transition: 0.05s opacity;
 }
 
 .hover {
@@ -157,7 +210,7 @@ a:link, a:visited {
 }
 
 .move {
-    opacity: 0.5;
+    opacity: 0.4;
     background-color: black;
 }
 
@@ -170,10 +223,18 @@ a:link, a:visited {
     opacity: 0.2;
     background: black;
     outline: thick solid rgb(200,125,145);
+    z-index: 3;
 }
 
-.moveable {
-    border: thick groove rgb(255,50,100);
+.unmoveable {
+    opacity: 0.2;
+    background: black;
+}
+
+.previousmove {
+    opacity: 0.8;
+    outline: thick dashed rgb(180,255,195);
+    z-index: 3;
 }
 
 #portraitdesc {

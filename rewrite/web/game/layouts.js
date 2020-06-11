@@ -1,6 +1,10 @@
 import { button } from '../button.js'
+import { Orientation } from '../piece.js'
 
 import { chessBoard } from './board.js'
+import { whitespace } from './layouts_whitespace.js'
+import { handedness } from './layouts_handedness.js'
+import { orientation } from './layouts_orientation.js'
 
 // ct stands for "centered text", a div structure compatible with layout.js that can be used
 // to vertically and horizontally center text in a styled box. Use the padding of #[id]margin
@@ -33,31 +37,68 @@ function ct(id, classes = '', inline = false, noselect = true, text = '') {
 `
 }
 
-export const players = ct('blackname', 'playername', false, false) + `
+export function players() {
+    let top = 'blackname'
+    let bottom = 'whitename'
+    if (orientation === Orientation.BLACK) {
+        top = 'whitename'
+        bottom = 'blackname'
+    }
+    return ct(top, 'playername', false, false) + `
 <div>
     <div></div>
     <div class="noselect" id="against">against</div>
     <div></div>
 </div>
-` + ct('whitename', 'playername', false, false)
+` + ct(bottom, 'playername', false, false)
+}
 
-const landscapeBar = `
+function landscapeBar(reversed = false) {
+    let t = `
+<div id="toptakes"></div>
+<div id="playernames">` + players() + `</div>
+<div id="selectedpiece"></div>
 <div id="navigation">
-    ` + ct('backconcede', 'navbutton', true) + ct('ack', 'navbutton', true) + `
-</div>
-<div id="playernames">` + players + `</div>
-<div id="controls">
-    ` + ct('showmoves', 'control', true) + `
-    <div class="inline">
-        ` + ct('swapinterface', 'control') + ct('mute', 'control') + `
-    </div>
+    <div class="inline"></div>
+    ` + ct('ack', '', true, true, '&#x2713;') + `
+    <div class="inline"></div>
 </div>
 <div id="statusbox">
     <div class="statusverticalmargin"></div>
     ` + ct('status') + `
     <div class="statusverticalmargin"></div>
 </div>
+<div id="controls">`
+
+    const gameControls = `
+    <div class="inline">` +
+        ct('showmoves', 'control', false, true, '&#x2318;') +
+        ct('showprev', 'control', false, true, '&#x21BA;') + `
+    </div>`
+
+    const interfaceControls = `
+    <div class="inline">
+        <div>
+            ` + ct('swapinterface', 'control', true, true, '&#x2194;') + 
+            ct('swapplayers', 'control', true, true, '&#x2195;') + `
+        </div>
+        <div>
+            ` + ct('mute', 'control', true) + 
+            ct('whitespace', 'control', true, true, '&#x21F2;') + `
+        </div>
+    </div>`
+
+    if (reversed === true) {
+        t += gameControls + interfaceControls
+    } else {
+        t += interfaceControls + gameControls
+    }
+    t += `
+</div>
+<div id="bottomtakes"></div>
 `
+    return t
+}
 
 // Promotion temporarily replaces #playernames with the choice buttons.
 export const promotion = `
@@ -71,46 +112,82 @@ export const promotion = `
 </div>
 `
 
-export const landscape = `
-<div class="inline">` + landscapeBar + `</div>
-<div class="inline" id="board">` + chessBoard() + `</div>`
+function board(reversed = false) {
+    const box = `<div id="boardbox" class="inline">` + chessBoard() + `</div>`
 
-export const reverseLandscape = `
-<div class="inline" id="board">` + chessBoard() + `</div>
-<div class="inline">` + landscapeBar + `</div>`
+    let t = `
+<div class="inline" id="board">`
+
+    if (whitespace === false) {
+        return t + box + '</div>'
+    }
+
+    t += `
+    <div class="boardvertspace"></div>
+    <div>
+    `
+    const spacer = `<div class="boardhorzspace inline"></div>`
+
+    if (reversed === false) {
+        t += box + spacer
+    } else {
+        t += spacer + box
+    }
+    return t + `   
+    </div>
+    <div class="boardvertspace"></div>
+</div>`
+}
+
+export function landscape() {
+    if (handedness === false) {
+        return `<div class="inline">` + landscapeBar() + `</div>` + board()
+    }
+    return board(true) + `<div class="inline">` + landscapeBar(true) + `</div>`
+}
 
 function floatingLandscape(sideClassName) {
     return `
 <div class="inline">
     <div class="` + sideClassName + ` inline"></div>
     <div class="inline" id="floatingbar">
-    ` + landscapeBar + `
+    ` + landscapeBar() + `
     </div>
     <div class="` + sideClassName + ` inline"></div>
-</div>
-<div class="inline" id="board">` + chessBoard() + `</div>`
+</div>` + board()
 }
 
 function reverseFloatingLandscape(sideClassName) {
-    return `
-<div class="inline" id="board">` + chessBoard() + `</div>
+    return board(true) + `
 <div class="inline">
     <div class="` + sideClassName + ` inline"></div>
     <div class="inline" id="floatingbar">
-    ` + landscapeBar + `
+    ` + landscapeBar(true) + `
     </div>
     <div class="` + sideClassName + ` inline"></div>
 </div>`
 }
 
-export const landscapeFloating = floatingLandscape('floatingside')
-export const landscapeWideFloating = floatingLandscape('widefloatingside')
-export const landscapeVeryWideFloating = floatingLandscape('verywidefloatingside')
+export function landscapeFloating() {
+    if (handedness === false) {
+        return floatingLandscape('floatingside')
+    }
+    return reverseFloatingLandscape('floatingside')
+}
 
-export const reverseLandscapeFloating = reverseFloatingLandscape('floatingside')
-export const reverseLandscapeWideFloating = reverseFloatingLandscape('widefloatingside')
-export const reverseLandscapeVeryWideFloating = 
-    reverseFloatingLandscape('verywidefloatinglandscape')
+export function landscapeWideFloating() {
+    if (handedness === false) {
+        return floatingLandscape('widefloatingside')
+    }
+    return reverseFloatingLandscape('widefloatingside')
+}
+
+export function landscapeVeryWideFloating() {
+    if (handedness === false) {
+        return floatingLandscape('verywidefloatingside')
+    }
+    return reverseFloatingLandscape('verywidefloatinglandscape')
+}
 
 export const square = `
 <div id="squaretop">

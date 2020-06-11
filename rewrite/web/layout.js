@@ -1,8 +1,8 @@
 import { layoutElement } from './layoutElement.js'
-export { addLayout, removeLayout, layout, layoutSelector, removeNewlines, interiorDimensions, 
-    layoutElement, scaleFont, addCSSRuleProperty }
+export { addLayout, removeLayout, removeAllLayouts, layout, layoutSelector, 
+    removeNewlines, interiorDimensions, layoutElement, scaleFont, addCSSRuleProperty }
 
-const layouts = []
+let layouts = []
 
 function addLayout(maxAspectRatio, htmlString) {
     layouts.push({
@@ -21,6 +21,8 @@ function removeLayout(maxAspectRatio) {
     }
     throw new Error('no layout with maxAspectRatio ' + maxAspectRatio)
 }
+
+function removeAllLayouts() { layouts = [] }
 
 function layout() {
     document.body.innerHTML = pickLayout().html

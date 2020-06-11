@@ -76,7 +76,7 @@ func MovePost(w http.ResponseWriter, r *http.Request, tx *sql.Tx,
 		promotionWasReverse = true
 	}
 
-	alertUpdate := Update{Squares: changes}
+	alertUpdate := Update{Squares: changes, FromMove: move}
 	if promotionNeeded || promotionWasReverse {
 		alertUpdate.State = WaitUpdate
 	}

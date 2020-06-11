@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <title>Wisconsin Chess</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
         <link rel="stylesheet" type="text/css" href="/web/font.css">
         <link rel="stylesheet" type="text/css" href="/web/layout.css">
         <link rel="stylesheet" type="text/css" href="/web/game.css">
@@ -21,6 +21,10 @@
                 },
                 Active: {{.GameHeader.Active}},
                 Turn: {{.GameHeader.Turn}},
+                Previous: {
+                    from: {{.GameHeader.From}},
+                    to: {{.GameHeader.To}}
+                },
                 Player: {{.Name}}
             }
         </script>

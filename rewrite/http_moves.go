@@ -54,7 +54,10 @@ func MovesGet(w http.ResponseWriter, r *http.Request, tx *sql.Tx,
 		case rules.Checkmate:
 			alertState = CheckmateCalculatedUpdate
 		}
-		go Alert(id, GameOpponent(tx, id, requester.Name), Update{nil, alertState})
+		go Alert(id, GameOpponent(tx, id, requester.Name), Update{
+			State:    alertState,
+			FromMove: rules.NoMove,
+		})
 	}
 
 	tx.Commit()

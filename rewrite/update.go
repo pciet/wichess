@@ -6,8 +6,9 @@ import "github.com/pciet/wichess/rules"
 // representation and to indicate promotion communication variations as described
 // by docs/promotion.md.
 type Update struct {
-	Squares []rules.AddressedSquare `json:"d,omitempty"` // diff
-	State   string                  `json:"s,omitempty"`
+	Squares  []rules.AddressedSquare `json:"d,omitempty"` // diff
+	State    string                  `json:"s,omitempty"`
+	FromMove rules.Move              `json:"m"` // can't be empty, rules.NoMove for empty
 }
 
 const (

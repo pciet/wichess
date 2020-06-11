@@ -1,7 +1,9 @@
-import { addLayout, layout, scaleFont }  from './layout.js'
+import { addLayout, layout, removeAllLayouts, scaleFont }  from './layout.js'
 import * as layouts from './game/layouts.js'
 
 import { initializeHandedness, swapHandedness } from './game/layouts_handedness.js'
+import { initializeWhitespace, swapWhitespace } from './game/layouts_whitespace.js'
+import { initializeOrientation, swapOrientation } from './game/layouts_orientation.js'
 
 import { writeBoardDimension } from './game/board_dimensions.js'
 import { updateBoard } from './game/board_update.js'
@@ -13,7 +15,7 @@ import { writeGameCondition } from './game/condition.js'
 import { fetchBoardPromise } from './game/fetch_board.js'
 import { fetchMovesPromise } from './game/fetch_moves.js'
 import { webSocketPromise, webSocketOnMessage } from './game/websocket.js'
-import { fetchedMoves, addShowMovesHandler, 
+import { fetchedMoves, addShowMovesHandler, addShowPreviousMoveHandler,
     showMoveablePieces, unshowMoveablePieces } from './game/moves.js'
 
 import { fetchNextMoveSound, muted, setMuteIcon, toggleMute } from './game/audio.js'
@@ -95,6 +97,14 @@ export let Turn = GameInformation.Turn
 export let Moves = []
 export function replaceMoves(withMoves) { Moves = withMoves }
 
+export let PreviousMove = window.GameInformation.Previous
+export function replacePreviousMove(from, to) {
+    PreviousMove = {
+        from: from,
+        to: to
+    }
+}
+
 // Host requests are started here so the webpage can do some work while the requests are being 
 // processed. The promised values are looked at in window.onload later.
 const boardPromise = fetchBoardPromise(GameInformation.ID)
@@ -111,18 +121,31 @@ export const floatingLandscapeRatio = 2
 export const wideFloatingLandscapeRatio = 3
 export const veryWideFloatingLandscapeRatio = 3.4
 
-addLayout(lowerSquareRatio, layouts.portrait)
-addLayout(upperSquareRatio, layouts.square)
-addLayout(landscapeRatio, layouts.landscape)
-addLayout(floatingLandscapeRatio, layouts.landscapeFloating)
-addLayout(wideFloatingLandscapeRatio, layouts.landscapeWideFloating)
-addLayout(veryWideFloatingLandscapeRatio, layouts.landscapeVeryWideFloating)
-addLayout(1000, layouts.unsupportedWindowDimension)
+function addLayouts() {
+    // TODO: portrait and square
+    addLayout(lowerSquareRatio, layouts.portrait)
+    addLayout(upperSquareRatio, layouts.square)
+    addLayout(landscapeRatio, layouts.landscape())
+    addLayout(floatingLandscapeRatio, layouts.landscapeFloating())
+    addLayout(wideFloatingLandscapeRatio, layouts.landscapeWideFloating())
+    addLayout(veryWideFloatingLandscapeRatio, layouts.landscapeVeryWideFloating())
+    addLayout(1000, layouts.unsupportedWindowDimension)
+}
+
+// Some layouts are constructed based on user settings, so the layout list has to be reset when
+// settings change.
+function resetLayouts() {
+    removeAllLayouts()
+    addLayouts()
+}
 
 window.onload = () => {
     boardPromise.then(b => {
         Board = b
         initializeHandedness()
+        initializeWhitespace()
+        initializeOrientation(PlayerOrientation)
+        addLayouts()
         layoutPage()
         return movesPromise
     }).then(m => {
@@ -141,6 +164,8 @@ window.onresize = () => {
 }
 
 export function layoutPage() {
+    document.body.classList.add('visible')
+
     writeBoardDimension(lowerSquareRatio, upperSquareRatio)
     layout()
     for (let i = 0; i < 64; i++) {
@@ -162,44 +187,37 @@ export function layoutPage() {
     setMuteIcon(muted())
     scaleFont()
 
-    document.querySelector('#swapinterfacetext').innerHTML = '&#x21BA;'
-    document.querySelector('#swapinterface').onclick = swapHandedness
+    document.querySelector('#swapinterface').onclick = () => {
+        swapHandedness()
+        resetLayouts()
+        layoutPage()
+    }
 
-    document.querySelector('#showmovestext').innerHTML = '&#x2318;'
+    document.querySelector('#whitespace').onclick = () => {
+        swapWhitespace()
+        resetLayouts()
+        layoutPage()
+    }
+
+    document.querySelector('#swapplayers').onclick = () => {
+        swapOrientation()
+        resetLayouts()
+        layoutPage()
+    }
 
     addShowMovesHandler()
     showMovesVisibility()
+    addShowPreviousMoveHandler()
 
     document.querySelector('#mute').onclick = toggleMute 
 
-    const back = document.querySelector('#backconcede')
-    if (window.location.pathname.includes('people')) {
-        // In people mode back is disabled because the game must be completed or conceded before
-        // going back to the index page. The button is changed to a concede button.
-        document.querySelector('#backconcedetext').innerHTML = '&#x2718;'
-        back.onclick = () => {
-            fetch('/concede/'+GameInformation.ID).then(() => {
-                window.location = '/' 
-            })
-        }
-    } else {
-        document.querySelector('#backconcedetext').innerHTML = '&#8592;'
-        back.onclick = () => {
-            window.location = '/'
-        }
-
+    const ack = document.querySelector('#ack')
+    ack.onclick = () => {
+        fetch('/acknowledge/' + GameInformation.ID).then(() => { window.location = '/' })
     }
-    back.addEventListener('mouseenter', () => { 
-        document.querySelector('#backconcede').classList.add('backconcedehover')
-    })
-    back.addEventListener('mouseleave', () => {
-        document.querySelector('#backconcede').classList.remove('backconcedehover') 
-    })
-
-    document.querySelector('#acktext').innerHTML = '&#x2713;'
-    document.querySelector('#ack').onclick = () => {
-        fetch('/acknowledge/'+GameInformation.ID).then(() => {
-            window.location = '/'
-        })
+    if (gameDone() === true) {
+        ack.hidden = false
+    } else {
+        ack.hidden = true
     }
 }
