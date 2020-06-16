@@ -6,7 +6,7 @@ import { replaceAndWriteGameCondition } from './condition.js'
 import { moveSound } from './audio.js'
 import { pauseWebSocket, unpauseWebSocket } from './websocket.js'
 
-import { switchActive, replacePreviousMove } from '../game.js'
+import { switchActive, replacePreviousMove, replaceMoves } from '../game.js'
 
 export function doMove(fromIndex, toIndex, promotion = undefined, reversePromotion = false) {
     let body
@@ -20,6 +20,7 @@ export function doMove(fromIndex, toIndex, promotion = undefined, reversePromoti
     unshowMoveablePieces()
     unshowPreviousMove()
     replaceAndWriteGameCondition(State.NORMAL)
+    replaceMoves([])
 
     // if the opponent move alert is received before the move response then the board will
     // be in an incorrect state

@@ -4,6 +4,7 @@ import { squareElement, boardAddressToIndex } from './board.js'
 import { doMove } from './move.js'
 import { moveablePiecesShown, unshowMoveablePieces, 
     previousMoveShown, unshowPreviousMove } from './moves.js'
+import { hideOptions, optionControlsShown } from './layouts_controls.js'
 
 const hoverClass = 'hover'
 const moveClass = 'move'
@@ -33,6 +34,9 @@ export function writeSquareClick(fromIndex, toIndices) {
     s.addEventListener('mouseleave', s.mouseLeaveFunc)
 
     s.clickFunc = () => {
+        if (optionControlsShown === true) {
+            hideOptions()
+        }
         const removeMoveSelect = (fromSquare, toList) => {
             fromSquare.classList.remove(selectClass)
             for (const m of toList) {

@@ -16,17 +16,20 @@ var ConcedeHandler = AuthenticRequestHandler{
 func ConcedeGet(w http.ResponseWriter, r *http.Request, tx *sql.Tx,
 	id GameIdentifier, requester Player) {
 
-	// the conceding player doesn't reload the game, so if it's marked conceded then you know
-	// it was your opponent that conceded
-	MarkGameConceded(tx, id)
-	go Alert(id, GameOpponent(tx, id, requester.Name), Update{
-		State:    ConcededUpdate,
-		FromMove: rules.NoMove,
-	})
-
-	// conceding only happens for people games
-	UpdatePlayerActivePeopleGame(tx, requester.ID, 0)
-
+	opp := GameOpponent(tx, id, requester.Name)
+	if opp != ComputerPlayerName {
+		// the conceding player doesn't reload the game, so if it's marked conceded then you know
+		// it was your opponent that conceded
+		MarkGameConceded(tx, id)
+		go Alert(id, opp, Update{
+			State:    ConcededUpdate,
+			FromMove: rules.NoMove,
+		})
+		// the only kind of game without the computer player opponent is the people game
+		UpdatePlayerActivePeopleGame(tx, requester.ID, 0)
+	} else {
+		DeleteGame(tx, id)
+	}
 	tx.Commit()
 
 	// on a success response the web browser redirects to the index

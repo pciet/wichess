@@ -5,6 +5,7 @@ import { layoutSelector } from '../layout.js'
 import { State, States } from './state.js'
 import { showPromotion } from './promotion.js'
 import { removeAllSquareEventHandlers } from './board_click.js'
+import { navigationLayout, addNavigationClickHandlers } from './layouts_navigation.js'
 
 export function replaceAndWriteGameCondition(cond) {
     replaceCondition(cond)
@@ -13,12 +14,9 @@ export function replaceAndWriteGameCondition(cond) {
 
 export function writeGameCondition() {
     if (gameDone() === true) {
-        document.querySelector('#ack').hidden = false
         removeAllSquareEventHandlers()
-        if (Condition === State.CONCEDED) {
-            document.querySelector('#backconcede').hidden = true
-        }
-        document.querySelector('#controls').hidden = true
+        layoutSelector('#navigation', navigationLayout())
+        addNavigationClickHandlers()
     }
 
     const s = document.querySelector('#statustext')

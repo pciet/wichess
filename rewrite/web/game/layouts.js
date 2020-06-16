@@ -2,40 +2,15 @@ import { button } from '../button.js'
 import { Orientation } from '../piece.js'
 
 import { chessBoard } from './board.js'
+import { hasComputerPlayer } from './players.js'
 import { whitespace } from './layouts_whitespace.js'
 import { handedness } from './layouts_handedness.js'
 import { orientation } from './layouts_orientation.js'
+import { controlsLayout } from './layouts_controls.js'
+import { navigationLayout } from './layouts_navigation.js'
+import { ct } from './layouts_ct.js'
 
-// ct stands for "centered text", a div structure compatible with layout.js that can be used
-// to vertically and horizontally center text in a styled box. Use the padding of #[id]margin
-// for margin, text is in #[id]text, and any classes in the argument are applied to #[id].
-// The click handler should be applied to #[id] to create a button.
-function ct(id, classes = '', inline = false, noselect = true, text = '') {
-    let t = '<div '
-    if (inline === true) {
-        t += 'class="inline" '
-    }
-    t += `id="`+id+`margin">
-    <div `
-    if (classes !== '') {
-    t += 'class="'+classes+'" '
-    }
-    t += `id="`+id+`">
-        <div></div>
-    <div `
-    if (noselect === true) {
-        t += 'class="noselect" '
-    }
-    t += `id="`+id+`text">`
-    if (text !== '') {
-        t += text
-    }
-    return t + `</div>
-        <div></div>
-    </div>
-</div>
-`
-}
+const activePlayerChar = '&#x394;'
 
 export function players() {
     let top = 'blackname'
@@ -44,13 +19,26 @@ export function players() {
         top = 'whitename'
         bottom = 'blackname'
     }
-    return ct(top, 'playername', false, false) + `
-<div>
-    <div></div>
-    <div class="noselect" id="against">against</div>
-    <div></div>
-</div>
+    let names = ct(top, 'playername', false, false) + `
+    <div>
+        <div></div>
+        <div class="noselect" id="against">against</div>
+        <div></div>
+    </div>
 ` + ct(bottom, 'playername', false, false)
+
+    if (hasComputerPlayer() === true) {
+        return names
+    }
+
+    return `
+<div class="inline" id="activeindicators">
+    ` + ct(top + 'active', 'activeindicator', false, true, activePlayerChar) +
+        `<div></div>` +
+        ct(bottom + 'active', 'activeindicator', false, true, activePlayerChar) + `
+</div>
+<div class="inline">` + names + `
+</div>`
 }
 
 function landscapeBar(reversed = false) {
@@ -58,43 +46,13 @@ function landscapeBar(reversed = false) {
 <div id="toptakes"></div>
 <div id="playernames">` + players() + `</div>
 <div id="selectedpiece"></div>
-<div id="navigation">
-    <div class="inline"></div>
-    ` + ct('ack', '', true, true, '&#x2713;') + `
-    <div class="inline"></div>
-</div>
+<div id="navigation">` + navigationLayout() + `</div>
 <div id="statusbox">
     <div class="statusverticalmargin"></div>
     ` + ct('status') + `
     <div class="statusverticalmargin"></div>
-</div>
-<div id="controls">`
-
-    const gameControls = `
-    <div class="inline">` +
-        ct('showmoves', 'control', false, true, '&#x2318;') +
-        ct('showprev', 'control', false, true, '&#x21BA;') + `
-    </div>`
-
-    const interfaceControls = `
-    <div class="inline">
-        <div>
-            ` + ct('swapinterface', 'control', true, true, '&#x2194;') + 
-            ct('swapplayers', 'control', true, true, '&#x2195;') + `
-        </div>
-        <div>
-            ` + ct('mute', 'control', true) + 
-            ct('whitespace', 'control', true, true, '&#x21F2;') + `
-        </div>
-    </div>`
-
-    if (reversed === true) {
-        t += gameControls + interfaceControls
-    } else {
-        t += interfaceControls + gameControls
-    }
-    t += `
-</div>
+</div>`
+    t += '<div id="controls">' + controlsLayout(reversed) + `</div>
 <div id="bottomtakes"></div>
 `
     return t

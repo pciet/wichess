@@ -1,22 +1,23 @@
 import { addLayout, layout, removeAllLayouts, scaleFont }  from './layout.js'
 import * as layouts from './game/layouts.js'
 
-import { initializeHandedness, swapHandedness } from './game/layouts_handedness.js'
-import { initializeWhitespace, swapWhitespace } from './game/layouts_whitespace.js'
-import { initializeOrientation, swapOrientation } from './game/layouts_orientation.js'
+import { initializeHandedness } from './game/layouts_handedness.js'
+import { initializeWhitespace } from './game/layouts_whitespace.js'
+import { initializeOrientation } from './game/layouts_orientation.js'
+import { addControlsClickHandlers } from './game/layouts_controls.js'
 
 import { writeBoardDimension } from './game/board_dimensions.js'
 import { updateBoard } from './game/board_update.js'
 import { writeBoardImages } from './game/board_images.js'
 import { writeBoardMoves } from './game/board_moves.js'
-import { writePlayersIndicator, hasComputerPlayer } from './game/players.js'
+import { writePlayersIndicator, writeActivePlayerIndicator,
+    hasComputerPlayer } from './game/players.js'
 import { writeGameCondition } from './game/condition.js'
 
 import { fetchBoardPromise } from './game/fetch_board.js'
 import { fetchMovesPromise } from './game/fetch_moves.js'
 import { webSocketPromise, webSocketOnMessage } from './game/websocket.js'
-import { fetchedMoves, addShowMovesHandler, addShowPreviousMoveHandler,
-    showMoveablePieces, unshowMoveablePieces } from './game/moves.js'
+import { fetchedMoves, showMoveablePieces, unshowMoveablePieces } from './game/moves.js'
 
 import { fetchNextMoveSound, muted, setMuteIcon, toggleMute } from './game/audio.js'
 
@@ -52,19 +53,7 @@ export function switchActive() {
     } else {
         throw new Error('active orientation ' + ActiveOrientation + ' not white or black')
     }
-    showMovesVisibility()
-}
-
-function showMovesVisibility() {
-    if (hasComputerPlayer() === true) {
-        return
-    }
-    const s = document.querySelector('#showmoves')
-    if (ActiveOrientation === PlayerOrientation) {
-        s.classList.remove('hidden')
-    } else {
-        s.classList.add('hidden')
-    }
+    writeActivePlayerIndicator()
 }
 
 // The current board is represtened by this Board var. The array is indexed by Wisconsin Chess 
@@ -134,7 +123,7 @@ function addLayouts() {
 
 // Some layouts are constructed based on user settings, so the layout list has to be reset when
 // settings change.
-function resetLayouts() {
+export function resetLayouts() {
     removeAllLayouts()
     addLayouts()
 }
@@ -165,7 +154,6 @@ window.onresize = () => {
 
 export function layoutPage() {
     document.body.classList.add('visible')
-
     writeBoardDimension(lowerSquareRatio, upperSquareRatio)
     layout()
     for (let i = 0; i < 64; i++) {
@@ -186,38 +174,5 @@ export function layoutPage() {
     writeGameCondition()
     setMuteIcon(muted())
     scaleFont()
-
-    document.querySelector('#swapinterface').onclick = () => {
-        swapHandedness()
-        resetLayouts()
-        layoutPage()
-    }
-
-    document.querySelector('#whitespace').onclick = () => {
-        swapWhitespace()
-        resetLayouts()
-        layoutPage()
-    }
-
-    document.querySelector('#swapplayers').onclick = () => {
-        swapOrientation()
-        resetLayouts()
-        layoutPage()
-    }
-
-    addShowMovesHandler()
-    showMovesVisibility()
-    addShowPreviousMoveHandler()
-
-    document.querySelector('#mute').onclick = toggleMute 
-
-    const ack = document.querySelector('#ack')
-    ack.onclick = () => {
-        fetch('/acknowledge/' + GameInformation.ID).then(() => { window.location = '/' })
-    }
-    if (gameDone() === true) {
-        ack.hidden = false
-    } else {
-        ack.hidden = true
-    }
+    addControlsClickHandlers()
 }

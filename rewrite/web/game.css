@@ -74,6 +74,16 @@ a:link, a:visited {
     color: rgb(205,180,160);
 }
 
+#activeindicators {
+    width: 10%;
+}
+
+.activeindicator {
+    font-size: 1.5rem;
+    text-align: center;
+    color: rgb(105,80,60);
+}
+
 #status {
     font-size: 1.8rem;
     text-align: center;
@@ -91,7 +101,7 @@ a:link, a:visited {
     height: 5%;
 }
 
-#mutetext, #whitespacetext, #swapinterfacetext, #swapplayerstext {
+#mutetext, #whitespacetext, #swapinterfacetext, #swapplayerstext, #showoptions {
     font-size: 2rem;
     text-align: center;
     color: rgb(180,180,200);
@@ -101,6 +111,21 @@ a:link, a:visited {
     font-size: 2rem;
     text-align: center;
     color: rgb(180,170,175);
+}
+#concedemargin {
+    padding: 2px;
+}
+
+#concedetext {
+    font-size: 1.5rem;
+    color: rgb(190,200,210);
+    text-align: center;
+}
+
+#concede {
+    border: outset rgb(255,225,235);
+    border-radius: 5px;
+    background: linear-gradient(rgb(70,35,150),rgb(200,60,10));
 }
 
 #ackmargin {

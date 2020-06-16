@@ -44,6 +44,10 @@ func Connected(id GameIdentifier, player string) (*websocket.Conn, bool) {
 		return gcs[0].Conn, true
 	}
 
+	if gcs[1].Username == "" {
+		return nil, false
+	}
+
 	if gcs[1].Username != player {
 		Panic(player, "not in game", id)
 	}

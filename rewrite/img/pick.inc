@@ -3,6 +3,7 @@
 #include "materials.inc"
 
 #declare TrimMaterial = LookTrimMaterial
+#declare TrimBMaterial = LookTrimBMaterial
 #declare PieceMaterial = LookMaterial
 
 #declare Background = pigment {

@@ -43,6 +43,7 @@ do
 #include "board.inc"
 #include "materials.inc"
 #declare TrimMaterial = '$p'TrimMaterial
+#declare TrimBMaterial = '$p'TrimBMaterial
 #declare PieceMaterial = '$p'Material
 #include "'$1'.inc"
 Piece('$1')' > $POV

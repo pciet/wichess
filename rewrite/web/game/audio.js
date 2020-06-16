@@ -1,5 +1,7 @@
 import { layoutSelector } from '../layout.js'
 
+import { optionControlsShown } from './layouts_controls.js'
+
 if (window.hasOwnProperty('webkitAudioContext')) {
     window.AudioContext = webkitAudioContext
 }
@@ -35,6 +37,9 @@ export function toggleMute() {
 }
 
 export function setMuteIcon(isMuted) {
+    if (optionControlsShown === false) {
+        return
+    }
     const m = document.querySelector('#mutetext')
     if (isMuted === false) {
         m.innerHTML = unmutedChar
