@@ -69,7 +69,7 @@ a:link, a:visited {
 }
 
 #blacknametext, #whitenametext {
-    font-size: 1.9rem;
+    font-size: 1.7rem;
     text-align: center;
     color: rgb(205,180,160);
 }
@@ -85,7 +85,7 @@ a:link, a:visited {
 }
 
 #status {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     text-align: center;
     color: rgb(130,75,60);
     background-color: rgb(50,35,20);
@@ -158,6 +158,10 @@ a:link, a:visited {
     text-align: center;
     font-size: 1.4rem;
     color: rgb(210,255,190);
+}
+
+.takeimg {
+    position: absolute;
 }
 
 .pieceimg {

@@ -16,11 +16,13 @@ const (
 	GamesWhiteAcknowledge = "white_ack"
 	GamesWhiteLeftKind    = "white_left_kind"
 	GamesWhiteRightKind   = "white_right_kind"
+	GamesWhiteCaptures    = "white_captures"
 
 	GamesBlack            = "black"
 	GamesBlackAcknowledge = "black_ack"
 	GamesBlackLeftKind    = "black_left_kind"
 	GamesBlackRightKind   = "black_right_kind"
+	GamesBlackCaptures    = "black_captures"
 
 	GamesActive         = "active"
 	GamesPreviousActive = "previous_active"
@@ -43,10 +45,12 @@ var (
 		GamesWhiteAcknowledge,
 		GamesWhiteLeftKind,
 		GamesWhiteRightKind,
+		GamesWhiteCaptures,
 		GamesBlack,
 		GamesBlackAcknowledge,
 		GamesBlackLeftKind,
 		GamesBlackRightKind,
+		GamesBlackCaptures,
 		GamesActive,
 		GamesPreviousActive,
 		GamesMoveFrom,
@@ -113,6 +117,16 @@ var (
 	GamesWhitePicksQuery = SQLQuery([]string{GamesWhiteLeftKind, GamesWhiteRightKind},
 		GamesTable, GamesIdentifier)
 	GamesBlackPicksQuery = SQLQuery([]string{GamesBlackLeftKind, GamesBlackRightKind},
+		GamesTable, GamesIdentifier)
+
+	GamesWhiteCapturesQuery = SQLQuery([]string{GamesWhiteCaptures},
+		GamesTable, GamesIdentifier)
+	GamesWhiteCapturesForUpdateQuery = SQLForUpdateQuery([]string{GamesWhiteCaptures},
+		GamesTable, GamesIdentifier)
+
+	GamesBlackCapturesQuery = SQLQuery([]string{GamesBlackCaptures},
+		GamesTable, GamesIdentifier)
+	GamesBlackCapturesForUpdateQuery = SQLForUpdateQuery([]string{GamesBlackCaptures},
 		GamesTable, GamesIdentifier)
 
 	GamesAcknowledgeWhiteUpdate = SQLUpdate(GamesTable, GamesWhiteAcknowledge, GamesIdentifier)

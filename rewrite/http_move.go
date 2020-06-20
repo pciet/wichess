@@ -57,7 +57,7 @@ func MovePost(w http.ResponseWriter, r *http.Request, tx *sql.Tx,
 		return
 	}
 
-	changes, promotionNeeded := Move(tx, id, requester.Name, move, promotionKind)
+	changes, takes, promotionNeeded := Move(tx, id, requester.Name, move, promotionKind)
 	if (changes == nil) || (len(changes) == 0) {
 		tx.Commit()
 		DebugPrintln(MovePath,
@@ -76,13 +76,13 @@ func MovePost(w http.ResponseWriter, r *http.Request, tx *sql.Tx,
 		promotionWasReverse = true
 	}
 
-	alertUpdate := Update{Squares: changes, FromMove: move}
+	alertUpdate := Update{Squares: changes, Captures: takes, FromMove: move}
 	if promotionNeeded || promotionWasReverse {
 		alertUpdate.State = WaitUpdate
 	}
 	go Alert(id, opponent, alertUpdate)
 
-	responseUpdate := Update{Squares: changes}
+	responseUpdate := Update{Squares: changes, Captures: takes}
 	if promotionNeeded {
 		responseUpdate.State = PromotionNeededUpdate
 	} else if promotionWasReverse {

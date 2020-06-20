@@ -1,10 +1,22 @@
 import { interiorDimensions } from './layout.js'
 
 // Recursively travels the document rooted at element e to calculate and write dimensions.
+// If an element has the "vcenter" CSS class then line-height is set to the parent height to
+// vertically center the content.
 export function layoutElement(e) {
+    let elementDims
+    if (e.classList.contains('vcenter') === true) {
+        elementDims = interiorDimensions(e)
+        e.style.lineHeight = elementDims.height + 'px'
+    }
+
     // an element with no children has already had its dimensions written
     if (e.children.length === 0) {
         return
+    }
+
+    if (elementDims === undefined) {
+        elementDims = interiorDimensions(e)
     }
 
     // border-box means padding and border don't need to be in these calculations
@@ -19,7 +31,7 @@ export function layoutElement(e) {
     const allDims = allChildrenDimensions(e, dims)
 
     // 'inline' CSS means these dimension numbers are written into the HTML tags
-    writeInlineCSSDimensions(e, allDims)
+    const eDims = writeInlineCSSDimensions(e, elementDims, allDims)
 
     for (const ei of e.children) {
         layoutElement(ei)
@@ -211,10 +223,11 @@ function allChildrenDimensions(parent, definedDimensions) {
     }
 }
 
-function writeInlineCSSDimensions(parent, dimensions) {
-    const pd = interiorDimensions(parent)
+function writeInlineCSSDimensions(parent, parentDimensions, dimensions) {
     for (let i = 0; i < parent.children.length; i++) {
-        parent.children[i].style.width = ((dimensions.widths[i] / 100) * pd.width) + 'px'
-        parent.children[i].style.height = ((dimensions.heights[i] / 100) * pd.height) + 'px'
+        parent.children[i].style.width =
+            ((dimensions.widths[i] / 100) * parentDimensions.width) + 'px'
+        parent.children[i].style.height = 
+            ((dimensions.heights[i] / 100) * parentDimensions.height) + 'px'
     }
 }

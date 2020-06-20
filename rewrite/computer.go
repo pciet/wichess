@@ -8,7 +8,8 @@ const (
 )
 
 var ComputerGameIdentifierQuery = SQLGeneralizedWhereQuery([]string{GamesIdentifier}, GamesTable,
-	GamesWhite+"=$1 AND "+GamesBlack+"='"+ComputerPlayerName+"'")
+	"("+GamesWhite+"=$1 AND "+GamesBlack+"='"+ComputerPlayerName+"') OR ("+
+		GamesWhite+"='"+ComputerPlayerName+"' AND "+GamesBlack+"=$1)")
 
 // ComputerGameIdentifier gets the game identifier for the player's one computer opponent game.
 func ComputerGameIdentifier(tx *sql.Tx, player string) GameIdentifier {

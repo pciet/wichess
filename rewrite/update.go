@@ -7,6 +7,7 @@ import "github.com/pciet/wichess/rules"
 // by docs/promotion.md.
 type Update struct {
 	Squares  []rules.AddressedSquare `json:"d,omitempty"` // diff
+	Captures []CapturedPiece         `json:"c,omitempty"`
 	State    string                  `json:"s,omitempty"`
 	FromMove rules.Move              `json:"m"` // can't be empty, rules.NoMove for empty
 }

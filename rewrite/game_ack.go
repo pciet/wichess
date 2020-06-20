@@ -9,7 +9,7 @@ func AcknowledgeGameComplete(tx *sql.Tx, id GameIdentifier, player string) {
 	h := LoadGameHeader(tx, id, true)
 	if ((player == h.White.Name) && h.Black.Acknowledge) ||
 		((player == h.Black.Name) && h.White.Acknowledge) ||
-		(h.Black.Name == ComputerPlayerName) {
+		(h.Black.Name == ComputerPlayerName) || (h.White.Name == ComputerPlayerName) {
 		DeleteGame(tx, id)
 		return
 	}

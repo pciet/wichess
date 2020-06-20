@@ -1,8 +1,10 @@
 import { button } from '../button.js'
-import { Orientation } from '../piece.js'
+import { Orientation, pieceTakeImageName } from '../piece.js'
+import { NoKind } from '../pieceDefs.js'
 
 import { chessBoard } from './board.js'
 import { hasComputerPlayer } from './players.js'
+import { captureList, spaceCaptureImages } from './captures.js'
 import { whitespace } from './layouts_whitespace.js'
 import { handedness } from './layouts_handedness.js'
 import { orientation } from './layouts_orientation.js'
@@ -20,11 +22,7 @@ export function players() {
         bottom = 'blackname'
     }
     let names = ct(top, 'playername', false, false) + `
-    <div>
-        <div></div>
-        <div class="noselect" id="against">against</div>
-        <div></div>
-    </div>
+    <div class="noselect vcenter" id="against">against</div>
 ` + ct(bottom, 'playername', false, false)
 
     if (hasComputerPlayer() === true) {
@@ -41,9 +39,66 @@ export function players() {
 </div>`
 }
 
+function topTakes() {
+    if (orientation === Orientation.BLACK) {
+        return takes(Orientation.WHITE)
+    }
+    return takes(Orientation.BLACK)
+}
+
+function bottomTakes() { return takes(orientation) }
+
+function takes(o) {
+    const l = captureList(o)
+    let prefix = 'w'
+    if (o === Orientation.BLACK) {
+        prefix = 'b'
+    }
+    let t = ''
+    for (let i = 0; i < 15; i++) {
+        const k = l[i]
+        if (k === NoKind) {
+            break
+        }
+        t += takeImg(prefix, i, o, k)
+    }
+    return t
+}
+
+function takeImg(prefix, index, or, k) {
+    return '<img id="t'+prefix+index+
+        '" class="takeimg" src="/web/img/'+pieceTakeImageName(or, k)+'">'
+}
+
+export function appendTakePieceImage(or, k, index) {
+    // or is the orientation of the captured piece
+    let takes, prefix, imgOr
+    if (or === Orientation.WHITE) {
+        prefix = 'b'
+        imgOr = Orientation.BLACK
+        if (orientation === Orientation.WHITE) {
+            // black took and is top
+            takes = 'toptakes'
+        } else {
+            takes = 'bottomtakes'
+        }
+    } else {
+        prefix = 'w'
+        imgOr = Orientation.WHITE
+        if (orientation === Orientation.BLACK) {
+            takes = 'toptakes'
+        } else {
+            takes = 'bottomtakes'
+        }
+    }
+    let t = document.querySelector('#'+takes)
+    t.innerHTML = t.innerHTML + takeImg(prefix, index, imgOr, k)
+    spaceCaptureImages()
+}
+
 function landscapeBar(reversed = false) {
     let t = `
-<div id="toptakes"></div>
+<div id="toptakes">` + topTakes() + `</div>
 <div id="playernames">` + players() + `</div>
 <div id="selectedpiece"></div>
 <div id="navigation">` + navigationLayout() + `</div>
@@ -53,7 +108,7 @@ function landscapeBar(reversed = false) {
     <div class="statusverticalmargin"></div>
 </div>`
     t += '<div id="controls">' + controlsLayout(reversed) + `</div>
-<div id="bottomtakes"></div>
+<div id="bottomtakes">` + bottomTakes() + `</div>
 `
     return t
 }

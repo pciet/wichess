@@ -57,3 +57,11 @@ export function pieceLookImageName(kind) {
 export function piecePickImageName(kind) {
     return 'pick_' + Pieces[kind].codeName + '.png'
 }
+
+export function pieceTakeImageName(orientation, kind) {
+    let prefix = 'b'
+    if (orientation === Orientation.BLACK) {
+        prefix = 'w'
+    }
+    return 'take_' + prefix + Pieces[kind].codeName + '.png'
+}

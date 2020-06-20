@@ -13,6 +13,7 @@ import { writeBoardMoves } from './game/board_moves.js'
 import { writePlayersIndicator, writeActivePlayerIndicator,
     hasComputerPlayer } from './game/players.js'
 import { writeGameCondition } from './game/condition.js'
+import { spaceCaptureImages } from './game/captures.js'
 
 import { fetchBoardPromise } from './game/fetch_board.js'
 import { fetchMovesPromise } from './game/fetch_moves.js'
@@ -170,6 +171,7 @@ export function layoutPage() {
     }
     writePlayersIndicator()
     writeBoardImages()
+    spaceCaptureImages()
     writeBoardMoves()
     writeGameCondition()
     setMuteIcon(muted())

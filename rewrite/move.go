@@ -10,16 +10,16 @@ import (
 // Board addresses are 0-63, so 64 is not a normal address index.
 const NoMove = 64
 
-// Move returns the squares that changed and whether a following promotion is needed.
+// Move returns the squares that changed, taken pieces, and whether a following promotion is needed.
 func Move(tx *sql.Tx, id GameIdentifier, player string,
-	m rules.Move, promotion rules.PieceKind) ([]rules.AddressedSquare, bool) {
+	m rules.Move, promotion rules.PieceKind) ([]rules.AddressedSquare, []CapturedPiece, bool) {
 	g := LoadGame(tx, id, true)
 	if g.Header.ID == 0 {
 		Panic("game", id, "not found")
 	}
 	if g.Header.Active != OrientationOf(player, g.Header.White.Name, g.Header.Black.Name) {
 		DebugPrintln(player, "not active", g.Header.Active)
-		return nil, false
+		return nil, nil, false
 	}
 
 	if promotion != rules.NoKind {
@@ -27,12 +27,12 @@ func Move(tx *sql.Tx, id GameIdentifier, player string,
 		if (needed == false) ||
 			(by != g.Header.Active) {
 			DebugPrintln("invalid promotion request by", player)
-			return nil, false
+			return nil, nil, false
 		}
 	} else {
 		if g.MoveLegal(m) == false {
 			DebugPrintln("illegal move", m)
-			return nil, false
+			return nil, nil, false
 		}
 	}
 
@@ -72,16 +72,18 @@ func (g Game) MoveLegal(m rules.Move) bool {
 // TODO: cleaner func signatures
 
 // DoMove does the database interactions necessary to do a move. Illegal moves can be done.
-// The board updates and if a promotion is needed are returned.
+// The board updates, taken pieces, and if a promotion is needed are returned.
 func (g Game) DoMove(tx *sql.Tx, m rules.Move,
-	promotion rules.PieceKind) ([]rules.AddressedSquare, bool) {
-	// TODO: changes, taken
-	changes := make([]rules.AddressedSquare, 0, 1)
+	promotion rules.PieceKind) ([]rules.AddressedSquare, []CapturedPiece, bool) {
+
+	var changes, takes []rules.AddressedSquare
+
 	if promotion != rules.NoKind {
+		changes = make([]rules.AddressedSquare, 0, 1)
 		changes = append(changes, g.Board.DoPromotion(promotion))
 		m = rules.NoMove
 	} else {
-		changes, _ = g.Board.DoMove(m)
+		changes, takes = g.Board.DoMove(m)
 	}
 
 	uc := make([]AddressedPiece, len(changes))
@@ -93,6 +95,27 @@ func (g Game) DoMove(tx *sql.Tx, m rules.Move,
 				Piece: rules.Piece(s.Square),
 			},
 		}
+	}
+
+	wFirst := g.Header.White.Captures.FirstAvailable()
+	bFirst := g.Header.Black.Captures.FirstAvailable()
+	t := make([]CapturedPiece, len(takes))
+	for i, s := range takes {
+		if ((s.Orientation == rules.Black) && (wFirst == -1)) ||
+			((s.Orientation == rules.White) && (bFirst == -1)) {
+			Panic("captured piece", s, "when capture list already full")
+		}
+		var slot int
+		if s.Orientation == rules.Black {
+			wFirst++
+			slot = wFirst
+		} else if s.Orientation == rules.White {
+			bFirst++
+			slot = bFirst
+		} else {
+			Panic("orientation", s.Orientation, "not white or black")
+		}
+		t[i] = CapturedPiece{s.Orientation, s.Kind, slot}
 	}
 
 	// normal case is the next player is the opponent, but promotion can change it
@@ -118,9 +141,7 @@ func (g Game) DoMove(tx *sql.Tx, m rules.Move,
 
 	UpdateGame(tx, g.Header.ID,
 		OrientationOf(active, g.Header.White.Name, g.Header.Black.Name),
-		g.Header.Active, 0, g.Header.Turn, m, uc)
-
-	// TODO: PieceTakesUpdate(tx, id, taken)
+		g.Header.Active, 0, g.Header.Turn, m, uc, t)
 
 	// TODO: remove this copy when ID determination is done
 	// main.Piece isn't needed past UpdateGame
@@ -132,5 +153,5 @@ func (g Game) DoMove(tx *sql.Tx, m rules.Move,
 		}
 	}
 
-	return squares, promotionNeeded
+	return squares, t, promotionNeeded
 }

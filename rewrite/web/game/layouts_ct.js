@@ -13,17 +13,15 @@ export function ct(id, classes = '', inline = false, noselect = true, text = '')
     t += 'class="'+classes+'" '
     }
     t += `id="`+id+`">
-        <div></div>
-    <div `
+    <div class="vcenter`
     if (noselect === true) {
-        t += 'class="noselect" '
+        t += ' noselect'
     }
-    t += `id="`+id+`text">`
+    t += `" id="`+id+`text">`
     if (text !== '') {
         t += text
     }
     return t + `</div>
-        <div></div>
     </div>
 </div>
 `

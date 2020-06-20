@@ -5,6 +5,8 @@ import { State } from './state.js'
 import { replaceAndWriteGameCondition } from './condition.js'
 import { moveSound } from './audio.js'
 import { pauseWebSocket, unpauseWebSocket } from './websocket.js'
+import { optionControlsShown, hideOptions } from './layouts_controls.js'
+import { updateCapturedPieces } from './captures.js'
 
 import { switchActive, replacePreviousMove, replaceMoves } from '../game.js'
 
@@ -16,6 +18,9 @@ export function doMove(fromIndex, toIndex, promotion = undefined, reversePromoti
         body = JSON.stringify({p: promotion})
     }
 
+    if (optionControlsShown === true) {
+        hideOptions()
+    }
     moveSound()
     unshowMoveablePieces()
     unshowPreviousMove()
@@ -38,6 +43,11 @@ export function doMove(fromIndex, toIndex, promotion = undefined, reversePromoti
             replacePreviousMove(fromIndex, toIndex)
         }
         updateBoard(parseBoardUpdate(moveResponse.d))
+        if (moveResponse.c !== undefined) {
+            for (const p of moveResponse.c) {
+                updateCapturedPieces(p.o, p.k)
+            }
+        }
         if ('s' in moveResponse) {
             switch (moveResponse.s) {
             case 'p':

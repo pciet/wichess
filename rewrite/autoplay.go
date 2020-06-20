@@ -33,14 +33,14 @@ func Autoplay(id GameIdentifier, player string) {
 		u.FromMove = rules.NoMove
 	} else {
 		u.FromMove = move
-		u.Squares, promotionNeeded = g.DoMove(tx, move, promotion)
+		u.Squares, u.Captures, promotionNeeded = g.DoMove(tx, move, promotion)
 		if promotionNeeded {
 			// if this is the promoting player then do it now
 			(&g.Board).ApplyChanges(u.Squares)
 			promoter, _ := g.Board.PromotionNeeded()
 			if PlayerWithOrientation(promoter, g.Header.White.Name,
 				g.Header.Black.Name) == player {
-				promUpdates, _ := g.DoMove(tx, rules.NoMove, rules.Queen)
+				promUpdates, _, _ := g.DoMove(tx, rules.NoMove, rules.Queen)
 				u.Squares = rules.MergeReplaceAddressedSquares(u.Squares, promUpdates)
 			}
 		}

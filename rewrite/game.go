@@ -65,6 +65,8 @@ func LoadGameHeader(tx *sql.Tx, id GameIdentifier, forUpdate bool) GameHeader {
 		query = GamesHeaderQuery
 	}
 
+	var whiteCaptures, blackCaptures []sql.NullInt64
+
 	h := GameHeader{ID: id}
 	var active, previousActive bool
 	err := tx.QueryRow(query, id).Scan(
@@ -73,10 +75,12 @@ func LoadGameHeader(tx *sql.Tx, id GameIdentifier, forUpdate bool) GameHeader {
 		&h.White.Acknowledge,
 		&h.White.Left,
 		&h.White.Right,
+		pq.Array(&whiteCaptures),
 		&h.Black.Name,
 		&h.Black.Acknowledge,
 		&h.Black.Left,
 		&h.Black.Right,
+		pq.Array(&blackCaptures),
 		&active,
 		&previousActive,
 		&h.From,
@@ -89,8 +93,23 @@ func LoadGameHeader(tx *sql.Tx, id GameIdentifier, forUpdate bool) GameHeader {
 	} else if err != nil {
 		Panic("failed to query database row:", err)
 	}
+
 	h.Active = rules.BoolToOrientation(active)
 	h.PreviousActive = rules.BoolToOrientation(previousActive)
+
+	for i := 0; i < 15; i++ {
+		wc := whiteCaptures[i]
+		if wc.Valid == false {
+			Panic("null white capture", i, "in", id)
+		}
+		bc := blackCaptures[i]
+		if wc.Valid == false {
+			Panic("null black capture", i, "in", id)
+		}
+		h.White.Captures[i] = rules.PieceKind(wc.Int64)
+		h.Black.Captures[i] = rules.PieceKind(bc.Int64)
+	}
+
 	return h
 }
 

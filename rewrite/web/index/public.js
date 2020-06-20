@@ -24,8 +24,7 @@ export function addPublicMatches() {
         const pb = document.querySelector('#p'+i)
         pb.classList.add('playernamed')
         pb.onclick = () => { matchOnClick(RecentOpponents[i]) }
-        layoutSelector('#p'+i, 
-            '<div></div><div class="noselect">'+RecentOpponents[i]+'</div><div></div>')
+        layoutSelector('#p'+i, '<div class="vcenter noselect">'+RecentOpponents[i]+'</div>')
     }
 
     document.querySelector('#match').onclick = () => {

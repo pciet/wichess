@@ -13,17 +13,13 @@ export const landscape = `
     </div>
     <div class="modebuttonmargin">
         <div class="modebutton" id="public">
-            <div></div>
-            <div class="noselect">People</div>
-            <div></div>
+            <div class="vcenter noselect">People</div>
         </div>
     </div>
     <div class="modepickspacer"></div>
     <div class="modebuttonmargin">
         <div class="modebutton" id="computer">
-            <div></div>
-            <div class="noselect">Computer</div>
-            <div></div>
+            <div class="vcenter noselect">Computer</div>
         </div>
     </div>
 </div>
@@ -60,37 +56,27 @@ export const publicMatching = `
 <div class="inline">
     <div class="playerbuttonmargin">
         <div class="playerbutton" id="p0">
-            <div></div>
-            <div class="noselect">Recent Opponent 1</div>
-            <div></div>
+            <div class="vcenter noselect">Recent Opponent 1</div>
         </div>
     </div>
     <div class="playerbuttonmargin">
         <div class="playerbutton" id="p1">
-            <div></div>
-            <div class="noselect">Recent Opponent 2</div>
-            <div></div>
+            <div class="vcenter noselect">Recent Opponent 2</div>
         </div>
     </div>
     <div class="playerbuttonmargin">
         <div class="playerbutton" id="p2">
-            <div></div>
-            <div class="noselect">Recent Opponent 3</div>
-            <div></div>
+            <div class="vcenter noselect">Recent Opponent 3</div>
         </div>
     </div>
     <div class="playerbuttonmargin">
         <div class="playerbutton" id="p3">
-            <div></div>
-            <div class="noselect">Recent Opponent 4</div>
-            <div></div>
+            <div class="vcenter noselect">Recent Opponent 4</div>
         </div>
     </div>
     <div class="playerbuttonmargin">
         <div class="playerbutton" id="p4">
-            <div></div>
-            <div class="noselect">Recent Opponent 5</div>
-            <div></div>
+            <div class="vcenter noselect">Recent Opponent 5</div>
         </div>
     </div>
 </div>
@@ -103,9 +89,7 @@ export const publicMatching = `
     <span id="opponentlabel">Type opponent's username.</span>
     <div id="matchbuttonmargin">
         <div id="match">
-            <div></div>
-            <div class="noselect">New Match</div>
-            <div></div>
+            <div class="vcenter noselect">New Match</div>
         </div>
     </div>
 </div>
@@ -124,9 +108,7 @@ export const matchPending = `
                 <div class="inline cancelbuttonspacer"></div>
                 <div class="inline" id="cancelbuttonmargin">
                     <div id="cancelbutton">
-                        <div></div>
-                        <div class="noselect">Cancel</div>
-                        <div></div>
+                        <div class="vcenter noselect">Cancel</div>
                     </div>
                 </div>
                 <div class="inline cancelbuttonspacer"></div>

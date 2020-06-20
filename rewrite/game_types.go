@@ -21,8 +21,13 @@ type (
 		Turn           int
 	}
 
+	// Captured pieces are ordered by when they were taken, so newly captured pieces are added
+	// to the first index that's still the initial value of rules.NoKind.
+	Captures [15]rules.PieceKind
+
 	GamePlayerHeader struct {
-		Name        string
+		Name string
+		Captures
 		Acknowledge bool `json:"-"`
 		// if a player chooses their left and/or right random pick pieces then they will be added
 		// to the player's collection if they complete the game

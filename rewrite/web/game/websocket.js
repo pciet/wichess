@@ -7,6 +7,7 @@ import { State } from './state.js'
 import { unshowMoveablePieces, unshowPreviousMove } from './moves.js'
 import { moveSound } from './audio.js'
 import { ComputerPlayerName } from './players.js'
+import { updateCapturedPieces } from './captures.js'
 
 import { switchActive, replacePreviousMove } from '../game.js'
 
@@ -47,6 +48,12 @@ export function webSocketOnMessage(event) {
 
     if ((alert.d !== undefined) && (alert.d.length !== 0)) {
         updateBoard(parseBoardUpdate(alert.d))
+    }
+
+    if (alert.c !== undefined) {
+        for (const p of alert.c) {
+            updateCapturedPieces(p.o, p.k)
+        }
     }
 
     // no previous move is defined if alert.m is equal to rules.NoMove

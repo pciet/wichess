@@ -17,12 +17,14 @@ func NewGame(tx *sql.Tx, wa, ba ArmyRequest, white, black Player) GameIdentifier
 		return 0
 	}
 
+	emptyCaptures := pq.Array(make([]rules.PieceKind, 15))
+
 	// QueryRow instead of Exec: https://github.com/lib/pq/issues/24
 	var id GameIdentifier
 	err = tx.QueryRow(GamesNewInsert,
 		false,
-		white.Name, false, wpicks.Left, wpicks.Right,
-		black.Name, false, bpicks.Left, bpicks.Right,
+		white.Name, false, wpicks.Left, wpicks.Right, emptyCaptures,
+		black.Name, false, bpicks.Left, bpicks.Right, emptyCaptures,
 		rules.White, rules.Black,
 		NoMove, NoMove,
 		0, 1,

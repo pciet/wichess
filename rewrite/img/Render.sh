@@ -28,6 +28,9 @@ do
     mv look.png "$IMGDIR"/look_"$p".png
     ./Pick.sh $p
     mv pick.png "$IMGDIR"/pick_"$p".png
+    ./Take.sh $p
+    mv btake.png "$IMGDIR"/take_b"$p".png
+    mv wtake.png "$IMGDIR"/take_w"$p".png
 done
 
 ./Board.sh empty

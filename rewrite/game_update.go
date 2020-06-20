@@ -10,11 +10,12 @@ import (
 )
 
 // UpdateGame puts board changes into the database for a game, updates the latest move, sets
-// the draw turn count, sets the active player, and increments the turn number.
+// the draw turn count, sets the active player, adds any taken pieces to the captured pieces lists,
+// and increments the turn number.
 // If the previous move shouldn't be updated, such as when the promotion pick is done, then m is
 // set to rules.NoMove.
 func UpdateGame(tx *sql.Tx, id GameIdentifier, active, previousActive rules.Orientation,
-	drawTurns int, turn int, m rules.Move, with []AddressedPiece) {
+	drawTurns int, turn int, m rules.Move, with []AddressedPiece, takes []CapturedPiece) {
 	var s strings.Builder
 	s.WriteString("UPDATE ")
 	s.WriteString(GamesTable)
@@ -39,6 +40,21 @@ func UpdateGame(tx *sql.Tx, id GameIdentifier, active, previousActive rules.Orie
 		s.WriteRune('[')
 		// Postgres arrays are indexed 1-(n+1) instead of 0-n
 		s.WriteString(strconv.Itoa(p.Address.Index().Int() + 1))
+		s.WriteRune(']')
+		placeholder(false)
+	}
+
+	for _, p := range takes {
+		args = append(args, p.PieceKind)
+		if p.Orientation == rules.Black {
+			s.WriteString(GamesWhiteCaptures)
+		} else if p.Orientation == rules.White {
+			s.WriteString(GamesBlackCaptures)
+		} else {
+			Panic("orientation", p.Orientation, "not white or black")
+		}
+		s.WriteRune('[')
+		s.WriteString(strconv.Itoa(p.CaptureSlot))
 		s.WriteRune(']')
 		placeholder(false)
 	}
