@@ -29,6 +29,10 @@ func InitializeHTTP() {
 	// If a timed game is in progress then the web browser is redirected to it.
 	http.Handle(IndexPath, IndexHandler)
 
+	// Details of the rules of individual pieces is in the details path. This information is
+	// not interactive and doesn't require authentication to read.
+	http.HandleFunc(DetailsPath, DetailsGet)
+
 	// "Computer" is the artificial opponent mode, where the other player's moves are
 	// made automatically.
 	// In HTTP terms, this path's POST is used to setup the match and the GET is to load

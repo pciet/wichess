@@ -14,6 +14,7 @@ import { writePlayersIndicator, writeActivePlayerIndicator,
     hasComputerPlayer } from './game/players.js'
 import { writeGameCondition } from './game/condition.js'
 import { spaceCaptureImages } from './game/captures.js'
+import { squareElement } from './game/board.js'
 
 import { fetchBoardPromise } from './game/fetch_board.js'
 import { fetchMovesPromise } from './game/fetch_moves.js'
@@ -153,22 +154,29 @@ window.onresize = () => {
     resizeWait = setTimeout(layoutPage, 150)
 }
 
+export let selectedPiece
+
 export function layoutPage() {
     document.body.classList.add('visible')
     writeBoardDimension(lowerSquareRatio, upperSquareRatio)
     layout()
+
     for (let i = 0; i < 64; i++) {
-        document.querySelector('#s'+i).addEventListener('mouseover', () => {
-            const at = Board[i]
-            let k, o
-            if (at === undefined) {
-                k = NoKind
+        const s = squareElement(i)
+        s.onclick = () => {
+            const p = Board[i]
+            if ((p === undefined) || (p.kind === NoKind)) {
+                selectedPiece = undefined
             } else {
-                k = at.kind
-                o = at.orientation
+                selectedPiece = p.kind
             }
-        })
+
+            if (s.moveClickFunc !== undefined) {
+                s.moveClickFunc()
+            }
+        }
     }
+
     writePlayersIndicator()
     writeBoardImages()
     spaceCaptureImages()

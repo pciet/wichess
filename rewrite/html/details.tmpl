@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+<meta charset="UTF-8">
+<title>{{.Name}} - Wisconsin Chess</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<link rel="stylesheet" type="text/css" href="/web/font.css">
+<link rel="stylesheet" type="text/css" href="/web/details.css">
+</head>
+
+<body>
+
+<img id="look" src="/web/img/look_{{.CodeName}}.png" alt="View of the {{.Name}} piece">
+<h1>{{.Name}}</h1>
+
+{{if .Basic}}
+<p>{{.Name}} is a <a href="/details?p={{.BasicCodeName}}">{{.Basic}}</a> piece.</p>
+{{else}}
+<p>{{.StartDescription}}</p>
+<p>{{.MovesDescription}}</p>
+{{end}}
+
+{{if .CharacteristicA}}
+<h2>{{.CharacteristicA}}</h2>
+<p>{{.CharacteristicADescription}}</p>
+{{end}}
+
+{{if .CharacteristicB}}
+<h2>{{.CharacteristicB}}</h2>
+<p>{{.CharacteristicBDescription}}</p>
+{{end}}
+
+</body>
+
+</html>

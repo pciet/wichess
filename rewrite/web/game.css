@@ -45,15 +45,19 @@ a:link, a:visited {
     height: 8%;
 }
 
+#topspacer {
+    height: 4%;
+}
+
+#bottomspacer {
+    height: 3%;
+}
+
 #playernames {
     height: 24%;
 }
 
 #controls {
-    height: 16%;
-}
-
-#selectedpiece {
     height: 16%;
 }
 
@@ -86,7 +90,9 @@ a:link, a:visited {
 
 #status {
     font-size: 1.6rem;
+    text-shadow: 1px 1px 0 rgb(5,5,50);
     text-align: center;
+    font-weight: bold;
     color: rgb(130,75,60);
     background-color: rgb(50,35,20);
 }
@@ -101,13 +107,17 @@ a:link, a:visited {
     height: 5%;
 }
 
+#showoptionsdiv {
+    width: 25%;
+}
+
 #mutetext, #whitespacetext, #swapinterfacetext, #swapplayerstext, #showoptions {
     font-size: 2rem;
     text-align: center;
     color: rgb(180,180,200);
 }
 
-#showmovestext, #showprevtext {
+#showmovestext, #showprevtext, #piececardtext {
     font-size: 2rem;
     text-align: center;
     color: rgb(180,170,175);

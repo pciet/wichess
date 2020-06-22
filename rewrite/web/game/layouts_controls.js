@@ -1,5 +1,6 @@
-import { resetLayouts, layoutPage, gameDone } from '../game.js'
+import { resetLayouts, layoutPage, gameDone, selectedPiece } from '../game.js'
 import { layoutSelector } from '../layout.js'
+import { Pieces } from '../pieceDefs.js'
 
 import { ct } from './layouts_ct.js'
 import { swapHandedness, handedness } from './layouts_handedness.js'
@@ -17,6 +18,10 @@ export function addControlsClickHandlers() {
         addShowMovesHandler()
         addShowPreviousMoveHandler()
         document.querySelector('#showoptions').onclick = showOptions
+        document.querySelector('#piececard').onclick = () => {
+            if (selectedPiece === undefined) { return }
+            window.open('/details?p=' + Pieces[selectedPiece].codeName)
+        }
         return
     }
 
@@ -63,14 +68,17 @@ function showOptions() {
 }
 
 const showOptionsButton = `
-<div class="inline">` +
+<div id="showoptionsdiv" class="inline">` +
     ct('showoptions', 'control', false, true, '&#x2022;') + `
 </div>`
 
 const gameControls = `
-<div class="inline">` +
-    ct('showmoves', 'control', false, true, '&#x2318;') +
-    ct('showprev', 'control', false, true, '&#x21BA;') + `
+<div class="inline">
+    <div class="inline">` + ct('piececard', 'control', false, true, '?') + `</div>
+    <div class="inline">` + 
+        ct('showmoves', 'control', false, true, '&#x2318;') +
+        ct('showprev', 'control', false, true, '&#x21BA;') + `
+    </div>
 </div>`
 
 const interfaceControls = `

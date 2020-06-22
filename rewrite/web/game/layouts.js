@@ -99,14 +99,16 @@ export function appendTakePieceImage(or, k, index) {
 function landscapeBar(reversed = false) {
     let t = `
 <div id="toptakes">` + topTakes() + `</div>
+<div id="topspacer"></div>
 <div id="playernames">` + players() + `</div>
-<div id="selectedpiece"></div>
 <div id="navigation">` + navigationLayout() + `</div>
 <div id="statusbox">
     <div class="statusverticalmargin"></div>
     ` + ct('status') + `
     <div class="statusverticalmargin"></div>
-</div>`
+</div>
+<div id="bottomspacer"></div>`
+
     t += '<div id="controls">' + controlsLayout(reversed) + `</div>
 <div id="bottomtakes">` + bottomTakes() + `</div>
 `

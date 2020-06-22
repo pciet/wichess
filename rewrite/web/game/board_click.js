@@ -33,7 +33,7 @@ export function writeSquareClick(fromIndex, toIndices) {
     }
     s.addEventListener('mouseleave', s.mouseLeaveFunc)
 
-    s.clickFunc = () => {
+    s.moveClickFunc = () => {
         if (optionControlsShown === true) {
             hideOptions()
         }
@@ -41,7 +41,7 @@ export function writeSquareClick(fromIndex, toIndices) {
             fromSquare.classList.remove(selectClass)
             for (const m of toList) {
                 const ms = squareElement(m)
-                ms.removeEventListener('click', ms.clickFunc)
+                ms.moveClickFunc = undefined
                 ms.classList.remove(selectMoveClass)
             }
             s.mouseLeaveFunc()
@@ -73,17 +73,15 @@ export function writeSquareClick(fromIndex, toIndices) {
         for (const m of toIndices) {
             const ms = squareElement(m)
             ms.classList.add(selectMoveClass)
-            ms.clickFunc = () => {
+            ms.moveClickFunc = () => {
                 removeMoveSelect(squareElement(fromIndex), toIndices)
                 clicked = undefined
                 // handlers added back in doMove with new moves
                 removeAllSquareEventHandlers()
                 doMove(fromIndex, m)
             }
-            ms.addEventListener('click', ms.clickFunc)
         }
     }
-    s.addEventListener('click', s.clickFunc)
 }
 
 export function removeAllSquareEventHandlers() {
@@ -91,6 +89,6 @@ export function removeAllSquareEventHandlers() {
         const s = squareElement(boardAddressToIndex(Moves[i].from))
         s.removeEventListener('mouseenter', s.mouseEnterFunc)
         s.removeEventListener('mouseleave', s.mouseLeaveFunc)
-        s.removeEventListener('click', s.clickFunc)
+        s.moveClickFunc = undefined
     }
 }
