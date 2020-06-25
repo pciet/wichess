@@ -3,11 +3,11 @@ package main
 import (
 	"database/sql"
 
-	"github.com/pciet/wichess/rules"
+	"github.com/pciet/wichess/piece"
 )
 
 func PicksInGameForPlayer(tx *sql.Tx,
-	gameID GameIdentifier, name string) (rules.PieceKind, rules.PieceKind) {
+	gameID GameIdentifier, name string) (piece.Kind, piece.Kind) {
 
 	white, black := GamePlayers(tx, gameID)
 
@@ -19,7 +19,7 @@ func PicksInGameForPlayer(tx *sql.Tx,
 	} else {
 		Panic(name, "not in game", gameID)
 	}
-	var left, right rules.PieceKind
+	var left, right piece.Kind
 	err := tx.QueryRow(query, gameID).Scan(&left, &right)
 	if err != nil {
 		DebugPrintln(query)

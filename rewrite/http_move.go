@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/pciet/wichess/piece"
 	"github.com/pciet/wichess/rules"
 )
 
@@ -72,7 +73,7 @@ func MovePost(w http.ResponseWriter, r *http.Request, tx *sql.Tx,
 	tx.Commit()
 
 	promotionWasReverse := false
-	if (promotionKind != rules.NoKind) && (previousActive != requester.Name) {
+	if (promotionKind != piece.NoKind) && (previousActive != requester.Name) {
 		promotionWasReverse = true
 	}
 
@@ -92,13 +93,13 @@ func MovePost(w http.ResponseWriter, r *http.Request, tx *sql.Tx,
 	JSONResponse(w, responseUpdate)
 }
 
-func ParseMove(m MoveJSON) (rules.Move, rules.PieceKind) {
+func ParseMove(m MoveJSON) (rules.Move, piece.Kind) {
 	var to rules.Address
-	promotion := rules.PieceKind(m.Promotion)
-	if promotion != rules.NoKind {
-		if rules.IsBasicKind(promotion) == false {
+	promotion := piece.Kind(m.Promotion)
+	if promotion != piece.NoKind {
+		if promotion.IsBasic() == false {
 			DebugPrintln("promotion request", promotion, "not basic kind")
-			return rules.NoMove, rules.NoKind
+			return rules.NoMove, piece.NoKind
 		}
 		to = rules.NoAddress
 	} else {

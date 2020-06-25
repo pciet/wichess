@@ -1,6 +1,9 @@
 package main
 
-import "github.com/pciet/wichess/rules"
+import (
+	"github.com/pciet/wichess/piece"
+	"github.com/pciet/wichess/rules"
+)
 
 const (
 	CollectionCount = 21
@@ -24,13 +27,12 @@ type (
 	}
 
 	RandomPicks struct {
-		Left  rules.PieceKind
-		Right rules.PieceKind
+		Left, Right piece.Kind
 	}
 )
 
-func (a Collection) Kinds() [CollectionCount]rules.PieceKind {
-	var out [CollectionCount]rules.PieceKind
+func (a Collection) Kinds() [CollectionCount]piece.Kind {
+	var out [CollectionCount]piece.Kind
 	for i, p := range a {
 		out[i] = p.Kind
 	}

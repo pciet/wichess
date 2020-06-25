@@ -4,6 +4,7 @@ import (
 	"database/sql"
 
 	"github.com/lib/pq"
+	"github.com/pciet/wichess/piece"
 	"github.com/pciet/wichess/rules"
 )
 
@@ -106,8 +107,8 @@ func LoadGameHeader(tx *sql.Tx, id GameIdentifier, forUpdate bool) GameHeader {
 		if wc.Valid == false {
 			Panic("null black capture", i, "in", id)
 		}
-		h.White.Captures[i] = rules.PieceKind(wc.Int64)
-		h.Black.Captures[i] = rules.PieceKind(bc.Int64)
+		h.White.Captures[i] = piece.Kind(wc.Int64)
+		h.Black.Captures[i] = piece.Kind(bc.Int64)
 	}
 
 	return h

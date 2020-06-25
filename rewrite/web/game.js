@@ -1,10 +1,11 @@
-import { addLayout, layout, removeAllLayouts, scaleFont }  from './layout.js'
+import { addLayout, layout, layoutSelector, removeAllLayouts, scaleFont }  from './layout.js'
 import * as layouts from './game/layouts.js'
 
-import { initializeHandedness } from './game/layouts_handedness.js'
+import { initializeHandedness, handedness } from './game/layouts_handedness.js'
 import { initializeWhitespace } from './game/layouts_whitespace.js'
 import { initializeOrientation } from './game/layouts_orientation.js'
-import { addControlsClickHandlers } from './game/layouts_controls.js'
+import { optionControlsShown,
+    showOptions, hideOptions, controlsLayout } from './game/layouts_controls.js'
 
 import { writeBoardDimension } from './game/board_dimensions.js'
 import { updateBoard } from './game/board_update.js'
@@ -179,10 +180,19 @@ export function layoutPage() {
 
     writePlayersIndicator()
     writeBoardImages()
+
+    if (optionControlsShown === true) {
+        showOptions()
+    } else {
+        hideOptions()
+    }
+
+    document.querySelector('#toptakes').innerHTML = layouts.topTakes()
+    document.querySelector('#bottomtakes').innerHTML = layouts.bottomTakes()
     spaceCaptureImages()
+
     writeBoardMoves()
     writeGameCondition()
-    setMuteIcon(muted())
     scaleFont()
-    addControlsClickHandlers()
+
 }

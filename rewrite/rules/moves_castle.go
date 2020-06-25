@@ -1,5 +1,7 @@
 package rules
 
+import "github.com/pciet/wichess/piece"
+
 // The king should not be in check when AppendCastleMoves is called.
 func (a Board) AppendCastleMoves(moves []MoveSet, by Orientation,
 	opponentThreats []Address) []MoveSet {
@@ -11,20 +13,20 @@ func (a Board) AppendCastleMoves(moves []MoveSet, by Orientation,
 	}
 
 	s := a[king.Index()]
-	if (s.Kind != King) || s.Moved {
+	if (s.Kind != piece.King) || s.Moved {
 		return moves
 	}
 
 	// The intermediates need to be ordered as a path from the king.
 	appendMove := func(intermediates []Address, rook Address, castleMove Address) {
 		r := a[rook.Index()]
-		if (BasicKind(r.Kind) != Rook) || r.Moved {
+		if (r.Kind.Basic() != piece.Rook) || r.Moved {
 			return
 		}
 
 		// if intermediate squares are not empty then castle not available
 		for i, inter := range intermediates {
-			if a[inter.Index()].Kind != NoKind {
+			if a[inter.Index()].Kind != piece.NoKind {
 				return
 			}
 			// the first two squares also need to be unthreatened

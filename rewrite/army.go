@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"io"
 
-	"github.com/pciet/wichess/rules"
+	"github.com/pciet/wichess/piece"
 )
 
 type (
@@ -35,23 +35,23 @@ func PickSlotsInArmyRequest(r ArmyRequest) (bool, bool) {
 
 // The BasicArmy is the initial position of one side for a regular chess game, addressed by
 // Wisconsin Chess index.
-var BasicArmy = func() [16]rules.PieceKind {
-	var b [16]rules.PieceKind
+var BasicArmy = func() [16]piece.Kind {
+	var b [16]piece.Kind
 	for i := 0; i < 8; i++ {
-		b[i] = rules.Pawn
+		b[i] = piece.Pawn
 	}
 
-	b[8] = rules.Rook
-	b[15] = rules.Rook
+	b[8] = piece.Rook
+	b[15] = piece.Rook
 
-	b[9] = rules.Knight
-	b[14] = rules.Knight
+	b[9] = piece.Knight
+	b[14] = piece.Knight
 
-	b[10] = rules.Bishop
-	b[13] = rules.Bishop
+	b[10] = piece.Bishop
+	b[13] = piece.Bishop
 
-	b[11] = rules.Queen
-	b[12] = rules.King
+	b[11] = piece.Queen
+	b[12] = piece.King
 
 	return b
 }()

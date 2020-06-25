@@ -3,6 +3,7 @@ package main
 import (
 	"math/rand"
 
+	"github.com/pciet/wichess/piece"
 	"github.com/pciet/wichess/rules"
 )
 
@@ -27,7 +28,7 @@ func Autoplay(id GameIdentifier, player string) {
 
 	var u Update
 	promotionNeeded := false
-	if (move == rules.NoMove) && (promotion == rules.NoKind) {
+	if (move == rules.NoMove) && (promotion == piece.NoKind) {
 		// alert player to completed game with empty diff
 		u.Squares = []rules.AddressedSquare{}
 		u.FromMove = rules.NoMove
@@ -40,7 +41,7 @@ func Autoplay(id GameIdentifier, player string) {
 			promoter, _ := g.Board.PromotionNeeded()
 			if PlayerWithOrientation(promoter, g.Header.White.Name,
 				g.Header.Black.Name) == player {
-				promUpdates, _, _ := g.DoMove(tx, rules.NoMove, rules.Queen)
+				promUpdates, _, _ := g.DoMove(tx, rules.NoMove, piece.Queen)
 				u.Squares = rules.MergeReplaceAddressedSquares(u.Squares, promUpdates)
 			}
 		}
@@ -56,13 +57,13 @@ func Autoplay(id GameIdentifier, player string) {
 // The autoplay algorithm in AutoplayMove inspects all moves this turn and picks the best.
 // A random move is picked amongst ties. The returned PieceKind is the promotion pick if needed.
 // If the game is determined to be complete then rules.NoMove is returned.
-func AutoplayMove(g rules.Game, o rules.Orientation) (rules.Move, rules.PieceKind) {
+func AutoplayMove(g rules.Game, o rules.Orientation) (rules.Move, piece.Kind) {
 	moves, state := g.Moves(o)
 	if (state != rules.Normal) && (state != rules.Check) {
-		return rules.NoMove, rules.NoKind
+		return rules.NoMove, piece.NoKind
 	}
 	if state == rules.Promotion {
-		return rules.NoMove, rules.Queen
+		return rules.NoMove, piece.Queen
 	}
 
 	takes := rules.MovesAddressSlice(g.NaiveTakeMoves(o.Opponent()))
@@ -86,7 +87,7 @@ func AutoplayMove(g rules.Game, o rules.Orientation) (rules.Move, rules.PieceKin
 		}
 	}
 
-	return best, rules.NoKind
+	return best, piece.NoKind
 }
 
 func AutoplayRating(g rules.Game, of rules.Move,
@@ -114,18 +115,18 @@ func AutoplayRating(g rules.Game, of rules.Move,
 	rating += g.Board.PieceCount(opponent) - future.Board.PieceCount(opponent)
 
 	ts := g.Board[of.To.Index()]
-	if (ts.Kind != rules.NoKind) && (ts.Orientation != by) {
-		if rules.IsBasicKind(ts.Kind) == false {
+	if (ts.Kind != piece.NoKind) && (ts.Orientation != by) {
+		if ts.Kind.IsBasic() == false {
 			rating++
 		}
-		switch rules.BasicKind(ts.Kind) {
-		case rules.Queen:
+		switch ts.Kind.Basic() {
+		case piece.Queen:
 			rating += 4
-		case rules.Rook:
+		case piece.Rook:
 			rating += 3
-		case rules.Bishop:
+		case piece.Bishop:
 			rating += 2
-		case rules.Knight:
+		case piece.Knight:
 			rating += 1
 		}
 	}

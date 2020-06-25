@@ -1,5 +1,7 @@
 package rules
 
+import "github.com/pciet/wichess/piece"
+
 func (a Board) AppendReconMoves(moves []Address, at Address) []Address {
 	possibleRecon := make([]Address, 0, 3)
 	s := a[at.Index()]
@@ -28,7 +30,7 @@ func (a Board) AppendReconMoves(moves []Address, at Address) []Address {
 			continue
 		}
 		p := a[ra]
-		if (p.Kind == NoKind) ||
+		if (p.Kind == piece.NoKind) ||
 			(s.Orientation != p.Orientation) ||
 			(p.Recons == false) {
 			continue
@@ -45,7 +47,7 @@ func (a Board) AppendReconMoves(moves []Address, at Address) []Address {
 			continue
 		}
 		mp := a[ra]
-		if mp.Kind == NoKind {
+		if mp.Kind == piece.NoKind {
 			moves = append(moves, reconMove)
 			continue
 		}

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"net/http"
 
+	"github.com/pciet/wichess/piece"
 	"github.com/pciet/wichess/rules"
 )
 
@@ -19,7 +20,7 @@ func BoardsGet(w http.ResponseWriter, r *http.Request, tx *sql.Tx, id GameIdenti
 
 	jr := make([]rules.AddressedSquare, 0, 32)
 	for i, s := range b.Board {
-		if s.Kind == rules.NoKind {
+		if s.Kind == piece.NoKind {
 			continue
 		}
 		jr = append(jr, rules.AddressedSquare{

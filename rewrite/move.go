@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 
+	"github.com/pciet/wichess/piece"
 	"github.com/pciet/wichess/rules"
 )
 
@@ -12,7 +13,7 @@ const NoMove = 64
 
 // Move returns the squares that changed, taken pieces, and whether a following promotion is needed.
 func Move(tx *sql.Tx, id GameIdentifier, player string,
-	m rules.Move, promotion rules.PieceKind) ([]rules.AddressedSquare, []CapturedPiece, bool) {
+	m rules.Move, promotion piece.Kind) ([]rules.AddressedSquare, []CapturedPiece, bool) {
 	g := LoadGame(tx, id, true)
 	if g.Header.ID == 0 {
 		Panic("game", id, "not found")
@@ -22,7 +23,7 @@ func Move(tx *sql.Tx, id GameIdentifier, player string,
 		return nil, nil, false
 	}
 
-	if promotion != rules.NoKind {
+	if promotion != piece.NoKind {
 		by, needed := g.Board.PromotionNeeded()
 		if (needed == false) ||
 			(by != g.Header.Active) {
@@ -41,7 +42,7 @@ func Move(tx *sql.Tx, id GameIdentifier, player string,
 
 func (g Game) MoveLegal(m rules.Move) bool {
 	p := g.Board.Board[m.From.Index()]
-	if p.Kind == rules.NoKind {
+	if p.Kind == piece.NoKind {
 		DebugPrintln("no piece at move from", m, "for player", g.Header.Active)
 		return false
 	}
@@ -74,11 +75,11 @@ func (g Game) MoveLegal(m rules.Move) bool {
 // DoMove does the database interactions necessary to do a move. Illegal moves can be done.
 // The board updates, taken pieces, and if a promotion is needed are returned.
 func (g Game) DoMove(tx *sql.Tx, m rules.Move,
-	promotion rules.PieceKind) ([]rules.AddressedSquare, []CapturedPiece, bool) {
+	promotion piece.Kind) ([]rules.AddressedSquare, []CapturedPiece, bool) {
 
 	var changes, takes []rules.AddressedSquare
 
-	if promotion != rules.NoKind {
+	if promotion != piece.NoKind {
 		changes = make([]rules.AddressedSquare, 0, 1)
 		changes = append(changes, g.Board.DoPromotion(promotion))
 		m = rules.NoMove
@@ -128,7 +129,7 @@ func (g Game) DoMove(tx *sql.Tx, m rules.Move,
 	if promotionNeeded {
 		// move into promotion makes the to-be promoting player active
 		active = promoterName
-	} else if promotion != rules.NoKind {
+	} else if promotion != piece.NoKind {
 		// if the promoter was not previous active then this is a reverse promotion
 		if OrientationOf(promoterName,
 			g.Header.White.Name, g.Header.Black.Name) != g.Header.PreviousActive {

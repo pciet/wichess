@@ -4,6 +4,7 @@ import (
 	"database/sql"
 
 	"github.com/lib/pq"
+	"github.com/pciet/wichess/piece"
 	"github.com/pciet/wichess/rules"
 )
 
@@ -17,7 +18,7 @@ func NewGame(tx *sql.Tx, wa, ba ArmyRequest, white, black Player) GameIdentifier
 		return 0
 	}
 
-	emptyCaptures := pq.Array(make([]rules.PieceKind, 15))
+	emptyCaptures := pq.Array(make([]piece.Kind, 15))
 
 	// QueryRow instead of Exec: https://github.com/lib/pq/issues/24
 	var id GameIdentifier

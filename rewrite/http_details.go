@@ -1,9 +1,10 @@
 package main
 
 import (
+	"html/template"
 	"net/http"
 
-	"github.com/pciet/wichess/rules"
+	"github.com/pciet/wichess/piece"
 )
 
 const (
@@ -16,14 +17,7 @@ type DetailsHTMLTemplateData struct {
 	Name     string // readable piece name
 	CodeName string // lowercase word used for URLs
 
-	Basic         string // optional readable piece name for the basic kind of this piece
-	BasicCodeName string
-
-	// if Basic isn't defined then StartDescription and MovesDescription are required, otherwise
-	// they are unused
-
-	StartDescription string // description of the starting squares
-	MovesDescription string // description of the piece moves
+	Description template.HTML
 
 	CharacteristicA            string // optional, name of the first characteristic
 	CharacteristicADescription string
@@ -32,30 +26,28 @@ type DetailsHTMLTemplateData struct {
 	CharacteristicBDescription string
 }
 
-func DetailsTemplateData(pieceCodeName string) DetailsHTMLTemplateData {
-	kind := rules.CodeNameKind(pieceCodeName)
-
+func DetailsTemplateData(pieceCodeName string, k piece.Kind) DetailsHTMLTemplateData {
 	t := DetailsHTMLTemplateData{
-		Name:     kind.Name(),
-		CodeName: pieceCodeName,
+		Name:        piece.Names[k],
+		CodeName:    pieceCodeName,
+		Description: template.HTML(piece.DetailsHTML[k]),
 	}
 
-	basic := rules.BasicKind(kind)
-	if basic != kind {
-		t.Basic = basic.Name()
-		t.BasicCodeName = basic.CodeName()
+	chars := piece.CharacteristicList[k]
+
+	if chars.A == piece.NoCharacteristic {
+		return t
 	}
 
-	t.StartDescription = kind.StartDescription()
-	t.MovesDescription = kind.MovesDescription()
+	t.CharacteristicA = piece.CharacteristicNames[chars.A]
+	t.CharacteristicADescription = piece.CharacteristicDescriptions[chars.A]
 
-	char := kind.CharacteristicAString()
-	t.CharacteristicA = char
-	t.CharacteristicADescription = rules.CharacteristicDescription(char)
+	if chars.B == piece.NoCharacteristic {
+		return t
+	}
 
-	char = kind.CharacteristicBString()
-	t.CharacteristicB = char
-	t.CharacteristicBDescription = rules.CharacteristicDescription(char)
+	t.CharacteristicB = piece.CharacteristicNames[chars.B]
+	t.CharacteristicBDescription = piece.CharacteristicDescriptions[chars.B]
 
 	return t
 }
@@ -74,13 +66,14 @@ func DetailsGet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if rules.IsPieceCodeName(p) == false {
+	kind := piece.KindForCodeName(p)
+	if kind == piece.NoKind {
 		DebugPrintln(DetailsPath, "bad piece code name query argument:", p)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	WriteHTMLTemplate(w, DetailsHTMLTemplate, DetailsTemplateData(p))
+	WriteHTMLTemplate(w, DetailsHTMLTemplate, DetailsTemplateData(p, kind))
 }
 
 func init() { ParseHTMLTemplate(DetailsHTMLTemplate) }

@@ -1,6 +1,9 @@
 package main
 
-import "github.com/pciet/wichess/rules"
+import (
+	"github.com/pciet/wichess/piece"
+	"github.com/pciet/wichess/rules"
+)
 
 // An EncodedPiece is piece information packed into 64 bits for storage in the database.
 type EncodedPiece uint64
@@ -54,7 +57,7 @@ func (e EncodedPiece) Decode() Piece {
 			Moved: Itob(int(UnshiftedUint64(e.Uint64(),
 				EncodedPieceMovedMask, EncodedPieceMovedBit))),
 
-			Kind: rules.PieceKind(UnshiftedUint64(e.Uint64(),
+			Kind: piece.Kind(UnshiftedUint64(e.Uint64(),
 				EncodedPieceKindMask, EncodedPieceKindBit)),
 		},
 	}

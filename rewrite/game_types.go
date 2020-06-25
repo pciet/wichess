@@ -1,6 +1,9 @@
 package main
 
-import "github.com/pciet/wichess/rules"
+import (
+	"github.com/pciet/wichess/piece"
+	"github.com/pciet/wichess/rules"
+)
 
 type (
 	// Each game has a unique GameIdentifier used to find it in the database.
@@ -23,7 +26,7 @@ type (
 
 	// Captured pieces are ordered by when they were taken, so newly captured pieces are added
 	// to the first index that's still the initial value of rules.NoKind.
-	Captures [15]rules.PieceKind
+	Captures [15]piece.Kind
 
 	GamePlayerHeader struct {
 		Name string
@@ -31,8 +34,8 @@ type (
 		Acknowledge bool `json:"-"`
 		// if a player chooses their left and/or right random pick pieces then they will be added
 		// to the player's collection if they complete the game
-		Left  rules.PieceKind `json:"-"`
-		Right rules.PieceKind `json:"-"`
+		Left  piece.Kind `json:"-"`
+		Right piece.Kind `json:"-"`
 	}
 
 	Game struct {

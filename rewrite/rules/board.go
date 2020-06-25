@@ -3,6 +3,8 @@ package rules
 import (
 	"strconv"
 	"strings"
+
+	"github.com/pciet/wichess/piece"
 )
 
 // A Wisconsin Chess board is a regular 8x8 chess board.
@@ -35,7 +37,7 @@ func (a Board) SurroundingSquares(at Address) []AddressedSquare {
 
 func (a Board) KingLocation(of Orientation) Address {
 	for i, s := range a {
-		if (s.Kind == King) && (s.Orientation == of) {
+		if (s.Kind == piece.King) && (s.Orientation == of) {
 			return AddressIndex(i).Address()
 		}
 	}
@@ -45,7 +47,7 @@ func (a Board) KingLocation(of Orientation) Address {
 
 func (a Board) NoKing(of Orientation) bool {
 	for _, s := range a {
-		if (s.Kind == King) && (s.Orientation == of) {
+		if (s.Kind == piece.King) && (s.Orientation == of) {
 			return false
 		}
 	}
@@ -61,7 +63,7 @@ func (a *Board) ApplyChanges(c []AddressedSquare) {
 func (a Board) PieceCount(of Orientation) int {
 	c := 0
 	for _, s := range a {
-		if s.Kind == NoKind {
+		if s.Kind == piece.NoKind {
 			continue
 		}
 		if s.Orientation == of {

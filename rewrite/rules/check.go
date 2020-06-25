@@ -1,5 +1,7 @@
 package rules
 
+import "github.com/pciet/wichess/piece"
+
 func (a Board) InCheck(active Orientation, takes []Address) bool {
 	king := a.KingLocation(active)
 	for _, take := range takes {
@@ -37,10 +39,11 @@ func (a Game) RemoveMovesIntoCheck(moves []MoveSet, active Orientation) []MoveSe
 // TODO: test cases for an opponent detonator next to king, can the king be improperly removed?
 
 func (a Board) ThreatenedDetonatorAdjacent(threats []Address, at Address) bool {
-	piece := a[at.Index()]
+	p := a[at.Index()]
 	for _, as := range a.SurroundingSquares(at) {
-		p := a[as.Address.Index()]
-		if (p.Kind == NoKind) || (piece.Orientation != p.Orientation) || (p.Detonates == false) {
+		s := a[as.Address.Index()]
+		if (s.Kind == piece.NoKind) || (p.Orientation != s.Orientation) ||
+			(p.Detonates == false) {
 			continue
 		}
 		for _, addr := range threats {

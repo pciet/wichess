@@ -1,8 +1,10 @@
 package rules
 
+import "github.com/pciet/wichess/piece"
+
 func (a Board) IsCastleMove(m Move) bool {
 	s := a[m.From.Index()]
-	if (s.Kind != King) || s.Moved {
+	if (s.Kind != piece.King) || s.Moved {
 		return false
 	}
 	if (m.To == Address{2, 0}) || (m.To == Address{6, 0}) ||

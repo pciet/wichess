@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
+	"github.com/pciet/wichess/piece"
 	"github.com/pciet/wichess/rules"
 )
 
@@ -22,7 +23,7 @@ func ReserveArmies(tx *sql.Tx, wa, ba ArmyRequest,
 	}
 
 	left, right := PickSlotsInArmyRequest(wa)
-	whitePicks := RandomPicks{rules.NoKind, rules.NoKind}
+	whitePicks := RandomPicks{piece.NoKind, piece.NoKind}
 	if left {
 		whitePicks.Left = whiteLeft
 	}
@@ -36,7 +37,7 @@ func ReserveArmies(tx *sql.Tx, wa, ba ArmyRequest,
 	}
 
 	left, right = PickSlotsInArmyRequest(ba)
-	blackPicks := RandomPicks{rules.NoKind, rules.NoKind}
+	blackPicks := RandomPicks{piece.NoKind, piece.NoKind}
 	if left {
 		blackPicks.Left = blackLeft
 	}
@@ -54,10 +55,10 @@ func ReserveArmies(tx *sql.Tx, wa, ba ArmyRequest,
 // encode the pieces for insertion into the games table. Both random pick slots are always queried
 // and the kinds returned for use in ReserveArmy to replace without duplication.
 func MakeArmyReservation(tx *sql.Tx, id PlayerIdentifier,
-	r ArmyRequest) ([16]rules.PieceKind, rules.PieceKind, rules.PieceKind, error) {
+	r ArmyRequest) ([16]piece.Kind, piece.Kind, piece.Kind, error) {
 
 	if id == ComputerPlayerID {
-		return BasicArmy, rules.NoKind, rules.NoKind, nil
+		return BasicArmy, piece.NoKind, piece.NoKind, nil
 	}
 
 	left, right := false, false
@@ -69,14 +70,14 @@ func MakeArmyReservation(tx *sql.Tx, id PlayerIdentifier,
 			continue
 		case LeftPick:
 			if left == true {
-				return [16]rules.PieceKind{}, rules.NoKind, rules.NoKind,
+				return [16]piece.Kind{}, piece.NoKind, piece.NoKind,
 					fmt.Errorf("multiple left pick requests for %v", id)
 			}
 			left = true
 			continue
 		case RightPick:
 			if right == true {
-				return [16]rules.PieceKind{}, rules.NoKind, rules.NoKind,
+				return [16]piece.Kind{}, piece.NoKind, piece.NoKind,
 					fmt.Errorf("multiple right pick requests for %v", id)
 			}
 			right = true
@@ -84,13 +85,13 @@ func MakeArmyReservation(tx *sql.Tx, id PlayerIdentifier,
 		}
 
 		if request > CollectionCount {
-			return [16]rules.PieceKind{}, rules.NoKind, rules.NoKind,
+			return [16]piece.Kind{}, piece.NoKind, piece.NoKind,
 				fmt.Errorf("request %v for %v out of collection bounds", request, id)
 		}
 
 		for _, alreadyRequested := range collectionRequests {
 			if alreadyRequested == request {
-				return [16]rules.PieceKind{}, rules.NoKind, rules.NoKind,
+				return [16]piece.Kind{}, piece.NoKind, piece.NoKind,
 					fmt.Errorf("duplicate collection request %v from %v", request, id)
 			}
 		}
@@ -102,7 +103,7 @@ func MakeArmyReservation(tx *sql.Tx, id PlayerIdentifier,
 	collectionPieces, leftKind, rightKind := PlayerSelectedCollectionPieces(tx, id,
 		collectionRequests)
 
-	var out [16]rules.PieceKind
+	var out [16]piece.Kind
 	collectionPiecesIndex := 0
 
 	for i, request := range r {
@@ -119,7 +120,7 @@ func MakeArmyReservation(tx *sql.Tx, id PlayerIdentifier,
 		}
 		p := collectionPieces[collectionPiecesIndex]
 		if p.InUse {
-			return [16]rules.PieceKind{}, rules.NoKind, rules.NoKind,
+			return [16]piece.Kind{}, piece.NoKind, piece.NoKind,
 				fmt.Errorf("collection piece %v for %v in use", p, id)
 		}
 		collectionPiecesIndex++
@@ -133,10 +134,10 @@ func MakeArmyReservation(tx *sql.Tx, id PlayerIdentifier,
 // be in use, it replaces random pick slots that are used, and all pieces, whether in the
 // collection or not, are encoded for insertion into the games table.
 func ReserveArmy(tx *sql.Tx, id PlayerIdentifier, o rules.Orientation,
-	pieces [16]rules.PieceKind, left, right rules.PieceKind, r ArmyRequest) EncodedArmy {
+	pieces [16]piece.Kind, left, right piece.Kind, r ArmyRequest) EncodedArmy {
 
 	collectionSlotsToUpdate := make([]CollectionSlot, 0, 4)
-	collectionSlotKinds := make([]rules.PieceKind, 0, 4)
+	collectionSlotKinds := make([]piece.Kind, 0, 4)
 	var army EncodedArmy
 	replaceLeft, replaceRight := false, false
 

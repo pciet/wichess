@@ -1,11 +1,13 @@
 package rules
 
+import "github.com/pciet/wichess/piece"
+
 func (a Board) IsEnPassantMove(m Move) bool {
 	if m.From.File == m.To.File {
 		return false
 	}
 	s := a[m.From.Index()]
-	if BasicKind(s.Kind) != Pawn {
+	if s.Kind.Basic() != piece.Pawn {
 		return false
 	}
 	to := a[m.To.Index()]

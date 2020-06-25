@@ -7,12 +7,13 @@ import (
 	"strings"
 
 	"github.com/lib/pq"
+	"github.com/pciet/wichess/piece"
 	"github.com/pciet/wichess/rules"
 )
 
 // TODO: this file is too long
 
-func PlayerPiecePicks(tx *sql.Tx, name string) (left, right rules.PieceKind) {
+func PlayerPiecePicks(tx *sql.Tx, name string) (left, right piece.Kind) {
 	err := tx.QueryRow(PlayersPiecePicksQuery, name).Scan(&left, &right)
 	if err != nil {
 		Panic(err)
@@ -23,9 +24,9 @@ func PlayerPiecePicks(tx *sql.Tx, name string) (left, right rules.PieceKind) {
 func AddGamePicksToPlayerCollection(tx *sql.Tx, pl Player, gameID GameIdentifier) {
 	left, right := PicksInGameForPlayer(tx, gameID, pl.Name)
 	need1 := false
-	if (left == rules.NoKind) && (right == rules.NoKind) {
+	if (left == piece.NoKind) && (right == piece.NoKind) {
 		return
-	} else if (left == rules.NoKind) || (right == rules.NoKind) {
+	} else if (left == piece.NoKind) || (right == piece.NoKind) {
 		need1 = true
 	}
 
@@ -33,7 +34,7 @@ func AddGamePicksToPlayerCollection(tx *sql.Tx, pl Player, gameID GameIdentifier
 
 	indexA, indexB := -1, -1
 	for i, p := range c {
-		if p.Kind != rules.NoKind {
+		if p.Kind != piece.NoKind {
 			continue
 		}
 		if indexA == -1 {
@@ -61,7 +62,7 @@ func AddGamePicksToPlayerCollection(tx *sql.Tx, pl Player, gameID GameIdentifier
 	indexA++
 	indexB++
 
-	update := func(index int, kind rules.PieceKind) {
+	update := func(index int, kind piece.Kind) {
 		arrStr := PlayersCollection + "[" + strconv.Itoa(index) + "]"
 		u := SQLUpdate(PlayersTable, arrStr, PlayersIdentifier)
 		piece := Piece{
@@ -85,8 +86,8 @@ func AddGamePicksToPlayerCollection(tx *sql.Tx, pl Player, gameID GameIdentifier
 	}
 
 	if need1 {
-		var k rules.PieceKind
-		if left == rules.NoKind {
+		var k piece.Kind
+		if left == piece.NoKind {
 			k = right
 		} else {
 			k = left
@@ -124,7 +125,7 @@ func PlayerCollection(tx *sql.Tx, id PlayerIdentifier) Collection {
 // The kinds of the left and right picks are always returned. If a requested collection slot is
 // outside the array range then a panic occurs.
 func PlayerSelectedCollectionPieces(tx *sql.Tx, id PlayerIdentifier,
-	slots []CollectionSlot) ([]Piece, rules.PieceKind, rules.PieceKind) {
+	slots []CollectionSlot) ([]Piece, piece.Kind, piece.Kind) {
 
 	var s strings.Builder
 	s.WriteString("SELECT ")
@@ -151,7 +152,7 @@ func PlayerSelectedCollectionPieces(tx *sql.Tx, id PlayerIdentifier,
 	}
 
 	var collectionValues []sql.NullInt64
-	var left, right rules.PieceKind
+	var left, right piece.Kind
 	values := make([]interface{}, 0, 3)
 	if len(slots) != 0 {
 		values = append(values, pq.Array(&collectionValues))
@@ -180,16 +181,16 @@ func PlayerSelectedCollectionPieces(tx *sql.Tx, id PlayerIdentifier,
 // PlayerCollectionFlagInUse flags pieces in the player's collection to be in use, and it updates
 // the pick piece slots if one or both slot is indicated to be used.
 func PlayerCollectionFlagInUse(tx *sql.Tx, id PlayerIdentifier,
-	slots []CollectionSlot, kinds []rules.PieceKind,
-	left, right rules.PieceKind, replaceLeft, replaceRight bool) {
+	slots []CollectionSlot, kinds []piece.Kind,
+	left, right piece.Kind, replaceLeft, replaceRight bool) {
 
-	updateLeft, updateRight := rules.NoKind, rules.NoKind
+	updateLeft, updateRight := piece.NoKind, piece.NoKind
 	if replaceLeft && replaceRight {
-		updateLeft, updateRight = rules.TwoDifferentSpecialPieces()
+		updateLeft, updateRight = piece.TwoDifferentSpecialKinds()
 	} else if replaceLeft {
-		updateLeft = rules.DifferentSpecialPiece(right)
+		updateLeft = right.DifferentSpecialKind()
 	} else if replaceRight {
-		updateRight = rules.DifferentSpecialPiece(left)
+		updateRight = left.DifferentSpecialKind()
 	} else {
 		if len(slots) == 0 {
 			return
@@ -216,17 +217,17 @@ func PlayerCollectionFlagInUse(tx *sql.Tx, id PlayerIdentifier,
 
 	args := make([]interface{}, 0, 4)
 
-	if updateLeft != rules.NoKind {
+	if updateLeft != piece.NoKind {
 		args = append(args, updateLeft)
 		s.WriteString(PlayersLeftKind)
-		if (updateRight == rules.NoKind) && (len(slots) == 0) {
+		if (updateRight == piece.NoKind) && (len(slots) == 0) {
 			placeholder(true)
 		} else {
 			placeholder(false)
 		}
 	}
 
-	if updateRight != rules.NoKind {
+	if updateRight != piece.NoKind {
 		args = append(args, updateRight)
 		s.WriteString(PlayersRightKind)
 		if len(slots) == 0 {

@@ -1,4 +1,5 @@
 import { appendTakePieceImage } from './layouts.js'
+import { handedness } from './layouts_handedness.js'
 
 import { Orientation } from '../piece.js'
 import { NoKind } from '../pieceDefs.js'
@@ -36,14 +37,32 @@ export function captureList(orientation) {
 
 export function spaceCaptureImages() {
     const dims = interiorDimensions(document.querySelector('#toptakes'))
-    const offset = dims.width / 16
+    let i = 0
+    for (; i < whiteCaptures.length; i++) {
+        if (whiteCaptures[i] === NoKind) {
+            break
+        }
+    }
+    const whiteOffset = (dims.width - dims.height) / i
+    i = 0
+    for (; i < blackCaptures.length; i++) {
+        if (blackCaptures[i] === NoKind) {
+            break
+        }
+    }
+    const blackOffset = (dims.width - dims.height) / i
     const width = dims.height + 'px'
     for (let i = 0; i < whiteCaptures.length; i++) {
         if (whiteCaptures[i] === NoKind) {
             break
         }
         const e = document.querySelector('#tw'+i)
-        e.style.left = (i-1)*offset + 'px'
+        const o = i*whiteOffset + 'px'
+        if (handedness === true) {
+            e.style.right = o
+        } else {
+            e.style.left = o
+        }
         e.style.zIndex = i
         e.style.width = width
         e.style.height = width
@@ -53,7 +72,12 @@ export function spaceCaptureImages() {
             break
         }
         const e = document.querySelector('#tb'+i)
-        e.style.left = (i-1)*offset + 'px'
+        const o = i*blackOffset + 'px'
+        if (handedness === true) {
+            e.style.right = o
+        } else {
+            e.style.left = o
+        }
         e.style.zIndex = i
         e.style.width = width
         e.style.height = width

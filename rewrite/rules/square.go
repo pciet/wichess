@@ -1,11 +1,13 @@
 package rules
 
+import "github.com/pciet/wichess/piece"
+
 // A board is made of squares which each might have a piece.
 // An empty square is indicated by the piece's Kind set to NoKind.
 type Square Piece
 
 func (a Square) FortifiedAgainst(t Square) bool {
-	return a.Fortified && (BasicKind(t.Kind) == Pawn)
+	return a.Fortified && (t.Kind.Basic() == piece.Pawn)
 }
 
 type AddressedSquare struct {
@@ -13,8 +15,8 @@ type AddressedSquare struct {
 	Square  `json:"p"`
 }
 
-func (a Square) NotEmpty() bool { return a.Kind != NoKind }
-func (a Square) Empty() bool    { return a.Kind == NoKind }
+func (a Square) NotEmpty() bool { return a.Kind != piece.NoKind }
+func (a Square) Empty() bool    { return a.Kind == piece.NoKind }
 
 func MergeReplaceAddressedSquares(base, overwrite []AddressedSquare) []AddressedSquare {
 LOOP:
@@ -39,11 +41,11 @@ func CombineAddressedSquares(a, b []AddressedSquare) []AddressedSquare {
 }
 
 func (a Square) String() string {
-	if a.Kind == NoKind {
+	if a.Kind == piece.NoKind {
 		return "empty"
 	}
 	k := ""
-	if IsBasicKind(a.Kind) == false {
+	if a.Kind.IsBasic() == false {
 		k = "+"
 	}
 	m := ""

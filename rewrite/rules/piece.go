@@ -1,10 +1,11 @@
 package rules
 
-// PieceKind is a positive integer that indiciates the piece's moves and characteristics.
-type PieceKind int
+import "github.com/pciet/wichess/piece"
+
+// TODO: update characteristic names, and don't repeat them here
 
 type Piece struct {
-	Kind        PieceKind `json:"k"`
+	piece.Kind  `json:"k"`
 	Orientation `json:"o"`
 	Moved       bool `json:"-"`
 
@@ -41,107 +42,34 @@ var (
 )
 
 func (a Piece) ApplyCharacteristics() Piece {
-	if BasicKind(a.Kind) == Knight {
+	if a.Kind.Basic() == piece.Knight {
 		a.MustEnd = true
 		a.Ghost = true
 	}
-	// TODO: map this?
-	switch a.Kind {
-	case King, Queen, Rook, Knight, Bishop, Pawn, NoKind:
-		break
-	case War:
-		a.Detonates = true
-	case Constructive:
-		a.Guards = true
-	case Form:
-		a.Recons = true
-		a.Rallies = true
-	default:
-		Panic("unknown piece kind", a.Kind, a)
-	}
-	return a
-}
 
-// All special pieces are based on a normal piece, called the basic kind of the piece.
-func BasicKind(p PieceKind) PieceKind {
-	switch p {
-	case NoKind:
-		return NoKind
-	case King:
-		return King
-	case Queen:
-		return Queen
-	case Bishop:
-		return Bishop
-	case Rook:
-		return Rook
-	case Knight, Constructive:
-		return Knight
-	case Pawn, War, Form:
-		return Pawn
-	default:
-		Panic("unexpected piece kind", p)
-		return NoKind
-	}
-}
+	chars := piece.CharacteristicList[a.Kind]
 
-func RandomSpecialPieceKind() PieceKind {
-	return PieceKind(randomSource.Int63n(
-		int64(PieceKindCount-BasicPieceKindCount-1)) + 1 + BasicPieceKindCount)
-}
-
-func IsBasicKind(p PieceKind) bool {
-	switch p {
-	case King, Queen, Rook, Bishop, Knight, Pawn:
+	applyChars := func(c piece.Characteristic) bool {
+		switch c {
+		case piece.Neutralizes:
+			a.Detonates = true
+		case piece.Asserts:
+			a.Guards = true
+		case piece.Enables:
+			a.Rallies = true
+		case piece.Reveals:
+			a.Recons = true
+		default:
+			return false
+		}
 		return true
 	}
-	return false
-}
 
-func (a PieceKind) String() string {
-	switch a {
-	case King:
-		return "king"
-	case Queen:
-		return "queen"
-	case Rook:
-		return "rook"
-	case Bishop:
-		return "bishop"
-	case Knight:
-		return "knight"
-	case Pawn:
-		return "pawn"
-	case War:
-		return "war"
-	case Constructive:
-		return "constructive"
-	case Form:
-		return "form"
-	default:
-		return "undefined"
+	if applyChars(chars.A) == false {
+		return a
 	}
-}
 
-func TwoDifferentSpecialPieces() (PieceKind, PieceKind) {
-	pa := RandomSpecialPieceKind()
-	pb := RandomSpecialPieceKind()
-	if pa == pb {
-		pb++
-		if pb == PieceKindCount {
-			pb = BasicPieceKindCount + 1
-		}
-	}
-	return pa, pb
-}
+	applyChars(chars.B)
 
-func DifferentSpecialPiece(than PieceKind) PieceKind {
-	p := RandomSpecialPieceKind()
-	if p == than {
-		p++
-		if p == PieceKindCount {
-			p = BasicPieceKindCount + 1
-		}
-	}
-	return p
+	return a
 }

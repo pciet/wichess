@@ -1,6 +1,9 @@
 package main
 
-import "github.com/pciet/wichess/rules"
+import (
+	"github.com/pciet/wichess/piece"
+	"github.com/pciet/wichess/rules"
+)
 
 type (
 	Piece struct {
@@ -16,7 +19,7 @@ type (
 
 	CapturedPiece struct {
 		rules.Orientation `json:"o"`
-		rules.PieceKind   `json:"k"`
+		piece.Kind        `json:"k"`
 		// CaptureSlot is the slot in a game's captured list for a player. The array index starts
 		// at 1 instead of 0.
 		CaptureSlot int `json:"-"`

@@ -1,6 +1,12 @@
 package rules
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/pciet/wichess/piece"
+)
+
+// TODO: define paths in package piece
 
 // Most abilities and some rules (like en passant and castling) will cause changes or
 // additions to these paths.
@@ -8,27 +14,27 @@ import "strings"
 // Lookup a piece's relative path variations by keying PieceRelPaths with the PieceKind.
 // If first, rally, or take are nil then the move paths are used.
 // All piece kinds have an entry in this map.
-var PieceRelPaths = func() map[PieceKind]RelPathVariations {
-	m := map[PieceKind]RelPathVariations{
-		King: {
+var PieceRelPaths = func() map[piece.Kind]RelPathVariations {
+	m := map[piece.Kind]RelPathVariations{
+		piece.King: {
 			NormalMove: KingPaths,
 		},
-		Queen: {
+		piece.Queen: {
 			NormalMove: QueenPaths,
 		},
-		Rook: {
+		piece.Rook: {
 			NormalMove: RookPaths,
 			RallyMove:  KingPaths,
 		},
-		Bishop: {
+		piece.Bishop: {
 			NormalMove: BishopPaths,
 			RallyMove:  KingPaths,
 		},
-		Knight: {
+		piece.Knight: {
 			NormalMove: KnightPaths,
 			RallyMove:  TripleKnightPaths,
 		},
-		Pawn: {
+		piece.Pawn: {
 			First: {
 				{{0, 1}, {0, 2}},
 			},
@@ -43,7 +49,7 @@ var PieceRelPaths = func() map[PieceKind]RelPathVariations {
 				{{-1, 1}},
 			},
 		},
-		War: {
+		piece.War: {
 			NormalMove: {
 				{{0, 1}},
 			},
@@ -73,14 +79,14 @@ var PieceRelPaths = func() map[PieceKind]RelPathVariations {
 		m[k] = v
 	}
 
-	assign := func(v RelPathVariations, f []PieceKind) {
+	assign := func(v RelPathVariations, f []piece.Kind) {
 		for _, k := range f {
 			m[k] = v
 		}
 	}
 
-	assign(m[Pawn], []PieceKind{Form})
-	assign(m[Knight], []PieceKind{Constructive})
+	assign(m[piece.Pawn], []piece.Kind{piece.Form})
+	assign(m[piece.Knight], []piece.Kind{piece.Constructive})
 
 	return m
 }()

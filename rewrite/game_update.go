@@ -45,7 +45,7 @@ func UpdateGame(tx *sql.Tx, id GameIdentifier, active, previousActive rules.Orie
 	}
 
 	for _, p := range takes {
-		args = append(args, p.PieceKind)
+		args = append(args, p.Kind)
 		if p.Orientation == rules.Black {
 			s.WriteString(GamesWhiteCaptures)
 		} else if p.Orientation == rules.White {

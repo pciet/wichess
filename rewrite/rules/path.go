@@ -1,13 +1,17 @@
 package rules
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/pciet/wichess/piece"
+)
 
 // TODO: is it worth caching the calculation result of applying rel paths?
 
 // Paths relative to the piece are applied to the board in AppliedRelPaths which returns
 // board addresses. Interaction of pieces is not considered. Paths that leave the board
 // are truncated.
-func AppliedRelPaths(f PieceKind, at Address, o Orientation) PathVariations {
+func AppliedRelPaths(f piece.Kind, at Address, o Orientation) PathVariations {
 	var out PathVariations
 
 	rv, ok := PieceRelPaths[f]

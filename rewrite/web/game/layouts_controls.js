@@ -56,10 +56,12 @@ export function hideOptions() {
     addNavigationClickHandlers()
 }
 
-function showOptions() {
-    unshowPreviousMove()
-    unshowMoveablePieces()
-    optionControlsShown = true
+export function showOptions() {
+    if (optionControlsShown === false) {
+        unshowPreviousMove()
+        unshowMoveablePieces()
+        optionControlsShown = true
+    }
     layoutSelector('#controls', controlsLayout(handedness))
     setMuteIcon(muted())
     addControlsClickHandlers()
@@ -72,14 +74,20 @@ const showOptionsButton = `
     ct('showoptions', 'control', false, true, '&#x2022;') + `
 </div>`
 
-const gameControls = `
-<div class="inline">
-    <div class="inline">` + ct('piececard', 'control', false, true, '?') + `</div>
-    <div class="inline">` + 
+function gameControls(reversed = false) {
+    let t = '<div class="inline">'
+
+    const card = ct('piececard', 'control', true, true, '?')
+    const board = '<div class="inline">' +
         ct('showmoves', 'control', false, true, '&#x2318;') +
-        ct('showprev', 'control', false, true, '&#x21BA;') + `
-    </div>
-</div>`
+        ct('showprev', 'control', false, true, '&#x21BA;') + '</div>'
+
+    if (reversed === true) {
+        return t + board + card + '</div>'
+    }
+
+    return t + card + board + '</div>'
+}
 
 const interfaceControls = `
 <div class="inline">
@@ -97,9 +105,9 @@ export function controlsLayout(reversed = false) {
     let t = ''
     if (optionControlsShown === false) {
         if (reversed === true) {
-            t += gameControls + showOptionsButton
+            t += gameControls(reversed) + showOptionsButton
         } else {
-            t += showOptionsButton + gameControls
+            t += showOptionsButton + gameControls(reversed)
         }
     } else {
         if (reversed === true) {

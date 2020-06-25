@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/pciet/wichess/rules"
+	"github.com/pciet/wichess/piece"
 )
 
 const (
@@ -23,7 +23,7 @@ type IndexHTMLTemplateData struct {
 	Name            string
 	LeftPiece       int
 	RightPiece      int
-	Collection      [CollectionCount]rules.PieceKind
+	Collection      [CollectionCount]piece.Kind
 	RecentOpponents [RecentOpponentCount]string
 }
 

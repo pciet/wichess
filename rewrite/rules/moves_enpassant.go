@@ -1,5 +1,7 @@
 package rules
 
+import "github.com/pciet/wichess/piece"
+
 // if a piece can get to the en passant take square then this will need to be updated
 
 func (a Game) AppendEnPassantMove(moves []Address, at Address) []Address {
@@ -8,12 +10,12 @@ func (a Game) AppendEnPassantMove(moves []Address, at Address) []Address {
 	}
 
 	s := a.Board[at.Index()]
-	if BasicKind(s.Kind) != Pawn {
+	if s.Kind.Basic() != piece.Pawn {
 		return moves
 	}
 
 	p := a.Board[a.Previous.To.Index()]
-	if BasicKind(p.Kind) != Pawn {
+	if p.Kind.Basic() != piece.Pawn {
 		return moves
 	}
 

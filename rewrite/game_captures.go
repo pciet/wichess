@@ -5,24 +5,25 @@ import (
 	"strconv"
 
 	"github.com/lib/pq"
+	"github.com/pciet/wichess/piece"
 	"github.com/pciet/wichess/rules"
 )
 
 // FirstAvailable returns the first empty array index, or -1 if the array is full.
 func (t Captures) FirstAvailable() int {
 	for i, k := range t {
-		if k == rules.NoKind {
+		if k == piece.NoKind {
 			return i
 		}
 	}
 	return -1
 }
 
-func AddGameCapture(tx *sql.Tx, in GameIdentifier, of rules.Orientation, k rules.PieceKind) {
+func AddGameCapture(tx *sql.Tx, in GameIdentifier, of rules.Orientation, k piece.Kind) {
 	cs := LoadGameCaptures(tx, in, of, true)
 	i := 0
 	for ; i < 15; i++ {
-		if cs[i] == rules.NoKind {
+		if cs[i] == piece.NoKind {
 			break
 		}
 	}
@@ -90,7 +91,7 @@ func LoadGameCaptures(tx *sql.Tx,
 		if v.Valid == false {
 			Panic(in, "sql null at", i)
 		}
-		cs[i] = rules.PieceKind(v.Int64)
+		cs[i] = piece.Kind(v.Int64)
 	}
 
 	return cs

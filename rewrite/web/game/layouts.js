@@ -39,14 +39,14 @@ export function players() {
 </div>`
 }
 
-function topTakes() {
+export function topTakes() {
     if (orientation === Orientation.BLACK) {
         return takes(Orientation.WHITE)
     }
     return takes(Orientation.BLACK)
 }
 
-function bottomTakes() { return takes(orientation) }
+export function bottomTakes() { return takes(orientation) }
 
 function takes(o) {
     const l = captureList(o)

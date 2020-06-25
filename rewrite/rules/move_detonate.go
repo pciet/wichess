@@ -1,5 +1,7 @@
 package rules
 
+import "github.com/pciet/wichess/piece"
+
 // Taking a detonating piece will cause adjacent detonators to also detonate.
 func (a Board) DetonateMove(changes, takes []AddressedSquare,
 	m Move) ([]AddressedSquare, []AddressedSquare) {
@@ -13,12 +15,12 @@ func (a Board) DetonateMove(changes, takes []AddressedSquare,
 
 	recursiveDetonate = func(detonator Address) {
 		for _, s := range a.SurroundingSquares(detonator) {
-			if s.Kind == NoKind {
+			if s.Kind == piece.NoKind {
 				continue
 			}
 			takes = append(takes, s)
 			changes = append(changes, AddressedSquare{s.Address, Square{}})
-			a[s.Address.Index()].Kind = NoKind
+			a[s.Address.Index()].Kind = piece.NoKind
 			if s.Detonates {
 				recursiveDetonate(s.Address)
 			}

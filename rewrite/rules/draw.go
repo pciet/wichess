@@ -1,5 +1,7 @@
 package rules
 
+import "github.com/pciet/wichess/piece"
+
 // TODO: same position has occurred three times
 
 // Possible states for an insufficient material draw:
@@ -11,11 +13,11 @@ func (a Board) InsufficientMaterialDraw() bool {
 	w := make([]AddressedSquare, 0, 2)
 	b := make([]AddressedSquare, 0, 2)
 	for i, p := range a {
-		if p.Kind == NoKind {
+		if p.Kind == piece.NoKind {
 			continue
 		}
-		switch BasicKind(p.Kind) {
-		case Queen, Rook, Pawn:
+		switch p.Kind.Basic() {
+		case piece.Queen, piece.Rook, piece.Pawn:
 			return false
 		}
 		switch p.Orientation {
@@ -37,7 +39,7 @@ func (a Board) InsufficientMaterialDraw() bool {
 	}
 
 	if (len(w) == 1) && (len(b) == 1) {
-		if (w[0].Kind != King) || (b[0].Kind != King) {
+		if (w[0].Kind != piece.King) || (b[0].Kind != piece.King) {
 			Panic("side missing king")
 		}
 		return true
@@ -45,17 +47,17 @@ func (a Board) InsufficientMaterialDraw() bool {
 
 	if (len(w) == 2) && (len(b) == 2) {
 		var bishop1, bishop2 AddressedSquare
-		if w[0].Kind == King {
+		if w[0].Kind == piece.King {
 			bishop1 = w[1]
 		} else {
 			bishop1 = w[0]
 		}
-		if b[0].Kind == King {
+		if b[0].Kind == piece.King {
 			bishop2 = b[1]
 		} else {
 			bishop2 = b[0]
 		}
-		if (BasicKind(bishop1.Kind) != Bishop) || (BasicKind(bishop2.Kind) != Bishop) {
+		if (bishop1.Kind.Basic() != piece.Bishop) || (bishop2.Kind.Basic() != piece.Bishop) {
 			return false
 		}
 		if bishop1.SquareEven() != bishop2.SquareEven() {
