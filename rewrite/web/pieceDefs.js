@@ -1,12 +1,3 @@
-import { Characteristic } from './pieceCharacteristics.js'
-
-function PieceDef(codeName, name, basicKind = NoKind, char1 = undefined, char2 = undefined) {
-    this.codeName = codeName
-    this.name = name
-    this.basicKind = basicKind
-    this.characteristics = [char1, char2]
-}
-
 export const NoKind = 0
 export const King = 1
 export const Pawn = 6
@@ -17,16 +8,22 @@ export const Rook = 3
 export const Bishop = 4
 export const Knight = 5
 
-// The index of Pieces matches the rules.PieceKind enum in the host source.
+// The index of Pieces matches the rules.PieceKind enum in the host source and is the code name
+// of the piece used for the image names and encoded information.
 export const Pieces = [
-    new PieceDef('empty', 'No Kind'),
-    new PieceDef('king', 'King', King),
-    new PieceDef('queen', 'Queen', Queen),
-    new PieceDef('rook', 'Rook', Rook),
-    new PieceDef('bishop', 'Bishop', Bishop),
-    new PieceDef('knight', 'Knight', Knight),
-    new PieceDef('pawn', 'Pawn', Pawn),
-    new PieceDef('war', 'War', Pawn, Characteristic.NEUTRALIZES),
-    new PieceDef('formpawn', 'Form', Pawn, Characteristic.REVEALS, Characteristic.ENABLES),
-    new PieceDef('constructive', 'Constructive', Knight, Characteristic.ASSERTS)
+    'empty',
+    'king', 'queen', 'rook', 'bishop', 'knight', 'pawn',
+    'war',
+    'formpawn',
+    'constructive',
+    'confined'
+]
+
+export const BasicKinds = [
+    NoKind,
+    King, Queen, Rook, Bishop, Knight, Pawn,
+    Pawn,
+    Pawn,
+    Knight,
+    Pawn
 ]

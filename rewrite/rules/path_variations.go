@@ -42,7 +42,8 @@ var PieceRelPaths = func() map[piece.Kind]RelPathVariations {
 				{{0, 1}},
 			},
 			RallyMove: {
-				{{0, 1}, {0, 2}},
+				{{1, 0}},
+				{{-1, 0}},
 			},
 			Take: {
 				{{1, 1}},
@@ -54,7 +55,8 @@ var PieceRelPaths = func() map[piece.Kind]RelPathVariations {
 				{{0, 1}},
 			},
 			RallyMove: {
-				{{0, 1}, {0, 2}},
+				{{1, 0}},
+				{{-1, 0}},
 			},
 			Take: {
 				{{1, 1}},
@@ -85,7 +87,7 @@ var PieceRelPaths = func() map[piece.Kind]RelPathVariations {
 		}
 	}
 
-	assign(m[piece.Pawn], []piece.Kind{piece.Form})
+	assign(m[piece.Pawn], []piece.Kind{piece.Form, piece.Confined})
 	assign(m[piece.Knight], []piece.Kind{piece.Constructive})
 
 	return m

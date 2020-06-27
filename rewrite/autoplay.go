@@ -41,6 +41,7 @@ func Autoplay(id GameIdentifier, player string) {
 			promoter, _ := g.Board.PromotionNeeded()
 			if PlayerWithOrientation(promoter, g.Header.White.Name,
 				g.Header.Black.Name) == player {
+				g.Header.PreviousActive = promoter
 				promUpdates, _, _ := g.DoMove(tx, rules.NoMove, piece.Queen)
 				u.Squares = rules.MergeReplaceAddressedSquares(u.Squares, promUpdates)
 			}

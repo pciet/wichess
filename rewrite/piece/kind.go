@@ -13,6 +13,7 @@ const (
 	War
 	Form
 	Constructive
+	Confined
 	KindCount
 )
 
@@ -32,7 +33,7 @@ func (a Kind) Basic() Kind {
 		return Rook
 	case Knight, Constructive:
 		return Knight
-	case Pawn, War, Form:
+	case Pawn, War, Form, Confined:
 		return Pawn
 	}
 	return NoKind

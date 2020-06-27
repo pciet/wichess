@@ -59,4 +59,7 @@ var DetailsHTML = []string{
 
 	`<h1>CONSTRUCTIVE</h1>
 <p>The constructive is a <a href="/details?p=knight">knight</a>.</p>`,
+
+	`<h1>CONFINED</h1>
+<p>The confined is a <a href="/details?p=pawn">pawn</a>.</p>`,
 }

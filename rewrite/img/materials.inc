@@ -38,7 +38,24 @@
 
 #declare WhiteMaterial = material {
     texture {
-        pigment { rgb <0.5,0.5,0.87> }
+        pigment { rgb <0.6,0.6,0.97> }
+        normal {
+            waves
+            scale 0.1
+        }
+        finish {
+            ambient 0.15
+            diffuse albedo 0.7
+            specular 0.2
+            roughness 0.8
+            reflection 0.4
+        }
+    }
+}
+
+#declare PlainWhiteMaterial = material {
+    texture {
+        pigment { rgb <0.6,0.6,0.97> }
         finish {
             ambient 0.15
             diffuse albedo 0.7
@@ -65,9 +82,9 @@
             scale 0.05
         }
         finish {
-            ambient 0.05
+            ambient 0.15
             diffuse albedo 0.7
-            specular 0.9
+            specular 0.99
             roughness 0.05
             metallic
         }
@@ -102,6 +119,8 @@
     }
 }
 
+#declare PlainBlackMaterial = BlackMaterial
+
 #declare LookMaterial = material {
     texture {
         pigment { 
@@ -130,3 +149,4 @@
 
 #declare LookTrimMaterial = LookMaterial
 #declare LookTrimBMaterial = LookMaterial
+#declare PlainLookMaterial = LookMaterial

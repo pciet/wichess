@@ -5,6 +5,7 @@
 #declare TrimMaterial = LookTrimMaterial
 #declare TrimBMaterial = LookTrimBMaterial
 #declare PieceMaterial = LookMaterial
+#declare PlainMaterial = PlainLookMaterial
 
 #declare Background = pigment {
     rgb <0.008,0.003,0.005>

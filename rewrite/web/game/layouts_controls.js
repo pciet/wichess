@@ -20,7 +20,7 @@ export function addControlsClickHandlers() {
         document.querySelector('#showoptions').onclick = showOptions
         document.querySelector('#piececard').onclick = () => {
             if (selectedPiece === undefined) { return }
-            window.open('/details?p=' + Pieces[selectedPiece].codeName)
+            window.open('/details?p=' + Pieces[selectedPiece])
         }
         return
     }

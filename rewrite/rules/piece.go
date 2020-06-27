@@ -28,8 +28,7 @@ type Piece struct {
 	// Quick
 	Ghost bool `json:"-"`
 
-	// Reveals
-	Recons bool `json:"-"`
+	Reveals bool `json:"-"`
 }
 
 var (
@@ -58,7 +57,7 @@ func (a Piece) ApplyCharacteristics() Piece {
 		case piece.Enables:
 			a.Rallies = true
 		case piece.Reveals:
-			a.Recons = true
+			a.Reveals = true
 		default:
 			return false
 		}

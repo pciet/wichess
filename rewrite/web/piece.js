@@ -44,18 +44,18 @@ export function pieceImageName(addressIndex, kind, orientation) {
     if (kind === NoKind) {
         name = 'empty'
     } else {
-        name += Pieces[kind].codeName
+        name += Pieces[kind]
     }
     const addr = boardIndexToAddress(addressIndex)
     return name + '_' + addr.file.toString() + '_' + addr.rank.toString() + '.png'
 }
 
 export function pieceLookImageName(kind) {
-    return 'look_' + Pieces[kind].codeName + '.png'
+    return 'look_' + Pieces[kind] + '.png'
 }
 
 export function piecePickImageName(kind) {
-    return 'pick_' + Pieces[kind].codeName + '.png'
+    return 'pick_' + Pieces[kind] + '.png'
 }
 
 export function pieceTakeImageName(orientation, kind) {
@@ -63,5 +63,5 @@ export function pieceTakeImageName(orientation, kind) {
     if (orientation === Orientation.BLACK) {
         prefix = 'w'
     }
-    return 'take_' + prefix + Pieces[kind].codeName + '.png'
+    return 'take_' + prefix + Pieces[kind] + '.png'
 }

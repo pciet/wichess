@@ -34,7 +34,7 @@ then
     exit 1
 fi
 
-DIM=2048
+DIM=3072
 PREFIX=""
 
 for p in "White" "Black"
@@ -45,6 +45,7 @@ do
 #declare TrimMaterial = '$p'TrimMaterial
 #declare TrimBMaterial = '$p'TrimBMaterial
 #declare PieceMaterial = '$p'Material
+#declare PlainMaterial = Plain'$p'Material
 #include "'$1'.inc"
 Piece('$1')' > $POV
 

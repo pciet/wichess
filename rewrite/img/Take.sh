@@ -38,6 +38,7 @@ do
 #declare TrimMaterial = '$p'TrimMaterial
 #declare TrimBMaterial = '$p'TrimBMaterial
 #declare PieceMaterial = '$p'Material
+#declare PlainMaterial = Plain'$p'Material
 #include "'$1'.inc"
 object { '$1' }' > $POV
 

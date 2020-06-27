@@ -172,7 +172,7 @@ function addPieceOptions() {
     for (let i = 0; i < Pieces.length; i++) {
         const o = document.createElement('option')
         o.value = i
-        o.text = Pieces[i].name
+        o.text = Pieces[i]
         e.add(o)
     }
 }

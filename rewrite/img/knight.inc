@@ -401,9 +401,12 @@
 
 /*#declare Teds_Knight = merge{*/
 #declare knight = merge {
-    object{Knight_Base}
+    object{
+        Knight_Base
+        material { TrimMaterial }
+    }
     object{Knight_Mid}
     scale 1.28
-    rotate <90,0,90>
-    material { PieceMaterial }
+    rotate <90,0,70>
+    material { PlainMaterial }
 }

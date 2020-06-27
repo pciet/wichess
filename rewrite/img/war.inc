@@ -20,6 +20,13 @@
             <-2,-2,5.8>,<2,2,8>
         }
     }
+    object {
+        cross
+        scale <2.5,2.5,2>
+        translate <0,0,-10>
+        rotate <0,0,20>
+        material { TrimBMaterial }
+    }
 #local i = 0;
 #while (i < 8)
     object {

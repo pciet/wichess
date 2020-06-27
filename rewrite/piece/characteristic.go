@@ -17,20 +17,17 @@ type Characteristics struct {
 var CharacteristicList = []Characteristics{
 	{}, {}, {}, {}, {}, {}, {},
 	{Neutralizes, NoCharacteristic}, // War
-	{Reveals, Enables},
+	{Reveals, NoCharacteristic},
 	{Asserts, NoCharacteristic},
+	{Enables, NoCharacteristic},
 }
 
 var CharacteristicDescriptions = []string{
 	"",
-	`When this piece is captured the capturing piece and all adjacent pieces from both sides
- are also captured.`,
-	`When an opponent piece moves adjacent then this piece automatically moves itself to
- capture it.`,
-	`Friendly pieces adjacent to this one gain additional moves. These moves can't be used
- to capture.`,
-	`Friendly pieces in the three adjacent squares behind this piece can move without capturing
- to the square ahead.`,
+	`When this is captured all adjacent pieces and the capturing piece are also captured.`,
+	`This automatically moves itself to capture when the opponent moves adjacent.`,
+	`Your adjacent pieces get added moves.`,
+	`Your adjacent pieces get an added move across this one.`,
 }
 
 var CharacteristicNames = []string{

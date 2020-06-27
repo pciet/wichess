@@ -7,12 +7,13 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/pciet/wichess/piece"
 	"github.com/pciet/wichess/rules"
 )
 
 type Piece struct {
 	Address     rules.Address     `json:"addr"`
-	Kind        rules.PieceKind   `json:"k"`
+	Kind        piece.Kind        `json:"k"`
 	Orientation rules.Orientation `json:"o"`
 	Moved       bool              `json:"m"`
 }

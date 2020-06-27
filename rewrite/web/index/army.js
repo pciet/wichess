@@ -1,6 +1,6 @@
 import { layoutSelector } from '../layout.js'
 import { piecePickImageName, CollectionPiece, NoSlot } from '../piece.js'
-import { Pieces, Pawn, Knight,  Bishop, Rook, Queen, King } from '../pieceDefs.js'
+import { BasicKinds, Pawn, Knight,  Bishop, Rook, Queen, King } from '../pieceDefs.js'
 import { Mode } from '../index.js'
 import { randomInt } from '../random.js'
 
@@ -89,7 +89,7 @@ export function armyDefaultAt(index) {
 export function randomArmyReplace(kind, collectionSlot) {
     // This slot is the army slot, not the collection slot.
     let slot
-    switch (Pieces[kind].basicKind) {
+    switch (BasicKinds[kind]) {
     case Pawn:
         slot = randomInt(7)
         if (slotTaken(slot) === true) {
@@ -148,7 +148,7 @@ function notTakenSlot(left, right) {
 function slotTaken(slot) {
     const a = armyForMode(Mode)
     const kind = a[slot].kind
-    if (kind !== Pieces[kind].basicKind) {
+    if (kind !== BasicKinds[kind]) {
         return true
     }
     return false

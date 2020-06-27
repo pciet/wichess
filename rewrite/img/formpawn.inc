@@ -1,8 +1,7 @@
 #include "pawn.inc"
 
 #declare Prism = box {
-    <-1.5,-0.3,5.5999>,<1.5,0.3,6.2>
-    translate <0,0,-0.2>
+    <-1.5,-0.3,0>,<1.5,0.3,0.6>
     material { TrimMaterial }
 }
 
@@ -10,13 +9,30 @@
 
 #declare formpawn = merge {
     object { pawn }
+    #local i = 0;
+    #while (i < 4)
+        union {
+            object {
+                Prism
+                translate <0,-0.9,0>
+            }
+            object {
+                Prism
+                translate <0,0.9,0>
+            }
+            scale <1.8,1,1>
+            rotate <0,0,i*180/4>
+            translate <0,0,0.4+(0.2*i)>
+        }
+    #local i = i + 1;
+    #end
     object {
         Prism
-        translate <0,-0.68,0>
+        translate <0,-0.7,5.39999>
     }
     object {
         Prism
-        translate <0,0.68,0>
+        translate <0,0.7,5.39999>
     }
     lathe {
         quadratic_spline

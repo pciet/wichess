@@ -9,10 +9,11 @@
     object {
         Box
         material { TrimMaterial }
+        rotate <0,0,-20>
     }
     object {
         Box
-        rotate <0,0,90>
+        rotate <0,0,70>
         material { TrimMaterial }
     }
 }

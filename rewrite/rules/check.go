@@ -43,7 +43,7 @@ func (a Board) ThreatenedDetonatorAdjacent(threats []Address, at Address) bool {
 	for _, as := range a.SurroundingSquares(at) {
 		s := a[as.Address.Index()]
 		if (s.Kind == piece.NoKind) || (p.Orientation != s.Orientation) ||
-			(p.Detonates == false) {
+			(s.Detonates == false) {
 			continue
 		}
 		for _, addr := range threats {

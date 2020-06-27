@@ -16,7 +16,7 @@ IMGDIR="../web/img"
 
 mkdir $IMGDIR
 
-PIECES=("pawn" "bishop" "knight" "rook" "queen" "king" "war" "constructive" "formpawn")
+PIECES=("pawn" "bishop" "knight" "rook" "queen" "king" "war" "constructive" "formpawn" "confined")
 
 for p in "${PIECES[@]}"
 do

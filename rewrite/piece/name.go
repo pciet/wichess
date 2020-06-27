@@ -9,8 +9,9 @@ var CodeNames = []string{
 	"knight",
 	"pawn",
 	"war",
-	"formpawn", // 'pawn' added to name to avoid web reserved word 'form'
+	"formpawn", // 'pawn' added to name to avoid POV-Ray reserved word 'form'
 	"constructive",
+	"confined",
 }
 
 var Names = []string{
@@ -24,6 +25,7 @@ var Names = []string{
 	"War",
 	"Form",
 	"Constructive",
+	"Confined",
 }
 
 func KindForCodeName(n string) Kind {

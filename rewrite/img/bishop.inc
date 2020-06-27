@@ -63,6 +63,7 @@
             rotate <0,60,0>
             translate <-2,0,9.5>
         }
+        material { PlainMaterial }
     }
     sphere {
         <0,0,7.4>,0.2

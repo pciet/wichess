@@ -43,8 +43,8 @@
             4,
             <4,4.5>,<1.6,4.9>,<1.4,5.1>,<1.37,9>
             rotate <90,0,0>
+            material { TrimMaterial }
         }
-        material { TrimMaterial }
     }
     merge { // cap
         cylinder {

@@ -40,6 +40,7 @@ echo '#version 3.7;
 #declare TrimMaterial = LookTrimMaterial
 #declare TrimBMaterial = LookTrimBMaterial
 #declare PieceMaterial = LookMaterial
+#declare PlainMaterial = PlainLookMaterial
 #include "'$1'.inc"
 object { '$1' }' > $POV
 

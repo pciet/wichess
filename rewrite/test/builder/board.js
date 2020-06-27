@@ -1,5 +1,7 @@
 import { chessBoard, boardIndex } from '../wichess/game/board.js'
-import { pieceImageName } from '../wichess/piece.js'
+import { initializeOrientation } from '../wichess/game/layouts_orientation.js'
+
+import { pieceImageName, Orientation } from '../wichess/piece.js'
 import { NoKind } from '../wichess/pieceDefs.js'
 
 import { selectValue } from './builder.js'
@@ -10,6 +12,7 @@ export function initBoard() {
     for (let i = 0; i < 64; i++) {
         board[i] = undefined
     }
+    initializeOrientation(Orientation.WHITE)
     document.querySelector('#board').innerHTML = chessBoard()
     setBoardAddPieceHandlers()
 }
