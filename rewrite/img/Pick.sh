@@ -32,7 +32,7 @@ then
     exit 1
 fi
 
-DIM=512
+DIM=768
 
 echo '#version 3.7;
 #include "pick.inc"

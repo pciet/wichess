@@ -32,7 +32,7 @@ then
     exit 1
 fi
 
-DIM=1024
+DIM=1536
 
 echo '#version 3.7;
 #include "look.inc"

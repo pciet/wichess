@@ -1,120 +1,68 @@
-import { button } from '../button.js'
+import { ct } from '../layout_ct.js'
+import { NoKind } from '../pieceDefs.js'
+
+import { armyImage } from './army.js'
+import { collectionImage, pickImage } from './collection.js'
+
+// ct(id, classes, inline, noselect, text)
 
 export const landscape = `
-<div class="inline" id="modepick">
-    <div id="logoutdiv">
-        <a href="/quit">` + button('', 'logout', 'Quit', false) + `</a>
-    </div>
-    <div>
-        <div></div>
-        <div id="title">Wisconsin Chess</div>
-        <div id="name">`+window.Name+`</div>
-        <div></div>
-    </div>
-    <div class="modebuttonmargin">
-        <div class="modebutton" id="public">
-            <div class="vcenter noselect">People</div>
-        </div>
-    </div>
-    <div class="modepickspacer"></div>
-    <div class="modebuttonmargin">
-        <div class="modebutton" id="computer">
-            <div class="vcenter noselect">Computer</div>
-        </div>
-    </div>
+<div id="top">
+` + ct('name', '', true, false, window.Name) +
+    ct('title', '', true, false, 'WISCONSIN CHESS') + `
+    <div id="topspacer" class="inline"></div>
+    <a class="inline" href="/quit">` + ct('quit', '', false, true, 'Quit') + `</a>
 </div>
-<div class="inline" id="contentdiv">
-    <div class="inline" id="contentspacer"></div>
-    <div class="inline" id="content"></div>
-</div>
-`
-
-export const playButton = `
-<div id="play">
-    <div class="inline"></div>
-    <div class="inline" id="playbuttonmargin">
-        <div id="playbutton">
-            <div class="playspacer"></div>
-            <div class="noselect">Play</div>
-            <div class="playspacer"></div>
+<div>
+    <div id="left" class="inline">
+        ` + ct('details', '', false, true, 'Piece Details') + `
+        <div id="picksmargin">
+            <img id="leftpick" class="inline pick" src="` + pickImage(window.LeftPiece) + `">
+            <img id="rightpick" class="inline pick" src="` + pickImage(window.RightPiece) + `">
         </div>
+        <p id="pickdesc">The two above pieces can be added to the army. If you then complete a
+            game used ones are added to your collection and replaced with another random piece.</p>
+        ` + ct('match', '', false, true, 'Match') + `
     </div>
-    <div class="inline"></div>
-</div>
-`
-
-export const content = `
-<div id="army"></div>
-<div id="picks">
-    <div class="inline noselect pickcell" id="leftpick"></div>
-    <div class="inline" id="pickspacer"></div>
-    <div class="inline noselect pickcell" id="rightpick"></div>
-</div>
-`
-
-export const publicMatching = `
-<div class="inline">
-    <div class="playerbuttonmargin">
-        <div class="playerbutton" id="p0">
-            <div class="vcenter noselect">Recent Opponent 1</div>
-        </div>
-    </div>
-    <div class="playerbuttonmargin">
-        <div class="playerbutton" id="p1">
-            <div class="vcenter noselect">Recent Opponent 2</div>
-        </div>
-    </div>
-    <div class="playerbuttonmargin">
-        <div class="playerbutton" id="p2">
-            <div class="vcenter noselect">Recent Opponent 3</div>
-        </div>
-    </div>
-    <div class="playerbuttonmargin">
-        <div class="playerbutton" id="p3">
-            <div class="vcenter noselect">Recent Opponent 4</div>
-        </div>
-    </div>
-    <div class="playerbuttonmargin">
-        <div class="playerbutton" id="p4">
-            <div class="vcenter noselect">Recent Opponent 5</div>
-        </div>
-    </div>
-</div>
-<div class="inline" id="matchingspacer"></div>
-<div class="inline">
-    <div></div>
-    <div id="opponentinputmargin">
-        <input type="text" id="opponent">
-    </div>
-    <span id="opponentlabel">Type opponent's username.</span>
-    <div id="matchbuttonmargin">
-        <div id="match">
-            <div class="vcenter noselect">New Match</div>
-        </div>
+    <div class="inline">
+        <p id="armydesc">Below is your army that will be put onto the game board. Click on pieces 
+            in the collection below that or to the left then at where you want them in the army to
+            customize. 
+            Pieces must be the same basic kind as the regular chess piece they are replacing.</p>
+        <div id="army">` + army() + `</div>
+        <div id="collection">` + collection() + `</div>
     </div>
 </div>
 `
 
-export const matchPending = `
-    <div class="matchcancelspacer"></div>
-    <div>
-        <div class="inline"></div>
-        <div class="inline">
-            <span class="matchingtext">Matching</span>
-            <div class="matchingplayer" id="matchingopponent"></div>
-            <span class="noselect matchingtext">against</span>
-            <div class="matchingplayer" id="matchingplayer"></div>
-            <div>
-                <div class="inline cancelbuttonspacer"></div>
-                <div class="inline" id="cancelbuttonmargin">
-                    <div id="cancelbutton">
-                        <div class="vcenter noselect">Cancel</div>
-                    </div>
-                </div>
-                <div class="inline cancelbuttonspacer"></div>
-            </div>
-        </div>
-        <div class="inline"></div>
-    </div>
-    <div class="matchcancelspacer"></div>
-`
+function army() {
+    let t = ''
+    for (let i = 0; i < 2; i++) {
+        t += '<div id="army'+i+'">'
+        for (let j = 0; j < 8; j++) {
+            const index = (8*i) + j
+            t += '<img id="a'+index+'" class="inline armycell noselect" src="' + armyImage(index) +
+                '">'
+        }
+        t += '</div>'
+    }
+    return t
+}
+
+function collection() {
+    let t = ''
+    for (let i = 0; i < 3; i++) {
+        t += '<div>'
+        for (let j = 0; j < 7; j++) {
+            const index = (7*i) + j
+            if (window.Collection[index] === NoKind) {
+                t += '<div id="c'+index+'" class="inline collectioncell noselect"></div>'
+            } else {
+                t += '<img id="c'+index+'" class="inline collectioncell noselect" src="' + 
+                    collectionImage(index) + '">'
+            }
+        }
+        t += '</div>'
+    }
+    return t
+}

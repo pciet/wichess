@@ -72,8 +72,7 @@ func (a Board) DoMove(m Move) ([]AddressedSquare, []AddressedSquare) {
 	} else {
 		if a.IsCastleMove(m) {
 			return a.CastleMove(changes, m), nil
-		}
-		if a.IsEnPassantMove(m) {
+		} else if a.IsEnPassantMove(m) {
 			changes, takes = a.EnPassantMove(changes, takes, m)
 		} else {
 			changes = a.NoTakeMove(changes, m)

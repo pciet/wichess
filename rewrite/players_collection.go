@@ -151,11 +151,11 @@ func PlayerSelectedCollectionPieces(tx *sql.Tx, id PlayerIdentifier,
 		DebugPrintln(s.String())
 	}
 
-	var collectionValues []sql.NullInt64
+	collectionValues := make([]sql.NullInt64, len(slots))
 	var left, right piece.Kind
 	values := make([]interface{}, 0, 3)
-	if len(slots) != 0 {
-		values = append(values, pq.Array(&collectionValues))
+	for i := 0; i < len(slots); i++ {
+		values = append(values, &(collectionValues[i]))
 	}
 	values = append(values, &left)
 	values = append(values, &right)
@@ -178,11 +178,12 @@ func PlayerSelectedCollectionPieces(tx *sql.Tx, id PlayerIdentifier,
 	return out, left, right
 }
 
-// PlayerCollectionFlagInUse flags pieces in the player's collection to be in use, and it updates
-// the pick piece slots if one or both slot is indicated to be used.
-func PlayerCollectionFlagInUse(tx *sql.Tx, id PlayerIdentifier,
-	slots []CollectionSlot, kinds []piece.Kind,
+func PlayerCollectionReplacePicks(tx *sql.Tx, id PlayerIdentifier,
 	left, right piece.Kind, replaceLeft, replaceRight bool) {
+
+	if (replaceLeft == false) && (replaceRight == false) {
+		return
+	}
 
 	updateLeft, updateRight := piece.NoKind, piece.NoKind
 	if replaceLeft && replaceRight {
@@ -191,10 +192,6 @@ func PlayerCollectionFlagInUse(tx *sql.Tx, id PlayerIdentifier,
 		updateLeft = right.DifferentSpecialKind()
 	} else if replaceRight {
 		updateRight = left.DifferentSpecialKind()
-	} else {
-		if len(slots) == 0 {
-			return
-		}
 	}
 
 	var s strings.Builder
@@ -220,7 +217,7 @@ func PlayerCollectionFlagInUse(tx *sql.Tx, id PlayerIdentifier,
 	if updateLeft != piece.NoKind {
 		args = append(args, updateLeft)
 		s.WriteString(PlayersLeftKind)
-		if (updateRight == piece.NoKind) && (len(slots) == 0) {
+		if updateRight == piece.NoKind {
 			placeholder(true)
 		} else {
 			placeholder(false)
@@ -230,29 +227,7 @@ func PlayerCollectionFlagInUse(tx *sql.Tx, id PlayerIdentifier,
 	if updateRight != piece.NoKind {
 		args = append(args, updateRight)
 		s.WriteString(PlayersRightKind)
-		if len(slots) == 0 {
-			placeholder(true)
-		} else {
-			placeholder(false)
-		}
-	}
-
-	for j, slot := range slots {
-		args = append(args, Piece{
-			InUse: true,
-			Piece: rules.Piece{
-				Kind: kinds[j],
-			},
-		}.Encode())
-		s.WriteString(PlayersCollection)
-		s.WriteRune('[')
-		s.WriteString(strconv.Itoa(slot.Int()))
-		s.WriteRune(']')
-		if j == (len(slots) - 1) {
-			placeholder(true)
-		} else {
-			placeholder(false)
-		}
+		placeholder(true)
 	}
 
 	s.WriteString(" WHERE ")

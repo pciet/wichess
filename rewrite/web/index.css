@@ -6,257 +6,137 @@ body {
     background: linear-gradient(rgb(11,25,18), rgb(21,25,28));
 }
 
-a {
-    width: 100%;
-    height: 100%;
+p {
+    margin: 0;
 }
 
-#title {
-    font-size: 1.2rem;
-    font-style: italic;
-    color: rgb(120,100,100);
-    text-align: center;
+#top {
+    height: 10%;
+    background: linear-gradient(90deg, rgb(1,31,121), rgb(7,20,55));
+    border-bottom: thin solid red;
+}
+
+#topspacer {
+    width: 15%;
 }
 
 #name {
-    font-size: 1.5rem;
+    font-size: 2rem;
     color: rgb(220,220,200);
     text-align: center;
 }
 
-.modepickspacer {
-    height: 7%;
+#detailsmargin {
+    height: 10%;
+    padding: 5px;
+    padding-bottom: 20px;
 }
 
-#modepick {
-    width: 17%;
-    background: linear-gradient(to bottom right, rgb(30,35,40), rgb(35,40,34));
+#details {
+    border: thin outset rgb(205,175,128);
+    border-radius: 5px;
+    font-size: 1.3rem;
+    color: rgb(220,220,200);
+    background: linear-gradient(rgb(110,70,20), rgb(130,50,30));
+    text-align: center;
 }
 
-#contentspacer {
-    width: 0%;
-    height: 0%;
+#title {
+    font-size: 1.8rem;
+    color: rgb(250,110,120);
+    text-shadow: 1px 1px 0 rgb(5,5,50);
+    font-weight: bold;
+    text-align: center;
 }
 
-#logout {
+#quitmargin {
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+}
+
+#quit {
     border-radius: 4px;
     color: rgb(150,120,200);
     background-color: rgb(20,10,30);
     box-shadow: -2px -3px 1px rgb(50,50,50);
-    font-size: 1.1rem;
+    font-size: 1.5rem;
     text-align: center;
 }
 
-#logoutspacer {
+#left {
+    width: 25%;
+    padding: 15px;
+}
+
+#picksmargin {
     height: 20%;
 }
 
-#logoutdiv {
-    height: 12%;
+.pick {
+    border: thick outset rgb(20,200,120);
+    border-radius: 5px;
 }
 
-.buttonmargin {
-    width: 100%;
-    height: 100%;
-    padding: 8px;
-}
-
-.modebuttonmargin {
-    padding: 10px;
-}
-
-.modebutton {
-    border: thick outset rgb(130,131,102);
-    border-radius: 10px;
-    color: rgb(105,90,100);
-    background-color: rgb(10,40,60);
-    box-shadow: -3px -4px 1px black;
-    font-size: 1.5rem;
-    text-align: center;
-}
-
-.selected {
-    border: thick outset rgb(233,255,235);
-    color: rgb(225,255,235);
-    background-color: rgb(210,130,110);
-    box-shadow: 0 0 0 black;
-}
-
-#play {
-    height: 12.5%;
-}
-
-#playbuttonmargin {
-    padding: 13px;
-}
-
-#playbutton {
-    border: 4px outset rgb(240,220,220);
-    border-radius: 2px;
-    color: rgb(245,255,237);
-    background-color: rgb(150,200,170);
-    box-shadow: -1px 0 10px rgb(210,210,200);
-    font-size: 2rem;
-    text-align: center;
-}
-
-.playspacer {
-    height: 15%;
-}
-
-#army {
-    height: 25%;
-}
-
-.armycell {
-    border: thin solid rgb(45,45,55);
-}
-
-.pickedarmycell {
-    border: thick inset rgb(255,155,25);
-}
-
-#picks {
+#pickdesc {
     padding: 20px;
-    text-align: center;
+    color: rgb(100,220,180);
+    font-size: 1.3rem;
+    font-style: italic;
 }
 
-#pickspacer {
-    width: 5%;
-}
-
-.pickcell {
-    border: thick outset rgb(50,255,200);
-    background: repeating-linear-gradient(
-        45deg,
-        rgb(50,5,200),
-        rgba(40,200,5,0.2) 5px,
-        rgba(200,200,5,0.2) 20px,
-        rgb(10,5,200) 5px
-    );
-    box-shadow: -1px 0 10px rgb(200,200,195);
-}
-
-.collectioncell {
-    border: 1px solid rgb(220,248,210);
-}
-
-#collection {
-    height: 37.5%;
-    text-align: center;
-}
-
-.pieceimg {
-    width: 100%;
-    height: 100%;
-}
-
-.pickedcellpicked {
-    border: thick outset rgb(10,110,110);
-}
-
-.picked {
-    opacity: 0.2;
-}
-
-#publics {
-    height: 50%;
-}
-
-#opponentinputmargin {
-    padding: 7px;
-}
-
-#opponent {
-    padding: 2px;
-    display: block;
-    font: inherit;
-    font-size: 1.5rem;
-    border: thick outset rgb(155,125,128);
-    border-radius: 2px;
-}
-
-#opponentlabel {
-    display: block;
-    font-size: 1.2rem;
-    color: rgb(230,245,255);
-    text-align: center;
-}
-
-#matchbuttonmargin {
-    padding: 10px;
-    height: 40%;
+#matchmargin {
+    padding: 20px;
 }
 
 #match {
     border: thick outset rgb(255,125,128);
     border-radius: 7px;
     color: rgb(255,240,245);
-    background-color: rgb(50,80,200);
+    background: linear-gradient(rgb(50,80,200), rgb(7,20,255));    
     box-shadow: 0px -4px 10px rgb(255,125,128);
-    font-size: 2rem;
+    font-size: 2.4rem;
     text-align: center;
 }
 
-.playerbuttonmargin {
-    padding: 5px;
-}
-
-.playerbutton {
-    border: thick outset rgb(105,75,78);
-    border-radius: 7px;
-    color: rgb(55,120,145);
-    font-style: italic;
-    background-color: rgb(20,50,70);
-    font-size: 1.4rem;
+#army {
     text-align: center;
+    height: 30%;
 }
 
-.playernamed {
-    border: thick outset rgb(255,125,128);
-    color: rgb(255,240,245);
-    font-style: normal;
-    background-color: rgb(50,80,200);
-    box-shadow: 0px -4px 10px rgb(255,125,128);
-}
-
-#matchingspacer {
-    width: 10%;
-}
-
-.matchcancelspacer {
-    height: 20%;
-}
-
-.matchingtext {
-    display: block;
-    text-align: center;
+#armydesc {
+    padding-bottom: 5px;
+    padding-top: 15px;
+    padding-left: 30px;
+    padding-right: 30px;
+    color: rgb(255,195,175);
     font-size: 1.2rem;
     font-style: italic;
-    color: rgb(240,50,50);
+    height: 15%;
 }
 
-.matchingplayer {
+#collection {
+    padding: 10px;
     text-align: center;
-    font-size: 2.2rem;
-    color: rgb(190,190,255);
 }
 
-#cancelbuttonmargin {
-    padding: 5px;
+.collectioncell {
+    background: linear-gradient(rgb(110,250,180), rgb(210,250,28));
+    border: thick outset rgb(70,150,20);
+    border-radius: 3px;
 }
 
-#cancelbutton {
-    border: thick outset rgb(150,255,180);
-    border-radius: 5px;
-    color: rgb(220,255,235);
-    background: linear-gradient(to bottom right, rgb(80,50,10), rgb(70,20,1));
-    background-color: rgb(80,50,10);
-    box-shadow: -5px -5px 1px black;
-    text-align: center;
-    font-size: 1.5rem;
+.selected {
+    border: thick dashed rgb(255,100,80);
+    border-radius: 3px;
 }
 
-.cancelbuttonspacer {
-    width: 20%;
+.used {
+    border: thick outset rgb(50,255,200);
+    box-shadow: -1px 0 10px rgb(200,200,195);
+    opacity: 0.2;
+}
+
+.replaced {
+    border: thick solid rgb(160,180,255);
 }

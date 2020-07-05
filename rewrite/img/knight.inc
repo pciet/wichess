@@ -408,5 +408,6 @@
     object{Knight_Mid}
     scale 1.28
     rotate <90,0,70>
+    translate <0,0,-0.3>
     material { PlainMaterial }
 }

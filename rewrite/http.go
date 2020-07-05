@@ -24,10 +24,13 @@ func InitializeHTTP() {
 	// A login is ended by a GET to /quit with the session key cookie.
 	http.Handle(QuitPath, QuitHandler)
 
-	// The index webpage is a place to choose what kind of match to play. This is where the
-	// army is picked.
-	// If a timed game is in progress then the web browser is redirected to it.
+	// The index webpage is where the army is picked from the collection. Before a game is played
+	// the match webpage is navigated to to pick an opponent. If a game against a person is already
+	// in progress then the browser is redirected to it.
 	http.Handle(IndexPath, IndexHandler)
+
+	// After configuring the army on index the player picks a match on the match page.
+	http.Handle(MatchPath, MatchHandler)
 
 	// Details of the rules of individual pieces is in the details path. This information is
 	// not interactive and doesn't require authentication to read.

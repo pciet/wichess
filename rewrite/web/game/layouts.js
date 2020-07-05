@@ -1,6 +1,7 @@
 import { button } from '../button.js'
 import { Orientation, pieceTakeImageName } from '../piece.js'
 import { NoKind } from '../pieceDefs.js'
+import { ct } from '../layout_ct.js'
 
 import { chessBoard } from './board.js'
 import { hasComputerPlayer } from './players.js'
@@ -10,7 +11,6 @@ import { handedness } from './layouts_handedness.js'
 import { orientation } from './layouts_orientation.js'
 import { controlsLayout } from './layouts_controls.js'
 import { navigationLayout } from './layouts_navigation.js'
-import { ct } from './layouts_ct.js'
 
 const activePlayerChar = '&#x394;'
 

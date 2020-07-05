@@ -8,12 +8,10 @@ import (
 	"github.com/pciet/wichess/rules"
 )
 
-// ReserveArmies verifies the requested armies are valid then updates the player's collections.
-// Requested pieces in each army are flagged in the database to be in use, and requested random
-// pick piece slots are replaced with new random pieces. The white and black armies (returned in
-// that order) are encoded to be ready for insertion into a games table row, and any used pick
-// slots have their kinds returned.
-// If either army is invalid then an error is returned and there are no database effects.
+// ReserveArmies verifies the requested armies are valid and replaces used pick slots. The white
+// and black armies (returned in that order) are encoded for insertion into a games table row,
+// and the kinds of used pick slots are returned. If either army is invalid then an error is
+// returned and there are no database effects.
 func ReserveArmies(tx *sql.Tx, wa, ba ArmyRequest,
 	whiteID, blackID PlayerIdentifier) (EncodedArmy, RandomPicks, EncodedArmy, RandomPicks, error) {
 
@@ -51,9 +49,8 @@ func ReserveArmies(tx *sql.Tx, wa, ba ArmyRequest,
 		blackPicks, nil
 }
 
-// MakeArmyReservation does one query to the player's database row to get information needed to
-// encode the pieces for insertion into the games table. Both random pick slots are always queried
-// and the kinds returned for use in ReserveArmy to replace without duplication.
+// MakeArmyReservation queries/reads the player's database row to translate ArmyRequest values into
+// piece kinds. Kinds of the two picks are always queried for and returned.
 func MakeArmyReservation(tx *sql.Tx, id PlayerIdentifier,
 	r ArmyRequest) ([16]piece.Kind, piece.Kind, piece.Kind, error) {
 
@@ -119,10 +116,6 @@ func MakeArmyReservation(tx *sql.Tx, id PlayerIdentifier,
 			continue
 		}
 		p := collectionPieces[collectionPiecesIndex]
-		if p.InUse {
-			return [16]piece.Kind{}, piece.NoKind, piece.NoKind,
-				fmt.Errorf("collection piece %v for %v in use", p, id)
-		}
 		collectionPiecesIndex++
 		out[i] = p.Kind
 	}
@@ -130,14 +123,11 @@ func MakeArmyReservation(tx *sql.Tx, id PlayerIdentifier,
 	return out, leftKind, rightKind, nil
 }
 
-// ReserveArmy updates the player's database row with the requested collection pieces flagged to
-// be in use, it replaces random pick slots that are used, and all pieces, whether in the
-// collection or not, are encoded for insertion into the games table.
+// ReserveArmy replaces used pick slots and encodes all pieces (whether in the collection or not)
+// for insertion into the games table.
 func ReserveArmy(tx *sql.Tx, id PlayerIdentifier, o rules.Orientation,
 	pieces [16]piece.Kind, left, right piece.Kind, r ArmyRequest) EncodedArmy {
 
-	collectionSlotsToUpdate := make([]CollectionSlot, 0, 4)
-	collectionSlotKinds := make([]piece.Kind, 0, 4)
 	var army EncodedArmy
 	replaceLeft, replaceRight := false, false
 
@@ -150,26 +140,18 @@ func ReserveArmy(tx *sql.Tx, id PlayerIdentifier, o rules.Orientation,
 		}.Encode()
 
 		switch c {
-		case NotInCollection:
-			continue
 		case LeftPick:
 			replaceLeft = true
-			continue
 		case RightPick:
 			replaceRight = true
-			continue
 		}
-
-		collectionSlotsToUpdate = append(collectionSlotsToUpdate, c)
-		collectionSlotKinds = append(collectionSlotKinds, pieces[i])
 	}
 
 	if id == ComputerPlayerID {
 		return army
 	}
 
-	PlayerCollectionFlagInUse(tx, id,
-		collectionSlotsToUpdate, collectionSlotKinds, left, right, replaceLeft, replaceRight)
+	PlayerCollectionReplacePicks(tx, id, left, right, replaceLeft, replaceRight)
 
 	return army
 }

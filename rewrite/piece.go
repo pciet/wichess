@@ -8,7 +8,6 @@ import (
 type (
 	Piece struct {
 		Slot        CollectionSlot `json:"s"`
-		InUse       bool           `json:"-"`
 		rules.Piece `json:"p"`
 	}
 

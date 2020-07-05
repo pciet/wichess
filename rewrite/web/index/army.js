@@ -1,155 +1,79 @@
-import { layoutSelector } from '../layout.js'
-import { piecePickImageName, CollectionPiece, NoSlot } from '../piece.js'
-import { BasicKinds, Pawn, Knight,  Bishop, Rook, Queen, King } from '../pieceDefs.js'
-import { Mode } from '../index.js'
-import { randomInt } from '../random.js'
+import { Pieces, Pawn, Knight, Bishop, Rook, Queen, King } from '../pieceDefs.js'
 
-import { PageMode } from './mode.js'
+import { NotInCollection, LeftPick, RightPick, collectionSelector } from './collection.js'
 
-let DefaultArmy = []
-
-DefaultArmy[8] = new CollectionPiece(NoSlot, Rook)
-DefaultArmy[15] = new CollectionPiece(NoSlot, Rook)
-DefaultArmy[9] = new CollectionPiece(NoSlot, Knight)
-DefaultArmy[14] = new CollectionPiece(NoSlot, Knight)
-DefaultArmy[10] = new CollectionPiece(NoSlot, Bishop)
-DefaultArmy[13] = new CollectionPiece(NoSlot, Bishop)
-DefaultArmy[11] = new CollectionPiece(NoSlot, Queen)
-DefaultArmy[12] = new CollectionPiece(NoSlot, King)
-
-for (let i = 0; i < 8; i++) {
-    DefaultArmy[i] = new CollectionPiece(NoSlot, Pawn)
-}
-
-let ComputerArmy = []
-let PublicArmy = []
-
-for (let i = 0; i < 16; i++) {
-    ComputerArmy[i] = new CollectionPiece(DefaultArmy[i].slot, DefaultArmy[i].kind)
-    PublicArmy[i] = new CollectionPiece(DefaultArmy[i].slot, DefaultArmy[i].kind)
-}
-
-export function addArmySelection(mode) {
-    let a = ''
-    for (let i = 0; i < 2; i++) {
-        a += '<div>'
-        for (let j = 0; j < 8; j++) {
-            a += '<div class="inline armycell noselect" id="a'+((8*i)+j)+'"></div>'
-        }
-        a += '</div>'
+export function ArmySlot(kind, collection = NotInCollection) {
+    return {
+        kind: kind,
+        collection: collection
     }
-    layoutSelector('#army', a)
-
-    const army = armyForMode(Mode)
-    addArmyPictures(army)
 }
 
-function addArmyPictures(selection) {
+export const Army = []
+
+Army[8] = ArmySlot(Rook)
+Army[15] = ArmySlot(Rook)
+Army[9] = ArmySlot(Knight)
+Army[14] = ArmySlot(Knight)
+Army[10] = ArmySlot(Bishop)
+Army[13] = ArmySlot(Bishop)
+Army[11] = ArmySlot(Queen)
+Army[12] = ArmySlot(King)
+
+for (let i = 0; i < 8; i++) { Army[i] = ArmySlot(Pawn) }
+
+const DefaultArmy = []
+
+for (let i = 0; i < 16; i++) { DefaultArmy[i] = Army[i].kind }
+
+export function armyImage(index) { return '/web/img/pick_'+Pieces[Army[index].kind]+'.png' }
+
+export function addArmySelection() {
     for (let i = 0; i < 16; i++) {
-        addArmyPicture(i, selection[i].kind)
+        const s = Army[i]
+
+        if (s.collection === NotInCollection) {
+            // then this army slot is not selected from the picks or collection
+            continue
+        } 
+
+        const e = document.querySelector(collectionSelector(s.collection))
+        e.armySlotIndex = i
+        e.classList.add('used')
+
+        const ae = document.querySelector('#a'+i)
+        ae.classList.add('replaced')
+
+        // the layout text isn't replaced when a piece is added, so the image has to be swapped here
+        ae.src = armyImage(i)
     }
 }
 
-function addArmyPicture(index, kind) {
-    let t = '<img class="pieceimg noselect" src="/web/img/'
-    t += piecePickImageName(kind) + '">'
-    document.querySelector('#a'+index).innerHTML = t
+export function deselectArmySlot(index) { 
+    const ce = document.querySelector(collectionSelector(Army[index].collection))
+    ce.classList.remove('used')
+    ce.armySlotIndex = undefined
+    const kind = DefaultArmy[index]
+    Army[index] = ArmySlot(kind) 
+    const e = document.querySelector('#a'+index)
+    e.src = armyImage(index)
+    e.classList.remove('replaced')
 }
 
-// The army selection is only made of collection slot integers.
+export function replaceArmySlot(index, armySlot) {
+    if (Army[index].collection !== NotInCollection) {
+        const ce = document.querySelector(collectionSelector(Army[index].collection))
+        ce.classList.remove('used')
+        ce.armySlotIndex = undefined
+    }
+    Army[index] = armySlot
+    const e = document.querySelector('#a'+index)
+    e.src = armyImage(index)
+    e.classList.add('replaced')
+}
+
 export function armySelectionJSON() {
     const j = []
-    const s = armyForMode(Mode)
-    for (let i = 0; i < 16; i++) {
-        j[i] = s[i].slot
-    }
+    for (let i = 0; i < 16; i++) { j[i] = Army[i].collection }
     return JSON.stringify(j)
-}
-
-export function armyDefaultAt(index) {
-    let k
-    switch (Mode) {
-    case PageMode.COMPUTER:
-        ComputerArmy[index].kind = DefaultArmy[index].kind
-        k = ComputerArmy[index].kind
-        ComputerArmy[index].slot = NoSlot
-        break
-    case PageMode.PUBLIC:
-        PublicArmy[index].kind = DefaultArmy[index].kind
-        k = PublicArmy[index].kind
-        PublicArmy[index].slot = NoSlot
-        break
-    }
-    addArmyPicture(index, k)
-    document.querySelector('#a'+index).classList.remove('pickedarmycell')
-}
-
-// A random basic kind for the special kind is replaced.
-// randomArmyReplace returns the army index that was replaced.
-export function randomArmyReplace(kind, collectionSlot) {
-    // This slot is the army slot, not the collection slot.
-    let slot
-    switch (BasicKinds[kind]) {
-    case Pawn:
-        slot = randomInt(7)
-        if (slotTaken(slot) === true) {
-            slot++
-            if (slot === 8) {
-                slot = 0
-            }
-        }
-        break
-    case Rook:
-        slot = notTakenSlot(8, 15)
-        break
-    case Knight:
-        slot = notTakenSlot(9, 14)
-        break
-    case Bishop:
-        slot = notTakenSlot(10, 13)
-        break
-    default:
-        throw new Error("can't replace kind " + kind)
-    }
-
-    addArmyPicture(slot, kind)
-
-    // The two random picks aren't in the collection. This means the army configuration can 
-    // have special pieces that don't have a slot, which is a case the host looks for.
-    armyForMode(Mode)[slot] = new CollectionPiece(collectionSlot, kind)
-
-    return slot
-}
-
-function armyForMode(m) {
-    switch (m) {
-    case PageMode.COMPUTER:
-        return ComputerArmy
-    case PageMode.PUBLIC:
-        return PublicArmy
-    }
-    throw new Error('unknown page mode ' + m)
-}
-
-function notTakenSlot(left, right) {
-    if (slotTaken(left) === true) {
-        return right
-    } else if (slotTaken(right) === true) {
-        return left
-    } else {
-        if (randomInt(1) === 0) {
-            return left
-        } else {
-            return right
-        }
-    }
-}
-
-function slotTaken(slot) {
-    const a = armyForMode(Mode)
-    const kind = a[slot].kind
-    if (kind !== BasicKinds[kind]) {
-        return true
-    }
-    return false
 }

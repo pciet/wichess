@@ -20,11 +20,10 @@ var IndexHandler = AuthenticRequestHandler{
 func init() { ParseHTMLTemplate(IndexHTMLTemplate) }
 
 type IndexHTMLTemplateData struct {
-	Name            string
-	LeftPiece       int
-	RightPiece      int
-	Collection      [CollectionCount]piece.Kind
-	RecentOpponents [RecentOpponentCount]string
+	Name       string
+	LeftPiece  int
+	RightPiece int
+	Collection [CollectionCount]piece.Kind
 }
 
 func IndexGet(w http.ResponseWriter, r *http.Request, tx *sql.Tx, requester Player) {
@@ -40,14 +39,12 @@ func IndexGet(w http.ResponseWriter, r *http.Request, tx *sql.Tx, requester Play
 
 	left, right := PlayerPiecePicks(tx, requester.Name)
 	collection := PlayerCollection(tx, requester.ID)
-	opp := PlayerRecentOpponents(tx, requester.ID)
 	tx.Commit()
 
 	WriteHTMLTemplate(w, IndexHTMLTemplate, IndexHTMLTemplateData{
-		Name:            requester.Name,
-		LeftPiece:       int(left),
-		RightPiece:      int(right),
-		Collection:      collection.Kinds(),
-		RecentOpponents: opp,
+		Name:       requester.Name,
+		LeftPiece:  int(left),
+		RightPiece: int(right),
+		Collection: collection.Kinds(),
 	})
 }

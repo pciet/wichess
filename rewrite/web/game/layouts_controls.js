@@ -1,8 +1,8 @@
 import { resetLayouts, layoutPage, gameDone, selectedPiece } from '../game.js'
 import { layoutSelector } from '../layout.js'
 import { Pieces } from '../pieceDefs.js'
+import { ct } from '../layout_ct.js'
 
-import { ct } from './layouts_ct.js'
 import { swapHandedness, handedness } from './layouts_handedness.js'
 import { swapWhitespace } from './layouts_whitespace.js'
 import { swapOrientation } from './layouts_orientation.js'

@@ -1,39 +1,65 @@
 import { addLayout, layout, scaleFont } from './layout.js'
+import { Pieces } from './pieceDefs.js'
 
-import { PageMode, pickMode, modeClick, savePageMode, savedPageMode } from './index/mode.js'
 import { landscape } from './index/layouts.js'
 
-export let Mode = savedPageMode()
-
-export function setMode(mode) {
-    savePageMode(mode)
-    Mode = mode
-}
+import { addArmySelection, armySelectionJSON } from './index/army.js'
+import { addPieceClicks, FloatingSelection } from './index/click.js'
 
 addLayout(100, landscape)
 
-let disableLayout = false
-
 export function layoutPage() {
-    // On some web browsers, like Chrome on Android, onresize is caused by the keyboard showing
-    // which breaks this and makes the webpage unusable. Layout is disabled as a workaround.
-    if (disableLayout === true) {
-        return
-    }
-
     layout()
-    pickMode(Mode)
     scaleFont()
 
-    if (Mode === PageMode.PUBLIC) {
-        const opp = document.querySelector('#opponent')
-        opp.onclick = () => { disableLayout = true }
-        opp.addEventListener('blur', () => { disableLayout = false })
+    setAllSquareDimensions('#leftpick', '.pick')
+    const armyDim = setAllSquareDimensions('#a0', '.armycell')
+    document.querySelector('#army0').style.height = armyDim + 'px'
+    setAllSquareDimensions('#c0', '.collectioncell')
+
+    document.querySelector('#details').onclick = () => {
+        if (FloatingSelection === undefined) {
+            return
+        }
+        window.open('/details?p=' + Pieces[FloatingSelection.kind])
     }
 
-    document.querySelector('#computer').onclick = modeClick(PageMode.COMPUTER)
-    document.querySelector('#public').onclick = modeClick(PageMode.PUBLIC)
+    addArmySelection()
+    addPieceClicks()
+
+    document.querySelector('#match').onclick = () => { 
+        window.localStorage.setItem('army', armySelectionJSON())
+        window.location = '/match'
+    }
+}
+
+function setAllSquareDimensions(modelID, elementsClass) {
+    const model = document.querySelector(modelID)
+    const w = parseFloat(model.style.width)
+    const h = parseFloat(model.style.height)
+
+    const setSelectorAllStyleDims = (selector, styleValue) => {
+        for (const e of document.querySelectorAll(selector)) {
+            e.style.width = styleValue
+            e.style.height = styleValue
+        }
+    }
+
+    if (w > h) {
+        setSelectorAllStyleDims(elementsClass, h + 'px')
+        return h
+    } else if (h > w) {
+        setSelectorAllStyleDims(elementsClass, w + 'px')
+        return w
+    }
+    return h
+}
+
+let resizeWait
+
+window.onresize = () => {
+    clearTimeout(resizeWait)
+    resizeWait = setTimeout(layoutPage, 150)
 }
 
 window.onload = layoutPage
-window.onresize = layoutPage

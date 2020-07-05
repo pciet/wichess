@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Wisconsin Chess - Match</title>
+    <link rel="stylesheet" type="text/css" href="/web/font.css">
+    <link rel="stylesheet" type="text/css" href="/web/match.css">
+    <script type="text/javascript">
+        window.Name = {{.Name}}
+        window.RecentOpponents = {{.RecentOpponents}}
+    </script>
+    <script type="module" src="/web/match.js"></script>
+</head>
+
+<body>
+
+<p><span id="player">{{.Name}}</span> playing Wisconsin Chess.</p>
+
+<div>
+    <div class="inline">
+        <div id="comp" class="activebutton">Play Computer</div>
+    </div>
+
+    <div class="inline">
+        <div class="inline">
+            <div id="r0" class="recentopp"></div>
+            <div id="r1" class="recentopp"></div>
+            <div id="r2" class="recentopp"></div>
+            <div id="r3" class="recentopp"></div>
+            <div id="r4" class="recentopp"></div>
+        </div>
+        <div class="inline">
+            <p id="matchingtext" class="hidden">Matching <span id="matchingname"></span>.</p>
+            <div id="cancel" class="hidden activebutton">Cancel</div>
+            <input id="opp">
+            <div id="oppsubmit" class="activebutton">Match</div>
+        </div>
+    </div>
+</div>
+
+</body>
+
+</html>

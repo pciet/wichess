@@ -28,6 +28,7 @@
         #local i = i + 1;
         #end
         scale <1.2,1.2,1>
+        translate <0,0,0.4>
     }
     lathe { // neck
         cubic_spline

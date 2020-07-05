@@ -152,6 +152,7 @@ a:link, a:visited {
     border: outset rgb(255,225,235);
     border-radius: 5px;
     background: linear-gradient(rgb(200,50,10), rgb(20,135,120));
+    box-shadow: -3px -3px 0 black;    
 }
 
 #queenprommargin, #rookprommargin, #bishopprommargin, #knightprommargin {

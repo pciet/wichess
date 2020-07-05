@@ -7,7 +7,8 @@ func (a Board) IsEnPassantMove(m Move) bool {
 		return false
 	}
 	s := a[m.From.Index()]
-	if s.Kind.Basic() != piece.Pawn {
+	if ((s.Orientation == Black) && (m.From.Rank != 3)) ||
+		((s.Orientation == White) && (m.From.Rank != 4)) || (s.Kind.Basic() != piece.Pawn) {
 		return false
 	}
 	to := a[m.To.Index()]
@@ -15,7 +16,7 @@ func (a Board) IsEnPassantMove(m Move) bool {
 		return false
 	}
 	taking := a[EnPassantTakeAddress(s.Orientation, m.To).Index()]
-	if taking.Empty() || (taking.Orientation == s.Orientation) {
+	if taking.Empty() || (taking.Orientation == s.Orientation) || (taking.Basic() != piece.Pawn) {
 		return false
 	}
 	return true

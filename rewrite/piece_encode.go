@@ -20,9 +20,6 @@ const (
 	EncodedPieceMovedBit  = 16
 	EncodedPieceMovedMask = 0x1
 
-	EncodedPieceInUseBit  = 24
-	EncodedPieceInUseMask = 0x1
-
 	EncodedPieceKindBit  = 32
 	EncodedPieceKindMask = 0xFFFF
 )
@@ -37,7 +34,6 @@ func (p Piece) Encode() EncodedPiece {
 
 	enc |= ShiftedUint64(uint64(Btoi(p.Moved)), EncodedPieceMovedMask, EncodedPieceMovedBit)
 	enc |= ShiftedUint64(uint64(p.Kind), EncodedPieceKindMask, EncodedPieceKindBit)
-	enc |= ShiftedUint64(uint64(Btoi(p.InUse)), EncodedPieceInUseMask, EncodedPieceInUseBit)
 
 	return EncodedPiece(enc)
 }
@@ -46,9 +42,6 @@ func (e EncodedPiece) Decode() Piece {
 	return Piece{
 		Slot: CollectionSlot(UnshiftedUint64(e.Uint64(),
 			EncodedPieceCollectionSlotMask, EncodedPieceCollectionSlotBit)),
-
-		InUse: Itob(int(UnshiftedUint64(e.Uint64(),
-			EncodedPieceInUseMask, EncodedPieceInUseBit))),
 
 		Piece: rules.Piece{
 			Orientation: rules.Orientation(UnshiftedUint64(e.Uint64(),

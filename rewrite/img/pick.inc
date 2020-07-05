@@ -17,19 +17,19 @@ global_settings {
 }
 
 camera {
-    location <0,-4,11.7>
+    location <0,-5,11>
     up <0,0,1>
     right <1,0,0>
     sky <0,0,1>
-    look_at <0,0,5>
+    look_at <0,0,3.5>
 }
 
 light_source {
-    <-4,-6,9.5>, rgb <1,0.98,0.99>
+    <-4,-6,50>, rgb <1,0.98,0.99>
 }
 
 light_source {
-    <10,2,20>, rgb <0.97,0.98,0.99>
+    <7,-5,40>, rgb <1,0.98,0.99>
 }
 
 sky_sphere {
@@ -37,15 +37,53 @@ sky_sphere {
 }
 
 box {
-    <-5,-5,-5000>,<5,5,-0.99999>
+    <-50,-50,-5000>,<50,50,-0.99999>
     texture {
         pigment {
-            rgb <1,0.9,0.7>
+            rgb <0.05,0.05,0.05>
+        }
+        normal {
+            waves
+            scale 0.2
         }
         finish {
-            diffuse albedo 0.7
-            specular 0
+            ambient 0
+            diffuse albedo 0.1
+            specular 0.05
+            roughness 0.01
+            reflection 0.2
         }
     }
 }
+
+
+#local i = 0;
+#while (i < 4)
+merge {
+    box {
+        <0,-5,-1>,<1,5,7>
+    }
+    box {
+        <-0.5,-5,-1>,<0,-4.5,7>
+    }
+    translate <5,0,0>
+    rotate <0,0,90*i>
+    texture {
+        pigment {
+            bozo
+            color_map {
+                [0.2 rgb 0][1 rgb 1]
+            }
+            scale 0.01
+        }
+        finish {
+            ambient 0
+            diffuse albedo 0.1
+            specular 0.7
+            roughness 0.001
+        }
+    }
+}
+#local i = i + 1;
+#end
 

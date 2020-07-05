@@ -44,6 +44,8 @@ var PieceRelPaths = func() map[piece.Kind]RelPathVariations {
 			RallyMove: {
 				{{1, 0}},
 				{{-1, 0}},
+				{{1, 1}},
+				{{-1, 1}},
 			},
 			Take: {
 				{{1, 1}},
@@ -57,6 +59,8 @@ var PieceRelPaths = func() map[piece.Kind]RelPathVariations {
 			RallyMove: {
 				{{1, 0}},
 				{{-1, 0}},
+				{{1, 1}},
+				{{-1, 1}},
 			},
 			Take: {
 				{{1, 1}},

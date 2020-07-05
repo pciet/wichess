@@ -32,7 +32,7 @@ func EndOpponentRequest(requester PlayerIdentifier) {
 // EndOpponentRequest is called from another goroutine. If the players successfully match then
 // a new game is created and the identifier for it returned, or 0 is returned otherwise. The
 // opponent is named by string so that the match is successful even if the username hasn't been
-// created yet. The opponent's player ID is also returned.
+// created yet. The opponent's player ID is also returned and is -1 if the username doesn't exist.
 func RequestOpponent(opponent string, requester Player,
 	with ArmyRequest) (GameIdentifier, PlayerIdentifier) {
 	OpponentRequestsLock.Lock()
@@ -85,10 +85,6 @@ func RequestOpponent(opponent string, requester Player,
 	tx = DatabaseTransaction()
 	oppID = PlayerID(tx, opponent)
 	tx.Commit()
-
-	if oppID == -1 {
-		Panic("unexpected missing player ID for", opponent)
-	}
 
 	return id, oppID
 }

@@ -17,11 +17,11 @@ function StateDef(name) {
 
 export const States = [
     new StateDef('Normal'),
-    new StateDef('Promotion'),
-    new StateDef('Check'),
-    new StateDef('Checkmate'),
-    new StateDef('Draw'),
-    new StateDef('Conceded'),
-    new StateDef('Time Over'),
-    new StateDef('Reverse Promotion')
+    new StateDef('PROMOTION'),
+    new StateDef('CHECK'),
+    new StateDef('CHECKMATE'),
+    new StateDef('DRAW'),
+    new StateDef('CONCEDED'),
+    new StateDef('TIME OVER'),
+    new StateDef('REVERSE PROMOTION')
 ]

@@ -44,8 +44,8 @@ var DetailsHTML = []string{
  square forward to the left or right. Pawns can still be moved forward even when they can capture.
 </p>
 <p>En passant is a capture that can only be done by pawns. If a pawn is moved forward two squares
- and passes through a square an opponent pawn could have captured it at, then the opponent can
- capture it by moving their pawn to the empty square.</p>
+ and passes through a square an opponent pawn could have captured it at, then only on their next
+ turn the opponent can capture it by moving their pawn to the empty square.</p>
 <p>If a pawn is moved entirely across the board to the last row then it must be promoted to a
  <a href="/details?p=queen">queen</a>, <a href="/details?p=rook">rook</a>,
  <a href="/details?p=bishop">bishop</a>, or <a href="/details?p=knight">knight</a>.</p>`,

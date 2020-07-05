@@ -1,30 +1,23 @@
-import { layoutSelector, interiorDimensions } from '../layout.js'
-import { NoKind } from '../pieceDefs.js'
-import { pieceLookImageName } from '../piece.js'
+import { Pieces } from '../pieceDefs.js'
 
-const CollectionCount = 21
+export function collectionImage(index) { 
+    return '/web/img/pick_'+Pieces[window.Collection[index]]+'.png'
+}
 
-export function addCollection() {
-    let a = ''
-    for (let i = 0; i < 3; i++) {
-        a += '<div>'
-        for (let j = 0; j < 7; j++) {
-            a += '<div class="inline collectioncell noselect" id="c'+((7*i)+j)+'"></div>'
-        }
-        a += '</div>'
+export function pickImage(kind) { return '/web/img/pick_'+Pieces[kind]+'.png' }
+
+export const LeftPick = -1
+export const RightPick = -2
+export const NotInCollection = 0
+
+export function collectionSelector(slot) {
+    switch (slot) {
+    case NotInCollection:
+        return ''
+    case LeftPick:
+        return '#leftpick'
+    case RightPick:
+        return '#rightpick'
     }
-    layoutSelector('#collection', a)
-
-    const dim = interiorDimensions(document.querySelector('#c0')).height + 'px'
-    for (const e of document.querySelectorAll('.collectioncell')) {
-        e.style.width = dim
-    }
-
-    for (let i = 0; i < CollectionCount; i++) {
-        if (Collection[i] == NoKind) {
-            continue
-        }
-        document.querySelector('#c'+i).innerHTML = '<img class="pieceimg noselect" src="/web/img/' +
-            pieceLookImageName(Collection[i]) + '">'
-    }
+    return '#c' + (slot-1)
 }

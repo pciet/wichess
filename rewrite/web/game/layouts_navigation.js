@@ -1,6 +1,6 @@
 import { gameDone } from '../game.js'
+import { ct } from '../layout_ct.js'
 
-import { ct } from './layouts_ct.js'
 import { optionControlsShown } from './layouts_controls.js'
 
 export function addNavigationClickHandlers() {

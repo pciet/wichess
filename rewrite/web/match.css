@@ -1,0 +1,52 @@
+* {
+    touch-action: none;
+}
+
+body {
+    background: linear-gradient(rgb(11,25,18), rgb(21,25,28));
+}
+
+.inline {
+    display: inline-block;
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+.recentopp, #comp, #oppsubmit, input, #cancel {
+    display: block;
+    margin: 1.5rem;
+    padding: 1.5rem;
+    font-size: 1.5rem;
+    font: inherit;
+}
+
+.recentopp {
+    border: thick outset rgb(105,75,78);
+    border-radius: 7px;
+    color: rgb(55,120,145);
+    font-style: italic;
+    background-color: rgb(20,50,70);
+    text-align: center;
+}
+
+.activebutton {
+    border: thick outset rgb(255,125,128);
+    border-radius: 7px;
+    color: rgb(255,240,245);
+    background-color: rgb(50,80,200);
+    box-shadow: 0px -4px 10px rgb(255,125,128);
+    text-align: center;
+}
+
+p {
+    color: white;
+    font-size: 1.6rem;
+    margin: 2rem;
+}
+
+#player, #matchingname {
+    font-weight: bold;    
+}
+

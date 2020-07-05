@@ -126,18 +126,21 @@
         pigment { 
             gradient z
             color_map {
-                [0 rgbf <0.1,0.2,0.4,0.8>]
-                [0.5 rgbf <0.4,0.4,0.3,1>]
-                [1 rgbf <0.1,0.2,0.5,0.8>]
+                [0 rgbf <0.5,0.7,1, 0.3>]
+                [0.7 rgbf <1,0.4,0.5, 0.4>]
+                [1 rgbf <0.5,0.7,1, 0.3>]
             }
-            scale 20
+            scale 6
+        }
+        normal {
+            wrinkles
+            scale 0.01
         }
         finish {
-            ambient 0.1
-            diffuse albedo 0.55
+            ambient 0
+            diffuse albedo 0.3
             specular 0.7
             roughness 0.1
-            reflection 0.05
         }
     }
     interior {
