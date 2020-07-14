@@ -24,8 +24,8 @@ func NewGame(tx *sql.Tx, wa, ba ArmyRequest, white, black Player) GameIdentifier
 	var id GameIdentifier
 	err = tx.QueryRow(GamesNewInsert,
 		false,
-		white.Name, false, wpicks.Left, wpicks.Right, emptyCaptures,
-		black.Name, false, bpicks.Left, bpicks.Right, emptyCaptures,
+		white.Name, false, wpicks.Left, wpicks.Right, piece.RandomSpecialKind(), emptyCaptures,
+		black.Name, false, bpicks.Left, bpicks.Right, piece.RandomSpecialKind(), emptyCaptures,
 		rules.White, rules.Black,
 		NoMove, NoMove,
 		0, 1,

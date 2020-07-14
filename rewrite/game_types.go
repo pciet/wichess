@@ -34,8 +34,9 @@ type (
 		Acknowledge bool `json:"-"`
 		// if a player chooses their left and/or right random pick pieces then they will be added
 		// to the player's collection if they complete the game
-		Left  piece.Kind `json:"-"`
-		Right piece.Kind `json:"-"`
+		Left   piece.Kind `json:"-"`
+		Right  piece.Kind `json:"-"`
+		Reward piece.Kind `json:"-"`
 	}
 
 	Game struct {

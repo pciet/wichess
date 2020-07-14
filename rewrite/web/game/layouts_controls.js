@@ -13,6 +13,8 @@ import { toggleMute, setMuteIcon, muted } from './audio.js'
 
 export let optionControlsShown = false
 
+// TODO: click handlers should be a separate group of files from layout
+
 export function addControlsClickHandlers() {
     if (optionControlsShown === false) {
         addShowMovesHandler()

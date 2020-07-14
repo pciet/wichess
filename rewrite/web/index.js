@@ -1,4 +1,4 @@
-import { addLayout, layout, scaleFont } from './layout.js'
+import { addLayout, layout, scaleFont, setAllSquareDimensions } from './layout.js'
 import { Pieces } from './pieceDefs.js'
 
 import { landscape } from './index/layouts.js'
@@ -31,28 +31,6 @@ export function layoutPage() {
         window.localStorage.setItem('army', armySelectionJSON())
         window.location = '/match'
     }
-}
-
-function setAllSquareDimensions(modelID, elementsClass) {
-    const model = document.querySelector(modelID)
-    const w = parseFloat(model.style.width)
-    const h = parseFloat(model.style.height)
-
-    const setSelectorAllStyleDims = (selector, styleValue) => {
-        for (const e of document.querySelectorAll(selector)) {
-            e.style.width = styleValue
-            e.style.height = styleValue
-        }
-    }
-
-    if (w > h) {
-        setSelectorAllStyleDims(elementsClass, h + 'px')
-        return h
-    } else if (h > w) {
-        setSelectorAllStyleDims(elementsClass, w + 'px')
-        return w
-    }
-    return h
 }
 
 let resizeWait

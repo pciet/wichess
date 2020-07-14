@@ -21,10 +21,7 @@ func NewSession(tx *sql.Tx, id PlayerIdentifier) string {
 	}
 	key := base64.StdEncoding.EncodeToString(k)
 
-	_, err = tx.Exec(PlayersSessionUpdate, []byte(key), id)
-	if err != nil {
-		Panic(err)
-	}
+	SQLExecRow(tx, PlayersSessionUpdate, []byte(key), id)
 
 	return key
 }
@@ -47,9 +44,4 @@ func PlayersSessionKey(tx *sql.Tx, id PlayerIdentifier) string {
 }
 
 // EndSession sets the player's row's session column to null.
-func EndSession(tx *sql.Tx, id PlayerIdentifier) {
-	_, err := tx.Exec(PlayersSessionUpdate, nil, id)
-	if err != nil {
-		Panic(err)
-	}
-}
+func EndSession(tx *sql.Tx, id PlayerIdentifier) { SQLExecRow(tx, PlayersSessionUpdate, nil, id) }

@@ -48,17 +48,7 @@ func PlayerRecentOpponentIDs(tx *sql.Tx,
 func UpdatePlayerRecentOpponents(tx *sql.Tx,
 	id PlayerIdentifier, opponents [RecentOpponentCount]PlayerIdentifier) {
 
-	r, err := tx.Exec(PlayersRecentOpponentsUpdate, pq.Array(opponents), id)
-	if err != nil {
-		Panic(err)
-	}
-	c, err := r.RowsAffected()
-	if err != nil {
-		Panic(err)
-	}
-	if c != 1 {
-		Panic(c, "rows affected by", PlayersRecentOpponentsUpdate, opponents, id)
-	}
+	SQLExecRow(tx, PlayersRecentOpponentsUpdate, pq.Array(opponents), id)
 }
 
 // AddPlayerRecentOpponent updates the list of recent opponents by inserting this one at the top.

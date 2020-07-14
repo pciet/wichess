@@ -29,11 +29,10 @@ p {
 #detailsmargin {
     height: 10%;
     padding: 5px;
-    padding-bottom: 20px;
 }
 
 #details {
-    border: thin outset rgb(205,175,128);
+    border: thick outset rgb(205,175,128);
     border-radius: 5px;
     font-size: 1.3rem;
     color: rgb(220,220,200);
@@ -42,7 +41,7 @@ p {
 }
 
 #title {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     color: rgb(250,110,120);
     text-shadow: 1px 1px 0 rgb(5,5,50);
     font-weight: bold;
@@ -69,6 +68,10 @@ p {
     padding: 15px;
 }
 
+.leftspacer {
+    height: 10%;
+}
+
 #picksmargin {
     height: 20%;
 }
@@ -78,11 +81,17 @@ p {
     border-radius: 5px;
 }
 
-#pickdesc {
-    padding: 20px;
+#pickstitlemargin {
+    height: 10%;
+    padding: 10px;
+}
+
+#pickstitle {
     color: rgb(100,220,180);
-    font-size: 1.3rem;
-    font-style: italic;
+    background-color: rgb(25,45,25);
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
 }
 
 #matchmargin {
@@ -102,17 +111,33 @@ p {
 #army {
     text-align: center;
     height: 30%;
+    padding: 10px;
 }
 
-#armydesc {
-    padding-bottom: 5px;
-    padding-top: 15px;
-    padding-left: 30px;
-    padding-right: 30px;
+#armytitlemargin {
+    height: 10%;
+    padding: 10px;
+}
+
+#armytitle {
     color: rgb(255,195,175);
-    font-size: 1.2rem;
-    font-style: italic;
-    height: 15%;
+    background-color: rgb(65,55,10);
+    font-size: 1.5rem;
+    text-align: center;
+    font-weight: bold;
+}
+
+#collectiontitlemargin {
+    height: 10%;
+    padding: 10px;
+}
+
+#collectiontitle {
+    text-align: center;
+    font-weight: bold;
+    color: rgb(240,140,25);
+    background-color: rgb(25,25,95);
+    font-size: 1.5rem;
 }
 
 #collection {
@@ -121,7 +146,6 @@ p {
 }
 
 .collectioncell {
-    background: linear-gradient(rgb(110,250,180), rgb(210,250,28));
     border: thick outset rgb(70,150,20);
     border-radius: 3px;
 }

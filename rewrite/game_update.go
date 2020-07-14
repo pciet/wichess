@@ -99,16 +99,5 @@ func UpdateGame(tx *sql.Tx, id GameIdentifier, active, previousActive rules.Orie
 		fmt.Println(args)
 	}
 
-	r, err := tx.Exec(s.String(), args...)
-	if err != nil {
-		Panic(err)
-	}
-
-	c, err := r.RowsAffected()
-	if err != nil {
-		Panic(err)
-	}
-	if c != 1 {
-		Panic(c, "rows affected by", s.String())
-	}
+	SQLExecRow(tx, s.String(), args...)
 }

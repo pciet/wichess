@@ -7,7 +7,7 @@ export function addNavigationClickHandlers() {
     if (gameDone() === true) {
         const ack = document.querySelector('#ack')
         document.querySelector('#ack').onclick = () => {
-            fetch('/acknowledge/' + GameInformation.ID).then(() => { window.location = '/' })
+            window.location = '/reward/' + GameInformation.ID
         }
         return
     }

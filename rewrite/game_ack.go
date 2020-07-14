@@ -23,16 +23,5 @@ func AcknowledgeGameComplete(tx *sql.Tx, id GameIdentifier, player string) {
 		Panic("GameHasPlayer shows", player, "in", id, ", but player not in header")
 	}
 
-	r, err := tx.Exec(exec, true, id)
-	if err != nil {
-		Panic(err)
-	}
-
-	c, err := r.RowsAffected()
-	if err != nil {
-		Panic(err)
-	}
-	if c != 1 {
-		Panic(c, "rows affected by", exec)
-	}
+	SQLExecRow(tx, exec, true, id)
 }

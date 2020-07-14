@@ -28,7 +28,7 @@ export let moveablePiecesShown = false
 export function addShowMovesHandler() {
     const sm = document.querySelector('#showmoves')
     sm.onclick = () => {
-        if (ActiveOrientation !== PlayerOrientation) {
+        if ((ActiveOrientation !== PlayerOrientation) || (gameDone() === true)) {
             return
         }
         showMoveablePieces()

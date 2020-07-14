@@ -70,8 +70,14 @@ func InitializeHTTP() {
 	// An opponent is alerted to board changes caused by a move with a WebSocket message.
 	http.Handle(AlertPath, AlertWebSocketUpgradeHandler)
 
-	// A player acknowledges they've reviewed the final position and don't need to see it again
-	// with a GET of /acknowledge/[game identifier].
+	// When a game is complete the player navigates to the reward webpage to optionally put the
+	// picked pieces (if selected before the start of the game) and a random reward piece into
+	// their collection. The acknowledge button is on this webpage.
+	// A POST is sent with any selection.
+	http.Handle(RewardPath, RewardHandler)
+
+	// A player acknowledges they've reviewed the rewards and final position and don't need to
+	// see them again with a GET of /acknowledge/[game identifier].
 	http.Handle(AcknowledgePath, AcknowledgeHandler)
 
 	// All files used by the webpages, including JavaScript and CSS, is in the web folder.

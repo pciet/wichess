@@ -1,8 +1,8 @@
 import { ct } from '../layout_ct.js'
 import { NoKind } from '../pieceDefs.js'
+import { collectionImage, pickImage } from '../collection.js'
 
 import { armyImage } from './army.js'
-import { collectionImage, pickImage } from './collection.js'
 
 // ct(id, classes, inline, noselect, text)
 
@@ -15,21 +15,20 @@ export const landscape = `
 </div>
 <div>
     <div id="left" class="inline">
-        ` + ct('details', '', false, true, 'Piece Details') + `
+        ` + ct('pickstitle', '', false, true, 'Random Picks') + `
         <div id="picksmargin">
             <img id="leftpick" class="inline pick" src="` + pickImage(window.LeftPiece) + `">
             <img id="rightpick" class="inline pick" src="` + pickImage(window.RightPiece) + `">
         </div>
-        <p id="pickdesc">The two above pieces can be added to the army. If you then complete a
-            game used ones are added to your collection and replaced with another random piece.</p>
+        <div class="leftspacer"></div> ` +
+        ct('details', '', false, true, 'Piece Details') + `
+        <div class="leftspacer"></div>
         ` + ct('match', '', false, true, 'Match') + `
     </div>
     <div class="inline">
-        <p id="armydesc">Below is your army that will be put onto the game board. Click on pieces 
-            in the collection below that or to the left then at where you want them in the army to
-            customize. 
-            Pieces must be the same basic kind as the regular chess piece they are replacing.</p>
+        ` + ct('armytitle', '', false, true, 'Army') + `
         <div id="army">` + army() + `</div>
+        ` + ct('collectiontitle', '', false, true, 'Collection') + `
         <div id="collection">` + collection() + `</div>
     </div>
 </div>
@@ -55,12 +54,8 @@ function collection() {
         t += '<div>'
         for (let j = 0; j < 7; j++) {
             const index = (7*i) + j
-            if (window.Collection[index] === NoKind) {
-                t += '<div id="c'+index+'" class="inline collectioncell noselect"></div>'
-            } else {
-                t += '<img id="c'+index+'" class="inline collectioncell noselect" src="' + 
-                    collectionImage(index) + '">'
-            }
+            t += '<img id="c'+index+'" class="inline collectioncell noselect" src="' + 
+                collectionImage(index) + '">'
         }
         t += '</div>'
     }

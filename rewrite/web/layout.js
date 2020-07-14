@@ -1,5 +1,5 @@
 import { layoutElement } from './layoutElement.js'
-export { addLayout, removeLayout, removeAllLayouts, layout, layoutSelector, 
+export { addLayout, removeLayout, removeAllLayouts, layout, layoutSelector, setAllSquareDimensions,
     removeNewlines, interiorDimensions, layoutElement, scaleFont, addCSSRuleProperty }
 
 let layouts = []
@@ -35,6 +35,28 @@ function layoutSelector(s, withString) {
     const e = document.querySelector(s)
     e.innerHTML = removeNewlines(withString)
     layoutElement(e)
+}
+
+function setAllSquareDimensions(modelID, elementsClass) {
+    const model = document.querySelector(modelID)
+    const w = parseFloat(model.style.width)
+    const h = parseFloat(model.style.height)
+
+    const setSelectorAllStyleDims = (selector, styleValue) => {
+        for (const e of document.querySelectorAll(selector)) {
+            e.style.width = styleValue
+            e.style.height = styleValue
+        }
+    }
+
+    if (w > h) {
+        setSelectorAllStyleDims(elementsClass, h + 'px')
+        return h
+    } else if (h > w) {
+        setSelectorAllStyleDims(elementsClass, w + 'px')
+        return w
+    }
+    return h
 }
 
 function pickLayout() {

@@ -1,6 +1,20 @@
 package main
 
-import "database/sql"
+import (
+	"database/sql"
+
+	"github.com/pciet/wichess/rules"
+)
+
+func GamePlayersOrientation(tx *sql.Tx, id GameIdentifier, name string) rules.Orientation {
+	white, black := GamePlayers(tx, id)
+	if name == white {
+		return rules.White
+	} else if name != black {
+		Panic("player", name, "not in game", id, "with", white, black)
+	}
+	return rules.Black
+}
 
 // GamesActiveAndOpponentName queries the database to show if this player is the active player
 // and get the opponent name.

@@ -1,7 +1,7 @@
 import { NoKind, BasicKinds } from '../pieceDefs.js'
+import { LeftPick, RightPick, NotInCollection, collectionSelector } from '../collection.js'
 
 import { Army, ArmySlot, deselectArmySlot, replaceArmySlot } from './army.js'
-import { LeftPick, RightPick, NotInCollection, collectionSelector } from './collection.js'
 
 export function addPieceClicks() {
     document.querySelector('#leftpick').onclick = 

@@ -1,6 +1,5 @@
 import { Pieces, Pawn, Knight, Bishop, Rook, Queen, King } from '../pieceDefs.js'
-
-import { NotInCollection, LeftPick, RightPick, collectionSelector } from './collection.js'
+import { NotInCollection, LeftPick, RightPick, collectionSelector } from '../collection.js'
 
 export function ArmySlot(kind, collection = NotInCollection) {
     return {

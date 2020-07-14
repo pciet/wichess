@@ -25,12 +25,14 @@ CREATE TABLE games (
     white_ack BOOLEAN,
     white_left_kind INTEGER,
     white_right_kind INTEGER,
+    white_reward INTEGER,
     white_captures INTEGER[15],
 
     black VARCHAR(24),
     black_ack BOOLEAN,
     black_left_kind INTEGER,
     black_right_kind INTEGER,
+    black_reward INTEGER,
     black_captures INTEGER[15],
 
     -- 0/false for white,

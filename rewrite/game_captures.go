@@ -40,19 +40,8 @@ func AddGameCapture(tx *sql.Tx, in GameIdentifier, of rules.Orientation, k piece
 	}
 	arrStr := capturesKey + "[" + strconv.Itoa(i) + "]"
 	u := SQLUpdate(GamesTable, arrStr, GamesIdentifier)
-	r, err := tx.Exec(u, k, in)
-	if err != nil {
-		DebugPrintln(u)
-		DebugPrintln(i, k, in)
-		Panic(err)
-	}
-	c, err := r.RowsAffected()
-	if err != nil {
-		Panic(err)
-	}
-	if c != 1 {
-		Panic(c, "rows affected by", u)
-	}
+
+	SQLExecRow(tx, u, k, in)
 }
 
 func LoadGameCaptures(tx *sql.Tx,
