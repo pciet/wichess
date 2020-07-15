@@ -78,6 +78,8 @@ var (
 		GamesConceded,
 	}, GamesTable, GamesIdentifier)
 
+	GamesActiveQuery = SQLQuery([]string{GamesActive}, GamesTable, GamesIdentifier)
+
 	// TODO: is there a useful generalized SQL func to make for GamesNewInsert?
 
 	GamesNewInsert = func() string {

@@ -11,6 +11,9 @@ export function addPieceClicks() {
             collectionClick('#rightpick', ArmySlot(window.RightPiece, RightPick))
 
     for (let i = 0; i < window.Collection.length; i++) {
+        if (window.Collection[i] === NoKind) {
+            continue
+        }
         const id = '#c'+i
         document.querySelector(id).onclick = 
             collectionClick(id, ArmySlot(window.Collection[i], i+1))

@@ -4,14 +4,35 @@
 
 body {
     background: linear-gradient(rgb(11,25,18), rgb(21,25,28));
-}
-
-.inline {
-    display: inline-block;
+    background-attachment: fixed;
 }
 
 .hidden {
     visibility: hidden;
+}
+
+.noselect {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.flex {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.main {
+    background: linear-gradient(rgb(21,25,18), rgb(41,35,18));
+    border: thin solid rgb(255,20,10);
+    border-radius: 9px;
+    margin: 10px;
+}
+
+.section {
+    flex-grow: 1;
 }
 
 .recentopp, #comp, #oppsubmit, input, #cancel {
@@ -25,9 +46,9 @@ body {
 .recentopp {
     border: thick outset rgb(105,75,78);
     border-radius: 7px;
-    color: rgb(55,120,145);
+    color: rgb(95,90,145);
     font-style: italic;
-    background-color: rgb(20,50,70);
+    background-color: rgb(20,20,70);
     text-align: center;
 }
 
@@ -35,18 +56,52 @@ body {
     border: thick outset rgb(255,125,128);
     border-radius: 7px;
     color: rgb(255,240,245);
-    background-color: rgb(50,80,200);
+    background-color: rgb(80,80,200);
     box-shadow: 0px -4px 10px rgb(255,125,128);
     text-align: center;
 }
 
 p {
-    color: white;
-    font-size: 1.6rem;
-    margin: 2rem;
+    text-align: center;
+    color: rgb(20,50,190);
+    background-color: rgb(30,5,25);
+    font-size: 2.5rem;
+    margin: 1.5rem;
+    padding: 20px;
+}
+
+.description {
+    background-color: transparent;
+    font-size: 1rem;
+    color: rgb(240,240,255);
+    margin: 1rem;
+}
+
+#pagetitle {
+    margin-bottom: 0;
+    text-shadow: 0px 2px 0 white;
+}
+
+#pagedesc {
+    margin: 0;
+}
+
+#matchdesc {
+    width: 20%;
 }
 
 #player, #matchingname {
+    text-shadow: none;
+    color: rgb(255,230,240);
     font-weight: bold;    
 }
 
+#beststreaktitle, #streaktitle {
+    font-size: 1.3rem;
+    background-color: rgb(40,20,10);
+    color: rgb(50,75,200);
+}
+
+#beststreak, #streak {
+    color: rgb(105,130,255);
+}

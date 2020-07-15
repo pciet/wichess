@@ -16,7 +16,9 @@ export const Pieces = [
     'war',
     'formpawn',
     'constructive',
-    'confined'
+    'confined',
+    'original',
+    'irrelevant'
 ]
 
 export const BasicKinds = [
@@ -25,5 +27,7 @@ export const BasicKinds = [
     Pawn,
     Pawn,
     Knight,
-    Pawn
+    Pawn,
+    Bishop,
+    Rook
 ]

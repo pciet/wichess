@@ -17,8 +17,11 @@ type Piece struct {
 	// Asserts
 	Guards bool `json:"-"`
 
+	// Immaterial
 	Fortified bool `json:"-"`
-	Locks     bool `json:"-"`
+
+	// Stops
+	Locks bool `json:"-"`
 
 	// Enables
 	Rallies bool `json:"-"`
@@ -58,6 +61,10 @@ func (a Piece) ApplyCharacteristics() Piece {
 			a.Rallies = true
 		case piece.Reveals:
 			a.Reveals = true
+		case piece.Stops:
+			a.Locks = true
+		case piece.Immaterial:
+			a.Fortified = true
 		default:
 			return false
 		}

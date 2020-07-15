@@ -51,15 +51,22 @@ var DetailsHTML = []string{
  <a href="/details?p=bishop">bishop</a>, or <a href="/details?p=knight">knight</a>.</p>`,
 
 	`<h1>WAR</h1>
-<p>The war piece is a <a href="/details?p=pawn">pawn</a> except that it cannot move two squares
- forward for its first move.</p>`,
+<p>The war is a <a href="/details?p=pawn">pawn</a> except that it can't move two squares forward 
+for the first move.</p>`,
 
 	`<h1>FORM</h1>
-<p>The form piece is a <a href="/details?p=pawn">pawn</a>.</p>`,
+<p>The form is a <a href="/details?p=pawn">pawn</a>.</p>`,
 
 	`<h1>CONSTRUCTIVE</h1>
 <p>The constructive is a <a href="/details?p=knight">knight</a>.</p>`,
 
 	`<h1>CONFINED</h1>
 <p>The confined is a <a href="/details?p=pawn">pawn</a>.</p>`,
+
+	`<h1>ORIGINAL</h1>
+<p>The original is a <a href="/details?p=bishop">bishop</a> except it only moves one square.</p>`,
+
+	`<h1>IRRELEVANT</h1>
+<p>The irrelevant is a <a href="/details?p=rook">rook</a> except it can only move five squares.
+</p>`,
 }

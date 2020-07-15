@@ -91,6 +91,15 @@ func GamePlayers(tx *sql.Tx, id GameIdentifier) (string, string) {
 	return white, black
 }
 
+func GameActive(tx *sql.Tx, id GameIdentifier) rules.Orientation {
+	var active bool
+	err := tx.QueryRow(GamesActiveQuery, id).Scan(&active)
+	if err != nil {
+		Panic(err)
+	}
+	return rules.BoolToOrientation(active)
+}
+
 func GamePreviousActive(tx *sql.Tx, id GameIdentifier) string {
 	var pa bool
 	err := tx.QueryRow(GamesPreviousActiveQuery, id).Scan(&pa)

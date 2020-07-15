@@ -67,6 +67,14 @@ var PieceRelPaths = func() map[piece.Kind]RelPathVariations {
 				{{-1, 1}},
 			},
 		},
+		piece.Original: {
+			NormalMove: SingleBishopPaths,
+			RallyMove:  TwoBishopPaths,
+		},
+		piece.Irrelevant: {
+			NormalMove: FiveRookPaths,
+			RallyMove:  KingPaths,
+		},
 	}
 
 	for k, v := range m {

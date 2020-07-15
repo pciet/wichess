@@ -52,4 +52,11 @@ var (
 
 	PlayersPeopleGameQuery  = SQLQuery([]string{PlayersPeopleGame}, PlayersTable, PlayersIdentifier)
 	PlayersPeopleGameUpdate = SQLUpdate(PlayersTable, PlayersPeopleGame, PlayersIdentifier)
+
+	PlayersComputerStreakQuery = SQLQuery([]string{PlayersComputerStreak,
+		PlayersBestComputerStreak}, PlayersTable, PlayersIdentifier)
+	PlayersComputerStreakUpdate = SQLUpdate(PlayersTable,
+		PlayersComputerStreak, PlayersIdentifier)
+	PlayersBestComputerStreakUpdate = SQLUpdate(PlayersTable,
+		PlayersBestComputerStreak, PlayersIdentifier)
 )

@@ -12,6 +12,8 @@ var CodeNames = []string{
 	"formpawn", // 'pawn' added to name to avoid POV-Ray reserved word 'form'
 	"constructive",
 	"confined",
+	"original",
+	"irrelevant",
 }
 
 var Names = []string{
@@ -26,6 +28,8 @@ var Names = []string{
 	"Form",
 	"Constructive",
 	"Confined",
+	"Original",
+	"Irrelevant",
 }
 
 func KindForCodeName(n string) Kind {

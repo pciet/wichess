@@ -18,8 +18,10 @@ var MatchHandler = AuthenticRequestHandler{
 func init() { ParseHTMLTemplate(MatchHTMLTemplate) }
 
 type MatchHTMLTemplateData struct {
-	Name            string
-	RecentOpponents [RecentOpponentCount]string
+	Name               string
+	RecentOpponents    [RecentOpponentCount]string
+	ComputerStreak     int
+	BestComputerStreak int
 }
 
 func MatchGet(w http.ResponseWriter, r *http.Request, tx *sql.Tx, requester Player) {
@@ -34,10 +36,13 @@ func MatchGet(w http.ResponseWriter, r *http.Request, tx *sql.Tx, requester Play
 	}
 
 	opp := PlayerRecentOpponents(tx, requester.ID)
+	streak, best := PlayerComputerStreak(tx, requester.ID)
 	tx.Commit()
 
 	WriteHTMLTemplate(w, MatchHTMLTemplate, MatchHTMLTemplateData{
-		Name:            requester.Name,
-		RecentOpponents: opp,
+		Name:               requester.Name,
+		RecentOpponents:    opp,
+		ComputerStreak:     streak,
+		BestComputerStreak: best,
 	})
 }

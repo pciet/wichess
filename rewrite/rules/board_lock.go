@@ -8,6 +8,10 @@ func (a Board) PieceLocked(at Address) bool {
 		Panic("no piece at", at, a)
 	}
 
+	if (p.Kind == piece.King) || (p.Kind == piece.Queen) {
+		return false
+	}
+
 	for _, s := range a.SurroundingSquares(at) {
 		if (s.Kind == piece.NoKind) || (s.Orientation == p.Orientation) {
 			continue

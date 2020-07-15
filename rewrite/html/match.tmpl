@@ -15,26 +15,40 @@
 
 <body>
 
-<p><span id="player">{{.Name}}</span> playing Wisconsin Chess.</p>
+<p id="pagetitle"><span id="player">{{.Name}}</span> playing Wisconsin Chess.</p>
 
-<div>
-    <div class="inline">
-        <div id="comp" class="activebutton">Play Computer</div>
+<p class="description" id="pagedesc">Choose a mode. Either play against the automatic computer 
+opponent or against a person you know.</p>
+
+<div class="flex">
+    <div class="main section flex">
+        <div class="section">
+            <div id="comp" class="activebutton noselect">Play Computer</div>
+        </div>
+        <div class="section">
+            <p id="beststreaktitle">Your Top Computer Win Streak: 
+                <span id="beststreak">{{.BestComputerStreak}}</p>
+            <p id="streaktitle">Your Current Computer Win Streak: 
+                <span id="streak">{{.ComputerStreak}}</p>
+        </div>
     </div>
 
-    <div class="inline">
-        <div class="inline">
+    <div class="main section flex">
+        <p class="description" id="matchdesc">Enter your opponent's name in the text box then 
+        press the match button. If your opponent does the same with your name then the game 
+        starts. Any successful matches are saved as shortcut buttons for future games.</p>
+        <div class="section">
             <div id="r0" class="recentopp"></div>
             <div id="r1" class="recentopp"></div>
             <div id="r2" class="recentopp"></div>
             <div id="r3" class="recentopp"></div>
             <div id="r4" class="recentopp"></div>
         </div>
-        <div class="inline">
+        <div class="section">
             <p id="matchingtext" class="hidden">Matching <span id="matchingname"></span>.</p>
-            <div id="cancel" class="hidden activebutton">Cancel</div>
+            <div id="cancel" class="hidden activebutton noselect">Cancel</div>
             <input id="opp">
-            <div id="oppsubmit" class="activebutton">Match</div>
+            <div id="oppsubmit" class="activebutton noselect">Match</div>
         </div>
     </div>
 </div>

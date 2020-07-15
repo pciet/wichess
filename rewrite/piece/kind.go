@@ -14,6 +14,8 @@ const (
 	Form
 	Constructive
 	Confined
+	Original
+	Irrelevant
 	KindCount
 )
 
@@ -27,9 +29,9 @@ func (a Kind) Basic() Kind {
 		return King
 	case Queen:
 		return Queen
-	case Bishop:
+	case Bishop, Original:
 		return Bishop
-	case Rook:
+	case Rook, Irrelevant:
 		return Rook
 	case Knight, Constructive:
 		return Knight
