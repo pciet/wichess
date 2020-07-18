@@ -1,47 +1,39 @@
-// Copyright 2017 Matthew Juran
-// All Rights Reserved
-
 package main
 
 import (
+	"database/sql"
+
 	"golang.org/x/crypto/bcrypt"
 )
 
-// The client code is responsible for checking the specifics of password requirements because the server behavior is the same for "wrong password" and "invalid password for new player".
-func (db DB) loginOrCreate(name, password string) string {
-	key := db.login(name, password)
-	if key != "" {
-		return key
-	}
-	return db.createAndLogin(name, password)
-}
+// Login queries the database for the username and encrypted password.
+// The password argument is the unencrypted password which is then re-encrypted for comparsion
+// to the database value.
+// If the credentials are correct then the player's ID in the players table and a new session
+// key are returned.
+// If the username doesn't exist in the database then it and the encrypted password are inserted.
+func Login(name, password string) (PlayerIdentifier, string) {
+	tx := DatabaseTransaction()
+	defer tx.Commit()
 
-func (db DB) login(name, password string) string {
-	has, encrypt := db.playerCrypt(name)
-	if has == false {
-		return ""
+	var id PlayerIdentifier
+	var c string
+	err := tx.QueryRow(PlayersCryptQuery, name).Scan(&id, &c)
+	switch err {
+	case sql.ErrNoRows:
+		crypt, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+		if err != nil {
+			Panic(err)
+		}
+		id = NewPlayer(tx, name, string(crypt))
+	case nil:
+		err = bcrypt.CompareHashAndPassword([]byte(c), []byte(password))
+		if err != nil {
+			return 0, ""
+		}
+	default:
+		Panic(err)
 	}
-	err := bcrypt.CompareHashAndPassword([]byte(encrypt), []byte(password))
-	if err != nil {
-		return ""
-	}
-	sessionKey := newSessionKey()
-	db.newSession(name, sessionKey)
-	return sessionKey
-}
 
-func (db DB) createAndLogin(name, password string) string {
-	exists, _ := db.playerCrypt(name)
-	if exists {
-		return ""
-	}
-	if (name == easy_computer_player) || (name == hard_computer_player) {
-		return ""
-	}
-	crypt, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	if err != nil {
-		panicExit(err.Error())
-	}
-	db.newPlayer(name, string(crypt))
-	return db.login(name, password)
+	return id, NewSession(tx, id)
 }

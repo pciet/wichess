@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 pg_exit () {
     pg_ctl -D database/data stop

@@ -33,6 +33,8 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+#TODO: call ./InitDB.sh instead of having a copy here
+
 initdb database/data
 if [ $? -ne 0 ]; then
     exit 1

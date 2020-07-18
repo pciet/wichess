@@ -1,6 +1,3 @@
-// Copyright 2017 Matthew Juran
-// All Rights Reserved
-
 package main
 
 import (
@@ -11,42 +8,19 @@ import (
 	_ "github.com/lib/pq"
 )
 
-const (
-	database_config_file = "dbconfig.json"
-	// https://github.com/pciet/wichess/issues/9
-	database_max_idle_conns = 10
-	// on macOS the fd limit is 256
-	database_max_open_conns = 50
-)
+const DatabaseConfigFile = "dbconfig.json"
 
-type DB struct {
-	*sql.DB
-}
+var Database *sql.DB
 
-var database DB
-
-type TX struct {
-	*sql.Tx
-}
-
-func (db DB) Begin() TX {
-	tx, err := db.DB.Begin()
+func DatabaseTransaction() *sql.Tx {
+	tx, err := Database.Begin()
 	if err != nil {
-		panicExit(err.Error())
+		Panic(err)
 	}
-	return TX{
-		Tx: tx,
-	}
+	return tx
 }
 
-func (tx TX) Commit() {
-	err := tx.Tx.Commit()
-	if err != nil {
-		panicExit(err.Error())
-	}
-}
-
-type databaseConfiguration struct {
+type DatabaseConfiguration struct {
 	Database string
 	User     string
 	Password string
@@ -55,28 +29,35 @@ type databaseConfiguration struct {
 	SslMode  string
 }
 
-func initializeDatabaseConnection() {
-	file, err := ioutil.ReadFile(database_config_file)
+// https://github.com/pciet/wichess/issues/9
+const (
+	MaxIdleDatabaseConns = 10
+	MaxOpenDatabaseConns = 50
+)
+
+func InitializeDatabaseConnection() {
+	file, err := ioutil.ReadFile(DatabaseConfigFile)
 	if err != nil {
-		panicExit(err.Error())
+		Panic(err)
 	}
-	var config databaseConfiguration
+	var config DatabaseConfiguration
 	err = json.Unmarshal(file, &config)
 	if err != nil {
-		panicExit(err.Error())
+		Panic(err)
 	}
-	args := "dbname=" + config.Database + " host=" + config.Host + " port=" + config.Port + " sslmode=" + config.SslMode
+	args := "dbname=" + config.Database + " host=" + config.Host + " port=" + config.Port +
+		" sslmode=" + config.SslMode
 	if config.User != "" {
 		args += " user=" + config.User + " password=" + config.Password
 	}
-	database.DB, err = sql.Open("postgres", args)
+	Database, err = sql.Open("postgres", args)
 	if err != nil {
-		panicExit(err.Error())
+		Panic(err)
 	}
-	err = database.Ping()
+	err = Database.Ping()
 	if err != nil {
-		panicExit(err.Error())
+		Panic(err)
 	}
-	database.SetMaxIdleConns(database_max_idle_conns)
-	database.SetMaxOpenConns(database_max_open_conns)
+	Database.SetMaxIdleConns(MaxIdleDatabaseConns)
+	Database.SetMaxOpenConns(MaxOpenDatabaseConns)
 }
