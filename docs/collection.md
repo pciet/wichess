@@ -4,9 +4,11 @@ Choosing pieces for the army before a game starts has some nuance, described her
 
 On the index webpage the player is shown two boxes with special pieces, the left and right picks. These are randomly selected, different than each other, and are persistent for the player until used.
 
-When clicked the piece is added to the army, and the pick slot is replaced with a new special piece. Once the game is completed then the picked piece is added to the player's collection. Both picks can be included in an army. If the game is conceded then the player doesn't get the piece.
+When clicked the piece can be added to the army by a click on it. Once a game is started then that random pick slot will be replaced with a new piece.
 
-Some modes allow use of collection pieces. There are 21 slots for these, and they are gotten from completing games with pick pieces. If a collection piece is taken in a game then the piece is lost from the player's collection. Collection pieces cannot be used in concurrent games; the index shows this by making the piece unselectable and greyed out somehow.
+If a game is completed (not conceded) then a reward screen is shown where the left and right pieces, if selected before the game started, can optionally be added to the collection. An additional random reward piece is also presented here. If a rewarded piece is not added to the collection then it's lost forever.
+
+The collection has 21 slots and can be used to create custom armies before starting games. Pieces are unchanged unless the player decides to replace pieces with new rewards.
 
 ## Index Army Logic
 
