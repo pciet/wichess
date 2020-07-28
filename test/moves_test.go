@@ -7,10 +7,10 @@ import (
 )
 
 // TestMoves tests the rules.Game.Moves method that determines which moves are available for
-// the active player in a position. Test cases are defined by wichess/test/builder and saved into
-// wichess/tests/cases as JSON to be loaded by this test.
+// the active player in a position. Test cases are defined by test/builder and saved into
+// test/cases as JSON to be loaded by this test.
 func TestMoves(t *testing.T) {
-	for _, tc := range LoadMovesCases() {
+	for _, tc := range LoadAllMovesCases() {
 		var board rules.Board
 		for _, piece := range tc.Position {
 			board[piece.Address.Index()] = rules.Square(rules.Piece{

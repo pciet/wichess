@@ -1,5 +1,4 @@
-// wichess/test/builder is a program to visually make test cases for tests in the test directory.
-// For now this is just a test of expected moves for a position.
+// test/builder is a program to visually make cases for package test.
 package main
 
 import (
@@ -8,19 +7,29 @@ import (
 	"net/http"
 )
 
+const (
+	MovesTag     = "moves"
+	AfterMoveTag = "after"
+)
+
 func main() {
-	http.HandleFunc("/", BuilderPageHandler)
-	http.HandleFunc("/categories", CategoriesHandler)
-	http.HandleFunc("/category", CategoryHandler)
-	http.HandleFunc("/savecase", SaveCaseHandler)
+	http.HandleFunc("/", HTMLHandler(indexPage))
+
+	http.HandleFunc("/moves", HTMLHandler(movesPage))
+	http.HandleFunc("/moves/categories", CategoriesHandler(MovesTag))
+	http.HandleFunc("/moves/category", CategoryHandler(MovesTag))
+	http.HandleFunc("/moves/save", SaveCategoryHandler(MovesTag))
+
+	http.HandleFunc("/after", HTMLHandler(afterPage))
+	http.HandleFunc("/after/categories", CategoriesHandler(AfterMoveTag))
+	http.HandleFunc("/after/category", CategoryHandler(AfterMoveTag))
+	http.HandleFunc("/after/save", SaveCategoryHandler(AfterMoveTag))
 
 	http.Handle("/web/", http.StripPrefix("/web/", http.FileServer(http.Dir("./"))))
-
 	http.Handle("/img/", http.StripPrefix("/img/", http.FileServer(http.Dir("../../web/img"))))
 
 	// app JavaScript is reused in the /wichess/ path
-	http.Handle("/wichess/", http.StripPrefix("/wichess/",
-		http.FileServer(http.Dir("../../web"))))
+	http.Handle("/wichess/", http.StripPrefix("/wichess/", http.FileServer(http.Dir("../../web"))))
 
 	err := http.ListenAndServe(":8081", nil)
 	if err != nil {
@@ -28,16 +37,26 @@ func main() {
 	}
 }
 
-var builderPage []byte
+var movesPage, afterPage, indexPage []byte
 
-func BuilderPageHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html")
-	fmt.Fprint(w, string(builderPage))
+func HTMLHandler(b []byte) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html")
+		fmt.Fprint(w, string(b))
+	}
 }
 
 func init() {
 	var err error
-	builderPage, err = ioutil.ReadFile("builder.html")
+	movesPage, err = ioutil.ReadFile("html/moves.html")
+	if err != nil {
+		Panic(err)
+	}
+	afterPage, err = ioutil.ReadFile("html/after.html")
+	if err != nil {
+		Panic(err)
+	}
+	indexPage, err = ioutil.ReadFile("html/index.html")
 	if err != nil {
 		Panic(err)
 	}

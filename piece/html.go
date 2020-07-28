@@ -75,7 +75,8 @@ for the first move.</p>`,
  and captures backwards.</p>`,
 
 	`<h1>LINE</h1>
-<p>The line is a <a href="/details?p=knight">knight</a> that can't move over pieces.</p>`,
+<p>The line is a <a href="/details?p=knight">knight</a> that can't move over pieces and only moves
+ toward the opponent.</p>`,
 
 	`<h1>IMPOSSIBLE</h1>
 <p>The impossible is a <a href="/details?p=rook">rook</a> that only moves four squares.</p>`,

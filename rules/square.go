@@ -40,6 +40,48 @@ func CombineAddressedSquares(a, b []AddressedSquare) []AddressedSquare {
 	return a
 }
 
+// TODO: the start square isn't included in AddressedSquaresEquivalent
+
+func AddressedSquaresEquivalent(a, b []AddressedSquare) bool {
+	if len(a) != len(b) {
+		return false
+	}
+
+	comparison := func(an AddressedSquare) AddressedSquare {
+		return AddressedSquare{
+			Address: an.Address,
+			Square: Square{
+				Kind:        an.Square.Kind,
+				Orientation: an.Square.Orientation,
+				Moved:       an.Square.Moved,
+				//Start:       an.Square.Start,
+			},
+		}
+	}
+
+	mapCount := func(slice []AddressedSquare) map[AddressedSquare]int {
+		m := make(map[AddressedSquare]int)
+		for _, as := range slice {
+			cas := comparison(as)
+			c, has := m[cas]
+			if has == false {
+				m[cas] = 1
+			} else {
+				m[cas] = c + 1
+			}
+		}
+		return m
+	}
+	am := mapCount(a)
+	bm := mapCount(b)
+	for k, v := range am {
+		if bm[k] != v {
+			return false
+		}
+	}
+	return true
+}
+
 func (a Square) String() string {
 	if a.Kind == piece.NoKind {
 		return "empty"

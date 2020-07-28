@@ -3,56 +3,80 @@ package main
 import (
 	"encoding/json"
 	"io/ioutil"
-	"os"
 
 	"github.com/pciet/wichess/test"
 )
 
-func SaveCaseInCategory(category string, testCase test.MovesCaseJSON) {
-	f := OpenCategoryFile(category)
+// TODO: reduce repetition between SaveMovesCase and SaveAfterMoveCase
+
+func SaveMovesCase(category string, c test.MovesCaseJSON) {
+	f := OpenCategoryFile(MovesTag, category)
 	defer f.Close()
 
-	mc, err := ioutil.ReadAll(f)
+	fc, err := ioutil.ReadAll(f)
 	if err != nil {
 		Panic(err)
 	}
 
-	js := test.ParseMovesCategoryJSON(mc)
+	var caseFile test.MovesCategoryFileJSON
+	err = json.Unmarshal(fc, &caseFile)
+	if err != nil {
+		Panic(err)
+	}
 
 	// either replace the case with the same title, or insert at the end
 	replaced := false
-	for i := 0; i < len(js); i++ {
-		if js[i].Name == testCase.Name {
-			js[i] = testCase
+	for i := 0; i < len(caseFile.Cases); i++ {
+		if caseFile.Cases[i].Name == c.Name {
+			caseFile.Cases[i] = c
 			replaced = true
 			break
 		}
 	}
 	if replaced == false {
-		js = append(js, testCase)
+		caseFile.Cases = append(caseFile.Cases, c)
 	}
 
-	out, err := json.MarshalIndent(test.CategoryFileJSON{js}, "", "    ")
+	out, err := json.MarshalIndent(caseFile, "", "    ")
 	if err != nil {
 		Panic(err)
 	}
 
-	c, err := f.WriteAt(out, 0)
-	if err != nil {
-		Panic(err)
-	}
-
-	err = f.Truncate(int64(c))
-	if err != nil {
-		Panic(err)
-	}
+	WriteCategoryFile(f, out)
 }
 
-func OpenCategoryFile(name string) *os.File {
-	f, err := os.OpenFile("../cases/moves_"+name+".json", os.O_RDWR, 0644)
+func SaveAfterMoveCase(category string, c test.AfterMoveCaseJSON) {
+	f := OpenCategoryFile(AfterMoveTag, category)
+	defer f.Close()
+
+	fc, err := ioutil.ReadAll(f)
 	if err != nil {
-		f.Close()
 		Panic(err)
 	}
-	return f
+
+	var caseFile test.AfterMoveCategoryFileJSON
+	err = json.Unmarshal(fc, &caseFile)
+	if err != nil {
+		Panic(err)
+	}
+
+	// either replace the case with the same title, or insert at the end
+	replaced := false
+	for i := 0; i < len(caseFile.Cases); i++ {
+		if caseFile.Cases[i].Name == c.Name {
+			caseFile.Cases[i] = c
+			replaced = true
+			break
+		}
+	}
+	if replaced == false {
+		caseFile.Cases = append(caseFile.Cases, c)
+	}
+
+	out, err := json.MarshalIndent(caseFile, "", "    ")
+	if err != nil {
+		Panic(err)
+	}
+
+	WriteCategoryFile(f, out)
 }

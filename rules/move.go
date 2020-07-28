@@ -113,6 +113,7 @@ func (a Board) TakeMove(changes, takes []AddressedSquare,
 			Kind:        t.Kind,
 			Orientation: t.Orientation,
 			Start:       t.Start,
+			Moved:       true,
 		}})
 	} else {
 		takes = append(takes, AddressedSquare{m.To, t})

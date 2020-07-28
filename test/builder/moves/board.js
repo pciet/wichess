@@ -1,10 +1,9 @@
-import { chessBoard, boardIndex } from '../wichess/game/board.js'
-import { initializeOrientation } from '../wichess/game/layouts_orientation.js'
-
-import { pieceImageName, Orientation } from '../wichess/piece.js'
-import { NoKind } from '../wichess/pieceDefs.js'
-
 import { selectValue } from './builder.js'
+
+import { chessBoard, boardIndex } from '../../wichess/game/board.js'
+import { initializeOrientation } from '../../wichess/game/layouts_orientation.js'
+import { pieceImageName, Orientation } from '../../wichess/piece.js'
+import { NoKind } from '../../wichess/pieceDefs.js'
 
 export const board = []
 

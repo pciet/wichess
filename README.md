@@ -12,7 +12,7 @@ Added are concepts from trading card games: players each have a collection of ne
 
 Piece and army variations make determining moves and check conditions complex, so computer calculations inform players of the moves they can make to enable playing at a good pace. Wisconsin Chess is a computer game played in web browsers through a local network host computer that relays move results, determines the moves, and holds players' collections.
 
-Technical installation instructions that use this source code repository is described in docs/install.md. An overview of the source code is in docs/source.md.
+Technical installation instructions that use this source code repository are described in docs/install.md. An overview of the source code is in docs/source.md.
 
 ## COPYRIGHT, LICENSES, CREDITS
 

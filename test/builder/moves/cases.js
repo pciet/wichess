@@ -2,12 +2,12 @@ import { caseMaker } from './layouts.js'
 import { initBoard, setBoardAddPieceHandlers, addBoardPieces, board } from './board.js'
 import { categoryCase, pickedCategory } from './categories.js'
 import { selectValueString } from './builder.js'
-import { addMovesAddHandler } from './moves.js'
+import { addMovesAddHandler } from './click.js'
 
-import { Pieces } from '../wichess/pieceDefs.js'
-import { Orientation } from '../wichess/piece.js'
-import { boardIndexToAddress, boardIndex } from '../wichess/game/board.js'
-import { States } from '../wichess/game/state.js'
+import { Pieces } from '../../wichess/pieceDefs.js'
+import { Orientation } from '../../wichess/piece.js'
+import { boardIndexToAddress, boardIndex } from '../../wichess/game/board.js'
+import { States } from '../../wichess/game/state.js'
 
 export function addCaseLoadButtonHandler() {
     document.querySelector('#loadcase').onclick = () => {
@@ -243,7 +243,7 @@ function addSaveHandler() {
 
         const str = JSON.stringify(o)
 
-        fetch('/savecase?cat=' + pickedCategory, {
+        fetch('/moves/save?cat=' + pickedCategory, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

@@ -91,8 +91,8 @@ var PieceRelPaths = func() map[piece.Kind]RelPathVariations {
 			},
 		},
 		piece.Line: {
-			NormalMove: NoGhostKnightPaths,
-			RallyMove:  NoGhostTripleKnightPaths,
+			NormalMove: NoGhostForwardKnightPaths,
+			RallyMove:  NoGhostKnightPaths,
 		},
 		piece.Impossible: {
 			NormalMove: FourRookPaths,

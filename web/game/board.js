@@ -28,13 +28,13 @@ export function AddressedPiece(address, piece) {
     this.piece = piece
 }
 
-export function chessBoard() {
+export function chessBoard(prefix = 's') {
     if (orientation === Orientation.WHITE) {
         let b = ''
         for (let i = 0; i < 8; i++) {
             b += '<div class="row">'
             for (let j = 0; j < 8; j++) {
-                b += '<div class="inline chesssquare noselect" id="s'+(((7-i)*8)+j)+'"></div>'
+                b += '<div class="inline chesssquare noselect" id="'+prefix+(((7-i)*8)+j)+'"></div>'
             }
             b += '</div>'
         }
@@ -45,7 +45,7 @@ export function chessBoard() {
     for (let i = 0; i < 8; i++) {
         b += '<div class="row">'
         for (let j = 0; j < 8; j++) {
-            b += '<div class="inline chesssquare noselect" id="s'+((7-j)+(i*8))+'"></div>'
+            b += '<div class="inline chesssquare noselect" id="'+prefix+((7-j)+(i*8))+'"></div>'
         }
         b += '</div>'
     }

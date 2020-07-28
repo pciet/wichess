@@ -42,7 +42,7 @@ var CharacteristicDescriptions = []string{
 	`Pawn pieces can't capture this.`,
 	`Can only be captured by queens or the king.`,
 	`When captured if its starting square is empty then it returns there.`,
-	`Adjacent friendly pieces become immaterial (pawn pieces can't capture them).`,
+	`Your adjacent pieces become immaterial (pawn pieces can't capture them).`,
 }
 
 var CharacteristicNames = []string{

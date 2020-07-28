@@ -62,4 +62,10 @@ img {
     border: dotted rgb(255,80,50);
 }
 
+.starting {
+    border: dotted rgb(200,255,50);
+}
 
+.started {
+    border: solid rgb(100,255,150);
+}

@@ -2,7 +2,7 @@ import { newOrLoadCase } from './layouts.js'
 import { addCaseLoadButtonHandler, addNewCaseButtonHandler } from './cases.js'
 
 export function writeCategorySelectList() {
-    fetch('/categories').then(r => r.json()).then(categories => {
+    fetch('/after/categories').then(r => r.json()).then(categories => {
         const e = document.querySelector('#categories')
         for (const c of categories) {
             const o = document.createElement('option')
@@ -25,7 +25,7 @@ export let pickedCategory
 
 function loadCategory(c) {
     pickedCategory = c
-    fetch('/category?name='+c).then(r => r.json()).then(cs => {
+    fetch('/after/category?name='+c).then(r => r.json()).then(cs => {
         categories = cs.cases
         document.querySelector('#content').innerHTML = newOrLoadCase
         const e = document.querySelector('#cases')
