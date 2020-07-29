@@ -37,6 +37,17 @@ func RemoveDuplicateMoveSetMoves(slice []MoveSet) []MoveSet {
 	return slice
 }
 
+func MoveSetSliceAdd(slice []MoveSet, at Address, to Address) []MoveSet {
+	for i, ms := range slice {
+		if ms.From != at {
+			continue
+		}
+		slice[i].Moves = append(slice[i].Moves, to)
+		return slice
+	}
+	return append(slice, MoveSet{at, []Address{to}})
+}
+
 func (a MoveSet) RemoveMove(to Address) MoveSet {
 	index := -1
 	for i, move := range a.Moves {

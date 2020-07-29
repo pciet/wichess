@@ -16,7 +16,7 @@ IMGDIR="../web/img"
 
 mkdir $IMGDIR
 
-PIECES=("pawn" "bishop" "knight" "rook" "queen" "king" "war" "constructive" "formpawn" "confined" "original" "irrelevant" "evident" "line" "impossible")
+PIECES=("pawn" "bishop" "knight" "rook" "queen" "king" "war" "constructive" "formpawn" "confined" "original" "irrelevant" "evident" "line" "impossible" "convenient" "appropriate" "warprook" "brilliant" "simple" "exit")
 
 for p in "${PIECES[@]}"
 do
@@ -36,5 +36,8 @@ done
 ./Board.sh empty
 ./$CUT bboard.png $IMGDIR empty
 rm bboard.png wboard.png
+
+./Pick.sh empty
+mv pick.png "$IMGDIR"/pick_empty.png
 
 rm $CUT

@@ -98,6 +98,26 @@ var PieceRelPaths = func() map[piece.Kind]RelPathVariations {
 			NormalMove: FourRookPaths,
 			RallyMove:  KingPaths,
 		},
+		piece.Convenient: {
+			NormalMove: TwoBishopPaths,
+			RallyMove:  KingPaths,
+		},
+		piece.Appropriate: {
+			NormalMove: NoGhostKnightPaths,
+			RallyMove:  KingPaths,
+		},
+		piece.Warp: {
+			NormalMove: FiveRookPaths,
+			RallyMove:  KingPaths,
+		},
+		piece.Brilliant: {
+			NormalMove: ForwardKnightPaths,
+			RallyMove:  KnightPaths,
+		},
+		piece.Exit: {
+			NormalMove: ThreeBishopPaths,
+			RallyMove:  KingPaths,
+		},
 	}
 
 	for k, v := range m {
@@ -124,6 +144,7 @@ var PieceRelPaths = func() map[piece.Kind]RelPathVariations {
 
 	assign(m[piece.Pawn], []piece.Kind{piece.Form, piece.Confined})
 	assign(m[piece.Knight], []piece.Kind{piece.Constructive})
+	assign(m[piece.Rook], []piece.Kind{piece.Simple})
 
 	return m
 }()

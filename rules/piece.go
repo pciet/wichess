@@ -4,6 +4,8 @@ import "github.com/pciet/wichess/piece"
 
 // TODO: update characteristic names, and don't repeat them here
 
+// when a new characteristic bool is added the Normalize func must also be updated
+
 type Piece struct {
 	piece.Kind  `json:"k"`
 	Orientation `json:"o"`
@@ -35,9 +37,13 @@ type Piece struct {
 
 	Reveals bool `json:"-"`
 
-	Tense   bool `json:"-"`
-	Fantasy bool `json:"-"`
-	Keep    bool `json:"-"`
+	Tense      bool `json:"-"`
+	Fantasy    bool `json:"-"`
+	Keep       bool `json:"-"`
+	Protective bool `json:"-"`
+	Extricates bool `json:"-"`
+	Normalizes bool `json:"-"`
+	Orders     bool `json:"-"`
 }
 
 var (
@@ -52,9 +58,12 @@ var (
 func (a Piece) ApplyCharacteristics() Piece {
 	if a.Kind.Basic() == piece.Knight {
 		a.MustEnd = true
-		if a.Kind != piece.Line {
+		if (a.Kind != piece.Line) && (a.Kind != piece.Appropriate) {
 			a.Ghost = true
 		}
+	}
+	if a.Kind == piece.Exit {
+		a.Ghost = true
 	}
 
 	chars := piece.CharacteristicList[a.Kind]
@@ -79,6 +88,14 @@ func (a Piece) ApplyCharacteristics() Piece {
 			a.Fantasy = true
 		case piece.Keep:
 			a.Keep = true
+		case piece.Protective:
+			a.Protective = true
+		case piece.Extricates:
+			a.Extricates = true
+		case piece.Normalizes:
+			a.Normalizes = true
+		case piece.Orders:
+			a.Orders = true
 		default:
 			return false
 		}

@@ -80,4 +80,24 @@ for the first move.</p>`,
 
 	`<h1>IMPOSSIBLE</h1>
 <p>The impossible is a <a href="/details?p=rook">rook</a> that only moves four squares.</p>`,
+
+	`<h1>CONVENIENT</h1>
+<p>The convenient is a <a href="/details?p=bishop">bishop</a> that only moves two squares.</p>`,
+
+	`<h1>APPROPRIATE</h1>
+<p>The appropriate is a <a href="/details?p=knight">knight</a> that can't move over pieces.</p>`,
+
+	`<h1>WARP</h1>
+<p>The warp is a <a href="/details?p=rook">rook</a> that only moves five squares.</p>`,
+
+	`<h1>BRILLIANT</h1>
+<p>The brilliant is a <a href="/details?p=knight">knight</a> that only moves toward the 
+ opponent.</p>`,
+
+	`<h1>SIMPLE</h1>
+<p>The simple is a <a href="/details?p=rook">rook</a>.</p>`,
+
+	`<h1>EXIT</h1>
+<p>The exit is a <a href="/details?p=bishop">bishop</a> that can move over other pieces but only 
+ moves three squares.</p>`,
 }

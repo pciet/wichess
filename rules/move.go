@@ -49,6 +49,7 @@ func (a Game) AfterMove(m Move) Game {
 //   en passant turns later
 //   castling through threatened squares, during check, or without a rook
 //   swapping with a friendly piece without having the swap ability
+//   extricate a piece other than the king
 
 // Returns the squares that changed and the squares with each piece that was taken.
 // No move legality is determined, bad moves either cause a panic or happen.
@@ -64,7 +65,12 @@ func (a Board) DoMove(m Move) ([]AddressedSquare, []AddressedSquare) {
 	to := a[m.To.Index()]
 	if to.NotEmpty() {
 		if to.Orientation == from.Orientation {
-			changes = a.SwapMove(changes, m)
+			if to.Extricates {
+				// captures your own piece for the opponent to get king out of check
+				changes, takes = a.TakeMove(changes, takes, m)
+			} else {
+				changes = a.SwapMove(changes, m)
+			}
 		} else {
 			if to.Detonates {
 				return a.DetonateMove(changes, takes, m)

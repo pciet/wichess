@@ -21,7 +21,13 @@ export const Pieces = [
     'irrelevant',
     'evident',
     'line',
-    'impossible'
+    'impossible',
+    'convenient',
+    'appropriate',
+    'warprook',
+    'brilliant',
+    'simple',
+    'exit'
 ]
 
 export const BasicKinds = [
@@ -35,5 +41,11 @@ export const BasicKinds = [
     Rook,
     Pawn,
     Knight,
-    Rook
+    Rook,
+    Bishop,
+    Knight,
+    Rook,
+    Knight,
+    Rook,
+    Bishop
 ]

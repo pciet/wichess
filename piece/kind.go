@@ -19,6 +19,12 @@ const (
 	Evident
 	Line
 	Impossible
+	Convenient
+	Appropriate
+	Warp
+	Brilliant
+	Simple
+	Exit
 	KindCount
 )
 
@@ -32,11 +38,11 @@ func (a Kind) Basic() Kind {
 		return King
 	case Queen:
 		return Queen
-	case Bishop, Original:
+	case Bishop, Original, Convenient, Exit:
 		return Bishop
-	case Rook, Irrelevant, Impossible:
+	case Rook, Irrelevant, Impossible, Warp, Simple:
 		return Rook
-	case Knight, Constructive, Line:
+	case Knight, Constructive, Line, Appropriate, Brilliant:
 		return Knight
 	case Pawn, War, Form, Confined, Evident:
 		return Pawn

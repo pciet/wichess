@@ -17,6 +17,12 @@ var CodeNames = []string{
 	"evident",
 	"line",
 	"impossible",
+	"convenient",
+	"appropriate",
+	"warprook", // 'rook' added to avoid reserved 'warp'
+	"brilliant",
+	"simple",
+	"exit",
 }
 
 var Names = []string{
@@ -36,6 +42,12 @@ var Names = []string{
 	"Evident",
 	"Line",
 	"Impossible",
+	"Convenient",
+	"Appropriate",
+	"Warp",
+	"Brilliant",
+	"Simple",
+	"Exit",
 }
 
 func KindForCodeName(n string) Kind {
