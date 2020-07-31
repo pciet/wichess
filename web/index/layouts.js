@@ -11,7 +11,7 @@ export const landscape = `
 ` + ct('name', '', true, false, window.Name) +
     ct('title', '', true, false, 'WISCONSIN CHESS') + `
     <div id="topspacer" class="inline"></div>
-    <a class="inline" href="/quit">` + ct('quit', '', false, true, 'Quit') + `</a>
+    <a class="inline" id="quita" href="/quit">` + ct('quit', '', false, true, 'Quit') + `</a>
 </div>
 <div>
     <div id="left" class="inline">
@@ -21,7 +21,8 @@ export const landscape = `
             <img id="rightpick" class="inline pick" src="` + pickImage(window.RightPiece) + `">
         </div>
         <div class="leftspacer"></div> ` +
-        ct('details', '', false, true, 'Piece Details') + `
+        ct('details', '', false, true, 'Piece Details') + 
+        ct('rules', '', false, true, 'Rules Overview') + `
         <div class="leftspacer"></div>
         ` + ct('match', '', false, true, 'Match') + `
     </div>

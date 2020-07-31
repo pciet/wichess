@@ -1,7 +1,7 @@
-import { NoKind, BasicKinds } from '../pieceDefs.js'
+import { NoKind, BasicKinds, King } from '../pieceDefs.js'
 import { LeftPick, RightPick, NotInCollection, collectionSelector } from '../collection.js'
 
-import { Army, ArmySlot, deselectArmySlot, replaceArmySlot } from './army.js'
+import { DefaultArmy, Army, ArmySlot, deselectArmySlot, replaceArmySlot } from './army.js'
 
 export function addPieceClicks() {
     document.querySelector('#leftpick').onclick = 
@@ -24,11 +24,13 @@ export function addPieceClicks() {
     }
 }
 
-export let FloatingSelection
+let FloatingSelection
+export let DetailsKind = King
 
 function armyClick(index) {
     return () => {
         if (FloatingSelection === undefined) {
+            DetailsKind = Army[index].kind
             if (Army[index].collection !== NotInCollection) {
                 deselectArmySlot(index)
             }
@@ -39,15 +41,18 @@ function armyClick(index) {
         }
         replaceArmySlot(index, FloatingSelection)
         const e = document.querySelector(collectionSelector(FloatingSelection.collection))
+        undarkenCollection()
         e.classList.remove('selected')
         e.classList.add('used')
         e.armySlotIndex = index
         FloatingSelection = undefined
+        DetailsKind = Army[index].kind
     }
 }
 
 function collectionClick(sourceElementID, armySlot) {
     return () => {
+        DetailsKind = armySlot.kind
         const e = document.querySelector(sourceElementID)
 
         if (e.armySlotIndex !== undefined) {
@@ -63,6 +68,7 @@ function collectionClick(sourceElementID, armySlot) {
                 // this slot was clicked but not added to the army yet
                 FloatingSelection = undefined
                 e.classList.remove('selected')
+                undarkenCollection()
                 return
             }
             // another piece was floating and is deselected before this one is selected to
@@ -73,5 +79,35 @@ function collectionClick(sourceElementID, armySlot) {
 
         FloatingSelection = armySlot
         e.classList.add('selected')
+        darkenCollection(e, armySlot.kind)
     }
+}
+
+function darkenCollection(excludedElement, selectedKind) {
+    const basic = BasicKinds[selectedKind]
+    for (let i = 0; i < 16; i++) {
+        if (DefaultArmy[i] === basic) {
+            continue
+        }
+        document.querySelector('#ab'+i).classList.add('darkened')
+        document.querySelector('#a'+i).classList.add('darkened')
+    }
+    for (let i = 0; i < 21; i++) {
+        document.querySelector('#c'+i).classList.add('darkened')
+    }
+    document.querySelector('#leftpick').classList.add('darkened')
+    document.querySelector('#rightpick').classList.add('darkened')
+    excludedElement.classList.remove('darkened')
+}
+
+function undarkenCollection() {
+    for (let i = 0; i < 16; i++) {
+        document.querySelector('#ab'+i).classList.remove('darkened')
+        document.querySelector('#a'+i).classList.remove('darkened')
+    }
+    for (let i = 0; i < 21; i++) {
+        document.querySelector('#c'+i).classList.remove('darkened')
+    }
+    document.querySelector('#leftpick').classList.remove('darkened')
+    document.querySelector('#rightpick').classList.remove('darkened')
 }

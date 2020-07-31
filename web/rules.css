@@ -1,0 +1,26 @@
+body {
+    background: linear-gradient(rgb(10,21,40),rgb(72,15,1));
+    background-attachment: fixed;
+}
+
+h1, h2, p {
+    color: white;
+}
+
+a:visited {
+    color: green;
+}
+
+p {
+    font-size: 12pt;
+}
+
+div {
+    margin-left: 25%;
+    margin-right: 25%;
+}
+
+.quote {
+    font-style: italic;
+    color: rgb(110,200,180);
+}

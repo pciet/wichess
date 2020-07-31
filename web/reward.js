@@ -13,7 +13,7 @@ export function layoutPage() {
     scaleFont()
 
     setAllSquareDimensions('#left', '.rewardcell')
-    setAllSquareDimensions('#c0', '.collectioncell')
+    setAllSquareDimensions('#cc0', '.collectioncell')
 
     document.querySelector('#ack').onclick = () => {
         const ack = () => {
@@ -45,6 +45,8 @@ export function layoutPage() {
     }
 
     addPieceClicks()
+
+    document.body.classList.add('visible')
 }
 
 let resizeWait

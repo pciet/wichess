@@ -1,6 +1,39 @@
+body {
+    background: linear-gradient(rgb(1,31,50),rgb(52,20,1));
+    background-attachment: fixed;
+    margin: 5%;
+}
+
+#flex {
+    display: flex;
+}
+
+#pieceimg {
+    flex: 1;
+}
+
 #look {
-    max-width: 35%;
+    max-width: 100%;
     height: auto;
-    float: left;
+    border: thick outset rgb(20,20,120);
     border-radius: 5%;
+    margin: 5%;
+}
+
+#text {
+    flex: 2;
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+h1, h2, p {
+    color: white;
+}
+
+p {
+    font-size: 12pt;
+}
+
+a:visited {
+    color: green;
 }

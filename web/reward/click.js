@@ -74,8 +74,7 @@ function rewardClick(sourceElementID, kind) {
 function deselectReward(sourceSelector, collectionIndex) {
     document.querySelector(sourceSelector).classList.remove('picked')
     const e = document.querySelector('#c'+(collectionIndex))
-    e.classList.remove('replaced')
-    e.src = collectionImage(collectionIndex)
+    e.classList.add('piecehidden')
 }
 
 function collectionClick(sourceElementID, kind, collectionIndex) {
@@ -109,6 +108,7 @@ function collectionClick(sourceElementID, kind, collectionIndex) {
         const ce = document.querySelector('#c'+collectionIndex)
         ce.src = collectionKindImage(FloatingSelection.kind)
         ce.classList.add('replaced')
+        ce.classList.remove('piecehidden')
 
         switch (FloatingSelection.selector) {
         case LeftSelector:

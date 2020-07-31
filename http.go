@@ -36,6 +36,9 @@ func InitializeHTTP() {
 	// not interactive and doesn't require authentication to read.
 	http.HandleFunc(DetailsPath, DetailsGet)
 
+	// A simple webpage describes an overview of the rules and features of Wisconsin Chess.
+	http.HandleFunc(RulesPath, RulesGet)
+
 	// "Computer" is the artificial opponent mode, where the other player's moves are
 	// made automatically.
 	// In HTTP terms, this path's POST is used to setup the match and the GET is to load

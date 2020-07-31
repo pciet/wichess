@@ -3,11 +3,18 @@
 }
 
 body {
+    opacity: 0;
+    transition: opacity 2.5s;
     background: linear-gradient(rgb(11,25,18), rgb(21,25,28));
+}
+
+.visible {
+    opacity: 1;
 }
 
 img {
     display: block;
+    transition: opacity 1s ease-in-out, border 4s ease-in-out, box-shadow 1.5s ease-in-out;  
 }
 
 #ackmargin, #detailsmargin {
@@ -57,9 +64,16 @@ img {
     width: 75%;
 }
 
+.collectionbox {
+    text-align: left;
+}
+
 .collectioncell {
-    border: thick outset rgb(70,150,20);
-    border-radius: 3px;
+    position: absolute;
+}
+
+.piecehidden {
+    opacity: 0;
 }
 
 .selected {
@@ -75,5 +89,5 @@ img {
 }
 
 .replaced {
-    border: thick dashed rgb(160,180,255);
+    border: thick outset rgb(160,180,55);
 }

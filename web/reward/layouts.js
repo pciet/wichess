@@ -46,8 +46,11 @@ function collection() {
         t += '<div>'
         for (let j = 0; j < 7; j++) {
             const index = (7*i) + j
-            t += '<img id="c'+index+'" class="inline collectioncell noselect" src="' + 
+            t += '<div id="cc'+index+'" class="inline collectionbox">'
+            t += '<img id="cb'+index+'" class="collectioncell noselect" src="'+
                 collectionImage(index) + '">'
+            t += '<img id="c'+index+'" class="collectioncell noselect piecehidden">'
+            t += '</div>'
         }
         t += '</div>'
     }

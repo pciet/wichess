@@ -21,7 +21,7 @@ Army[12] = ArmySlot(King)
 
 for (let i = 0; i < 8; i++) { Army[i] = ArmySlot(Pawn) }
 
-const DefaultArmy = []
+export const DefaultArmy = []
 
 for (let i = 0; i < 16; i++) { DefaultArmy[i] = Army[i].kind }
 
