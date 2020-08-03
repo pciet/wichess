@@ -121,27 +121,32 @@ func (a Board) AppendNaiveTakeMoves(moves []Address, paths []Path, from Address)
 		if path.Truncated && s.MustEnd {
 			continue
 		}
-	LOOP:
 		for i, move := range path.Addresses {
 			p := a[move.Index()]
 			if (p.Kind == piece.NoKind) ||
 				(s.Ghost && s.MustEnd && (len(path.Addresses) != i+1)) {
 				continue
 			}
-			if p.Protective {
-				for _, ps := range a.SurroundingSquares(move) {
-					if (ps.Kind != piece.NoKind) && ps.Protective {
-						continue LOOP
-					}
-				}
-			}
 			if (s.Orientation != p.Orientation) &&
 				((s.Kind.Basic() != piece.Pawn) || (p.Fortified == false)) &&
 				((p.Tense == false) || (s.Kind == piece.King) || (s.Kind == piece.Queen)) &&
 				((s.MustEnd == false) || (len(path.Addresses) == i+1)) {
-				moves = append(moves, move)
+
+				protected := false
+				if p.Protective {
+					for _, ps := range a.SurroundingSquares(move) {
+						if (ps.Kind != piece.NoKind) && ps.Protective {
+							protected = true
+							break
+						}
+					}
+				}
+
+				if protected == false {
+					moves = append(moves, move)
+				}
 			}
-			if s.Ghost {
+			if s.Ghost && (s.NoOverCapture == false) {
 				continue
 			}
 			break

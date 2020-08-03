@@ -140,11 +140,7 @@ func ReserveArmy(tx *sql.Tx, id PlayerIdentifier, o rules.Orientation,
 				start = rules.AddressIndex(i - 8)
 			}
 		} else if o == rules.Black {
-			if i < 8 {
-				start = rules.AddressIndex(55 - i)
-			} else {
-				start = rules.AddressIndex(71 - i)
-			}
+			start = rules.AddressIndex(i + 48)
 		} else {
 			Panic("bad orientation", o)
 		}

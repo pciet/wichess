@@ -35,6 +35,9 @@ type Piece struct {
 	// Quick
 	Ghost bool `json:"-"`
 
+	// only applies with quick, can move but can't capture by moving over other pieces
+	NoOverCapture bool `json:"-"`
+
 	Reveals bool `json:"-"`
 
 	Tense      bool `json:"-"`
@@ -64,6 +67,7 @@ func (a Piece) ApplyCharacteristics() Piece {
 	}
 	if a.Kind == piece.Exit {
 		a.Ghost = true
+		a.NoOverCapture = true
 	}
 
 	chars := piece.CharacteristicList[a.Kind]

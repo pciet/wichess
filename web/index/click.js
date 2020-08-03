@@ -87,6 +87,8 @@ function darkenCollection(excludedElement, selectedKind) {
     const basic = BasicKinds[selectedKind]
     for (let i = 0; i < 16; i++) {
         if (DefaultArmy[i] === basic) {
+            document.querySelector('#ab'+i).classList.remove('darkened')
+            document.querySelector('#a'+i).classList.remove('darkened')
             continue
         }
         document.querySelector('#ab'+i).classList.add('darkened')

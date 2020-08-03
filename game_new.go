@@ -20,6 +20,8 @@ func NewGame(tx *sql.Tx, wa, ba ArmyRequest, white, black Player) GameIdentifier
 
 	emptyCaptures := pq.Array(make([]piece.Kind, 15))
 
+	// the black army is not a rotation of the white army, it's a mirror
+
 	// QueryRow instead of Exec: https://github.com/lib/pq/issues/24
 	var id GameIdentifier
 	err = tx.QueryRow(GamesNewInsert,
