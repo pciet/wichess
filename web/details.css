@@ -37,3 +37,7 @@ p {
 a:visited {
     color: green;
 }
+
+a:link {
+    color: rgb(200,200,255);
+}

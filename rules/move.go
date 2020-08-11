@@ -62,6 +62,35 @@ func (a Board) DoMove(m Move) ([]AddressedSquare, []AddressedSquare) {
 	changes := make([]AddressedSquare, 0, 3)
 	takes := make([]AddressedSquare, 0, 1)
 
+	// apply characteristic changes caused by other pieces
+
+	// remove characteristics due to normalizes
+	for i, s := range a {
+		// TODO: this loop is duplicated in Game.Moves
+		if (s.Kind == piece.NoKind) || (s.Normalizes == false) {
+			continue
+		}
+		for _, ss := range a.SurroundingSquares(AddressIndex(i).Address()) {
+			if ss.Kind == piece.NoKind {
+				continue
+			}
+			Normalize(&(a[ss.Address.Index()]))
+		}
+	}
+
+	// apply orders
+	for i, s := range a {
+		if (s.Kind == piece.NoKind) || (s.Orders == false) {
+			continue
+		}
+		for _, ss := range a.SurroundingSquares(AddressIndex(i).Address()) {
+			if ss.Kind == piece.NoKind {
+				continue
+			}
+			a[ss.Address.Index()].Detonates = true
+		}
+	}
+
 	to := a[m.To.Index()]
 	if to.NotEmpty() {
 		if to.Orientation == from.Orientation {

@@ -27,7 +27,9 @@ export const Pieces = [
     'warprook',
     'brilliant',
     'simple',
-    'exit'
+    'exit',
+    'imperfect',
+    'derange'
 ]
 
 export const BasicKinds = [
@@ -47,5 +49,7 @@ export const BasicKinds = [
     Rook,
     Knight,
     Rook,
-    Bishop
+    Bishop,
+    Pawn,
+    Pawn
 ]

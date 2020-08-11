@@ -25,6 +25,8 @@ const (
 	Brilliant
 	Simple
 	Exit
+	Imperfect
+	Derange
 	KindCount
 )
 
@@ -44,7 +46,7 @@ func (a Kind) Basic() Kind {
 		return Rook
 	case Knight, Constructive, Line, Appropriate, Brilliant:
 		return Knight
-	case Pawn, War, Form, Confined, Evident:
+	case Pawn, War, Form, Confined, Evident, Imperfect, Derange:
 		return Pawn
 	}
 	return NoKind

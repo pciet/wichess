@@ -36,7 +36,7 @@ func (a Game) Moves(active Orientation) ([]MoveSet, State) {
 			continue
 		}
 		for _, ss := range a.Board.SurroundingSquares(AddressIndex(i).Address()) {
-			if (ss.Kind == piece.NoKind) || (ss.Orientation != s.Orientation) {
+			if ss.Kind == piece.NoKind {
 				continue
 			}
 			if s.Keep && (ss.Orientation == s.Orientation) {

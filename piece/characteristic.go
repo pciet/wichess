@@ -40,6 +40,8 @@ var CharacteristicList = []Characteristics{
 	{Tense, NoCharacteristic},
 	{Normalizes, Orders},
 	{NoCharacteristic, NoCharacteristic},
+	{Asserts, NoCharacteristic},
+	{Fantasy, NoCharacteristic},
 }
 
 var CharacteristicDescriptions = []string{

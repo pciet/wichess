@@ -100,4 +100,12 @@ for the first move.</p>`,
 	`<h1>EXIT</h1>
 <p>The exit is a <a href="/details?p=bishop">bishop</a> that can move over other pieces but only 
  moves three squares.</p>`,
+
+	`<h1>IMPERFECT</h1>
+<p>The imperfect is a <a href="/details?p=pawn">pawn</a> that can only capture the square behind
+itself.</p>`,
+
+	`<h1>DERANGE</h1>
+<p>The derange is a <a href="/details?p=pawn">pawn</a> that can only capture the square behind
+itself. The derange can otherwise move to any of the three squares ahead.</p>`,
 }

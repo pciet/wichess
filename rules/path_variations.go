@@ -118,6 +118,45 @@ var PieceRelPaths = func() map[piece.Kind]RelPathVariations {
 			NormalMove: ThreeBishopPaths,
 			RallyMove:  KingPaths,
 		},
+		piece.Imperfect: {
+			First: {
+				{{0, 1}, {0, 2}},
+			},
+			NormalMove: {
+				{{0, 1}},
+			},
+			RallyMove: {
+				{{1, 0}},
+				{{-1, 0}},
+				{{1, 1}},
+				{{-1, 1}},
+			},
+			Take: {
+				{{0, -1}},
+			},
+		},
+		piece.Derange: {
+			First: {
+				{{-1, 1}},
+				{{0, 1}, {0, 2}, {1, 2}},
+				{{0, 1}, {0, 2}, {-1, 2}},
+				{{1, 1}},
+			},
+			NormalMove: {
+				{{-1, 1}},
+				{{0, 1}},
+				{{1, 1}},
+			},
+			RallyMove: {
+				{{1, 0}},
+				{{-1, 0}},
+				{{-1, -1}},
+				{{1, -1}},
+			},
+			Take: {
+				{{0, -1}},
+			},
+		},
 	}
 
 	for k, v := range m {

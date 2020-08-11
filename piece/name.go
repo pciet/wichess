@@ -23,6 +23,8 @@ var CodeNames = []string{
 	"brilliant",
 	"simple",
 	"exit",
+	"imperfect",
+	"derange",
 }
 
 var Names = []string{
@@ -48,6 +50,8 @@ var Names = []string{
 	"Brilliant",
 	"Simple",
 	"Exit",
+	"Imperfect",
+	"Derange",
 }
 
 func KindForCodeName(n string) Kind {
