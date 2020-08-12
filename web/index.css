@@ -8,6 +8,10 @@ body {
     background: linear-gradient(rgb(11,25,18), rgb(21,25,28));
 }
 
+#unsupported {
+    color: white;
+}
+
 .visible {
     opacity: 1;
 }
@@ -21,8 +25,12 @@ p {
     background: linear-gradient(90deg, rgb(1,31,121), rgb(7,20,55));
 }
 
-#topspacer {
-    width: 15%;
+#squarepicks {
+    height: 10%;
+}
+
+#squarebuttons {
+    height: 10%;
 }
 
 #name {
@@ -33,10 +41,13 @@ p {
 
 #detailsmargin {
     height: 10%;
+}
+
+#detailsmargin, #squaredetailsmargin {
     padding: 5px;
 }
 
-#details {
+#details, #squaredetails {
     border: thick outset rgb(205,175,128);
     border-radius: 5px;
     font-size: 1.3rem;
@@ -46,11 +57,14 @@ p {
 }
 
 #rulesmargin {
-    padding: 5px;
     height: 10%;
 }
 
-#rules {
+#rulesmargin, #squarerulesmargin {
+    padding: 5px;
+}
+
+#rules, #squarerules {
     border: thick outset rgb(125,50,1);
     border-radius: 5px;
     font-size: 1.3rem;
@@ -97,6 +111,9 @@ p {
 
 #picksmargin {
     height: 20%;
+}
+
+#picksmargin, #squarepicksmargin {
     text-align: center;
 }
 
@@ -127,7 +144,11 @@ img {
     padding: 10px;
 }
 
-#pickstitle {
+#squarepickstitlemargin {
+    padding: 10px;
+}
+
+#pickstitle, #squarepickstitle {
     color: rgb(100,220,180);
     background-color: rgb(25,45,25);
     font-size: 1.5rem;
@@ -139,7 +160,11 @@ img {
     padding: 20px;
 }
 
-#match {
+#squarematchmargin {
+    padding: 5px;
+}
+
+#match, #squarematch {
     border: thick outset rgb(255,125,128);
     border-radius: 7px;
     color: rgb(255,240,245);
@@ -151,16 +176,22 @@ img {
 
 #army {
     text-align: center;
-    height: 30%;
     padding: 10px;
 }
 
 #armytitlemargin {
     height: 10%;
+}
+
+#squarearmytitlemargin {
+    height: 20%;
+}
+
+#armytitlemargin, #squarearmytitlemargin {
     padding: 10px;
 }
 
-#armytitle {
+#armytitle, #squarearmytitle {
     color: rgb(255,195,175);
     background-color: rgb(65,35,10);
     font-size: 1.5rem;
@@ -170,10 +201,17 @@ img {
 
 #collectiontitlemargin {
     height: 10%;
+}
+
+#squarecollectiontitlemargin {
+    height: 20%;
+}
+
+#collectiontitlemargin, #squarecollectiontitlemargin {
     padding: 10px;
 }
 
-#collectiontitle {
+#collectiontitle, #squarecollectiontitle {
     text-align: center;
     font-weight: bold;
     color: rgb(240,190,75);

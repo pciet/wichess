@@ -106,7 +106,7 @@ const websocketPromise = webSocketPromise(GameInformation.ID)
 fetchNextMoveSound()
 
 const lowerSquareRatio = 0.8
-const upperSquareRatio = 1.2
+const upperSquareRatio = 1.29
 
 export const landscapeRatio = 1.8
 export const floatingLandscapeRatio = 2
@@ -114,9 +114,9 @@ export const wideFloatingLandscapeRatio = 3
 export const veryWideFloatingLandscapeRatio = 3.4
 
 function addLayouts() {
-    // TODO: portrait and square
-    addLayout(lowerSquareRatio, layouts.portrait)
-    addLayout(upperSquareRatio, layouts.square)
+    addLayout(0.4, layouts.unsupportedWindowDimension)
+    addLayout(lowerSquareRatio, layouts.portrait())
+    addLayout(upperSquareRatio, layouts.square())
     addLayout(landscapeRatio, layouts.landscape())
     addLayout(floatingLandscapeRatio, layouts.landscapeFloating())
     addLayout(wideFloatingLandscapeRatio, layouts.landscapeWideFloating())
@@ -160,6 +160,12 @@ export let selectedPiece
 export function layoutPage() {
     writeBoardDimension(lowerSquareRatio, upperSquareRatio)
     layout()
+
+    if (document.querySelector('#s0') === null) {
+        // unsupported aspect ratio
+        document.body.classList.add('visible')    
+        return
+    }
 
     for (let i = 0; i < 64; i++) {
         const s = squareElement(i)

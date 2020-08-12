@@ -12,6 +12,10 @@ body {
     opacity: 1;
 }
 
+#unsupported {
+    color: white;
+}
+
 img {
     display: block;
     transition: opacity 1s ease-in-out, border 4s ease-in-out, box-shadow 1.5s ease-in-out;  
@@ -62,6 +66,7 @@ img {
     padding: 30px;
     text-align: center;
     width: 75%;
+    margin: 0 auto;
 }
 
 .collectionbox {

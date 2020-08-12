@@ -4,7 +4,17 @@ import { collectionImage, pickImage } from '../collection.js'
 
 // ct(id, classes, inline, noselect, text)
 
-export const landscape = `
+export function portrait() { 
+    return `
+<div>
+    ` + ct('ack', '', true, true, '&#x2713;') + ct('details', '', true, true, 'Piece') + `
+</div>
+<div id="collection">` + collection() + `</div>
+` + picks
+}
+
+export function landscape() {
+    return `
 <div>
     <div class="inline">
         <div></div>
@@ -18,6 +28,10 @@ export const landscape = `
         <div></div>
     </div>
 </div>
+` + picks
+}
+
+const picks = `
 <div>
     <div class="inline">
         <div class="rewardtitle">Left Pick</div>
@@ -56,3 +70,14 @@ function collection() {
     }
     return t
 }
+
+export const unsupported = `
+<div class="inline"></div>
+<div class="inline" id="unsupported">
+    <div></div>
+    <div>This window is set to an unsupported dimension.<br>If this is a desktop window then 
+    resize it.</div>
+    <div></div>
+</div>
+<div class="inline"></div>
+`

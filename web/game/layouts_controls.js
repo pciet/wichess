@@ -52,9 +52,15 @@ export function addControlsClickHandlers() {
 
 export function hideOptions() {
     optionControlsShown = false
-    layoutSelector('#controls', controlsLayout(handedness))
+    let ok = layoutSelector('#controls', controlsLayout(handedness))
+    if (ok === null) {
+        layoutSelector('#portraitcontrols', controlsLayout(handedness))
+    }
     addControlsClickHandlers()
-    layoutSelector('#navigation', navigationLayout())
+    ok = layoutSelector('#navigation', navigationLayout())
+    if (ok === null) {
+        layoutSelector('#portraitnavigation', navigationLayout(true))
+    }
     addNavigationClickHandlers()
 }
 
@@ -64,10 +70,16 @@ export function showOptions() {
         unshowMoveablePieces()
         optionControlsShown = true
     }
-    layoutSelector('#controls', controlsLayout(handedness))
+    let ok = layoutSelector('#controls', controlsLayout(handedness))
+    if (ok === null) {
+        layoutSelector('#portraitcontrols', controlsLayout(handedness))
+    }
     setMuteIcon(muted())
     addControlsClickHandlers()
-    layoutSelector('#navigation', navigationLayout())
+    ok = layoutSelector('#navigation', navigationLayout())
+    if (ok === null) {
+        layoutSelector('#portraitnavigation', navigationLayout(true))
+    }
     addNavigationClickHandlers()
 }
 

@@ -15,7 +15,10 @@ export function replaceAndWriteGameCondition(cond) {
 export function writeGameCondition() {
     if (gameDone() === true) {
         removeAllSquareEventHandlers()
-        layoutSelector('#navigation', navigationLayout())
+        const ok = layoutSelector('#navigation', navigationLayout())
+        if (ok === null) {
+            layoutSelector('#portraitnavigation', navigationLayout(true))
+        }
         addNavigationClickHandlers()
     }
 

@@ -31,8 +31,12 @@ function layout() {
 
 // The layoutSelector function adds the string into the selector's element's innerHTML after 
 // removing all newlines, then calls layoutElement on the element.
+// If the element isn't found then null is returned.
 function layoutSelector(s, withString) {
     const e = document.querySelector(s)
+    if (e === null) {
+        return null
+    }
     e.innerHTML = removeNewlines(withString)
     layoutElement(e)
 }

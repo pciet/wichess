@@ -2,11 +2,14 @@ import { addLayout, layout, scaleFont, setAllSquareDimensions } from './layout.j
 import { Pieces } from './pieceDefs.js'
 import { NotInCollection } from './collection.js'
 
-import { landscape } from './reward/layouts.js'
+import { landscape, portrait, unsupported } from './reward/layouts.js'
 import { addPieceClicks, DescribedPiece, 
     LeftPicked, RightPicked, RewardPicked } from './reward/click.js'
 
-addLayout(100, landscape)
+addLayout(1000, unsupported)
+addLayout(100, landscape())
+addLayout(1.29, portrait())
+addLayout(0.4, unsupported)
 
 export function layoutPage() {
     layout()

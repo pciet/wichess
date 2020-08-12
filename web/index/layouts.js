@@ -6,13 +6,15 @@ import { armyImage } from './army.js'
 
 // ct(id, classes, inline, noselect, text)
 
-export const landscape = `
+const top = `
 <div id="top">
 ` + ct('name', '', true, false, window.Name) +
     ct('title', '', true, false, 'WISCONSIN CHESS') + `
-    <div id="topspacer" class="inline"></div>
     <a class="inline" id="quita" href="/quit">` + ct('quit', '', false, true, 'Quit') + `</a>
 </div>
+`
+
+export const landscape = top + `
 <div>
     <div id="left" class="inline">
         ` + ct('pickstitle', '', false, true, 'Random Picks') + `
@@ -33,6 +35,43 @@ export const landscape = `
         <div id="collection">` + collection() + `</div>
     </div>
 </div>
+`
+
+export const square = top + `
+<div>
+    <div>
+        ` + ct('squarearmytitle', '', false, true, 'Army') + `
+        <div id="army">` + army() + `</div>
+    </div>
+    <div id="squarepicks">
+        ` + ct('squarepickstitle', '', true, true, 'Random Picks &rarr;') + `
+        <div class="inline" id="squarepicksmargin">
+            <img id="leftpick" class="inline pick" src="` + pickImage(window.LeftPiece) + `">
+            <img id="rightpick" class="inline pick" src="` + pickImage(window.RightPiece) + `">
+        </div>
+        <div class="inline"></div>
+    </div>
+    <div>
+        ` + ct('squarecollectiontitle', '', false, true, 'Collection') + `
+        <div id="collection">` + collection() + `</div>
+    </div>
+    <div id="squarebuttons">
+        ` + ct('squaredetails', '', true, true, 'Piece Details') +
+            ct('squarerules', '', true, true, 'Rules Overview') +
+            ct('squarematch', '', true, true, 'Match') + `
+    </div>
+</div>
+`
+
+export const unsupported = `
+<div class="inline"></div>
+<div class="inline" id="unsupported">
+    <div></div>
+    <div>This window is set to an unsupported dimension.<br>If this is a desktop window then 
+    resize it.</div>
+    <div></div>
+</div>
+<div class="inline"></div>
 `
 
 function army() {

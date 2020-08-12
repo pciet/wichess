@@ -21,8 +21,11 @@ export function addNavigationClickHandlers() {
 const concedeButton = ct('concede', '', true, true, '&#x2717;')
 const ackButton = ct('ack', '', true, true, '&#x2713;') 
 
-export function navigationLayout() {
-    return '<div class="inline"></div>' + navigationButton() + '<div class="inline"></div>'
+export function navigationLayout(portrait = false) {
+    if (portrait === false) {
+        return '<div class="inline"></div>' + navigationButton() + '<div class="inline"></div>'
+    }
+    return navigationButton()
 }
 
 function navigationButton() {

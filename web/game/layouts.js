@@ -115,6 +115,18 @@ function landscapeBar(reversed = false) {
     return t
 }
 
+function squareBar(reversed = false) {
+    return `
+<div id="squareprom"></div>
+<div id="navigation">` + navigationLayout() + `</div>
+<div id="statusbox">
+    <div class="statusverticalmargin"></div>
+    ` + ct('status') + `
+    <div class="statusverticalmargin"></div>
+</div>
+<div id="controls">` + controlsLayout(reversed) + `</div><div></div>`
+}
+
 // Promotion temporarily replaces #playernames with the choice buttons.
 export const promotion = `
 <div class="inline">
@@ -130,8 +142,7 @@ export const promotion = `
 function board(reversed = false) {
     const box = `<div id="boardbox" class="inline">` + chessBoard() + `</div>`
 
-    let t = `
-<div class="inline" id="board">`
+    let t = `<div class="inline" id="board">`
 
     if (whitespace === false) {
         return t + box + '</div>'
@@ -152,6 +163,34 @@ function board(reversed = false) {
     </div>
     <div class="boardvertspace"></div>
 </div>`
+}
+
+function squareBoard() {
+    let top = 'blackname'
+    let bottom = 'whitename'
+    if (orientation === Orientation.BLACK) {
+        top = 'whitename'
+        bottom = 'blackname'
+    }
+    const hasComputer = hasComputerPlayer()
+
+    let t = `<div class="squareboardbar">`
+    if (hasComputer === false) {
+        t += ct(top + 'active', 'activeindicator', true, true, activePlayerChar)
+    }
+    t += ct(top, 'playername', true, false) + `
+        <div class="inline" id="toptakes">` + topTakes() + '</div></div>'
+
+    t += `<div id="board"><div id="boardbox" class="inline">` + chessBoard() + `</div></div>`
+
+    t += `<div class="squareboardbar">`
+    if (hasComputer === false) {
+        t += ct(bottom + 'active', 'activeindicator', true, true, activePlayerChar)
+    }
+    t += ct(bottom, 'playername', true, false) + `
+        <div class="inline" id="bottomtakes">` + bottomTakes() + '</div></div>'
+
+    return t
 }
 
 export function landscape() {
@@ -204,50 +243,26 @@ export function landscapeVeryWideFloating() {
     return reverseFloatingLandscape('verywidefloatinglandscape')
 }
 
-export const square = `
-<div id="squaretop">
-    <div class="inline" id="description"></div>
-    <div class="inline">
-        <div id="squarebuttonspacer"></div>
-        <div>
-            <div class="inline" id="squarenav">
-            ` + button('navbutton', 'ack', '&#x2713;', true) + 
-                button('navbutton', 'back', '&#8592;', true) + `
-            </div>
-            <div class="inline" id="mute"></div>
-        </div>
-        <div id="squarebuttonspacer"></div>
-    </div>
-</div>
-<div id="boardrow">
-    <div class="inline">
-        <div id="players"></div>
-        <div>
-            <div></div>
-            <div id="condition"></div>
-            <div></div>
-        </div>
-    </div>
-    <div class="inline" id="board">` + chessBoard() + `</div>
-</div>
-`
+export function square() {
+    if (handedness === false) {
+        return `<div class="inline" id="squarebar">` + squareBar() + `</div>` + 
+            `<div class="inline">` + squareBoard() + `</div>`
+    }
+    return `<div class="inline">` + squareBoard() + `</div><div class="inline" id="squarebar">` + 
+        squareBar(true) + `</div>`
+}
 
-export const portrait = `
-<div>
-    <div id="mute"></div>
-` + button('navbutton', 'ack', '&#x2713;', true) + 
-    button('navbutton', 'back', '&#8592;', true) + `
+export function portrait() {
+    return `
+<div id="portraittop">
+    <div class="inline" id="statusbox">
+        ` + ct('status') + `
+    </div>
+    <div class="inline" id="portraitnavigation">` + navigationLayout(true) + `</div>
+    <div class="inline" id="portraitcontrols">` + controlsLayout() + `</div>
 </div>
-<div>
-    <div class="inline" id="players"></div>
-    <div class="inline" id="description"></div>
-</div>
-<div>
-    <div class="inline" id="condition"></div>
-</div>
-<div id="board">` + chessBoard() + `
-</div>
-`
+` + squareBoard()
+}
 
 export const unsupportedWindowDimension = `
 <div class="inline"></div>

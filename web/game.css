@@ -22,6 +22,7 @@ a:link, a:visited {
 
 #unsupported {
     font-size: 1.5rem;
+    color: white;
 }
 
 .floatingside {
@@ -45,6 +46,10 @@ a:link, a:visited {
     height: 8%;
 }
 
+#portraitnavigation {
+    width: 15%;
+}
+
 #topspacer {
     height: 4%;
 }
@@ -63,6 +68,7 @@ a:link, a:visited {
 
 #bottomtakes, #toptakes {
     height: 8%;
+    position: relative;
 }
 
 #against {
@@ -156,7 +162,7 @@ a:link, a:visited {
 }
 
 #queenprommargin, #rookprommargin, #bishopprommargin, #knightprommargin {
-    padding: 10px;
+    padding: 5px;
 }
 
 .promotebutton {
@@ -231,6 +237,14 @@ a:link, a:visited {
 
 .boardhorzspace {
     width: 16%;
+}
+
+#squareboardbar {
+    height: 10%;
+}
+
+#squarebar {
+    width: 25%;
 }
 
 #boardbox {
