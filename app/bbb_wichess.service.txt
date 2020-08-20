@@ -1,0 +1,15 @@
+[Unit]
+Description=Wisconsin Chess host web and app server
+After=postgresql@11-wichess.service
+
+[Service]
+Type=simple
+Restart=always
+RootDirectory=/media/sd
+WorkingDirectory=/
+User=wichess
+Group=wichess
+ExecStart=/wichess
+
+[Install]
+WantedBy=multi-user.target

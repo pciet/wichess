@@ -90,6 +90,6 @@ The docs folder has this document and any other articles describing the Wisconsi
 
 The licenses folder has any license documents needed for content not made by me.
 
-The screenshots folder is a pictures of the game in development all the way back to September 2017 when the board was first seen.
+The screenshots folder is pictures of the game in development all the way back to September 2017 when the board was first seen.
 
 The vendor folder is for Go to build wichess and includes code made by other people.
