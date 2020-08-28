@@ -1,6 +1,8 @@
-package main
+package wichess
 
 import (
+	"strconv"
+
 	"github.com/pciet/wichess/piece"
 	"github.com/pciet/wichess/rules"
 )
@@ -44,3 +46,5 @@ type (
 		Board
 	}
 )
+
+func (a GameIdentifier) String() string { return strconv.Itoa(int(a)) }

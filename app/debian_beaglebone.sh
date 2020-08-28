@@ -100,5 +100,11 @@ apt autoremove
 
 ## TODO: add firewall rules to only allow HTTP and WebSocket traffic to wichess
 ## https://wiki.debian.org/DebianFirewall
+## use nftables for this
 
 ## TODO: remove the debian user and any other unnecessary users
+
+## TODO: write logs to SD card
+
+## TODO: enable AppArmor for wichess
+

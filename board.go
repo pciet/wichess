@@ -1,4 +1,4 @@
-package main
+package wichess
 
 import "github.com/pciet/wichess/rules"
 

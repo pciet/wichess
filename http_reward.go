@@ -1,4 +1,4 @@
-package main
+package wichess
 
 import (
 	"bytes"
@@ -119,5 +119,3 @@ func ParseRewardPostBody(w http.ResponseWriter, r *http.Request) (RewardJSON, er
 
 	return rj, nil
 }
-
-func init() { ParseHTMLTemplate(RewardHTMLTemplate) }

@@ -1,8 +1,7 @@
-package main
+package wichess
 
 import (
 	"fmt"
-	"io/ioutil"
 	"net/http"
 )
 
@@ -21,12 +20,4 @@ func RulesGet(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "text/html")
 	fmt.Fprint(w, string(rulesPage))
-}
-
-func init() {
-	var err error
-	rulesPage, err = ioutil.ReadFile(RulesHTML)
-	if err != nil {
-		Panic(err)
-	}
 }

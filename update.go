@@ -1,6 +1,8 @@
-package main
+package wichess
 
 import "github.com/pciet/wichess/rules"
+
+// TODO: State should be better described and maybe typed
 
 // An Update is used by the response to /move and the alert message to update the webpage's board
 // representation and to indicate promotion communication variations as described

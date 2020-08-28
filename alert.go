@@ -1,4 +1,4 @@
-package main
+package wichess
 
 // Alert is called to notify the opponent when a game has progressed.
 // Changes are expected to have already been committed to the database.

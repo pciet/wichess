@@ -1,4 +1,4 @@
-package main
+package wichess
 
 import "net/http"
 
@@ -13,8 +13,6 @@ const (
 
 	NameMaxLength = 64
 )
-
-func init() { ParseHTMLTemplate(LoginHTMLTemplate) }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {

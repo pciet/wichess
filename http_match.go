@@ -1,4 +1,4 @@
-package main
+package wichess
 
 import (
 	"database/sql"
@@ -14,8 +14,6 @@ const (
 var MatchHandler = AuthenticRequestHandler{
 	Get: MatchGet,
 }
-
-func init() { ParseHTMLTemplate(MatchHTMLTemplate) }
 
 type MatchHTMLTemplateData struct {
 	Name               string

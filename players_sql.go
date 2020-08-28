@@ -1,4 +1,4 @@
-package main
+package wichess
 
 const (
 	PlayersTable = "players"

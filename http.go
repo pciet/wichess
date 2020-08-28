@@ -1,4 +1,4 @@
-package main
+package wichess
 
 import (
 	"net/http"
@@ -60,6 +60,10 @@ func InitializeHTTP() {
 	// Which piece is where on a game's board is initially loaded into the web browser with a
 	// GET to /boards/[game identifier].
 	http.Handle(BoardsPath, BoardsHandler)
+
+	// The players path isn't used by the regular game webpage but helps with testing by providing
+	// which player is which orientation and which player is active.
+	http.Handle(PlayersPath, PlayersHandler)
 
 	// The webpages requests a calculation of all possible moves for a turn with a GET to
 	// /moves/[game identifier]?turn=[turn number].

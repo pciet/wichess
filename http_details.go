@@ -1,4 +1,4 @@
-package main
+package wichess
 
 import (
 	"html/template"
@@ -75,5 +75,3 @@ func DetailsGet(w http.ResponseWriter, r *http.Request) {
 
 	WriteHTMLTemplate(w, DetailsHTMLTemplate, DetailsTemplateData(p, kind))
 }
-
-func init() { ParseHTMLTemplate(DetailsHTMLTemplate) }

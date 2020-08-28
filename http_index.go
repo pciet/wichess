@@ -1,4 +1,4 @@
-package main
+package wichess
 
 import (
 	"database/sql"
@@ -16,8 +16,6 @@ const (
 var IndexHandler = AuthenticRequestHandler{
 	Get: IndexGet,
 }
-
-func init() { ParseHTMLTemplate(IndexHTMLTemplate) }
 
 type IndexHTMLTemplateData struct {
 	Name       string

@@ -1,4 +1,4 @@
-package main
+package wichess
 
 import (
 	"bytes"
@@ -21,7 +21,7 @@ var MoveHandler = AuthenticRequestHandler{
 type MoveJSON struct {
 	From      int `json:"f"`
 	To        int `json:"t"`
-	Promotion int `json:"p"`
+	Promotion int `json:"p"` // piece.Kind instead of rules.AddressIndex
 }
 
 func MovePost(w http.ResponseWriter, r *http.Request, tx *sql.Tx,
