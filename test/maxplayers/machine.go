@@ -69,6 +69,9 @@ func DoneState(gameDone chan<- error, stop chan Signal, done <-chan error,
 	with client.Instance, id wichess.GameIdentifier) {
 
 	err := <-done
+
+	DebugPrintln("DONE", with.Name, id)
+
 	close(stop)
 
 	DebugPrintln("CLOSE WEBSOCKET", with.Name)

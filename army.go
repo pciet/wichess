@@ -10,6 +10,8 @@ import (
 type (
 	ArmyRequest [16]CollectionSlot
 	EncodedArmy [16]EncodedPiece
+
+	ArmySlotIndex int
 )
 
 var RegularArmyRequest = ArmyRequest{}
@@ -31,6 +33,41 @@ func PickSlotsInArmyRequest(r ArmyRequest) (bool, bool) {
 		}
 	}
 	return left, right
+}
+
+func (an ArmyRequest) AvailableSlotsForKind(k piece.Kind) []ArmySlotIndex {
+	out := make([]ArmySlotIndex, 0, 8)
+	switch k.Basic() {
+	case piece.Pawn:
+		for i := 0; i < 8; i++ {
+			if an[i] != NotInCollection {
+				continue
+			}
+			out = append(out, ArmySlotIndex(i))
+		}
+	case piece.Rook:
+		if an[8] == NotInCollection {
+			out = append(out, 8)
+		}
+		if an[15] == NotInCollection {
+			out = append(out, 15)
+		}
+	case piece.Knight:
+		if an[9] == NotInCollection {
+			out = append(out, 9)
+		}
+		if an[14] == NotInCollection {
+			out = append(out, 14)
+		}
+	case piece.Bishop:
+		if an[10] == NotInCollection {
+			out = append(out, 10)
+		}
+		if an[13] == NotInCollection {
+			out = append(out, 13)
+		}
+	}
+	return out
 }
 
 // The BasicArmy is the initial position of one side for a regular chess game, addressed by

@@ -7,12 +7,12 @@ import (
 	"github.com/pciet/wichess"
 )
 
-func Match(a, b Instance) (wichess.GameIdentifier, error) {
+func Match(a, b Instance, aArmy, bArmy wichess.ArmyRequest) (wichess.GameIdentifier, error) {
 	done := make(chan error)
 	var gameID wichess.GameIdentifier
 
-	match := func(an Instance, opponent string, writeID bool) {
-		b, err := json.Marshal(wichess.RegularArmyRequest)
+	match := func(an Instance, army wichess.ArmyRequest, opponent string, writeID bool) {
+		b, err := json.Marshal(army)
 		if err != nil {
 			done <- err
 			return
@@ -41,8 +41,8 @@ func Match(a, b Instance) (wichess.GameIdentifier, error) {
 		done <- nil
 	}
 
-	go match(a, b.Name, false)
-	go match(b, a.Name, true)
+	go match(a, aArmy, b.Name, false)
+	go match(b, bArmy, a.Name, true)
 
 	err := <-done
 	if err != nil {

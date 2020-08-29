@@ -16,7 +16,8 @@ func WebSocketState(stop chan Signal, done chan<- error,
 		case <-stop:
 			return
 		case <-listen:
-			DebugPrintln("WEBSOCKET WAIT", with.Name)
+		LISTEN:
+			DebugPrintln("WEBSOCKET READ", with.Name)
 
 			s, err := with.WebSocketReadState()
 			if err != nil {
@@ -24,17 +25,24 @@ func WebSocketState(stop chan Signal, done chan<- error,
 				break
 			}
 
-			DebugPrintln("WEBSOCKET READ", with.Name)
+			DebugPrintln("WEBSOCKET READ DONE", with.Name)
 
 			switch s {
 			case wichess.WaitUpdate:
-				break
+				DebugPrintln("  WAIT", with.Name)
+				goto LISTEN
+			case wichess.CheckCalculatedUpdate:
+				DebugPrintln("  CHECK", with.Name)
+				goto LISTEN
 			case wichess.DrawCalculatedUpdate, wichess.CheckmateCalculatedUpdate,
 				wichess.ConcededUpdate:
+				DebugPrintln("  DONE", with.Name)
 				done <- nil
-			case "", wichess.ContinueUpdate, wichess.CheckCalculatedUpdate:
+			case "", wichess.ContinueUpdate:
+				DebugPrintln("  CONTINUE", with.Name)
 				moves <- Signal{}
 			default:
+				DebugPrintln("  WEBSOCKET BAD UPDATE STATE", with.Name)
 				done <- fmt.Errorf("unknown WebSocket update state %v", s)
 			}
 		}

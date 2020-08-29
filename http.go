@@ -53,6 +53,14 @@ func InitializeHTTP() {
 	http.Handle(PeoplePath, MatchPeopleHandler)
 	http.Handle(PeopleRootPath, MatchPeopleHandler)
 
+	// The /peopleid path isn't used by the regular game webpage but helps with testing by
+	// providing the game identifier of the people game if one exists.
+	http.Handle(PeopleIDPath, PeopleIDHandler)
+
+	// /collection and /picks are testing paths for accessing a player's collection.
+	http.Handle(PicksPath, PicksHandler)
+	http.Handle(CollectionPath, CollectionHandler)
+
 	// A people game can be conceded by clicking on the concede button, which does a GET to
 	// /concede/[game identifier].
 	http.Handle(ConcedePath, ConcedeHandler)

@@ -33,7 +33,16 @@ type PeoplePostJSON struct {
 func PeoplePost(w http.ResponseWriter, r *http.Request, tx *sql.Tx,
 	requester Player, a ArmyRequest) {
 
+	peopleGameID := PlayerActivePeopleGame(tx, requester.ID)
 	tx.Commit()
+
+	if peopleGameID != 0 {
+		// if there's an active people game then it must be conceded or completed before
+		// requesting a new one
+		DebugPrintln(PeoplePath, "new game request by", requester, "when game already active")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 
 	requestedOpponent, err := ParseURLQuery(r.URL.Query(), RequestedOpponentQuery)
 	if err != nil {
