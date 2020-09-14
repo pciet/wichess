@@ -1,57 +1,24 @@
 package wichess
 
 import (
-	"database/sql"
+	"net/http"
 
-	"github.com/lib/pq"
-	"github.com/pciet/wichess/piece"
+	"github.com/pciet/wichess/game"
+	"github.com/pciet/wichess/memory"
+	"github.com/pciet/wichess/rules"
 )
 
-// TODO: change players table database access to use ID when available
-
-type PlayerIdentifier int
-
-type Player struct {
-	Name string
-	ID   PlayerIdentifier
+type PlayersJSON struct {
+	White  memory.PlayerName `json:"w"`
+	Black  memory.PlayerName `json:"b"`
+	Active rules.Orientation `json:"a"`
 }
 
-// NewPlayer inserts a database row then returns the player's ID.
-func NewPlayer(tx *sql.Tx, name, crypt string) PlayerIdentifier {
-	left, right := piece.TwoDifferentSpecialKinds()
-	var id PlayerIdentifier
-	err := tx.QueryRow(PlayersNewInsert,
-		name, crypt, left, right,
-		pq.Array([CollectionCount]EncodedPiece{}),
-		0, 0,
-	).Scan(&id)
-	if err != nil {
-		Panic(err)
-	}
-	return id
+func playersGet(w http.ResponseWriter, r *http.Request, g game.Instance) {
+	wn, bn := memory.TwoPlayerNames(g.White.PlayerIdentifier, g.Black.PlayerIdentifier)
+	jsonResponse(w, PlayersJSON{
+		White:  wn,
+		Black:  bn,
+		Active: g.Active,
+	})
 }
-
-func PlayerName(tx *sql.Tx, id PlayerIdentifier) string {
-	var name string
-	err := tx.QueryRow(PlayersNameQuery, id).Scan(&name)
-	if err == sql.ErrNoRows {
-		return ""
-	} else if err != nil {
-		Panic(err)
-	}
-	return name
-}
-
-// PlayerID returns -1 if the name doesn't match a database row.
-func PlayerID(tx *sql.Tx, name string) PlayerIdentifier {
-	var id PlayerIdentifier
-	err := tx.QueryRow(PlayersIdentifierQuery, name).Scan(&id)
-	if err == sql.ErrNoRows {
-		return -1
-	} else if err != nil {
-		Panic(err)
-	}
-	return id
-}
-
-func (a PlayerIdentifier) Int() int { return int(a) }

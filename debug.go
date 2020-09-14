@@ -2,13 +2,10 @@ package wichess
 
 import "fmt"
 
-const (
-	Debug    = true
-	DebugSQL = false
-)
+const debugEnabled = true
 
-func DebugPrintln(a ...interface{}) {
-	if Debug {
+func debug(a ...interface{}) {
+	if debugEnabled {
 		fmt.Println(a...)
 	}
 }

@@ -3,97 +3,198 @@ package wichess
 import (
 	"net/http"
 	"time"
+
+	"github.com/pciet/wichess/auth"
 )
 
+// These constants describe every HTTP path and HTML template.
 const (
-	// TODO: does this unnecessarily limit the maximum number of concurrent players on server
-	// hardware that can support more?
-	// github.com/pciet/wichess/issues/9 - 100 http + 100 postgres should be under macOS 256 limit
-	HTTPMaxIdleConns    = 50
-	HTTPIdleConnTimeout = time.Duration(time.Minute * 5)
-)
+	// First when a new person connects to this host process they are given a webpage to login with.
+	// If the username and password provided exist together in memory, or the username is new, then
+	// the player's web browser is issued a unique session key to be stored as an HttpOnly cookie.
+	// All other handlers inspect this session key cookie value using the auth.Handler to be
+	// sure the request is authentic.
+	LoginPath         = auth.LoginPath
+	LoginHTMLTemplate = "html/login.tmpl"
 
-func InitializeHTTP() {
-	// First when a new person connects to this program they are given a webpage to login with.
-	// If the username and password provided exist together in the database, or the username
-	// is new, then the person's web browser is issued a unique session key to be stored as
-	// a cookie.
-	// All other handlers inspect the session key cookie value to be sure the request is authentic.
-	http.HandleFunc(LoginPath, LoginHandler)
-
-	// A login is ended by a GET to /quit with the session key cookie.
-	http.Handle(QuitPath, QuitHandler)
+	// A login session is ended by a GET of /quit.
+	QuitPath = "/quit"
 
 	// The index webpage is where the army is picked from the collection. Before a game is played
 	// the match webpage is navigated to to pick an opponent. If a game against a person is already
 	// in progress then the browser is redirected to it.
-	http.Handle(IndexPath, IndexHandler)
+	IndexPath         = "/"
+	IndexHTMLTemplate = "html/index.tmpl"
 
-	// After configuring the army on index the player picks a match on the match page.
-	http.Handle(MatchPath, MatchHandler)
+	// After configuring the army on index the player picks a match on the match webpage.
+	MatchPath         = "/match"
+	MatchHTMLTemplate = "html/match.tmpl"
 
 	// Details of the rules of individual pieces is in the details path. This information is
 	// not interactive and doesn't require authentication to read.
-	http.HandleFunc(DetailsPath, DetailsGet)
+	DetailsPath         = "/details"
+	DetailsHTMLTemplate = "html/details.tmpl"
 
 	// A simple webpage describes an overview of the rules and features of Wisconsin Chess.
-	http.HandleFunc(RulesPath, RulesGet)
+	RulesPath = "/rules"
+	RulesHTML = "html/rules.html"
+
+	// GameHTMLTemplate is the template for all of the game modes.
+	GameHTMLTemplate = "html/game.tmpl"
 
 	// "Computer" is the artificial opponent mode, where the other player's moves are
-	// made automatically.
-	// In HTTP terms, this path's POST is used to setup the match and the GET is to load
-	// the game webpage.
-	http.Handle(ComputerPath, ComputerHandler)
+	// made automatically. POST sets up the match and GET retrieves the game webpage.
+	ComputerPath = "/computer"
 
 	// Players match against each other in the People mode by typing in their opponent's username,
 	// or by clicking on a recent opponent's name that's displayed. This causes a POST to
 	// /people?o=PlayersName which returns the game ID when the opponent does the same or an error
 	// if there's a timeout by the opponent not requesting. A GET to /people/[game identifier] loads
 	// the game webpage for the match.
-	http.Handle(PeoplePath, MatchPeopleHandler)
-	http.Handle(PeopleRootPath, MatchPeopleHandler)
+	PeoplePath     = "/people/"
+	PeopleRootPath = "/people"
 
 	// The /peopleid path isn't used by the regular game webpage but helps with testing by
 	// providing the game identifier of the people game if one exists.
-	http.Handle(PeopleIDPath, PeopleIDHandler)
+	PeopleIDPath = "/peopleid"
 
 	// /collection and /picks are testing paths for accessing a player's collection.
-	http.Handle(PicksPath, PicksHandler)
-	http.Handle(CollectionPath, CollectionHandler)
+	PicksPath      = "/picks"
+	CollectionPath = "/collection"
 
-	// A people game can be conceded by clicking on the concede button, which does a GET to
+	// A game can be conceded by clicking on the concede button which does a GET of
 	// /concede/[game identifier].
-	http.Handle(ConcedePath, ConcedeHandler)
+	ConcedePath = "/concede/"
 
 	// Which piece is where on a game's board is initially loaded into the web browser with a
-	// GET to /boards/[game identifier].
-	http.Handle(BoardsPath, BoardsHandler)
+	// GET of /boards/[game identifier].
+	BoardsPath = "/boards/"
 
 	// The players path isn't used by the regular game webpage but helps with testing by providing
 	// which player is which orientation and which player is active.
-	http.Handle(PlayersPath, PlayersHandler)
+	PlayersPath = "/players/"
 
 	// The webpages requests a calculation of all possible moves for a turn with a GET to
 	// /moves/[game identifier]?turn=[turn number].
-	// The turn number is included to guarantee the web browser and host are synchronized.
-	http.Handle(MovesPath, MovesHandler)
+	MovesPath = "/moves/"
 
 	// A move is requested by POST to /move/[game identifier] with the move encoded as JSON
 	// in the request body.
-	http.Handle(MovePath, MoveHandler)
+	MovePath = "/move/"
 
 	// An opponent is alerted to board changes caused by a move with a WebSocket message.
-	http.Handle(AlertPath, AlertWebSocketUpgradeHandler)
+	AlertPath = "/alert/"
 
 	// When a game is complete the player navigates to the reward webpage to optionally put the
 	// picked pieces (if selected before the start of the game) and a random reward piece into
-	// their collection. The acknowledge button is on this webpage.
-	// A POST is sent with any selection.
-	http.Handle(RewardPath, RewardHandler)
+	// their collection. The acknowledge button is on this webpage. POST is for any selection.
+	RewardPath         = "/reward/"
+	RewardHTMLTemplate = "html/reward.tmpl"
 
 	// A player acknowledges they've reviewed the rewards and final position and don't need to
 	// see them again with a GET of /acknowledge/[game identifier].
-	http.Handle(AcknowledgePath, AcknowledgeHandler)
+	AcknowledgePath = "/acknowledge/"
+)
+
+var (
+	acknowledgeHandler = auth.Handler{
+		Get: auth.PlayerAndGameWriteable(acknowledgeGet, AcknowledgePath),
+	}
+
+	quitHandler = auth.Handler{Get: auth.PlayerIdentified(quitGet)}
+
+	indexHandler = auth.Handler{
+		Get: auth.PlayerReadable(indexGet),
+	}
+
+	matchHandler = auth.Handler{
+		Get: auth.PlayerReadable(matchGet),
+	}
+
+	computerHandler = auth.Handler{
+		Get:  auth.PlayerReadable(computerGet, ComputerPath),
+		Post: auth.PlayerWriteable(computerPost, ComputerPath),
+	}
+
+	matchPeopleHandler = auth.Handler{
+		Get:  auth.GameReadablePlayerIdentified(peopleGet, PeoplePath),
+		Post: peoplePost,
+	}
+
+	peopleIDHandler = auth.Handler{
+		Get: auth.PlayerReadable(peopleIDGet),
+	}
+
+	picksHandler = auth.Handler{
+		Get: auth.PlayerReadable(picksGet),
+	}
+
+	collectionHandler = auth.Handler{Get: auth.PlayerReadable(collectionGet)}
+
+	concedeHandler = auth.Handler{
+		Get: auth.PlayerAndGameWriteable(concedeGet, ConcedePath),
+	}
+
+	boardsHandler = auth.Handler{
+		Get: auth.GameReadable(boardsGet, BoardsPath),
+	}
+
+	playersHandler = auth.Handler{
+		Get: auth.GameReadable(playersGet, PlayersPath),
+	}
+
+	movesHandler = auth.Handler{
+		Get: auth.GameReadablePlayerIdentified(movesGet, MovesPath),
+	}
+
+	moveHandler = auth.Handler{
+		Post: auth.GameAndPlayerIdentified(movePost, MovePath),
+	}
+
+	alertWebSocketUpgradeHandler = auth.Handler{
+		Get: auth.GameReadablePlayerIdentified(alertGet, AlertPath),
+	}
+
+	rewardHandler = auth.Handler{
+		Get:  auth.GameAndPlayerReadable(rewardGet, RewardPath),
+		Post: auth.GameReadablePlayerWriteable(rewardPost, RewardPath),
+	}
+)
+
+// TODO: does HTTPMaxIdleConns unnecessarily limit the max number of concurrent players on server
+// hardware that can support more?
+// github.com/pciet/wichess/issues/9 - 100 http + 100 postgres should be under macOS 256 limit
+
+const (
+	httpMaxIdleConns    = 50
+	httpIdleConnTimeout = time.Duration(time.Minute * 5)
+)
+
+// InitializeHTTP adds net/http handlers for all paths and loads all HTML templates. The
+// http.ListenAndServe function is called to serve those HTTP paths by the caller.
+func InitializeHTTP() {
+	loadHTMLTemplates()
+
+	http.HandleFunc(LoginPath, loginHandler)
+	http.Handle(QuitPath, quitHandler)
+	http.Handle(IndexPath, indexHandler)
+	http.Handle(MatchPath, matchHandler)
+	http.HandleFunc(DetailsPath, detailsGet)
+	http.HandleFunc(RulesPath, rulesGet)
+	http.Handle(ComputerPath, computerHandler)
+	http.Handle(PeoplePath, matchPeopleHandler)
+	http.Handle(PeopleRootPath, matchPeopleHandler)
+	http.Handle(PeopleIDPath, peopleIDHandler)
+	http.Handle(PicksPath, picksHandler)
+	http.Handle(CollectionPath, collectionHandler)
+	http.Handle(ConcedePath, concedeHandler)
+	http.Handle(BoardsPath, boardsHandler)
+	http.Handle(PlayersPath, playersHandler)
+	http.Handle(MovesPath, movesHandler)
+	http.Handle(MovePath, moveHandler)
+	http.Handle(AlertPath, alertWebSocketUpgradeHandler)
+	http.Handle(RewardPath, rewardHandler)
+	http.Handle(AcknowledgePath, acknowledgeHandler)
 
 	// All files used by the webpages, including JavaScript and CSS, is in the web folder.
 	http.Handle("/web/", http.StripPrefix("/web/", http.FileServer(http.Dir("web"))))
@@ -106,6 +207,6 @@ func InitializeHTTP() {
 	if ok == false {
 		Panic("http.DefaultTransport.(*http.Transport) failed")
 	}
-	dt.MaxIdleConns = HTTPMaxIdleConns
-	dt.IdleConnTimeout = HTTPIdleConnTimeout
+	dt.MaxIdleConns = httpMaxIdleConns
+	dt.IdleConnTimeout = httpIdleConnTimeout
 }

@@ -9,10 +9,7 @@ import (
 )
 
 func main() {
-	wichess.LoadHTMLTemplates()
-
-	// A PostgreSQL database stores information that persists between reboots.
-	wichess.InitializeDatabaseConnection()
+	wichess.InitializeMemory()
 
 	// HTTP handlers are how people get the game interface in their web browser and how game
 	// interactions are done with this host program.

@@ -10,11 +10,11 @@ import (
 var randomSource = func() *prand.Rand {
 	seed, err := rand.Int(rand.Reader, big.NewInt(math.MaxInt64))
 	if err != nil {
-		Panic(err)
+		panic(err.Error())
 	}
 	return prand.New(prand.NewSource(seed.Int64()))
 }()
 
-func RandomBool() bool {
+func randomBool() bool {
 	return randomSource.Intn(2) == 0
 }

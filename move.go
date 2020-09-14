@@ -1,158 +1,127 @@
 package wichess
 
 import (
-	"database/sql"
+	"bytes"
+	"encoding/json"
+	"net/http"
 
+	"github.com/pciet/wichess/game"
+	"github.com/pciet/wichess/memory"
 	"github.com/pciet/wichess/piece"
 	"github.com/pciet/wichess/rules"
 )
 
-// NoMove is the initial value of the From and To address indices for a new game.
-// Board addresses are 0-63, so 64 is not a normal address index.
-const NoMove = 64
-
-// Move returns the squares that changed, taken pieces, and whether a following promotion is needed.
-func Move(tx *sql.Tx, id GameIdentifier, player string,
-	m rules.Move, promotion piece.Kind) ([]rules.AddressedSquare, []CapturedPiece, bool) {
-	g := LoadGame(tx, id, true)
-	if g.Header.ID == 0 {
-		Panic("game", id, "not found")
-	}
-	if g.Header.Active != OrientationOf(player, g.Header.White.Name, g.Header.Black.Name) {
-		DebugPrintln(player, "not active", g.Header.Active)
-		return nil, nil, false
-	}
-
-	if promotion != piece.NoKind {
-		by, needed := g.Board.PromotionNeeded()
-		if (needed == false) ||
-			(by != g.Header.Active) {
-			DebugPrintln("invalid promotion request by", player)
-			return nil, nil, false
-		}
-	} else {
-		if g.MoveLegal(m) == false {
-			DebugPrintln("illegal move", m)
-			return nil, nil, false
-		}
-	}
-
-	return g.DoMove(tx, m, promotion)
+// The webpage sends a move request in the MoveJSON format as the POST body to /move/[game id].
+// If a promotion is requested then p is nonzero and f/t is ignored.
+type MoveJSON struct {
+	From      rules.AddressIndex `json:"f"`
+	To        rules.AddressIndex `json:"t"`
+	Promotion piece.Kind         `json:"p"`
 }
 
-func (g Game) MoveLegal(m rules.Move) bool {
-	p := g.Board.Board[m.From.Index()]
-	if p.Kind == piece.NoKind {
-		DebugPrintln("no piece at move from", m, "for player", g.Header.Active)
-		return false
+func movePost(w http.ResponseWriter, r *http.Request,
+	gid memory.GameIdentifier, pid memory.PlayerIdentifier) {
+
+	move, promotion := handleMovePostParse(w, r)
+	if (move == rules.NoMove) && (promotion == piece.NoKind) {
+		return
 	}
 
-	if p.Orientation != g.Header.Active {
-		DebugPrintln("active player", g.Header.Active, "not moving player")
-		return false
+	// game is locked here instead of the auth handler to finely control the amount of lock time
+	g := game.Lock(gid)
+	if g.Nil() {
+		debug(MovePath, "no game with ID", gid, "for", pid)
+		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
 
-	// TODO: cache move calculation if the database read/write is cheaper than recalculation
-
-	// moves are recalculated to confirm legality of the requested move
-	moves, state := g.Moves()
-
-	if (state != rules.Normal) && (state != rules.Check) {
-		DebugPrintln(g.Header.Active, "requested move", m, "in", state, "state")
-		return false
+	if g.PlayerActive(pid) == false {
+		g.UnlockGame()
+		debug(MovePath, "player", pid, "not active in game", gid)
+		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
 
-	if rules.MoveSetSliceHasMove(moves, m) == false {
-		DebugPrintln(g.Header.Active, "requested illegal move", m)
-		return false
-	}
+	previousActive := g.PreviousActive
 
-	return true
-}
-
-// TODO: cleaner func signatures
-
-// DoMove does the database interactions necessary to do a move. Illegal moves can be done.
-// The board updates, taken pieces, and if a promotion is needed are returned.
-func (g Game) DoMove(tx *sql.Tx, m rules.Move,
-	promotion piece.Kind) ([]rules.AddressedSquare, []CapturedPiece, bool) {
-
-	var changes, takes []rules.AddressedSquare
-
+	var changes []rules.AddressedSquare
+	var captures []CapturedPiece
+	var promotionNeeded bool
 	if promotion != piece.NoKind {
-		changes = make([]rules.AddressedSquare, 0, 1)
-		changes = append(changes, g.Board.DoPromotion(promotion))
-		m = rules.NoMove
+		changes = g.Promote(promotion)
 	} else {
-		changes, takes = g.Board.DoMove(m)
+		changes, captures, promotionNeeded = g.Move(move)
 	}
 
-	uc := make([]AddressedPiece, len(changes))
-	for i, s := range changes {
-		uc[i] = AddressedPiece{
-			Address: s.Address,
-			Piece: Piece{
-				Slot:  NotInCollection,
-				Piece: rules.Piece(s.Square),
-			},
-		}
+	if (changes == nil) || (len(changes) == 0) {
+		g.Unlock()
+		debug(MovePath, "bad move from", pid, "in", gid, ":", move, promotion)
+		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
 
-	wFirst := g.Header.White.Captures.FirstAvailable()
-	bFirst := g.Header.Black.Captures.FirstAvailable()
-	t := make([]CapturedPiece, len(takes))
-	for i, s := range takes {
-		if ((s.Orientation == rules.Black) && (wFirst == -1)) ||
-			((s.Orientation == rules.White) && (bFirst == -1)) {
-			Panic("captured piece", s, "when capture list already full")
-		}
-		var slot int
-		if s.Orientation == rules.Black {
-			wFirst++
-			slot = wFirst
-		} else if s.Orientation == rules.White {
-			bFirst++
-			slot = bFirst
-		} else {
-			Panic("orientation", s.Orientation, "not white or black")
-		}
-		t[i] = CapturedPiece{s.Orientation, s.Kind, slot}
+	opponentID := g.OpponentOf(pid)
+	opponentOrientation := g.OrientationOf(opponentID)
+
+	var promotionWasReverse bool
+	if (promotion != piece.NoKind) && (previousActive != g.OrientationOf(pid)) {
+		promotionWasReverse = true
 	}
 
-	// normal case is the next player is the opponent, but promotion can change it
-	active := Opponent(g.Header.Active, g.Header.White.Name, g.Header.Black.Name)
+	g.Unlock()
 
-	(&g.Board).ApplyChanges(changes)
-	promoter, promotionNeeded := g.Board.PromotionNeeded()
-	promoterName := PlayerWithOrientation(promoter, g.Header.White.Name, g.Header.Black.Name)
+	alertUpdate := game.Update{Squares: changes, Captures: captures, FromMove: move}
+	if promotionNeeded || promotionWasReverse {
+		alertUpdate.State = game.WaitUpdate
+	}
+	go game.Alert(gid, opponentOrientation, pid, alertUpdate)
 
+	responseUpdate := game.Update{Squares: changes, Captures: takes}
 	if promotionNeeded {
-		// move into promotion makes the to-be promoting player active
-		active = promoterName
-	} else if promotion != piece.NoKind {
-		// if the promoter was not previous active then this is a reverse promotion
-		if OrientationOf(promoterName,
-			g.Header.White.Name, g.Header.Black.Name) != g.Header.PreviousActive {
-			active = promoterName
-		}
-		// otherwise a promotion does the regular active player swap
+		responseUpdate.State = game.PromotionNeededUpdate
+	} else if promotionWasReverse {
+		responseUpdate.State = game.ContinueUpdate
 	}
 
-	// TODO: determine draw turn count (the 0 in UpdateGame)
+	jsonResponse(w, responseUpdate)
+}
 
-	UpdateGame(tx, g.Header.ID,
-		OrientationOf(active, g.Header.White.Name, g.Header.Black.Name),
-		g.Header.Active, 0, g.Header.Turn, m, uc, t)
-
-	// TODO: remove this copy when ID determination is done
-	// main.Piece isn't needed past UpdateGame
-	squares := make([]rules.AddressedSquare, len(uc))
-	for i, s := range uc {
-		squares[i] = rules.AddressedSquare{
-			Address: s.Address,
-			Square:  rules.Square(s.Piece.Piece),
-		}
+// handleMovePostParse parses a move or promotion from the request body. If rules.NoMove and
+// piece.NoKind are returned then error handling was done and the calling handler just returns.
+func handleMovePostParse(w http.ResponseWriter, r *http.Request) (rules.Move, piece.Kind) {
+	body := handleLimitedBodyRead(w, r)
+	if body == nil {
+		return rules.NoMove, piece.NoKind
 	}
 
-	return squares, t, promotionNeeded
+	var mj MoveJSON
+	err = json.Unmarshal(body, &mj)
+	if err != nil {
+		debug(MovePath, "failed to read body JSON for", pid, "in", gid, ":", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return rules.NoMove, piece.NoKind
+	}
+
+	if mj == (MoveJSON{}) {
+		debug(MovePath, "all zero move request from", pid, "in", gid)
+		w.WriteHeader(http.StatusBadRequest)
+		return rules.NoMove, piece.NoKind
+	}
+
+	var to rules.Address
+	if mj.Promotion != piece.NoKind {
+		if mj.Promotion.IsBasic() == false {
+			debug("promotion request", promotion, "not basic kind")
+			w.WriteHeader(http.StatusBadRequest)
+			return rules.NoMove, piece.NoKind
+		}
+		to = rules.NoAddress
+	} else {
+		to = rules.AddressIndex(mj.To).Address()
+	}
+
+	return rules.Move{
+		rules.AddressIndex(mj.From).Address(),
+		to,
+	}, promotion
 }

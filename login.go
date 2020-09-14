@@ -1,39 +1,62 @@
 package wichess
 
 import (
-	"database/sql"
-
-	"golang.org/x/crypto/bcrypt"
+	"github.com/pciet/wichess/auth"
+	"github.com/pciet/wichess/memory"
 )
 
-// Login queries the database for the username and encrypted password.
-// The password argument is the unencrypted password which is then re-encrypted for comparsion
-// to the database value.
-// If the credentials are correct then the player's ID in the players table and a new session
-// key are returned.
-// If the username doesn't exist in the database then it and the encrypted password are inserted.
-func Login(name, password string) (PlayerIdentifier, string) {
-	tx := DatabaseTransaction()
-	defer tx.Commit()
+// FormPlayerName and FormPassword are the HTML form keys for LoginPath.
+const (
+	FormPlayerName = "name"
+	FormPassword   = "password"
+)
 
-	var id PlayerIdentifier
-	var c string
-	err := tx.QueryRow(PlayersCryptQuery, name).Scan(&id, &c)
-	switch err {
-	case sql.ErrNoRows:
-		crypt, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-		if err != nil {
-			Panic(err)
-		}
-		id = NewPlayer(tx, name, string(crypt))
-	case nil:
-		err = bcrypt.CompareHashAndPassword([]byte(c), []byte(password))
-		if err != nil {
-			return 0, ""
-		}
-	default:
-		Panic(err)
+func loginHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodPost {
+		loginAttemptHandler(w, r)
+		return
 	}
 
-	return id, NewSession(tx, id)
+	if r.Method != http.MethodGet {
+		debug(LoginPath, "HTTP method", r.Method, "not GET")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	writeHTMLTemplate(w, LoginHTMLTemplate, nil)
+}
+
+func loginAttemptHandler(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		debug(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	// TODO: verify README correctly describes username/password constraints
+	name := r.FormValue(FormPlayerName)
+	pass := r.FormValue(FormPassword)
+	if (name == "") || (pass == "") {
+		debug("missing username or password")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	if len(name) > memory.PlayerNameMaxLength {
+		debug("username too long")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	if name == memory.ComputerPlayerName {
+		debug("username matches", memory.ComputerPlayerName)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	id, key := auth.Login(name, pass)
+	if (key == memory.NoSessionKey) || (id == memory.NoPlayerIdentifier) {
+		debug("bad password for", name)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	auth.CreateBrowserSession(w, key.String())
+	http.Redirect(w, r, IndexPath, http.StatusSeeOther)
 }
