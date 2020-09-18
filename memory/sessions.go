@@ -6,58 +6,31 @@ import (
 )
 
 var (
-	sessionsCache map[SessionKey]PlayerIdentifier
-	sessionsMutex sync.RWMutex
+	sessionCache = make(map[SessionKey]PlayerIdentifier)
+	sessionMutex sync.RWMutex
 )
 
-const (
-	// The SessionsFile is organized similarly to PlayerFile. Differences are all runes are valid,
-	// an empty key is represented as NoSessionKey, and each key is a fixed length.
-	SessionsFile = "session"
-)
+func addSession(id PlayerIdentifier, k *SessionKey) {
+	activeMutex.RLock()
+	sessionsMutex.Lock()
 
-func AddSession(id PlayerIdentifier, k SessionKey) {
-	SessionsMutex.Lock()
-	defer SessionsMutex.RUnlock()
+	SessionsCache[*i] = id
 
-	SessionsCache[i] = id
-	ScheduleSessionsCacheWrite()
+	sessionsMutex.Unlock()
+	activeMutex.RUnlock()
 }
 
-func RemoveSession(k SessionKey) {
-	SessionsMutex.Lock()
-	defer SessionMutex.Unlock()
+func removeSession(k *SessionKey) {
+	activeMutex.RLock()
+	sessionsMutex.Lock()
 
 	_, has := SessionsCache[k]
 	if has == false {
-		Panic("tried to remove nonexistent session key")
+		panic("tried to remove nonexistent session key")
 	}
 
 	delete(SessionsCache, k)
-	ScheduleSessionsCacheWrite()
-}
 
-func (a SessionKey) PlayerID() PlayerIdentifier {
-	SessionsMutex.RLock()
-	defer SessionsMutex.RUnlock()
-
-	return SessionsCache[a]
-}
-
-func InitializeSessionMemory() {
-	SessionsCache = make(map[SessionKey]PlayerIdentifier)
-
-	b, err := ioutil.ReadFile(MemoryFilePath(SessionsFile))
-	if err != nil {
-		return
-	}
-
-	keys := strings.Split(string(b), "\n")
-	if len(keys) == 1 {
-		return
-	}
-
-	for i, k := range keys {
-		SessionsCache[k] = i + 1
-	}
+	sessionsMutex.Unlock()
+	activeMutex.RUnlock()
 }

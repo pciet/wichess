@@ -15,23 +15,32 @@ var (
 
 // AddGame causes this game to be saved in the memory system.
 func AddGame(g *Game) GameIdentifier {
+	activeMutex.RLock()
 	gamesMutex.Lock()
+
 	g.GameIdentifier = nextGameID
 	gamesCache[nextGameID] = g
 	nextGameID++
+
 	gamesMutex.Unlock()
-	g.Changed()
+	activeMutex.RUnlock()
+
 	return id
 }
 
-// LockGame locks the indicated game from concurrent access and returns its memory. If the memory
-// is changed then GameMemoryChanged is called to schedule a backing file update. *Game.Unlock,
-// from the sync.RWMutex embedded in the struct, is called when access is done. If the game
-// doesn't exist then nil is returned.
+// LockGame locks the indicated game from concurrent access and returns its memory. The Unlock
+// method of the embedded Game sync.RWMutex should be called when access is done.
+//
+// If the game doesn't exist then nil is returned.
 func LockGame(id GameIdentifier) *Game {
+	activeMutex.RLock()
 	gamesMutex.RLock()
+
 	g := gamesCache[id]
+
 	gamesMutex.RUnlock()
+	activeMutex.RUnlock()
+
 	if g != nil {
 		g.Lock()
 	}
@@ -39,18 +48,18 @@ func LockGame(id GameIdentifier) *Game {
 }
 
 // RLockGame is the same as LockGame except it does a read lock on the game's sync.RWMutex. When
-// the caller is done reading from *Game then RUnlock is called.
+// the caller is done reading then the RUnlock method should be called.
 func RLockGame(id GameIdentifier) *Game {
+	activeMutex.RLock()
 	gamesMutex.RLock()
+
 	g := gamesCache[id]
+
 	gamesMutex.RUnlock()
+	activeMutex.RUnlock()
+
 	if g != nil {
 		g.RLock()
 	}
 	return g
-}
-
-// initializeGamesMemory reads all existing games from disk and puts them into the gamesCache.
-func InitializeGamesMemory() {
-	// TODO: set NextGameID based on the maximum filename
 }

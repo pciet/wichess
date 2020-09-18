@@ -13,22 +13,30 @@ type (
 	// been deleted. The first game is 1 and others are larger.
 	GameIdentifier int
 
+	// Game represents a chess board and all information needed to calculate available moves
+	// and the results of moves. Methods change this memory in-place. Games are encoded as JSON
+	// in the backing files.
 	Game struct {
-		sync.RWMutex
-		GameIdentifier
-		Active, PreviousActive rules.Orientation
-		White, Black           GamePlayer
-		PreviousMove           rules.Move
-		DrawTurns              int
-		Conceded               bool
-		rules.Board
+		sync.RWMutex   `json:"-"`
+		GameIdentifier `json:"id"`
+		Active         rules.Orientation `json:"active"`
+		PreviousActive rules.Orientation `json:"prevactive"`
+		White          GamePlayer        `json:"white"`
+		Black          GamePlayer        `json:"black"`
+		PreviousMove   rules.Move        `json:"prevmove"`
+		DrawTurns      int               `json:"drawturns"`
+		Conceded       bool              `json:"conceded"`
+		rules.Board    `json:"board"`
 	}
 
+	// GamePlayer is a field in a Game representing one of the two players.
 	GamePlayer struct {
-		PlayerIdentifier
-		Acknowledge bool
-		Captures
-		Left, Right, Reward piece.Kind
+		PlayerIdentifier `json:"id"`
+		Acknowledge      bool `json:"ack"`
+		Captures         `json:"captures"`
+		Left             piece.Kind `json:"left"`
+		Right            piece.Kind `json:"right"`
+		Reward           piece.Kind `json:"reward"`
 	}
 
 	// Captures is a list of pieces a player has captured in ascending time order.
@@ -38,10 +46,7 @@ type (
 // NoGame is the value of a GameIdentifier var when it's not representing a game.
 const NoGame = 0
 
-// NoMove is the initial value of the From and To address indices for a new game.
-// Board addresses are 0-63, so 64 is not a normal address index.
-const NoMoveIndex = 64
-
+// RulesGame returns the minimal information needed to do calulations using package rules.
 func (a *Game) RulesGame() rules.Game {
 	return rules.Game{
 		Board:        &(a.Board),
@@ -49,33 +54,30 @@ func (a *Game) RulesGame() rules.Game {
 	}
 }
 
+// CanDelete signals that this game is no longer needed and can be permanently deleted sometime
+// by this package.
 func (a *Game) CanDelete() {
-
-}
-
-// Changed signals that, if the game continues to exist, sometime before app shutdown its latest
-// version should be written to a file.
-func (a *Game) Changed() {
 	id := a.GameIdentifier
 	go func() {
-		gameFileWritesMutex.Lock()
-		defer gameFileWritesMutex.Unlock()
-		for _, gid := range gameFileWrites {
-			if gid == id {
-				return
-			}
-		}
-		gameFileWrites = append(gameFileWrites, id)
+		activeMutex.RLock()
+		gamesMutex.Lock()
+
+		delete(gamesCache, id)
+
+		gamesMutex.Unlock()
+
+		deleteGameFile(id)
+		activeMutex.RUnlock()
 	}()
 }
 
 func (a GameIdentifier) Int() int       { return int(a) }
 func (a GameIdentifier) String() string { return strconv.Itoa(a.Int()) }
 
-// FirstAvailableCaptureIndex returns the first array index that's piece.NoKind.
-func FirstAvailableCaptureIndex(of *Captures) int {
-	for i := 0; i < len(of); i++ {
-		if of[i] == piece.NoKind {
+// FirstAvailableIndex returns the first array index that's piece.NoKind.
+func (the *Captures) FirstAvailableIndex() int {
+	for i := 0; i < len(a.Captures); i++ {
+		if a.Captures[i] == piece.NoKind {
 			return i
 		}
 	}

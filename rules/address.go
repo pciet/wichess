@@ -31,6 +31,8 @@ func (an AddressIndex) Int() int         { return int(an) }
 
 var NoAddress = Address{0, 8}
 
+const NoAddressIndex = 64
+
 func RemoveAddressSliceDuplicates(a []Address) []Address {
 	out := make([]Address, 0, len(a))
 LOOP:

@@ -3,8 +3,6 @@ package piece
 import (
 	"encoding/json"
 	"io"
-
-	"github.com/pciet/wichess/memory"
 )
 
 // ArmySize is the number of pieces in an army. This number is the same as regular chess.

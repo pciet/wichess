@@ -22,6 +22,9 @@ const LoginPath = "/login"
 // A HandlerFunc is an application of the auth package for an HTTP path and method called after
 // the player has been authenticated. Other func types in the package extend this type with
 // additional handling before finally calling a handling function provided to the package.
+//
+// The pathPrefix argument of those added funcs is used to parse the game identifier from the URL.
+// This value is just the path string, such as wichess.MovePath.
 type HandlerFunc func(http.ResponseWriter, *http.Request, memory.PlayerIdentifier)
 
 // Handler is a http.Handler that uses the requester's session key to get their player identifier.

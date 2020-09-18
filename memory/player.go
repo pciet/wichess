@@ -6,6 +6,12 @@ import (
 	"github.com/pciet/wichess/piece"
 )
 
+// NoPlayer is the value of a PlayerIdentifier var when it doesn't represent a player.
+const NoPlayer = 0
+
+// PlayerNameMaxSize is the maximum number of runes in a PlayerName.
+const PlayerNameMaxSize = 21
+
 type (
 	// A PlayerIdentifier is a positive integer that uniquely identifies a player.
 	PlayerIdentifier int
@@ -14,81 +20,24 @@ type (
 	// unicode.IsGraphic.
 	PlayerName string
 
+	// Player represents a person that is playing in games on this host. This memory includes the
+	// player's collection of pieces used to customize their army before starting a new match.
 	Player struct {
-		sync.RWMutex
-		PlayerIdentifier
-		PlayerName
-		PeopleGame, ComputerGame           GameIdentifier
-		ComputerStreak, BestComputerStreak int
-		RecentOpponents                    [RecentOpponentCount]PlayerIdentifier
-		Left, Right                        piece.Kind
-		piece.Collection
+		sync.RWMutex `json:"-"`
+
+		PlayerIdentifier `json:"id"`
+		PlayerName       `json:"name"`
+
+		PeopleGame   GameIdentifier `json:"people"`
+		ComputerGame GameIdentifier `json:"computer"`
+
+		ComputerStreak     int `json:"compstreak"`
+		BestComputerStreak int `json:"bestcompstreak"`
+
+		RecentOpponents [RecentOpponentCount]PlayerIdentifier `json"recent"`
+
+		Left             piece.Kind `json:"left"`
+		Right            piece.Kind `json:"right"`
+		piece.Collection `json:"collection"`
 	}
 )
-
-const (
-	// NoPlayer is the value of a PlayerIdentifier var when it doesn't represent a player.
-	NoPlayer = 0
-
-	// PlayerNameMaxSize is the maximum number of runes in a PlayerName.
-	PlayerNameMaxSize = 21
-
-	// The easy artificial computer player "punching bag" opponent has a reserved name and id.
-	ComputerPlayerName       = "Computer Player"
-	ComputerPlayerIdentifier = 0
-)
-
-func (a PlayerIdentifier) IsComputerPlayer() bool { return a == ComputerPlayerIdentifier }
-
-func NewPlayer(name PlayerName, crypt []byte) PlayerIdentifier {
-
-}
-
-const RecentOpponentCount = 5
-
-// AddPlayerRecentOpponent updates the list of recent opponents by inserting this one at the top.
-// The list is updated to remove duplicates, and opponents past the bottom of the list are lost.
-func AddPlayerRecentOpponent(player, opponent PlayerIdentifier) {
-	tx := DatabaseTransaction()
-
-	// TODO: does this need to be a FOR UPDATE query?
-	rec := PlayerRecentOpponentIDs(tx, player)
-
-	// remove possible one duplicate of this opponent then condense the list
-	for i, opp := range rec {
-		if opp != opponent {
-			continue
-		}
-		for j := i; j < RecentOpponentCount; j++ {
-			if j == (RecentOpponentCount - 1) {
-				rec[j] = 0
-				break
-			}
-			rec[j] = rec[j+1]
-		}
-		break
-	}
-
-	// insert the opponent at the start of the list
-	for i := (RecentOpponentCount - 1); i > 0; i-- {
-		rec[i] = rec[i-1]
-	}
-	rec[0] = opponent
-
-	UpdatePlayerRecentOpponents(tx, player, rec)
-
-	tx.Commit()
-}
-
-func (an Instance) IncrementComputerStreak() {
-	an.ComputerStreak++
-	if an.ComputerStreak > an.BestComputerStreak {
-		an.BestComputerStreak = an.ComputerStreak
-	}
-	an.Changed()
-}
-
-func (an Instance) ResetComputerStreak() {
-	an.ComputerStreak = 0
-	an.Changed()
-}

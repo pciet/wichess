@@ -7,7 +7,6 @@ import (
 )
 
 var (
-	// The playerID and playerNames caches are made from the PlayerFile.
 	playerIDCache    = make(map[PlayerName]PlayerIdentifier)
 	playerNamesCache = make([]PlayerName, 0, 8) // indexed by PlayerIdentifier-1
 
@@ -15,66 +14,43 @@ var (
 	playerNameMutex sync.RWMutex
 )
 
-// The PlayerFile is a UTF-8 ordered list of player names each separated by the \n line feed
-// rune (0xA). The name's player identifier is the line number starting at one.
-const PlayerFile = "player"
-
+// PlayerNameKnown returns the id for the player name or NoPlayer if it's not a saved name.
 func PlayerNameKnown(a PlayerName) PlayerIdentifier {
+	activeMutex.RLock()
 	playerNameMutex.RLock()
+
 	id, has := playerIDCache[a]
+
 	playerNameMutex.RUnlock()
+	activeMutex.RUnlock()
+
 	if has == false {
 		return NoPlayer
 	}
 	return id
 }
 
-func AddPlayerName(a PlayerName) (PlayerIdentifier, error) {
-	playerNameMutex.Lock()
-	defer playerNameMutex.Unlock()
-
-	_, has := playerIDCache[a]
-	if has {
-		return 0, fmt.Errorf("player %v already saved", a)
-	}
-
-	id := len(playerNamesCache)
-	playerIDCache[a] = id
-	playerNamesCache = append(playerNamesCache, a)
-
-	scheduleNamesCachesWrite()
-
-	return id, nil
-}
-
 func (id PlayerIdentifier) Name() PlayerName {
-	PlayerNameMutex.RLock()
-	defer PlayerNameMutex.RUnlock()
+	activeMutex.RLock()
+	playerNameMutex.RLock()
 
-	return PlayerNamesCache[id]
+	n := playerNamesCache[id]
+
+	playerNameMutex.RUnlock()
+	activeMutex.RUnlock()
+
+	return n
 }
 
+// TwoPlayerNames reads the names of two players while only having to acquire the cache mutex once.
 func TwoPlayerNames(a, b PlayerIdentifier) (string, string) {
-	PlayerNameMutex.RLock()
-	defer PlayerNameMutex.RUnlock()
-	return PlayerNamesCache[a], PlayerNamesCache[b]
-}
+	activeMutex.RLock()
+	playerNameMutex.RLock()
 
-// initializePlayerNameMemory reads PlayerFile to make the playerID and playerNames caches. If no
-// file exists then it will be written later after players login.
-func initializePlayerNameMemory() {
-	b, err := ioutil.ReadFile(memoryFilePath(playerFile))
-	if err != nil {
-		return
-	}
+	na, nb := playerNamesCache[a], playerNamesCache[b]
 
-	names := strings.Split(string(b), "\n")
-	if len(names) == 1 {
-		return
-	}
+	playerNameMutex.RUnlock()
+	activeMutex.RUnlock()
 
-	for i, n := range names {
-		playerIDCache[n] = i + 1
-		playerNamesCache = append(playerNamesCache, n)
-	}
+	return na, nb
 }

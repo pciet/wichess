@@ -6,10 +6,11 @@ import (
 	"net/http"
 
 	"github.com/pciet/wichess"
+	"github.com/pciet/wichess/memory"
 )
 
 func main() {
-	wichess.InitializeMemory()
+	memory.Initialize()
 
 	// HTTP handlers are how people get the game interface in their web browser and how game
 	// interactions are done with this host program.
