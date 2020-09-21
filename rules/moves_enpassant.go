@@ -4,24 +4,24 @@ import "github.com/pciet/wichess/piece"
 
 // if a piece can get to the en passant take square then this will need to be updated
 
-func (a Game) AppendEnPassantMove(moves []Address, at Address) []Address {
-	if a.Previous == NoPreviousMove {
+func (a *Board) appendEnPassantMove(moves []Address, at Address, previous Move) []Address {
+	if previous == NoPreviousMove {
 		return moves
 	}
 
-	s := a.Board[at.Index()]
+	s := a[at.Index()]
 	if s.Kind.Basic() != piece.Pawn {
 		return moves
 	}
 
-	p := a.Board[a.Previous.To.Index()]
+	p := a[previous.To.Index()]
 	if p.Kind.Basic() != piece.Pawn {
 		return moves
 	}
 
 	var left, right Address
 	if s.Orientation == White {
-		if (a.Previous.From.Rank != 6) || (a.Previous.To.Rank != 4) {
+		if (previous.From.Rank != 6) || (previous.To.Rank != 4) {
 			return moves
 		}
 		if s.Kind != piece.Evident {
@@ -39,7 +39,7 @@ func (a Game) AppendEnPassantMove(moves []Address, at Address) []Address {
 			right = Address{at.File + 1, at.Rank - 1}
 		}
 	} else {
-		if (a.Previous.From.Rank != 1) || (a.Previous.To.Rank != 3) {
+		if (previous.From.Rank != 1) || (previous.To.Rank != 3) {
 			return moves
 		}
 		if s.Kind != piece.Evident {
@@ -57,7 +57,7 @@ func (a Game) AppendEnPassantMove(moves []Address, at Address) []Address {
 		}
 	}
 
-	switch a.Previous.To.File {
+	switch previous.To.File {
 	case left.File:
 		return append(moves, left)
 	case right.File:

@@ -1,8 +1,8 @@
 package memory
 
 import (
-	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"sync"
 )
@@ -25,7 +25,7 @@ func writeHashFile() {
 
 	for _, hash := range hashCache {
 		if len(hash) > 256 {
-			panic(fmt.Sprint("hash longer than can fit into byte", len(hash)))
+			log.Panicln("hash longer than can fit into byte", len(hash))
 		}
 		_, err = f.Write([]byte{byte(len(hash))})
 		if err != nil {

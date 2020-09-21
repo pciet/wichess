@@ -1,7 +1,7 @@
 package game
 
 import (
-	"fmt"
+	"log"
 	"sync"
 
 	"github.com/gorilla/websocket"
@@ -36,7 +36,7 @@ func Connected(id memory.GameIdentifier, o rules.Orientation) *websocket.Conn {
 // original WebSocket is closed.
 func Connect(id memory.GameIdentifier, o rules.Orientation, with *websocket.Conn) {
 	if with == nil {
-		panic(fmt.Sprint("no WebSocket for %v in %v", o, id))
+		log.Panicln("no WebSocket for %v in %v", o, id)
 	}
 
 	connectionsMutex.Lock()

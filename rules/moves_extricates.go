@@ -2,13 +2,13 @@ package rules
 
 import "github.com/pciet/wichess/piece"
 
-func (a Board) AppendExtricateMoves(moves []MoveSet, active Orientation) []MoveSet {
-	king := a.KingLocation(active)
+func (a *Board) appendExtricateMoves(moves []MoveSet, active Orientation) []MoveSet {
+	king := a.kingLocation(active)
 	for i, s := range a {
-		if (s.Kind == piece.NoKind) || (s.Orientation != active) || (s.Extricates == false) {
+		if (s.Kind == piece.NoKind) || (s.Orientation != active) || (s.flags.extricates == false) {
 			continue
 		}
-		moves = MoveSetSliceAdd(moves, king, AddressIndex(i).Address())
+		moves = moveSetSliceAdd(moves, king, AddressIndex(i).Address())
 	}
 	return moves
 }

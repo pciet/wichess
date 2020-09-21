@@ -2,9 +2,9 @@ package rules
 
 import "github.com/pciet/wichess/piece"
 
-func (a Board) AppendRevealMoves(moves []Address, at Address) []Address {
-	for _, s := range a.SurroundingSquares(at) {
-		if (s.Kind == piece.NoKind) || (s.Reveals == false) ||
+func (a *Board) appendRevealMoves(moves []Address, at Address) []Address {
+	for _, s := range a.surroundingSquares(at) {
+		if (s.Kind == piece.NoKind) || (s.flags.reveals == false) ||
 			(s.Orientation != a[at.Index()].Orientation) {
 			continue
 		}

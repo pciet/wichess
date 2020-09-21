@@ -1,7 +1,7 @@
 package wichess
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/pciet/wichess/game"
@@ -22,7 +22,7 @@ func computerGet(w http.ResponseWriter, r *http.Request, p *memory.Player) {
 
 	g := game.Lock(p.ComputerGame)
 	if g.Nil() {
-		panic(fmt.Sprint(ComputerPath, "no game", p.ComputerGame, "for", p.Name))
+		log.Panicln(ComputerPath, "no game", p.ComputerGame, "for", p.Name)
 	}
 
 	// TODO: is it even possible that the computer player's move hasn't been done?

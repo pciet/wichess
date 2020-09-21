@@ -3,7 +3,6 @@ package wichess
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/pciet/wichess/memory"

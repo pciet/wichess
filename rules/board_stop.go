@@ -1,11 +1,15 @@
 package rules
 
-import "github.com/pciet/wichess/piece"
+import (
+	"log"
 
-func (a Board) PieceLocked(at Address) bool {
+	"github.com/pciet/wichess/piece"
+)
+
+func (a *Board) pieceStopped(at Address) bool {
 	p := a[at.Index()]
 	if p.Kind == piece.NoKind {
-		Panic("no piece at", at, a)
+		log.Panicln("no piece at", at, a)
 	}
 
 	if (p.Kind == piece.King) || (p.Kind == piece.Queen) {
@@ -16,7 +20,7 @@ func (a Board) PieceLocked(at Address) bool {
 		if (s.Kind == piece.NoKind) || (s.Orientation == p.Orientation) {
 			continue
 		}
-		if s.Locks {
+		if s.flags.stops {
 			return true
 		}
 	}

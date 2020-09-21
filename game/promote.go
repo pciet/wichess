@@ -17,7 +17,5 @@ func (an Instance) Promote(with piece.Kind) []rules.AddressedSquare {
 	an.PreviousActive = an.Active
 	an.Active = an.OpponentOf(an.Active)
 
-	an.Changed()
-
 	return changes
 }

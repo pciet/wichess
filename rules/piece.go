@@ -2,115 +2,106 @@ package rules
 
 import "github.com/pciet/wichess/piece"
 
-// TODO: update characteristic names, and don't repeat them here
-
-// when a new characteristic bool is added the Normalize func must also be updated
-
+// Piece represents a chess piece in a game, with fields that include the necessary information
+// to use it in package rules calculations.
+//
+// The JSON encoding of Piece is used to save into files by package memory. The web interface also
+// uses a JSON piece encoding, but for that the wichess.Piece type is used on the host since the
+// Kind and Orientation are the only needed fields to transmit.
 type Piece struct {
 	piece.Kind  `json:"k"`
 	Orientation `json:"o"`
+	Moved       bool    `json:"m"`
+	Start       Address `json:"s"`
 
-	Moved bool    `json:"-"`
-	Start Address `json:"-"`
-
-	Swaps bool `json:"-"`
-
-	// Neutralizes
-	Detonates bool `json:"-"`
-
-	// Asserts
-	Guards bool `json:"-"`
-
-	// Immaterial
-	Fortified bool `json:"-"`
-
-	// Stops
-	Locks bool `json:"-"`
-
-	// Enables
-	Rallies bool `json:"-"`
-
-	MustEnd bool `json:"-"`
-
-	// Quick
-	Ghost bool `json:"-"`
-
-	// only applies with quick, can move but can't capture by moving over other pieces
-	NoOverCapture bool `json:"-"`
-
-	Reveals bool `json:"-"`
-
-	Tense      bool `json:"-"`
-	Fantasy    bool `json:"-"`
-	Keep       bool `json:"-"`
-	Protective bool `json:"-"`
-	Extricates bool `json:"-"`
-	Normalizes bool `json:"-"`
-	Orders     bool `json:"-"`
+	// These flags aren't always an exact match with a package piece Characteristic.
+	flags characteristics
 }
 
-var (
-	WhiteKingStart      = Address{4, 0}
-	BlackKingStart      = Address{4, 7}
-	WhiteLeftRookStart  = Address{0, 0}
-	WhiteRightRookStart = Address{7, 0}
-	BlackLeftRookStart  = Address{7, 7}
-	BlackRightRookStart = Address{0, 7}
-)
+// TODO: detonate=neutralizes, guards=asserts, fortified=immaterial, locks=stops, rallies=enables,
+// ghost=quick
 
-func (a Piece) ApplyCharacteristics() Piece {
-	if a.Kind.Basic() == piece.Knight {
-		a.MustEnd = true
-		if (a.Kind != piece.Line) && (a.Kind != piece.Appropriate) {
-			a.Ghost = true
+// TODO: would packing flags into an int be a significant performance improvement?
+
+// When a new characteristics bool is added the applyCharacteristicFlags and normalize funcs must
+// also be updated.
+type characteristics struct {
+	neutralizes, asserts, immaterial, stops, enables,
+	mustEnd, // can only move to the last square on the path
+	quick, // paths can continue over other pieces, like for the regular knight
+	noOverCapture, // only applies with quick, can move but can't capture by moving over pieces
+	reveals, tense, fantasy, keep, protective, extricates, normalizes, orders bool
+}
+
+func applyCharacteristicFlags(to *Piece) {
+	if to.Kind.Basic() == piece.Knight {
+		to.flags.mustEnd = true
+		if (to.Kind != piece.Line) && (to.Kind != piece.Appropriate) {
+			to.flags.quick = true
 		}
 	}
-	if a.Kind == piece.Exit {
-		a.Ghost = true
-		a.NoOverCapture = true
+	if to.Kind == piece.Exit {
+		to.flags.quick = true
+		to.flags.noOverCapture = true
 	}
 
-	chars := piece.CharacteristicList[a.Kind]
+	charA, charB := piece.Characteristics(to.Kind)
+	if charA == piece.NoCharacteristic {
+		return
+	}
 
 	applyChars := func(c piece.Characteristic) bool {
 		switch c {
 		case piece.Neutralizes:
-			a.Detonates = true
+			to.flags.neutralizes = true
 		case piece.Asserts:
-			a.Guards = true
+			to.flags.asserts = true
 		case piece.Enables:
-			a.Rallies = true
+			to.flags.enables = true
 		case piece.Reveals:
-			a.Reveals = true
+			to.flags.reveals = true
 		case piece.Stops:
-			a.Locks = true
+			to.flags.stops = true
 		case piece.Immaterial:
-			a.Fortified = true
+			to.flags.immaterial = true
 		case piece.Tense:
-			a.Tense = true
+			to.flags.tense = true
 		case piece.Fantasy:
-			a.Fantasy = true
+			to.flags.fantasy = true
 		case piece.Keep:
-			a.Keep = true
+			to.flags.keep = true
 		case piece.Protective:
-			a.Protective = true
+			to.flags.protective = true
 		case piece.Extricates:
-			a.Extricates = true
+			to.flags.extricates = true
 		case piece.Normalizes:
-			a.Normalizes = true
+			to.flags.normalizes = true
 		case piece.Orders:
-			a.Orders = true
-		default:
-			return false
+			to.flags.orders = true
 		}
-		return true
 	}
 
-	if applyChars(chars.A) == false {
-		return a
-	}
+	applyChars(charA)
+	applyChars(charB)
+}
 
-	applyChars(chars.B)
+func normalize(s *characteristics) {
+	s.flags.neutralizes = false
+	s.flags.asserts = false
+	s.flags.immaterial = false
+	s.flags.stops = false
+	s.flags.enables = false
+	s.flags.reveals = false
+	s.flags.tense = false
+	s.flags.fantasy = false
+	s.flags.keep = false
+	s.flags.protective = false
+	s.flags.extricates = false
+	s.flags.orders = false
 
-	return a
+	// the Normalize, MustEnd, and Quick bools are left true
+}
+
+func (a *Piece) fortifiedAgainst(t *Piece) bool {
+	return a.flags.immaterial && (t.Kind.Basic() == piece.Pawn)
 }

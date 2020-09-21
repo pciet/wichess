@@ -1,16 +1,39 @@
 package rules
 
 import (
+	"log"
 	"strconv"
 	"strings"
 
 	"github.com/pciet/wichess/piece"
 )
 
-// A Wisconsin Chess board is a regular 8x8 chess board.
-type Board [8 * 8]Square
+// A Wisconsin Chess board is a regular 8x8 chess board. The mapping of array index to board square
+// is described for the AddressIndex type. If a Board value's Kind field is piece.NoKind then that
+// square doesn't have a piece on it.
+type Board [8 * 8]Piece
 
-func (a Board) SurroundingSquares(at Address) []AddressedSquare {
+// NotEmpty and Empty are used when a Piece is representing a square on the board which could not
+// have a chess piece on it.
+func (square *Piece) NotEmpty() bool { return square.Kind != piece.NoKind }
+func (square *Piece) Empty() bool    { return square.Kind == piece.NoKind }
+
+func (a *Board) String() string {
+	var s strings.Builder
+	for rank := 7; rank >= 0; rank-- {
+		s.WriteString(strconv.Itoa(rank + 1))
+		s.WriteRune(' ')
+		for file := 0; file < 8; file++ {
+			s.WriteRune('[')
+			s.WriteString(a[Address{file, rank}.Index()].String())
+			s.WriteString("] ")
+		}
+		s.WriteString("\n")
+	}
+	return s.String()
+}
+
+func (a *Board) surroundingSquares(at Address) []AddressedSquare {
 	s := make([]AddressedSquare, 0, 8)
 	for x := -1; x <= 1; x++ {
 		for y := -1; y <= 1; y++ {
@@ -25,27 +48,27 @@ func (a Board) SurroundingSquares(at Address) []AddressedSquare {
 			if (ny < 0) || (ny > 7) {
 				continue
 			}
-			addr := Address{uint8(nx), uint8(ny)}
+			addr := Address{nx, ny}
 			s = append(s, AddressedSquare{
 				Address: addr,
-				Square:  a[addr.Index()],
+				Piece:   a[addr.Index()],
 			})
 		}
 	}
 	return s
 }
 
-func (a Board) KingLocation(of Orientation) Address {
+func (a *Board) kingLocation(of Orientation) Address {
 	for i, s := range a {
 		if (s.Kind == piece.King) && (s.Orientation == of) {
 			return AddressIndex(i).Address()
 		}
 	}
-	Panic("no king found for", of)
+	log.Panicln("no king found for", of)
 	return Address{}
 }
 
-func (a Board) NoKing(of Orientation) bool {
+func (a *Board) noKing(of Orientation) bool {
 	for _, s := range a {
 		if (s.Kind == piece.King) && (s.Orientation == of) {
 			return false
@@ -54,13 +77,13 @@ func (a Board) NoKing(of Orientation) bool {
 	return true
 }
 
-func (a *Board) ApplyChanges(c []AddressedSquare) {
+func (a *Board) applyChanges(c []AddressedSquare) {
 	for _, change := range c {
-		a[change.Address.Index()] = change.Square
+		a[change.Address.Index()] = change.Piece
 	}
 }
 
-func (a Board) PieceCount(of Orientation) int {
+func (a *Board) pieceCount(of Orientation) int {
 	c := 0
 	for _, s := range a {
 		if s.Kind == piece.NoKind {
@@ -71,19 +94,4 @@ func (a Board) PieceCount(of Orientation) int {
 		}
 	}
 	return c
-}
-
-func (a Board) String() string {
-	var s strings.Builder
-	for rank := 7; rank >= 0; rank-- {
-		s.WriteString(strconv.Itoa(rank + 1))
-		s.WriteRune(' ')
-		for file := 0; file < 8; file++ {
-			s.WriteRune('[')
-			s.WriteString(a[Address{uint8(file), uint8(rank)}.Index()].String())
-			s.WriteString("] ")
-		}
-		s.WriteString("\n")
-	}
-	return s.String()
 }

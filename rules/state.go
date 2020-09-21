@@ -2,6 +2,7 @@ package rules
 
 import "strconv"
 
+// State represents the current state of the game, such as check, promotion needed, or draw.
 type State int
 
 const (

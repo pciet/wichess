@@ -1,8 +1,6 @@
 package memory
 
-import (
-	"sync"
-)
+import "sync"
 
 // TODO: assumptions for GamesCache's type are documented at github.com/pciet/wichess/issues/113
 

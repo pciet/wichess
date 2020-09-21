@@ -2,7 +2,9 @@ package rules
 
 import "github.com/pciet/wichess/piece"
 
-func (a Board) PromotionNeeded() (Orientation, bool) {
+// PromotionNeeded returns whether a promotion must be done, and if so it returns the Orientation
+// of the player that needs to promote.
+func (a *Board) PromotionNeeded() (Orientation, bool) {
 	for i := 0; i < 8; i++ {
 		p := a[i]
 		if (p.Kind.Basic() == piece.Pawn) && (p.Orientation == Black) {
@@ -18,14 +20,16 @@ func (a Board) PromotionNeeded() (Orientation, bool) {
 	return White, false
 }
 
-func (a Board) DoPromotion(with piece.Kind) AddressedSquare {
+// DoPromotion finds the piece that needs to be promoted and returns the value of its Square after
+// the promotion is done. The Board is not changed.
+func (a *Board) DoPromotion(with piece.Kind) Square {
 	for i := 0; i < 8; i++ {
 		s := a[i]
 		if (s.Kind.Basic() == piece.Pawn) && (s.Orientation == Black) {
 			s.Kind = with
-			return AddressedSquare{
+			return Square{
 				Address: AddressIndex(i).Address(),
-				Square:  s,
+				Piece:   s,
 			}
 		}
 	}
@@ -33,9 +37,9 @@ func (a Board) DoPromotion(with piece.Kind) AddressedSquare {
 		s := a[i]
 		if (s.Kind.Basic() == piece.Pawn) && (s.Orientation == White) {
 			s.Kind = with
-			return AddressedSquare{
+			return Square{
 				Address: AddressIndex(i).Address(),
-				Square:  s,
+				Piece:   s,
 			}
 		}
 	}

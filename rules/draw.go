@@ -9,7 +9,7 @@ import "github.com/pciet/wichess/piece"
 //   king v king+bishop
 //   king v king+knight
 //   king+bishop v king+bishop of the same bishop color
-func (a Board) InsufficientMaterialDraw() bool {
+func (a *Board) insufficientMaterialDraw() bool {
 	w := make([]AddressedSquare, 0, 2)
 	b := make([]AddressedSquare, 0, 2)
 	for i, p := range a {
@@ -35,12 +35,12 @@ func (a Board) InsufficientMaterialDraw() bool {
 	}
 
 	if (len(w) == 0) || (len(b) == 0) {
-		Panic("side has no pieces")
+		panic("side has no pieces")
 	}
 
 	if (len(w) == 1) && (len(b) == 1) {
 		if (w[0].Kind != piece.King) || (b[0].Kind != piece.King) {
-			Panic("side missing king")
+			panic("side missing king")
 		}
 		return true
 	}

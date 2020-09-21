@@ -2,6 +2,7 @@ package game
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/pciet/wichess/memory"
 	"github.com/pciet/wichess/piece"
@@ -145,7 +146,7 @@ func reserveArmy(id memory.PlayerIdentifier, o rules.Orientation,
 		} else if o == rules.Black {
 			start = rules.AddressIndex(i + 48)
 		} else {
-			panic(fmt.Sprint("bad orientation", o))
+			log.Panicln("bad orientation", o)
 		}
 
 		army[i] = Piece{

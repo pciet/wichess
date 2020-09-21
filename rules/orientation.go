@@ -1,11 +1,13 @@
 package rules
 
-// Piece ownership and direction of travel is shown by orientation.
+import "log"
+
+// Orientation indicates piece ownership and direction of movement.
 type Orientation int
 
 const (
-	White Orientation = 0
-	Black Orientation = 1
+	White Orientation = iota
+	Black
 )
 
 func (an Orientation) Opponent() Orientation {
@@ -15,7 +17,7 @@ func (an Orientation) Opponent() Orientation {
 	case Black:
 		return White
 	}
-	Panic("unknown orientation", an)
+	log.Panicln("unknown orientation", an)
 	return White
 }
 
@@ -26,13 +28,6 @@ func (an Orientation) String() string {
 	case Black:
 		return "black"
 	}
-	Panic("unknown orientation", an)
+	log.Panicln("unknown orientation", an)
 	return ""
-}
-
-func BoolToOrientation(a bool) Orientation {
-	if a == false {
-		return White
-	}
-	return Black
 }

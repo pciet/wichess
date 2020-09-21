@@ -3,42 +3,21 @@ package rules
 import "github.com/pciet/wichess/piece"
 
 type (
+	// Move represents the addressing of a piece move from a square to another.
 	Move struct {
 		From Address `json:"f"`
 		To   Address `json:"t"`
 	}
 
+	// MoveSet represents the moves of multiple pieces that may each have more than one To.
 	MoveSet struct {
 		From  Address   `json:"f"`
 		Moves []Address `json:"m"`
 	}
 )
 
+// NoMove is the value of a Move when it doesn't indicate a move.
 var NoMove = Move{NoAddress, NoAddress}
-
-func (a Move) Forward(by Orientation) bool {
-	if by == White {
-		if a.From.Rank < a.To.Rank {
-			return true
-		}
-	} else if by == Black {
-		if a.From.Rank > a.To.Rank {
-			return true
-		}
-	} else {
-		Panic("orientation", by, "not white or black")
-	}
-	return false
-}
-
-func (a Game) AfterMove(m Move) Game {
-	d, _ := a.DoMove(m)
-	for _, s := range d {
-		a.Board[s.Address.Index()] = s.Square
-	}
-	a.Previous = m
-	return a
-}
 
 // At least these bad moves can be made with DoMove:
 //   putting the king in check
@@ -51,112 +30,128 @@ func (a Game) AfterMove(m Move) Game {
 //   swapping with a friendly piece without having the swap ability
 //   extricate a piece other than the king
 
-// Returns the squares that changed and the squares with each piece that was taken.
-// No move legality is determined, bad moves either cause a panic or happen.
-func (a Board) DoMove(m Move) ([]AddressedSquare, []AddressedSquare) {
-	from := a[m.From.Index()]
-	if from.Empty() {
-		Panic("no piece for move", m, a)
-	}
-
-	changes := make([]AddressedSquare, 0, 3)
-	takes := make([]AddressedSquare, 0, 1)
+// DoMove does the requested move without affecting the Board. No move legality is determined and
+// many illegal moves are possible with this method. The changed squares and original values of
+// squares that had captures happen to them are returned.
+func (a *Board) DoMove(m Move) ([]Square, []Square) {
+	// copy the Board as a workspace to do temporary changes caused by characteristics
+	bcopy := a.Copy()
 
 	// apply characteristic changes caused by other pieces
 
 	// remove characteristics due to normalizes
-	for i, s := range a {
+	for i, s := range bcopy {
 		// TODO: this loop is duplicated in Game.Moves
-		if (s.Kind == piece.NoKind) || (s.Normalizes == false) {
+		if (s.Kind == piece.NoKind) || (s.flags.normalizes == false) {
 			continue
 		}
-		for _, ss := range a.SurroundingSquares(AddressIndex(i).Address()) {
+		for _, ss := range bcopy.surroundingSquares(AddressIndex(i).Address()) {
 			if ss.Kind == piece.NoKind {
 				continue
 			}
-			Normalize(&(a[ss.Address.Index()]))
+			normalize(&(bcopy[ss.Address.Index()].flags))
 		}
 	}
 
 	// apply orders
-	for i, s := range a {
-		if (s.Kind == piece.NoKind) || (s.Orders == false) {
+	for i, s := range bcopy {
+		if (s.Kind == piece.NoKind) || (s.flags.orders == false) {
 			continue
 		}
-		for _, ss := range a.SurroundingSquares(AddressIndex(i).Address()) {
+		for _, ss := range bcopy.surroundingSquares(AddressIndex(i).Address()) {
 			if ss.Kind == piece.NoKind {
 				continue
 			}
-			a[ss.Address.Index()].Detonates = true
+			bcopy[ss.Address.Index()].flags.neutralizes = true
 		}
 	}
 
-	to := a[m.To.Index()]
+	changes := make([]Square, 0, 4)
+	captures := make([]Square, 0, 1)
+
+	from := bcopy[m.From.Index()]
+	if from.Empty() {
+		log.Panicln("no piece for move", m, a)
+	}
+	to := bcopy[m.To.Index()]
+
 	if to.NotEmpty() {
 		if to.Orientation == from.Orientation {
-			if to.Extricates {
+			if to.flags.extricates {
 				// captures your own piece for the opponent to get king out of check
-				changes, takes = a.TakeMove(changes, takes, m)
-			} else {
-				changes = a.SwapMove(changes, m)
+				changes, takes = bcopy.takeMove(changes, takes, m)
 			}
 		} else {
-			if to.Detonates {
-				return a.DetonateMove(changes, takes, m)
+			if to.flags.neutralizes {
+				return bcopy.neutralizesMove(changes, takes, m)
 			}
-			changes, takes = a.TakeMove(changes, takes, m)
+			changes, takes = bcopy.captureMove(changes, takes, m)
 		}
 	} else {
-		if a.IsCastleMove(m) {
-			return a.CastleMove(changes, m), nil
-		} else if a.IsEnPassantMove(m) {
-			changes, takes = a.EnPassantMove(changes, takes, m)
+		if bcopy.isCastleMove(m) {
+			return bcopy.castleMove(changes, m), nil
+		} else if bcopy.isEnPassantMove(m) {
+			changes, takes = bcopy.enPassantMove(changes, takes, m)
 		} else {
-			changes = a.NoTakeMove(changes, m)
+			changes = bcopy.noCaptureMove(changes, m)
 		}
 	}
 
-	for _, s := range a.SurroundingSquares(m.To) {
-		if a.GuardWillTake(from, s) == false {
+	for _, s := range bcopy.surroundingSquares(m.To) {
+		if bcopy.assertsWillCapture(from, s) == false {
 			continue
 		}
-		if from.Detonates {
-			return a.GuardTakesDetonate(changes, takes, m, s.Address)
+		if from.flags.neutralizes {
+			return bcopy.assertsCapturesNeutralizes(changes, takes, m, s.Address)
 		}
-		return a.GuardChain(changes, takes, m, s.Address)
+		return bcopy.assertsChain(changes, takes, m, s.Address)
 	}
 
 	return changes, takes
 }
 
-func (a Board) NoTakeMove(changes []AddressedSquare, m Move) []AddressedSquare {
-	s := a[m.From.Index()]
-	s.Moved = true
-	changes = append(changes, AddressedSquare{m.From, Square{}})
-	return append(changes, AddressedSquare{m.To, s})
+func (a Move) String() string {
+	return "from " + a.From.String() + " to " + a.To.String()
 }
 
-func (a Board) TakeMove(changes, takes []AddressedSquare,
-	m Move) ([]AddressedSquare, []AddressedSquare) {
+func (a *Board) noCaptureMove(changes []Square, m Move) []Square {
 	s := a[m.From.Index()]
 	s.Moved = true
-	changes = append(changes, AddressedSquare{m.From, Square{}})
+	changes = append(changes, Square{m.From, Piece{}})
+	return append(changes, Square{m.To, s})
+}
+
+func (a *Board) captureMove(changes, captures []Square, m Move) ([]Square, []Square) {
+	s := a[m.From.Index()]
+	s.Moved = true
+	changes = append(changes, Square{m.From, Piece{}})
 
 	t := a[m.To.Index()]
-	if t.Fantasy && (a[t.Start.Index()].Kind == piece.NoKind) {
-		changes = append(changes, AddressedSquare{t.Start, Square{
+	if t.flags.fantasy && (a[t.Start.Index()].Kind == piece.NoKind) {
+		changes = append(changes, Square{t.Start, Piece{
 			Kind:        t.Kind,
 			Orientation: t.Orientation,
 			Start:       t.Start,
 			Moved:       true,
 		}})
 	} else {
-		takes = append(takes, AddressedSquare{m.To, t})
+		takes = append(captures, Square{m.To, t})
 	}
 
-	return append(changes, AddressedSquare{m.To, s}), takes
+	return append(changes, Square{m.To, s}), captures
 }
 
-func (a Move) String() string {
-	return "from " + a.From.String() + " to " + a.To.String()
+func (a Move) forward(by Orientation) bool {
+	if by == White {
+		if a.From.Rank < a.To.Rank {
+			return true
+		}
+	} else if by == Black {
+		if a.From.Rank > a.To.Rank {
+			return true
+		}
+	} else {
+		log.Panicln("orientation", by, "not white or black")
+	}
+	return false
 }

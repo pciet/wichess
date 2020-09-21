@@ -1,11 +1,7 @@
-package rules
-
-// Each piece has sets of possible paths that depend on the position.
-// In the host these are represented as paths of relative addresses before application
-// to a position.
+package piece
 
 var (
-	KnightPaths = []RelPath{
+	knightPaths = []Path{
 		{{0, 1}, {0, 2}, {-1, 2}},
 		{{0, 1}, {0, 2}, {1, 2}},
 		{{1, 0}, {2, 0}, {2, 1}},
@@ -16,7 +12,7 @@ var (
 		{{-1, 0}, {-2, 0}, {-2, -1}},
 	}
 
-	TripleKnightPaths = []RelPath{
+	tripleKnightPaths = []Path{
 		{{0, 1}, {0, 2}, {0, 3}, {-1, 3}},
 		{{0, 1}, {0, 2}, {0, 3}, {1, 3}},
 		{{1, 0}, {2, 0}, {3, 0}, {3, 1}},
@@ -27,14 +23,14 @@ var (
 		{{-1, 0}, {-2, 0}, {-3, 0}, {-3, -1}},
 	}
 
-	ForwardKnightPaths = []RelPath{
+	forwardKnightPaths = []Path{
 		{{0, 1}, {0, 2}, {-1, 2}},
 		{{0, 1}, {0, 2}, {1, 2}},
 		{{1, 0}, {2, 0}, {2, 1}},
 		{{-1, 0}, {-2, 0}, {-2, 1}},
 	}
 
-	NoGhostKnightPaths = []RelPath{
+	noGhostKnightPaths = []Path{
 		{{0, 1}, {0, 2}, {-1, 2}},
 		{{-1, 0}, {-1, 1}, {-1, 2}},
 		{{0, 1}, {-1, 1}, {-1, 2}},
@@ -68,7 +64,7 @@ var (
 		{{-1, 0}, {-1, -1}, {-2, -1}},
 	}
 
-	NoGhostForwardKnightPaths = []RelPath{
+	noGhostForwardKnightPaths = []Path{
 		{{0, 1}, {0, 2}, {-1, 2}},
 		{{-1, 0}, {-1, 1}, {-1, 2}},
 		{{0, 1}, {-1, 1}, {-1, 2}},
@@ -86,7 +82,7 @@ var (
 		{{-1, 0}, {-1, 1}, {-2, 1}},
 	}
 
-	NoGhostTripleKnightPaths = []RelPath{
+	noGhostTripleKnightPaths = []Path{
 		{{0, 1}, {0, 2}, {0, 3}, {-1, 3}},
 		{{-1, 0}, {-1, 1}, {-1, 2}, {-1, 3}},
 		{{0, 1}, {-1, 1}, {-1, 2}, {-1, 3}},
@@ -128,56 +124,56 @@ var (
 		{{-1, 0}, {-2, 0}, {-2, -1}, {-3, -1}},
 	}
 
-	BishopPaths = []RelPath{
+	bishopPaths = []Path{
 		{{1, 1}, {2, 2}, {3, 3}, {4, 4}, {5, 5}, {6, 6}, {7, 7}},
 		{{-1, -1}, {-2, -2}, {-3, -3}, {-4, -4}, {-5, -5}, {-6, -6}, {-7, -7}},
 		{{1, -1}, {2, -2}, {3, -3}, {4, -4}, {5, -5}, {6, -6}, {7, -7}},
 		{{-1, 1}, {-2, 2}, {-3, 3}, {-4, 4}, {-5, 5}, {-6, 6}, {-7, 7}},
 	}
 
-	SingleBishopPaths = []RelPath{
+	singleBishopPaths = []Path{
 		{{1, 1}},
 		{{-1, -1}},
 		{{1, -1}},
 		{{-1, 1}},
 	}
 
-	TwoBishopPaths = []RelPath{
+	twoBishopPaths = []Path{
 		{{1, 1}, {2, 2}},
 		{{-1, -1}, {-2, -2}},
 		{{1, -1}, {2, -2}},
 		{{-1, 1}, {-2, 2}},
 	}
 
-	ThreeBishopPaths = []RelPath{
+	threeBishopPaths = []Path{
 		{{1, 1}, {2, 2}, {3, 3}},
 		{{-1, -1}, {-2, -2}, {-3, -3}},
 		{{1, -1}, {2, -2}, {3, -3}},
 		{{-1, 1}, {-2, 2}, {-3, 3}},
 	}
 
-	RookPaths = []RelPath{
+	rookPaths = []Path{
 		{{1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}},
 		{{-1, 0}, {-2, 0}, {-3, 0}, {-4, 0}, {-5, 0}, {-6, 0}, {-7, 0}},
 		{{0, 1}, {0, 2}, {0, 3}, {0, 4}, {0, 5}, {0, 6}, {0, 7}},
 		{{0, -1}, {0, -2}, {0, -3}, {0, -4}, {0, -5}, {0, -6}, {0, -7}},
 	}
 
-	FiveRookPaths = []RelPath{
+	fiveRookPaths = []Path{
 		{{1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}},
 		{{-1, 0}, {-2, 0}, {-3, 0}, {-4, 0}, {-5, 0}},
 		{{0, 1}, {0, 2}, {0, 3}, {0, 4}, {0, 5}},
 		{{0, -1}, {0, -2}, {0, -3}, {0, -4}, {0, -5}},
 	}
 
-	FourRookPaths = []RelPath{
+	fourRookPaths = []Path{
 		{{1, 0}, {2, 0}, {3, 0}, {4, 0}},
 		{{-1, 0}, {-2, 0}, {-3, 0}, {-4, 0}},
 		{{0, 1}, {0, 2}, {0, 3}, {0, 4}},
 		{{0, -1}, {0, -2}, {0, -3}, {0, -4}},
 	}
 
-	QueenPaths = []RelPath{
+	queenPaths = []Path{
 		{{1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}},
 		{{-1, 0}, {-2, 0}, {-3, 0}, {-4, 0}, {-5, 0}, {-6, 0}, {-7, 0}},
 		{{0, 1}, {0, 2}, {0, 3}, {0, 4}, {0, 5}, {0, 6}, {0, 7}},
@@ -188,7 +184,7 @@ var (
 		{{-1, 1}, {-2, 2}, {-3, 3}, {-4, 4}, {-5, 5}, {-6, 6}, {-7, 7}},
 	}
 
-	KingPaths = []RelPath{
+	kingPaths = []Path{
 		{{0, 1}},
 		{{1, 1}},
 		{{1, 0}},
@@ -199,7 +195,7 @@ var (
 		{{-1, 1}},
 	}
 
-	DoubleKingPaths = []RelPath{
+	doubleKingPaths = []Path{
 		{{0, 1}, {0, 2}},
 		{{1, 1}, {2, 2}},
 		{{1, 0}, {2, 0}},
@@ -210,10 +206,44 @@ var (
 		{{-1, 1}, {-2, 2}},
 	}
 
-	ExtendedBishopPaths = CombineRelPathSlices(KingPaths, BishopPaths)
-	ExtendedRookPaths   = CombineRelPathSlices(KingPaths, RookPaths)
+	extendedBishopPaths = combinePathSlices(kingPaths, bishopPaths)
+	extendedRookPaths   = combinePathSlices(kingPaths, rookPaths)
 
-	ExtendedKnightRallyPaths = CombineRelPathSlices(TripleKnightPaths, KnightPaths)
-	ExtendedBishopRallyPaths = CombineRelPathSlices(ExtendedBishopPaths, DoubleKingPaths)
-	ExtendedRookRallyPaths   = CombineRelPathSlices(ExtendedRookPaths, DoubleKingPaths)
+	extendedKnightRallyPaths = combinePathSlices(tripleKnightPaths, knightPaths)
+	extendedBishopRallyPaths = combinePathSlices(extendedBishopPaths, doubleKingPaths)
+	extendedRookRallyPaths   = combinePathSlices(extendedRookPaths, doubleKingPaths)
 )
+
+// The resulting slice only has one of any path.
+func combinePathSlices(s ...[]Path) []Path {
+	if len(s) == 0 {
+		panic("no slices")
+	}
+
+	z := s[0]
+	for _, ps := range s[1:] {
+	LOOP:
+		for _, p := range ps {
+			for _, ep := range z {
+				if pathEqual(p, ep) {
+					continue LOOP
+				}
+			}
+			z = append(z, p)
+		}
+	}
+
+	return z
+}
+
+func pathEqual(a, b Path) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i, v := range a {
+		if b[i] != v {
+			return false
+		}
+	}
+	return true
+}

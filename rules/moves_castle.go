@@ -2,14 +2,14 @@ package rules
 
 import "github.com/pciet/wichess/piece"
 
-// The king should not be in check when AppendCastleMoves is called.
-func (a Board) AppendCastleMoves(moves []MoveSet, by Orientation,
+// The king should not be in check when appendCastleMoves is called.
+func (a *Board) appendCastleMoves(moves []MoveSet, by Orientation,
 	opponentThreats []Address) []MoveSet {
 	var king Address
 	if by == White {
-		king = WhiteKingStart
+		king = whiteKingStart
 	} else {
-		king = BlackKingStart
+		king = blackKingStart
 	}
 
 	s := a[king.Index()]
@@ -53,16 +53,16 @@ func (a Board) AppendCastleMoves(moves []MoveSet, by Orientation,
 	var left, right []Address
 
 	if by == White {
-		leftRook = WhiteLeftRookStart
-		rightRook = WhiteRightRookStart
+		leftRook = whiteLeftRookStart
+		rightRook = whiteRightRookStart
 		left = []Address{{3, 0}, {2, 0}, {1, 0}}
 		right = []Address{{5, 0}, {6, 0}}
 		leftCastle = Address{2, 0}
 		rightCastle = Address{6, 0}
 	} else {
 		// reversed because naming in this function is from the white perspective
-		leftRook = BlackRightRookStart
-		rightRook = BlackLeftRookStart
+		leftRook = blackRightRookStart
+		rightRook = blackLeftRookStart
 		left = []Address{{3, 7}, {2, 7}, {1, 7}}
 		right = []Address{{5, 7}, {6, 7}}
 		leftCastle = Address{2, 7}

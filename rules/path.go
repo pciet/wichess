@@ -6,48 +6,53 @@ import (
 	"github.com/pciet/wichess/piece"
 )
 
-// TODO: is it worth caching the calculation result of applying rel paths?
-
-// Paths relative to the piece are applied to the board in AppliedRelPaths which returns
-// board addresses. Interaction of pieces is not considered. Paths that leave the board
-// are truncated.
-func AppliedRelPaths(f piece.Kind, at Address, o Orientation) PathVariations {
-	var out PathVariations
-
-	rv, ok := PieceRelPaths[f]
-	if ok == false {
-		Panic("no basic paths defined for piece", f)
+type (
+	path struct {
+		Truncated bool // MustEnd pieces need to know if the path was ended early
+		Addresses []Address
 	}
 
-	offBoard := func(r RelAddress) (bool, Address) {
-		x := int8(at.File)
+	pathVariations [piece.PathVariationCount][]Path
+)
+
+// TODO: is it worth caching the calculation result of applying paths?
+
+// appliedPaths changes the piece.Address that's relative to the piece into absolute board
+// addresses. Other pieces aren't considered. If a piece's path leaves the board then the
+// path is truncated at the last square on the board edge.
+func appliedPaths(f piece.Kind, at Address, o Orientation) PathVariations {
+	var out PathVariations
+	rv := piece.Paths(f)
+
+	offBoard := func(r piece.Address) (bool, Address) {
+		x := at.File
 		if o == White {
-			x = x + r.X
+			x = x + r.File
 		} else {
-			x = x - r.X
+			x = x - r.File
 		}
 		if (x < 0) || (x > 7) {
 			return true, Address{}
 		}
 
-		y := int8(at.Rank)
+		y := at.Rank
 		if o == White {
-			y = y + r.Y
+			y = y + r.Rank
 		} else {
-			y = y - r.Y
+			y = y - r.Rank
 		}
 		if (y < 0) || (y > 7) {
 			return true, Address{}
 		}
 
-		return false, Address{uint8(x), uint8(y)}
+		return false, Address{x, y}
 	}
 
 	for v, relpaths := range rv {
 		paths := make([]Path, 0, len(relpaths))
 		for _, rp := range relpaths {
 			if len(rp) == 0 {
-				Panic("zero length basic path for piece", f)
+				log.Panicln("zero length basic path for piece", f)
 			}
 
 			off, _ := offBoard(rp[0])
@@ -70,40 +75,6 @@ func AppliedRelPaths(f piece.Kind, at Address, o Orientation) PathVariations {
 	}
 
 	return out
-}
-
-// The resulting slice only has one of any path.
-func CombineRelPathSlices(s ...[]RelPath) []RelPath {
-	if len(s) == 0 {
-		Panic("no slices")
-	}
-
-	z := s[0]
-	for _, ps := range s[1:] {
-	LOOP:
-		for _, p := range ps {
-			for _, ep := range z {
-				if RelPathEqual(p, ep) {
-					continue LOOP
-				}
-			}
-			z = append(z, p)
-		}
-	}
-
-	return z
-}
-
-func RelPathEqual(a, b RelPath) bool {
-	if len(a) != len(b) {
-		return false
-	}
-	for i, v := range a {
-		if b[i] != v {
-			return false
-		}
-	}
-	return true
 }
 
 func (a Path) String() string {

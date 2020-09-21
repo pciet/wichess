@@ -4,66 +4,73 @@ import "github.com/pciet/wichess/piece"
 
 // TODO: move results are all calculated here, so cache that for when a move is picked
 
-func (a Game) Moves(active Orientation) ([]MoveSet, State) {
+// Moves calculates all moves that can be done by the active player and the state of the game.
+// The previous move is needed because en passant calculations need to know when the pawn to
+// capture was moved.
+func (a *Board) Moves(active Orientation, previous Move) ([]MoveSet, State) {
 	// promotion is part of the previous move
 	_, needed := a.PromotionNeeded()
 	if needed {
 		return nil, Promotion
 	}
 
-	if a.InsufficientMaterialDraw() {
+	if a.insufficientMaterialDraw() {
 		return nil, Draw
 	}
+
+	bcopy := a.Copy()
 
 	// apply characteristic changes caused by other pieces
 
 	// first remove characteristics due to normalizes
-	for i, s := range a.Board {
-		if (s.Kind == piece.NoKind) || (s.Normalizes == false) {
+	for i, s := range bcopy {
+		if (s.Kind == piece.NoKind) || (s.flags.normalizes == false) {
 			continue
 		}
-		for _, ss := range a.Board.SurroundingSquares(AddressIndex(i).Address()) {
+		for _, ss := range bcopy.surroundingSquares(AddressIndex(i).Address()) {
 			if ss.Kind == piece.NoKind {
 				continue
 			}
-			Normalize(&(a.Board[ss.Address.Index()]))
+			normalize(&(bcopy[ss.Address.Index()].fields))
 		}
 	}
 
 	// apply keep and orders
-	for i, s := range a.Board {
-		if (s.Kind == piece.NoKind) || ((s.Keep == false) && (s.Orders == false)) {
+	for i, s := range bcopy {
+		if (s.Kind == piece.NoKind) || ((s.flags.keep == false) && (s.flags.orders == false)) {
 			continue
 		}
-		for _, ss := range a.Board.SurroundingSquares(AddressIndex(i).Address()) {
+		for _, ss := range bcopy.surroundingSquares(AddressIndex(i).Address()) {
 			if ss.Kind == piece.NoKind {
 				continue
 			}
-			if s.Keep && (ss.Orientation == s.Orientation) {
-				a.Board[ss.Address.Index()].Fortified = true
+			if s.flags.keep && (ss.Orientation == s.Orientation) {
+				bcopy[ss.Address.Index()].flags.immaterial = true
 			}
-			if s.Orders {
-				a.Board[ss.Address.Index()].Detonates = true
+			if s.flags.orders {
+				bcopy[ss.Address.Index()].flags.neutralizes = true
 			}
 		}
 	}
 
 	// calculate all moves the player can make without considering check
-	moves := a.NaiveMoves(active)
+	moves := bcopy.naiveMoves(active, previous)
+
+	// TODO: what should previous be for the threats call?
 
 	// check is a threat of capture, which means takes into check count
-	threats := MovesAddressSlice(a.NaiveMoves(active.Opponent()))
+	threats := movesAddressSlice(bcopy.naiveMoves(active.Opponent(), previous))
 
-	check := a.Board.InCheck(active, threats)
+	check := bcopy.inCheck(active, threats)
 
 	if check == false {
-		moves = a.Board.AppendCastleMoves(moves, active, threats)
+		moves = bcopy.appendCastleMoves(moves, active, threats)
 	} else {
-		moves = a.Board.AppendExtricateMoves(moves, active)
+		moves = bcopy.appendExtricateMoves(moves, active)
 	}
 
 	// if the king is on a threatened square or taken after a move then that move is removed
-	moves = a.RemoveMovesIntoCheck(moves, active)
+	moves = bcopy.removeMovesIntoCheck(moves, active)
 
 	if len(moves) == 0 {
 		if check {

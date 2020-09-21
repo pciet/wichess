@@ -1,5 +1,6 @@
 package piece
 
+// CollectionSize is the number of pieces a player's collection can have.
 const CollectionSize = 21
 
 // These three special CollectionSlot values indicate either that a piece isn't in the collection

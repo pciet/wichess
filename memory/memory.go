@@ -13,6 +13,7 @@ package memory
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"os/signal"
 	"strings"
@@ -50,7 +51,7 @@ func Initialize() {
 			if err != nil {
 				panic(err.Error())
 			} else if c != 1 {
-				panic(fmt.Sprint("parsed", c))
+				log.Panicln("parsed", c)
 			}
 			gameIDs = append(gameIDs, id)
 		} else if strings.HasPrefix(name, PlayerFilePrefix) {
@@ -59,7 +60,7 @@ func Initialize() {
 			if err != nil {
 				panic(err.Error())
 			} else if c != 1 {
-				panic(fmt.Sprint("parsed", c))
+				log.Panicln("parsed", c)
 			}
 			playerIDs = append(playerIDs, id)
 		}

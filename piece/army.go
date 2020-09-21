@@ -13,6 +13,9 @@ type (
 	// at zero and ascends to the right to seven for the far right pawn, then jumps back to the
 	// left with the queenside rook at eight and ascends again to the right up to the right rook
 	// at index 15.
+	//
+	// The black army is a mirror of the white army, not a rotation. This means that from the
+	// white perspective the black army indexing also starts at the left and goes right.
 	ArmyIndex int
 
 	// An ArmyRequest points zero or more army indices at slots in the collection for use in a game.
@@ -22,32 +25,30 @@ type (
 	Army [ArmySize]Kind
 )
 
-var (
-	// A RegularArmyRequest is a request for a regular chess army without any special pieces.
-	RegularArmyRequest = ArmyRequest{}
+// A RegularArmyRequest is a request for a regular chess army without any special pieces.
+var RegularArmyRequest = ArmyRequest{}
 
-	// RegularArmy is a chess army without any special pieces.
-	RegularArmy = func() Army {
-		var b Army
-		for i := 0; i < 8; i++ {
-			b[i] = Pawn
-		}
+// RegularArmy is a chess army without any special pieces.
+var RegularArmy = func() Army {
+	var b Army
+	for i := 0; i < 8; i++ {
+		b[i] = Pawn
+	}
 
-		b[8] = Rook
-		b[15] = Rook
+	b[8] = Rook
+	b[15] = Rook
 
-		b[9] = Knight
-		b[14] = Knight
+	b[9] = Knight
+	b[14] = Knight
 
-		b[10] = Bishop
-		b[13] = Bishop
+	b[10] = Bishop
+	b[13] = Bishop
 
-		b[11] = Queen
-		b[12] = King
+	b[11] = Queen
+	b[12] = King
 
-		return b
-	}()
-)
+	return b
+}()
 
 // DecodeArmyRequest takes a JSON encoding of an ArmyRequest and decodes it.
 func DecodeArmyRequest(jsonBuf io.Reader) (ArmyRequest, error) {
@@ -69,6 +70,7 @@ func (an *ArmyRequest) PicksUsed() (bool, bool) {
 	return left, right
 }
 
+// AvailableSlotsForKind returns which indices don't have a piece of that basic kind assigned.
 func (an ArmyRequest) AvailableSlotsForKind(k Kind) []ArmyIndex {
 	out := make([]ArmyIndex, 0, 8)
 	switch k.Basic() {

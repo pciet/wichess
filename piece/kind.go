@@ -1,7 +1,12 @@
 package piece
 
+// Kind is the kind of the piece, such as king, queen, pawn, or a new special piece added for
+// Wisconsin Chess. The kind can be known by how the piece looks, and a kind has characteristics
+// associated with it.
 type Kind int
 
+// These are all of the piece kinds of Wisconsin Chess, except for NoKind and KindCount which can
+// be useful constants.
 const (
 	NoKind Kind = iota
 	King
@@ -30,10 +35,10 @@ const (
 	KindCount
 )
 
-const BasicKindCount = 6
+const basicKindCount = 6
 
-// All special pieces are based on a normal piece. The kind of the normal piece is the basic kind
-// of the special piece.
+// All special pieces are based on a regular chess piece like the knight or bishop. The kind of
+// the normal piece is the basic kind of the special piece.
 func (a Kind) Basic() Kind {
 	switch a {
 	case King:

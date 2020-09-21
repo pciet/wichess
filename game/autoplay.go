@@ -33,7 +33,7 @@ func (an Instance) Autoplay() {
 
 	if promotionNeeded {
 		// TODO: is reverse promotion properly handled?
-		u.Squares = rules.MergeReplaceAddressedSquares(u.Squares, a.Promote(piece.Queen))
+		u.Squares = rules.MergeReplaceAddressedSquares(u.Squares, an.Promote(piece.Queen))
 	}
 
 	go Alert(an.GameIdentifier, an.ActivePlayerIdentifier(), u)

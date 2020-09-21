@@ -1,7 +1,7 @@
 package game
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/pciet/wichess/memory"
 	"github.com/pciet/wichess/rules"
@@ -15,8 +15,8 @@ func (an Instance) OrientationOf(id memory.PlayerIdentifier) rules.Orientation {
 	if a.White.PlayerIdentifier == id {
 		return rules.White
 	} else if a.Black.PlayerIdentifier != id {
-		panic(fmt.Sprint("player", id, "not in game with",
-			a.White.PlayerIdentifier, a.Black.PlayerIdentifier))
+		log.Panicln("player", id, "not in game with",
+			a.White.PlayerIdentifier, a.Black.PlayerIdentifier)
 	}
 	return rules.Black
 }

@@ -1,6 +1,23 @@
 package piece
 
-var CodeNames = []string{
+// CodeName returns a piece kind name string used for image filenames or other similar uses.
+func CodeName(of Kind) string { return codeNames[of] }
+
+// Name returns a capitalized name for the piece kind.
+func Name(of Kind) string { return names[of] }
+
+// KindForCodeName takes a code name string for the kind and returns either the associated kind
+// or NoKind if none match.
+func KindForCodeName(n string) Kind {
+	for i, name := range CodeNames {
+		if name == n {
+			return Kind(i)
+		}
+	}
+	return NoKind
+}
+
+var codeNames = []string{
 	"none",
 	"king",
 	"queen",
@@ -27,7 +44,7 @@ var CodeNames = []string{
 	"derange",
 }
 
-var Names = []string{
+var names = []string{
 	"",
 	"King",
 	"Queen",
@@ -52,13 +69,4 @@ var Names = []string{
 	"Exit",
 	"Imperfect",
 	"Derange",
-}
-
-func KindForCodeName(n string) Kind {
-	for i, name := range CodeNames {
-		if name == n {
-			return Kind(i)
-		}
-	}
-	return NoKind
 }

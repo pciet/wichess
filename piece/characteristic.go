@@ -1,7 +1,12 @@
 package piece
 
+// A Characteristic is something special about a piece that affects gameplay with it, with a one
+// word name for it. A piece can have zero, one, or two characteristics.
 type Characteristic int
 
+// These Characteristic constants are used by package rules to adjust calculations of moves to
+// consider what the characteristic does for the piece, or they are used to read a description
+// using the CharacteristicDescription function.
 const (
 	NoCharacteristic Characteristic = iota
 	Neutralizes
@@ -19,11 +24,24 @@ const (
 	Orders
 )
 
-type Characteristics struct {
+// Characteristics returns up to two Characteristic that apply to a piece. If the piece has no
+// characteristics then the first return will be NoCharacteristic.
+func Characteristics(of Kind) (Characteristic, Characteristic) {
+	c := characteristicList[of]
+	return c.A, c.B
+}
+
+// CharacteristicDescription returns a sentence or two that describe the characteristic for players.
+func CharacteristicDescription(of Characteristic) string { return characteristicDescriptions[of] }
+
+// CharacteristicName returns a capitalized name string of the characteristic.
+func CharacteristicName(of Characteristic) string { return characteristicNames[of] }
+
+type characteristics struct {
 	A, B Characteristic
 }
 
-var CharacteristicList = []Characteristics{
+var characteristicList = []characteristics{
 	{}, {}, {}, {}, {}, {}, {},
 	{Neutralizes, NoCharacteristic}, // War
 	{Reveals, NoCharacteristic},
@@ -44,7 +62,7 @@ var CharacteristicList = []Characteristics{
 	{Fantasy, NoCharacteristic},
 }
 
-var CharacteristicDescriptions = []string{
+var characteristicDescriptions = []string{
 	"",
 	`When this is captured all adjacent pieces and the capturing piece are also captured.`,
 	`This automatically moves itself to capture when the opponent moves adjacent.`,
@@ -63,7 +81,7 @@ your opponent.`,
  also captured).`,
 }
 
-var CharacteristicNames = []string{
+var characteristicNames = []string{
 	"",
 	"Neutralizes",
 	"Asserts",

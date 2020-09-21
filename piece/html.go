@@ -1,6 +1,10 @@
 package piece
 
-var DetailsHTML = []string{
+// DetailsHTML returns an HTML string meant for the individual piece details webpages.
+// Characteristic descriptions are not included.
+func DetailsHTML(of Kind) string { detailsHTML[of] }
+
+var detailsHTML = []string{
 	"",
 	`<h1>KING</h1>
 <p>Capturing your opponent's king is the goal of the game. Kings start in the back row five squares

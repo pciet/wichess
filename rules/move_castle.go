@@ -1,8 +1,12 @@
 package rules
 
-import "github.com/pciet/wichess/piece"
+import (
+	"log"
 
-func (a Board) IsCastleMove(m Move) bool {
+	"github.com/pciet/wichess/piece"
+)
+
+func (a *Board) isCastleMove(m Move) bool {
 	s := a[m.From.Index()]
 	if (s.Kind != piece.King) || s.Moved {
 		return false
@@ -14,7 +18,7 @@ func (a Board) IsCastleMove(m Move) bool {
 	return false
 }
 
-func (a Board) CastleMove(changes []AddressedSquare, m Move) []AddressedSquare {
+func (a *Board) castleMove(changes []Square, m Move) []Square {
 	var rookMove Move
 	switch m.To {
 	case Address{2, 0}:
@@ -26,7 +30,7 @@ func (a Board) CastleMove(changes []AddressedSquare, m Move) []AddressedSquare {
 	case Address{6, 7}:
 		rookMove = Move{Address{7, 7}, Address{5, 7}}
 	default:
-		Panic("not a castle move", m, a)
+		log.Panicln("not a castle move", m, a)
 	}
 
 	rook := a[rookMove.From.Index()]
@@ -35,8 +39,8 @@ func (a Board) CastleMove(changes []AddressedSquare, m Move) []AddressedSquare {
 	king.Moved = true
 	rook.Moved = true
 
-	changes = append(changes, AddressedSquare{m.From, Square{}})
-	changes = append(changes, AddressedSquare{rookMove.From, Square{}})
-	changes = append(changes, AddressedSquare{rookMove.To, rook})
-	return append(changes, AddressedSquare{m.To, king})
+	changes = append(changes, Square{m.From, Piece{}})
+	changes = append(changes, Square{rookMove.From, Piece{}})
+	changes = append(changes, Square{rookMove.To, rook})
+	return append(changes, Square{m.To, king})
 }

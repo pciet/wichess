@@ -2,66 +2,66 @@ package rules
 
 import "github.com/pciet/wichess/piece"
 
-// Moves that don't consider check aren't legal but are a first calculation, done with NaiveMoves.
+// Moves that don't consider check aren't legal but are a first calculation, done with naiveMoves.
 // All types of moves are calculated except for just castle which is never available in check.
-func (a Game) NaiveMoves(active Orientation) []MoveSet {
+func (a *Board) naiveMoves(active Orientation, previous Move) []MoveSet {
 	moves := make([]MoveSet, 0, 16)
-	for i, s := range a.Board {
+	for i, s := range a {
 		if (s.Kind == piece.NoKind) || (s.Orientation != active) {
 			continue
 		}
 		at := AddressIndex(i).Address()
-		nm := a.NaiveMovesAt(at)
+		nm := a.naiveMovesAt(at, previous)
 		if len(nm) == 0 {
 			continue
 		}
 		moves = append(moves, MoveSet{at, nm})
 	}
-	return RemoveDuplicateMoveSetMoves(moves)
+	return removeDuplicateMoveSetMoves(moves)
 }
 
-func (a Game) NaiveMovesAt(the Address) []Address {
-	s := a.Board[the.Index()]
+func (a *Board) naiveMovesAt(the Address, previous Move) []Address {
+	s := a[the.Index()]
 
 	// TODO: NoKind check done twice from Game.NaiveMoves
-	if (s.Kind == piece.NoKind) || a.Board.PieceLocked(the) {
+	if (s.Kind == piece.NoKind) || a.pieceLocked(the) {
 		return []Address{}
 	}
 
-	pathvariations := AppliedRelPaths(s.Kind, the, s.Orientation)
+	pathvariations := appliedPaths(s.Kind, the, s.Orientation)
 
 	moves := make([]Address, 0, 8)
 
 	if s.Moved == false {
-		moves = a.Board.AppendNaiveMoves(moves, pathvariations[First], the)
+		moves = a.appendNaiveMoves(moves, pathvariations[piece.FirstPaths], the)
 	} else {
-		moves = a.Board.AppendNaiveMoves(moves, pathvariations[NormalMove], the)
+		moves = a.appendNaiveMoves(moves, pathvariations[piece.NormalPaths], the)
 	}
 
-	if a.Board.PieceRallied(the) {
-		moves = a.Board.AppendNaiveMoves(moves, pathvariations[RallyMove], the)
+	if a.pieceEnabled(the) {
+		moves = a.appendNaiveMoves(moves, pathvariations[piece.RallyPaths], the)
 	}
 
-	moves = a.Board.AppendNaiveTakeMoves(moves, pathvariations[Take], the)
-	moves = a.AppendEnPassantMove(moves, the)
+	moves = a.appendNaiveCaptureMoves(moves, pathvariations[piece.CapturePaths], the)
+	moves = a.appendEnPassantMove(moves, the, previous)
 
 	// TODO: only look at reveals moves when the piece has the recon characteristic
-	moves = a.Board.AppendRevealMoves(moves, the)
+	moves = a.appendRevealMoves(moves, the)
 
 	return moves
 }
 
-// TODO: NaiveTakeMoves and NaiveTakeMovesAt are mostly copied from the above two funcs,
+// TODO: NaiveCaptureMoves and NaiveCaptureMovesAt are mostly copied from the above two funcs,
 // don't repeat
 
-func (a Game) NaiveTakeMoves(active Orientation) []MoveSet {
+func (a *Board) naiveCaptureMoves(active Orientation, previous Move) []MoveSet {
 	moves := make([]MoveSet, 0, 16)
-	for i, s := range a.Board {
+	for i, s := range a {
 		if (s.Kind == piece.NoKind) || (s.Orientation != active) {
 			continue
 		}
 		at := AddressIndex(i).Address()
-		nm := a.NaiveTakeMovesAt(at)
+		nm := a.naiveCaptureMovesAt(at, previous)
 		if len(nm) == 0 {
 			continue
 		}
@@ -70,43 +70,40 @@ func (a Game) NaiveTakeMoves(active Orientation) []MoveSet {
 	return moves
 }
 
-func (a Game) NaiveTakeMovesAt(the Address) []Address {
+func (a *Board) naiveCaptureMovesAt(the Address, previous Move) []Address {
 	s := a.Board[the.Index()]
 
-	if (s.Kind == piece.NoKind) || a.Board.PieceLocked(the) {
+	if (s.Kind == piece.NoKind) || a.pieceStopped(the) {
 		return []Address{}
 	}
 
 	// TODO: to expedite getting it working rewriting this to just get the take moves was skipped
-	takes := AppliedRelPaths(s.Kind, the, s.Orientation)[Take]
+	takes := appliedPaths(s.Kind, the, s.Orientation)[piece.CapturePaths]
 
 	moves := make([]Address, 0, 8)
 
-	moves = a.Board.AppendNaiveTakeMoves(moves, takes, the)
-	moves = a.AppendEnPassantMove(moves, the)
+	moves = a.appendNaiveCaptureMoves(moves, takes, the)
+	moves = a.appendEnPassantMove(moves, the, previous)
 
 	return moves
 }
 
-func (a Board) AppendNaiveMoves(moves []Address, paths []Path, from Address) []Address {
+func (a *Board) appendNaiveMoves(moves []Address, paths []path, from Address) []Address {
 	s := a[from.Index()]
 	for _, path := range paths {
-		if path.Truncated && s.MustEnd {
+		if path.Truncated && s.flags.mustEnd {
 			continue
 		}
 		for i, move := range path.Addresses {
 			p := a[move.Index()]
 			if p.Kind == piece.NoKind {
-				if s.MustEnd && (len(path.Addresses) != i+1) {
+				if s.flags.mustEnd && (len(path.Addresses) != i+1) {
 					continue
 				}
 				moves = append(moves, move)
 				continue
 			}
-			if (s.Orientation == p.Orientation) && s.Swaps {
-				moves = append(moves, move)
-			}
-			if s.Ghost {
+			if s.flags.quick {
 				continue
 			}
 			break
@@ -115,27 +112,27 @@ func (a Board) AppendNaiveMoves(moves []Address, paths []Path, from Address) []A
 	return moves
 }
 
-func (a Board) AppendNaiveTakeMoves(moves []Address, paths []Path, from Address) []Address {
+func (a *Board) appendNaiveCaptureMoves(moves []Address, paths []Path, from Address) []Address {
 	s := a[from.Index()]
 	for _, path := range paths {
-		if path.Truncated && s.MustEnd {
+		if path.Truncated && s.flags.mustEnd {
 			continue
 		}
 		for i, move := range path.Addresses {
 			p := a[move.Index()]
 			if (p.Kind == piece.NoKind) ||
-				(s.Ghost && s.MustEnd && (len(path.Addresses) != i+1)) {
+				(s.flags.quick && s.flags.mustEnd && (len(path.Addresses) != i+1)) {
 				continue
 			}
 			if (s.Orientation != p.Orientation) &&
-				((s.Kind.Basic() != piece.Pawn) || (p.Fortified == false)) &&
-				((p.Tense == false) || (s.Kind == piece.King) || (s.Kind == piece.Queen)) &&
-				((s.MustEnd == false) || (len(path.Addresses) == i+1)) {
+				((s.Kind.Basic() != piece.Pawn) || (p.flags.immaterial == false)) &&
+				((p.flags.tense == false) || (s.Kind == piece.King) || (s.Kind == piece.Queen)) &&
+				((s.flags.mustEnd == false) || (len(path.Addresses) == i+1)) {
 
 				protected := false
-				if p.Protective {
-					for _, ps := range a.SurroundingSquares(move) {
-						if (ps.Kind != piece.NoKind) && ps.Protective {
+				if p.flags.protective {
+					for _, ps := range a.surroundingSquares(move) {
+						if (ps.Kind != piece.NoKind) && ps.flags.protective {
 							protected = true
 							break
 						}
@@ -146,7 +143,7 @@ func (a Board) AppendNaiveTakeMoves(moves []Address, paths []Path, from Address)
 					moves = append(moves, move)
 				}
 			}
-			if s.Ghost && (s.NoOverCapture == false) {
+			if s.flags.quick && (s.flags.noOverCapture == false) {
 				continue
 			}
 			break

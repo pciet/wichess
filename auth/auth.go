@@ -8,7 +8,7 @@
 package auth
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -48,8 +48,7 @@ func (a Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		ClearBrowserSession(w, r)
 		return
 	} else if err != nil {
-		panic(fmt.Sprint(r.URL.Path,
-			"failed to read session key cookie", SessionKeyCookie, ":", err))
+		log.Panicln(r.URL.Path, "failed to read session key cookie", SessionKeyCookie, ":", err)
 	}
 
 	key := memory.SessionKeyFromString(sc.Value)
@@ -70,6 +69,6 @@ func (a Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	case http.MethodPost:
 		an.Post(w, r, pid)
 	default:
-		panic(fmt.Sprint(r.URL.Path, r.Method, "HTTP method not caught by Handler"))
+		log.Panicln(r.URL.Path, r.Method, "HTTP method not caught by Handler")
 	}
 }

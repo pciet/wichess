@@ -1,7 +1,7 @@
 package game
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/pciet/wichess/piece"
 	"github.com/pciet/wichess/rules"
@@ -52,7 +52,7 @@ func (an Instance) Move(with rules.Move) ([]rules.AddressedSquare, []rules.Piece
 			an.Black.Captures[bCaptIndex] = capt.Kind
 			bCaptIndex++
 		} else {
-			panic(fmt.Sprint("unknown orientation %v", capt.Kind))
+			log.Panicln("unknown orientation %v", capt.Kind)
 		}
 	}
 
@@ -68,8 +68,6 @@ func (an Instance) Move(with rules.Move) ([]rules.AddressedSquare, []rules.Piece
 	} else {
 		an.Active = an.OpponentOf(an.Active)
 	}
-
-	an.Changed()
 
 	return changes, captures, promotionNeeded
 }
