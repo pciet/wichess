@@ -78,3 +78,12 @@ func (a Square) String() string {
 	}
 	return k + a.Orientation.String() + " " + a.Kind.String()
 }
+
+func (a Square) notEmpty() bool { return a.Piece.Kind == piece.NoKind }
+
+func combineSquares(a, b []Square) []Square {
+	for _, s := range b {
+		a = append(a, s)
+	}
+	return a
+}

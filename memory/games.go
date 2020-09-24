@@ -18,6 +18,7 @@ func AddGame(g *Game) GameIdentifier {
 
 	g.GameIdentifier = nextGameID
 	gamesCache[nextGameID] = g
+	id := nextGameID
 	nextGameID++
 
 	gamesMutex.Unlock()

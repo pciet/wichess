@@ -8,7 +8,7 @@ const RecentOpponentCount = 5
 func (a *Player) AddRecentOpponent(id PlayerIdentifier) {
 	// remove possible one duplicate of this opponent then condense the list
 	for i, opp := range a.RecentOpponents {
-		if opp != opponent {
+		if opp != id {
 			continue
 		}
 		for j := i; j < RecentOpponentCount; j++ {
@@ -25,5 +25,5 @@ func (a *Player) AddRecentOpponent(id PlayerIdentifier) {
 	for i := (RecentOpponentCount - 1); i > 0; i-- {
 		a.RecentOpponents[i] = a.RecentOpponents[i-1]
 	}
-	a.RecentOpponents[0] = opponent
+	a.RecentOpponents[0] = id
 }

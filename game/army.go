@@ -2,16 +2,15 @@ package game
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/pciet/wichess/memory"
 	"github.com/pciet/wichess/piece"
-	"github.com/pciet/wichess/rules"
 )
 
 // reserveArmies verifies the requested armies are valid and replaces used pick slots. The white
 // and black armies are returned in that order, and the kinds of used pick slots are returned. If
-// either army is invalid then an error is returned and there are no memory effects.
+// either army is invalid then an error is returned and there are no memory effects. Player's
+// memory must be available for reading using a memory.RLockPlayer.
 func reserveArmies(wa, ba piece.ArmyRequest,
 	wid, bid memory.PlayerIdentifier) (piece.Army, piece.RandomPicks,
 	piece.Army, piece.RandomPicks, error) {
@@ -46,10 +45,7 @@ func reserveArmies(wa, ba piece.ArmyRequest,
 		blackPicks.Right = blackRight
 	}
 
-	return reserveArmy(wid, rules.White, whiteReservation, whiteLeft, whiteRight, wa),
-		whitePicks,
-		reserveArmy(bid, rules.Black, blackReservation, blackLeft, blackRight, ba),
-		blackPicks, nil
+	return whiteReservation, whitePicks, blackReservation, blackPicks, nil
 }
 
 // makeArmyReservation queries memory to translate ArmyRequest values into piece kinds. Kinds of
@@ -100,7 +96,12 @@ func makeArmyReservation(id memory.PlayerIdentifier,
 	}
 
 	collectionPieces,
-		leftKind, rightKind := memory.SelectedCollectionPieces(id, collectionRequests)
+		leftKind, rightKind := selectedCollectionPieces(id, collectionRequests)
+
+	if collectionPieces == nil {
+		return piece.Army{}, piece.NoKind, piece.NoKind,
+			fmt.Errorf("selectedCollectionPieces failed for %v", id)
+	}
 
 	var out piece.Army
 	collectionPiecesIndex := 0
@@ -117,60 +118,9 @@ func makeArmyReservation(id memory.PlayerIdentifier,
 			out[i] = rightKind
 			continue
 		}
-		p := collectionPieces[collectionPiecesIndex]
+		out[i] = collectionPieces[collectionPiecesIndex]
 		collectionPiecesIndex++
-		out[i] = p.Kind
 	}
 
 	return out, leftKind, rightKind, nil
-}
-
-// TODO: reserveArmy needs to be redone
-
-// reserveArmy replaces used pick slots and encodes all pieces (whether in the collection or not)
-// for use in game memory.
-func reserveArmy(id memory.PlayerIdentifier, o rules.Orientation,
-	pieces piece.Army, left, right piece.Kind, r piece.ArmyRequest) piece.Army {
-
-	var army piece.Army
-	replaceLeft, replaceRight := false, false
-
-	for i, c := range r {
-		var start rules.AddressIndex
-		if o == rules.White {
-			if i < 8 {
-				start = rules.AddressIndex(8 + i)
-			} else {
-				start = rules.AddressIndex(i - 8)
-			}
-		} else if o == rules.Black {
-			start = rules.AddressIndex(i + 48)
-		} else {
-			log.Panicln("bad orientation", o)
-		}
-
-		army[i] = Piece{
-			Piece: rules.Piece{
-				Orientation: o,
-				Start:       start.Address(),
-				Kind:        pieces[i],
-			},
-		}
-
-		switch c {
-		case memory.LeftPick:
-			replaceLeft = true
-		case memory.RightPick:
-			replaceRight = true
-		}
-	}
-
-	if id == memory.ComputerPlayerIdentifier {
-		return army
-	}
-
-	// TODO: interact with package player correctly
-	player.ReplaceCollectionPicks(id, left, right, replaceLeft, replaceRight)
-
-	return army
 }

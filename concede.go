@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/pciet/wichess/game"
+	"github.com/pciet/wichess/memory"
 	"github.com/pciet/wichess/rules"
 )
 
@@ -21,13 +22,12 @@ func concedeGet(w http.ResponseWriter, r *http.Request, g game.Instance, p *memo
 		p.BestComputerStreak = 0
 	} else {
 		// TODO: when opponent acknowledges is the game deleted?
-		g.SetConceded()
+		g.Conceded = true
 
 		oppID := g.OpponentOf(p.PlayerIdentifier)
 		go game.Alert(g.GameIdentifier, g.OrientationOf(oppID), oppID,
-			game.Update{State: game.ConcededUpdate, FromMove: rules.NoMove})
+			game.Update{UpdateState: game.ConcededUpdate, FromMove: rules.NoMove})
 
 		p.PeopleGame = 0
 	}
-	p.Changed()
 }

@@ -17,26 +17,30 @@ func (an Instance) Autoplay() {
 	var u Update
 	if (move == rules.NoMove) && (promotion == piece.NoKind) {
 		// game is completed
-		u.Squares = []rules.AddressedSquare{}
+		u.Squares = []Square{}
 		u.FromMove = rules.NoMove
-		go Alert(an.GameIdentifier, an.InactivePlayerIdentifier(), u)
+		go Alert(an.GameIdentifier, an.inactiveOrientation(), an.inactivePlayerIdentifier(), u)
 		return
 	}
 
 	var promotionNeeded bool
 	if promotion != piece.NoKind {
-		u.Squares = a.Promote(promotion)
+		u.Squares = SquaresFromRules(an.Promote(promotion))
 	} else {
 		u.FromMove = move
-		u.Squares, u.Captures, promotionNeeded = a.Move(move)
+		var squares []rules.Square
+		var captures []rules.Piece
+		squares, captures, promotionNeeded = an.Move(move)
+		u.Squares = SquaresFromRules(squares)
+		u.Captures = PiecesFromRules(captures)
 	}
 
 	if promotionNeeded {
 		// TODO: is reverse promotion properly handled?
-		u.Squares = rules.MergeReplaceAddressedSquares(u.Squares, an.Promote(piece.Queen))
+		u.Squares = mergeReplaceSquares(u.Squares, SquaresFromRules(an.Promote(piece.Queen)))
 	}
 
-	go Alert(an.GameIdentifier, an.ActivePlayerIdentifier(), u)
+	go Alert(an.GameIdentifier, an.Active, an.activePlayerIdentifier(), u)
 }
 
 // This autoplay algorithm inspects the results of all moves. This already takes significant time,
@@ -46,7 +50,7 @@ func (an Instance) Autoplay() {
 // Ties are broken randomly. If a piece.Kind other than NoKind is returned then the move is a
 // promotion. If the game is complete then rules.NoMove and piece.NoKind are returned.
 func (an Instance) autoplayMove() (rules.Move, piece.Kind) {
-	moves, threats, state := an.MovesWithThreats()
+	moves, state := an.Moves()
 	if (state != rules.Normal) && (state != rules.Check) {
 		return rules.NoMove, piece.NoKind
 	}
@@ -54,7 +58,11 @@ func (an Instance) autoplayMove() (rules.Move, piece.Kind) {
 		return rules.NoMove, piece.Queen
 	}
 
-	count := rules.MoveSetMoveCount(moves)
+	count := 0
+	for _, set := range moves {
+		count += len(set.Moves)
+	}
+
 	trials := make([]Instance, count)
 	for i := 0; i < count; i++ {
 		trials[i] = an.Copy()
@@ -64,13 +72,9 @@ func (an Instance) autoplayMove() (rules.Move, piece.Kind) {
 	bestRating := -100
 	var i int
 	for _, moveset := range moves {
-		// since this calculation takes 10-100x the time of a normal move it yields processor time
-		// to people game moves where a quick response is more critical for a good player experience
-		memory.QuickWaitForIdle()
-
 		for _, to := range moveset.Moves {
 			move := rules.Move{moveset.From, to}
-			rating := trials[i].autoplayRating(move, threats)
+			rating := trials[i].autoplayRating(move)
 			i++
 			if rating > bestRating {
 				bestRating = rating
@@ -88,12 +92,10 @@ func (an Instance) autoplayMove() (rules.Move, piece.Kind) {
 	return best, piece.NoKind
 }
 
-// autoplayRating rates the move for comparison to other moves. The Game is changed as if the move
-// was done, so the caller likely uses a copy of the Game for this calculation.
-func (an Instance) autoplayRating(m rules.Move, threats []rules.Address) int {
+func (an Instance) autoplayRating(m rules.Move) int {
 	active := an.Active
-	changes, captures, promotion := an.Move(m)
-	opponentMoves, state := a.Moves()
+	_, captures, _ := an.Move(m)
+	opponentMoves, state := an.Moves()
 
 	rating := 0
 
@@ -109,7 +111,7 @@ func (an Instance) autoplayRating(m rules.Move, threats []rules.Address) int {
 	rating += len(captures)
 	rating -= len(opponentMoves)
 
-	if m.Forward() {
+	if m.Forward(active) {
 		rating++
 	}
 
@@ -140,13 +142,6 @@ func (an Instance) autoplayRating(m rules.Move, threats []rules.Address) int {
 			rating += 3
 		case piece.Pawn:
 			rating += 2
-		}
-	}
-
-	for _, t := range threats {
-		if t == m.To {
-			rating -= 5
-			break
 		}
 	}
 

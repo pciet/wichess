@@ -21,11 +21,11 @@ func (an Instance) Moves() ([]rules.MoveSet, rules.State) {
 		return an.moves, an.state
 	}
 
-	rg := an.RulesGame()
-	an.moves, an.state = rg.Moves()
+	an.moves, an.state = an.Board.Moves(an.Active, an.PreviousMove)
 	if an.state == rules.Promotion {
 		an.moves = []rules.MoveSet{}
-		if rg.Promoter() != an.Active {
+		o, _ := an.Board.PromotionNeeded()
+		if o != an.Active {
 			an.state = rules.ReversePromotion
 		}
 	}

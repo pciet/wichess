@@ -46,12 +46,19 @@ type (
 // NoGame is the value of a GameIdentifier var when it's not representing a game.
 const NoGame = 0
 
-// RulesGame returns the minimal information needed to do calulations using package rules.
-func (a *Game) RulesGame() rules.Game {
-	return rules.Game{
-		Board:        &(a.Board),
-		PreviousMove: a.PreviousMove,
+func (a *Game) Copy() *Game {
+	c := Game{
+		GameIdentifier: a.GameIdentifier,
+		Active:         a.Active,
+		PreviousActive: a.PreviousActive,
+		White:          a.White,
+		Black:          a.Black,
+		PreviousMove:   a.PreviousMove,
+		DrawTurns:      a.DrawTurns,
+		Conceded:       a.Conceded,
+		Board:          a.Board,
 	}
+	return &c
 }
 
 // CanDelete signals that this game is no longer needed and can be permanently deleted sometime
@@ -76,8 +83,8 @@ func (a GameIdentifier) String() string { return strconv.Itoa(a.Int()) }
 
 // FirstAvailableIndex returns the first array index that's piece.NoKind.
 func (the *Captures) FirstAvailableIndex() int {
-	for i := 0; i < len(a.Captures); i++ {
-		if a.Captures[i] == piece.NoKind {
+	for i := 0; i < len(the); i++ {
+		if the[i] == piece.NoKind {
 			return i
 		}
 	}

@@ -15,21 +15,37 @@ func (a *Board) inCheck(active Orientation, captures []Address) bool {
 	return false
 }
 
-func (a *Board) removeMovesIntoCheck(moves []MoveSet, active Orientation) []MoveSet {
+// removeMovesIntoCheck is called by Moves but not DoMove.
+func (a *Board) removeMovesIntoCheck(moves []MoveSet, active Orientation, previous Move) []MoveSet {
 	out := make([]MoveSet, 0, len(moves))
 
 	for _, moveset := range moves {
 		outset := MoveSet{moveset.From, make([]Address, 0, len(moveset.Moves))}
 		for _, move := range moveset.Moves {
-			// TODO: possible to not copy the entire board here?
-			ga := a.afterMove(Move{moveset.From, move})
-			threats := movesAddressSlice(ga.naiveCaptureMoves(active.Opponent()))
+			// stash original squares then apply move changes
+			changes, _ := a.DoMove(Move{moveset.From, move})
+			orig := make([]Square, len(changes))
+			for i, change := range changes {
+				addr := change.Address.Index()
+				orig[i] = Square{change.Address, a[addr]}
+				a[addr] = change.Piece
+			}
+			revert := func() {
+				for _, s := range orig {
+					a[s.Address.Index()] = s.Piece
+				}
+			}
 
-			if ga.noKing(active) || ga.inCheck(active, captures) ||
-				ga.threatenedNeutralizerAdjacent(nil, threats, ga.kingLocation(active)) {
+			threats := movesAddressSlice(a.naiveCaptureMoves(active.Opponent(), previous))
+
+			if a.noKing(active) || a.inCheck(active, threats) ||
+				a.threatenedNeutralizerAdjacent(nil, threats, a.kingLocation(active)) {
+
+				revert()
 				continue
 			}
 
+			revert()
 			outset.Moves = append(outset.Moves, move)
 		}
 		if len(outset.Moves) == 0 {

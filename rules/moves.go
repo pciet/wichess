@@ -31,7 +31,7 @@ func (a *Board) Moves(active Orientation, previous Move) ([]MoveSet, State) {
 			if ss.Kind == piece.NoKind {
 				continue
 			}
-			normalize(&(bcopy[ss.Address.Index()].fields))
+			normalize(&(bcopy[ss.Address.Index()].flags))
 		}
 	}
 
@@ -70,7 +70,7 @@ func (a *Board) Moves(active Orientation, previous Move) ([]MoveSet, State) {
 	}
 
 	// if the king is on a threatened square or taken after a move then that move is removed
-	moves = bcopy.removeMovesIntoCheck(moves, active)
+	moves = bcopy.removeMovesIntoCheck(moves, active, previous)
 
 	if len(moves) == 0 {
 		if check {

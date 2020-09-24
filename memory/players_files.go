@@ -1,40 +1,38 @@
 package memory
 
 import (
+	"encoding/json"
+	"fmt"
 	"io/ioutil"
-	"strconv"
+	"os"
 )
 
 // PlayersFilePrefix is the first character in a player filename followed by the player identifier.
 const PlayersFilePrefix = "p"
 
-func writePlayerFile(id PlayerIdentifier) {
-	p := LockPlayer(id)
-	if p == nil {
-		return
-	}
-	defer g.Unlock()
+func writePlayerFiles() {
+	for id, p := range playersCache {
+		b, err := json.Marshal(p)
+		if err != nil {
+			panic(err.Error())
+		}
 
-	b, err := json.Marshal(p)
-	if err != nil {
-		panic(err.Error())
-	}
+		f, err := os.OpenFile(filePath(PlayersFilePrefix+id.String()),
+			os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
 
-	f, err := os.OpenFile(filePath(PlayersilePrefix+id.String()),
-		os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
+		if err != nil {
+			panic(err.Error())
+		}
 
-	if err != nil {
-		panic(err.Error())
-	}
+		_, err = f.Write(b)
+		if err != nil {
+			panic(err.Error())
+		}
 
-	_, err = f.Write(b)
-	if err != nil {
-		panic(err.Error())
-	}
-
-	err = f.Close()
-	if err != nil {
-		panic(err.Error())
+		err = f.Close()
+		if err != nil {
+			panic(err.Error())
+		}
 	}
 }
 

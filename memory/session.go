@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"math/big"
 	"unicode"
+	"unicode/utf8"
 )
 
 // SessionKeySize is the number of random runes in a session key.
@@ -23,14 +24,30 @@ func NewSession(of PlayerIdentifier) *SessionKey {
 	return key
 }
 
-func (a *SessionKey) String() string { return string(*a) }
+// EndSession removes the supplied key from memory.
+func EndSession(with *SessionKey) { removeSession(with) }
 
-var maxSessionRune = big.Int(unicode.MaxRune)
+// SessionKeyFromString decodes the input string into a SessionKey. If the input string isn't a
+// valid key then nil is returned.
+func SessionKeyFromString(a string) *SessionKey {
+	if utf8.RuneCountInString(a) != SessionKeySize {
+		return nil
+	}
+	out := SessionKey{}
+	for i, r := range a {
+		out[i] = r
+	}
+	return &out
+}
+
+func (a *SessionKey) String() string { return string(a[:]) }
+
+var maxSessionRune = big.NewInt(unicode.MaxRune)
 
 func newSessionKey() *SessionKey {
 	var key SessionKey
 	for i := 0; i < SessionKeySize; i++ {
-		bigIntP, err := rand.Int(rand.Reader, &maxSessionRune)
+		bigIntP, err := rand.Int(rand.Reader, maxSessionRune)
 		if err != nil {
 			panic(err.Error())
 		}

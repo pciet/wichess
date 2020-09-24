@@ -2,6 +2,7 @@ package memory
 
 import (
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"os"
 )
@@ -48,8 +49,8 @@ func writeSessionFile() {
 // initializeSessionsCache returns the number of entries.
 func initializeSessionsCache() int {
 	content, err := ioutil.ReadFile(filePath(SessionFile))
-	if os.IsNotExists(err) {
-		return
+	if os.IsNotExist(err) {
+		return 0
 	} else if err != nil {
 		panic(err.Error())
 	}
@@ -58,10 +59,10 @@ func initializeSessionsCache() int {
 	i := 0
 	id := PlayerIdentifier(1)
 	for i != len(content) {
-		length := content[i]
+		length := int(content[i])
 		var key SessionKey
 		copy(key[:], bytes.Runes(content[i+1:i+length]))
-		sessionsCache[key] = id
+		sessionCache[key] = id
 		i += 1 + length
 		id++
 		c++

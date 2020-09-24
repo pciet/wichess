@@ -13,5 +13,5 @@ type PicksJSON struct {
 }
 
 func picksGet(w http.ResponseWriter, r *http.Request, p *memory.Player) {
-	jsonResponse(w, PicksJSON{p.LeftPick, p.RightPick})
+	jsonResponse(w, PicksJSON{p.Left, p.Right})
 }

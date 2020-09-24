@@ -12,7 +12,7 @@ func PlayerHash(id PlayerIdentifier) []byte {
 	activeMutex.RLock()
 	hashMutex.RLock()
 
-	if len(hashCache) < id {
+	if len(hashCache) < int(id) {
 		return nil
 	}
 	b := hashCache[id-1]

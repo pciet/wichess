@@ -1,6 +1,7 @@
 package memory
 
 import (
+	"strconv"
 	"sync"
 
 	"github.com/pciet/wichess/piece"
@@ -41,3 +42,6 @@ type (
 		piece.Collection `json:"collection"`
 	}
 )
+
+func (a PlayerIdentifier) String() string { return strconv.Itoa(int(a)) }
+func (a PlayerName) String() string       { return string(a) }

@@ -17,7 +17,7 @@ var randomSource = func() *prand.Rand {
 
 // RandomSpecialKind returns a randomly picked kind that isn't from a normal chess army.
 func RandomSpecialKind() Kind {
-	return Kind(randomSource.Int63n(int64(KindCount-BasicKindCount-1)) + 1 + BasicKindCount)
+	return Kind(randomSource.Int63n(int64(KindCount-basicKindCount-1)) + 1 + basicKindCount)
 }
 
 // TwoDifferentSpecialKinds returns two random special kinds that aren't the same.
@@ -27,7 +27,7 @@ func TwoDifferentSpecialKinds() (Kind, Kind) {
 	if pa == pb {
 		pb++
 		if pb == KindCount {
-			pb = BasicKindCount + 1
+			pb = basicKindCount + 1
 		}
 	}
 	return pa, pb
@@ -39,7 +39,7 @@ func (a Kind) DifferentSpecialKind() Kind {
 	if p == a {
 		p++
 		if p == KindCount {
-			p = BasicKindCount + 1
+			p = basicKindCount + 1
 		}
 	}
 	return p

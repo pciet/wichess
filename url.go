@@ -3,7 +3,6 @@ package wichess
 import (
 	"fmt"
 	"net/url"
-	"strconv"
 )
 
 func parseURLQuery(from url.Values, queryKey string) (string, error) {

@@ -9,12 +9,12 @@ import (
 )
 
 func boardsGet(w http.ResponseWriter, r *http.Request, g game.Instance) {
-	jr := make([]rules.AddressedSquare, 0, 32)
+	jr := make([]rules.Square, 0, 32)
 	for i, s := range g.Board {
 		if s.Kind == piece.NoKind {
 			continue
 		}
-		jr = append(jr, rules.AddressedSquare{rules.AddressIndex(i).Address(), s})
+		jr = append(jr, rules.Square{rules.AddressIndex(i).Address(), s})
 	}
 	jsonResponse(w, jr)
 }

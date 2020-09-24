@@ -65,4 +65,4 @@ func (a Kind) IsBasic() bool {
 	return false
 }
 
-func (a Kind) String() string { return CodeNames[a] }
+func (a Kind) String() string { return codeNames[a] }

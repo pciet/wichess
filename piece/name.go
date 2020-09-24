@@ -9,7 +9,7 @@ func Name(of Kind) string { return names[of] }
 // KindForCodeName takes a code name string for the kind and returns either the associated kind
 // or NoKind if none match.
 func KindForCodeName(n string) Kind {
-	for i, name := range CodeNames {
+	for i, name := range codeNames {
 		if name == n {
 			return Kind(i)
 		}

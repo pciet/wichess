@@ -11,7 +11,7 @@ var (
 	playersCache = make(map[PlayerIdentifier]*Player)
 	playersMutex sync.RWMutex
 
-	nextPlayerID int
+	nextPlayerID PlayerIdentifier
 )
 
 // LockPlayer and RLockPlayer work similarly to LockGame and RLockGame.
@@ -80,7 +80,7 @@ func NewPlayer(name PlayerName, passwordHash []byte) PlayerIdentifier {
 	playersCache[id] = &p
 	hashCache = append(hashCache, passwordHash)
 	playerIDCache[name] = id
-	if len(playerNamesCache) < id {
+	if len(playerNamesCache) < int(id) {
 		playerNamesCache = playerNamesCache[:id]
 	}
 	playerNamesCache[id-1] = name

@@ -4,12 +4,6 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"sync"
-)
-
-var (
-	hashCache = make([][]byte, 0, 8)
-	hashMutex sync.RWMutex
 )
 
 // The HashFile is a binary encoded file listing the password hashes of all players in order of id
@@ -47,7 +41,7 @@ func writeHashFile() {
 func initializeHashCache() int {
 	content, err := ioutil.ReadFile(filePath(HashFile))
 	if os.IsNotExist(err) {
-		return
+		return 0
 	} else if err != nil {
 		panic(err.Error())
 	}
@@ -55,7 +49,7 @@ func initializeHashCache() int {
 	i := 0
 	c := 0
 	for i != len(content) {
-		length := content[i]
+		length := int(content[i])
 		hashCache = append(hashCache, content[i+1:i+length])
 		i += 1 + length
 		c++

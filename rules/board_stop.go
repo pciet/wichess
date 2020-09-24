@@ -16,7 +16,7 @@ func (a *Board) pieceStopped(at Address) bool {
 		return false
 	}
 
-	for _, s := range a.SurroundingSquares(at) {
+	for _, s := range a.surroundingSquares(at) {
 		if (s.Kind == piece.NoKind) || (s.Orientation == p.Orientation) {
 			continue
 		}

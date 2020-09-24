@@ -18,28 +18,28 @@ func peopleGet(w http.ResponseWriter, r *http.Request,
 		memory.TwoPlayerNames(g.White.PlayerIdentifier, g.Black.PlayerIdentifier)
 
 	t := GameHTMLTemplateData{
-		GameIdentifier: gm.GameIdentifier,
-		Conceded:       gm.Conceded,
-		White: {
-			Name:     whiteName,
-			Captures: gm.White.Captures,
+		GameIdentifier: g.GameIdentifier,
+		Conceded:       g.Conceded,
+		White: GamePlayerHTMLTemplateData{
+			PlayerName: whiteName,
+			Captures:   g.White.Captures,
 		},
-		Black: {
-			Name:     blackCaptures,
-			Captures: gm.Black.Captures,
+		Black: GamePlayerHTMLTemplateData{
+			PlayerName: blackName,
+			Captures:   g.Black.Captures,
 		},
-		Active:   gm.Active,
-		Previous: gm.PreviousMove,
-		Player:   gm.OrientationOf(pid),
+		Active:       g.Active,
+		PreviousMove: g.PreviousMove,
+		Player:       g.OrientationOf(pid),
 	}
 	writeHTMLTemplate(w, GameHTMLTemplate, t)
 }
 
 type PeoplePostJSON struct {
-	GameIdentifier `json:"id"`
+	memory.GameIdentifier `json:"id"`
 }
 
-func peoplePost(w http.ResponseWriter, r *http.Request, pid PlayerIdentifier) {
+func peoplePost(w http.ResponseWriter, r *http.Request, pid memory.PlayerIdentifier) {
 	army, err := piece.DecodeArmyRequest(r.Body)
 	if err != nil {
 		debug(PeoplePath, "POST failed to decode army request of", pid, ":", err)
@@ -70,14 +70,15 @@ func peoplePost(w http.ResponseWriter, r *http.Request, pid PlayerIdentifier) {
 		}
 	}()
 
-	gameID, opponentID := game.RequestOpponent(requestedOpponent, pid, army)
+	// if the opponent hasn't requested this player yet then the handler waits here
+	gameID, opponentID := game.RequestOpponent(memory.PlayerName(requestedOpponent), pid, army)
 
 	close(done)
 
 	if gameID != memory.NoGame {
 		p = memory.LockPlayer(pid)
 		p.AddRecentOpponent(opponentID)
-		p.SetPeopleGame(gameID)
+		p.PeopleGame = gameID
 		p.Unlock()
 	} // else a timeout or cancel
 

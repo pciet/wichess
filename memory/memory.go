@@ -47,16 +47,16 @@ func Initialize() {
 		name := f.Name()
 		if strings.HasPrefix(name, GameFilePrefix) {
 			var id GameIdentifier
-			c, err := fmt.SScanf(name, GameFilePrefix+"%d", &id)
+			c, err := fmt.Sscanf(name, GameFilePrefix+"%d", &id)
 			if err != nil {
 				panic(err.Error())
 			} else if c != 1 {
 				log.Panicln("parsed", c)
 			}
 			gameIDs = append(gameIDs, id)
-		} else if strings.HasPrefix(name, PlayerFilePrefix) {
+		} else if strings.HasPrefix(name, PlayersFilePrefix) {
 			var id PlayerIdentifier
-			c, err := fmt.Sscanf(name, PlayerFilePrefix+"%d", &id)
+			c, err := fmt.Sscanf(name, PlayersFilePrefix+"%d", &id)
 			if err != nil {
 				panic(err.Error())
 			} else if c != 1 {
@@ -80,9 +80,9 @@ func Initialize() {
 
 		writeGamesFiles()
 		// TODO: could a game ack be lost by player gid being written, thus leaving orphan files
-		writePlayersFiles()
+		writePlayerFiles()
 		writePlayerNamesFile()
-		writeSessionsFile()
+		writeSessionFile()
 		writeHashFile()
 
 		os.Exit(0)

@@ -10,12 +10,12 @@ import (
 // Move attempts to do the requested move onto the Instance. The changed squares, captured pieces,
 // and whether a promotion is now needed are returned. If the move couldn't be done then the
 // changed squares slice is nil.
-func (an Instance) Move(with rules.Move) ([]rules.AddressedSquare, []rules.Piece, bool) {
+func (an Instance) Move(with rules.Move) ([]rules.Square, []rules.Piece, bool) {
 	if an.moveLegal(with) == false {
 		return nil, nil, false
 	}
 
-	changes, captures := &(an.Board).DoMove(with)
+	changes, captures := an.Game.Board.DoMove(with)
 	if changes == nil {
 		return nil, nil, false
 	}
@@ -39,8 +39,8 @@ func (an Instance) Move(with rules.Move) ([]rules.AddressedSquare, []rules.Piece
 	}
 
 	// record captures to game memory
-	wCaptIndex := memory.FirstAvailableCaptureIndex(&(an.White.Captures))
-	bCaptIndex := memory.FirstAvailableCaptureIndex(&(an.Black.Captures))
+	wCaptIndex := an.White.Captures.FirstAvailableIndex()
+	bCaptIndex := an.Black.Captures.FirstAvailableIndex()
 	for _, capt := range captures {
 		if capt.Kind == piece.NoKind {
 			panic("capture list with piece.NoKind")
@@ -66,10 +66,15 @@ func (an Instance) Move(with rules.Move) ([]rules.AddressedSquare, []rules.Piece
 		}
 		// else active player stays the same
 	} else {
-		an.Active = an.OpponentOf(an.Active)
+		an.Active = an.opponentOf(an.Active)
 	}
 
-	return changes, captures, promotionNeeded
+	capturedPieces := make([]rules.Piece, len(captures))
+	for i, p := range captures {
+		capturedPieces[i] = p.Piece
+	}
+
+	return changes, capturedPieces, promotionNeeded
 }
 
 func (an Instance) moveLegal(m rules.Move) bool {

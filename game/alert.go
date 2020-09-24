@@ -16,7 +16,7 @@ func Alert(in memory.GameIdentifier,
 
 	if pid == memory.ComputerPlayerIdentifier {
 		// a wait happens if the opponent still needs to promote
-		if ofChanges.State != WaitUpdate {
+		if ofChanges.UpdateState != WaitUpdate {
 			err := autoplay(in, pid)
 			if err != nil {
 				panic(err.Error())

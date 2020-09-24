@@ -6,7 +6,7 @@ import "github.com/pciet/wichess/piece"
 // to use it in package rules calculations.
 //
 // The JSON encoding of Piece is used to save into files by package memory. The web interface also
-// uses a JSON piece encoding, but for that the wichess.Piece type is used on the host since the
+// uses a JSON piece encoding, but for that the game.Piece type is used on the host since the
 // Kind and Orientation are the only needed fields to transmit.
 type Piece struct {
 	piece.Kind  `json:"k"`
@@ -16,6 +16,17 @@ type Piece struct {
 
 	// These flags aren't always an exact match with a package piece Characteristic.
 	flags characteristics
+}
+
+// NoPiece is the value of a Piece when it doesn't represent a piece.
+var NoPiece = Piece{}
+
+func (a Piece) String() string {
+	str := a.Orientation.String() + " " + a.Kind.String() + " " + a.Start.String() + " start"
+	if a.Moved {
+		str += " moved"
+	}
+	return str
 }
 
 // TODO: detonate=neutralizes, guards=asserts, fortified=immaterial, locks=stops, rallies=enables,
@@ -50,7 +61,7 @@ func applyCharacteristicFlags(to *Piece) {
 		return
 	}
 
-	applyChars := func(c piece.Characteristic) bool {
+	applyChars := func(c piece.Characteristic) {
 		switch c {
 		case piece.Neutralizes:
 			to.flags.neutralizes = true
@@ -86,22 +97,22 @@ func applyCharacteristicFlags(to *Piece) {
 }
 
 func normalize(s *characteristics) {
-	s.flags.neutralizes = false
-	s.flags.asserts = false
-	s.flags.immaterial = false
-	s.flags.stops = false
-	s.flags.enables = false
-	s.flags.reveals = false
-	s.flags.tense = false
-	s.flags.fantasy = false
-	s.flags.keep = false
-	s.flags.protective = false
-	s.flags.extricates = false
-	s.flags.orders = false
+	s.neutralizes = false
+	s.asserts = false
+	s.immaterial = false
+	s.stops = false
+	s.enables = false
+	s.reveals = false
+	s.tense = false
+	s.fantasy = false
+	s.keep = false
+	s.protective = false
+	s.extricates = false
+	s.orders = false
 
 	// the Normalize, MustEnd, and Quick bools are left true
 }
 
-func (a *Piece) fortifiedAgainst(t *Piece) bool {
+func (a *Piece) immaterialAgainst(t *Piece) bool {
 	return a.flags.immaterial && (t.Kind.Basic() == piece.Pawn)
 }

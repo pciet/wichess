@@ -24,7 +24,7 @@ func (a *Board) naiveMovesAt(the Address, previous Move) []Address {
 	s := a[the.Index()]
 
 	// TODO: NoKind check done twice from Game.NaiveMoves
-	if (s.Kind == piece.NoKind) || a.pieceLocked(the) {
+	if (s.Kind == piece.NoKind) || a.pieceStopped(the) {
 		return []Address{}
 	}
 
@@ -71,7 +71,7 @@ func (a *Board) naiveCaptureMoves(active Orientation, previous Move) []MoveSet {
 }
 
 func (a *Board) naiveCaptureMovesAt(the Address, previous Move) []Address {
-	s := a.Board[the.Index()]
+	s := a[the.Index()]
 
 	if (s.Kind == piece.NoKind) || a.pieceStopped(the) {
 		return []Address{}
@@ -112,7 +112,7 @@ func (a *Board) appendNaiveMoves(moves []Address, paths []path, from Address) []
 	return moves
 }
 
-func (a *Board) appendNaiveCaptureMoves(moves []Address, paths []Path, from Address) []Address {
+func (a *Board) appendNaiveCaptureMoves(moves []Address, paths []path, from Address) []Address {
 	s := a[from.Index()]
 	for _, path := range paths {
 		if path.Truncated && s.flags.mustEnd {

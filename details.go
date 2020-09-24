@@ -26,26 +26,26 @@ type DetailsHTMLTemplateData struct {
 
 func detailsTemplateData(pieceCodeName string, k piece.Kind) DetailsHTMLTemplateData {
 	t := DetailsHTMLTemplateData{
-		Name:        piece.Names[k],
+		Name:        piece.Name(k),
 		CodeName:    pieceCodeName,
-		Description: template.HTML(piece.DetailsHTML[k]),
+		Description: template.HTML(piece.DetailsHTML(k)),
 	}
 
-	chars := piece.CharacteristicList[k]
+	charA, charB := piece.Characteristics(k)
 
-	if chars.A == piece.NoCharacteristic {
+	if charA == piece.NoCharacteristic {
 		return t
 	}
 
-	t.CharacteristicA = piece.CharacteristicNames[chars.A]
-	t.CharacteristicADescription = piece.CharacteristicDescriptions[chars.A]
+	t.CharacteristicA = piece.CharacteristicName(charA)
+	t.CharacteristicADescription = piece.CharacteristicDescription(charA)
 
-	if chars.B == piece.NoCharacteristic {
+	if charB == piece.NoCharacteristic {
 		return t
 	}
 
-	t.CharacteristicB = piece.CharacteristicNames[chars.B]
-	t.CharacteristicBDescription = piece.CharacteristicDescriptions[chars.B]
+	t.CharacteristicB = piece.CharacteristicName(charB)
+	t.CharacteristicBDescription = piece.CharacteristicDescription(charB)
 
 	return t
 }
@@ -71,5 +71,5 @@ func detailsGet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writeHTMLTemplate(w, DetailsHTMLTemplate, DetailsTemplateData(p, kind))
+	writeHTMLTemplate(w, DetailsHTMLTemplate, detailsTemplateData(p, kind))
 }

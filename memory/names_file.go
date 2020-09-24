@@ -17,7 +17,7 @@ func writePlayerNamesFile() {
 	}
 
 	for _, name := range playerNamesCache {
-		_, err = f.WriteString(name + "\n")
+		_, err = f.WriteString(string(name + "\n"))
 		if err != nil {
 			panic(err.Error())
 		}
@@ -33,20 +33,20 @@ func writePlayerNamesFile() {
 func initializePlayerNameCaches() int {
 	b, err := ioutil.ReadFile(filePath(PlayerFile))
 	if os.IsNotExist(err) {
-		return
+		return 0
 	} else if err != nil {
 		panic(err.Error())
 	}
 
 	names := strings.Split(string(b), "\n")
 	if len(names) == 1 {
-		return
+		return 0
 	}
 
 	c := 0
 	for i, n := range names {
-		playerIDCache[n] = i + 1
-		playerNamesCache = append(playerNamesCache, n)
+		playerIDCache[PlayerName(n)] = PlayerIdentifier(i + 1)
+		playerNamesCache = append(playerNamesCache, PlayerName(n))
 		c++
 	}
 

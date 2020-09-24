@@ -10,8 +10,8 @@ import "github.com/pciet/wichess/piece"
 //   king v king+knight
 //   king+bishop v king+bishop of the same bishop color
 func (a *Board) insufficientMaterialDraw() bool {
-	w := make([]AddressedSquare, 0, 2)
-	b := make([]AddressedSquare, 0, 2)
+	w := make([]Square, 0, 2)
+	b := make([]Square, 0, 2)
 	for i, p := range a {
 		if p.Kind == piece.NoKind {
 			continue
@@ -25,12 +25,12 @@ func (a *Board) insufficientMaterialDraw() bool {
 			if len(w) == 2 {
 				return false
 			}
-			w = append(w, AddressedSquare{AddressIndex(i).Address(), p})
+			w = append(w, Square{AddressIndex(i).Address(), p})
 		case Black:
 			if len(b) == 2 {
 				return false
 			}
-			b = append(b, AddressedSquare{AddressIndex(i).Address(), p})
+			b = append(b, Square{AddressIndex(i).Address(), p})
 		}
 	}
 
@@ -46,7 +46,7 @@ func (a *Board) insufficientMaterialDraw() bool {
 	}
 
 	if (len(w) == 2) && (len(b) == 2) {
-		var bishop1, bishop2 AddressedSquare
+		var bishop1, bishop2 Square
 		if w[0].Kind == piece.King {
 			bishop1 = w[1]
 		} else {
@@ -60,7 +60,7 @@ func (a *Board) insufficientMaterialDraw() bool {
 		if (bishop1.Kind.Basic() != piece.Bishop) || (bishop2.Kind.Basic() != piece.Bishop) {
 			return false
 		}
-		if bishop1.SquareEven() != bishop2.SquareEven() {
+		if bishop1.squareEven() != bishop2.squareEven() {
 			return false
 		}
 	}

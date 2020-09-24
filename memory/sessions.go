@@ -1,36 +1,45 @@
 package memory
 
-import (
-	"io/ioutil"
-	"sync"
-)
+import "sync"
 
 var (
 	sessionCache = make(map[SessionKey]PlayerIdentifier)
 	sessionMutex sync.RWMutex
 )
 
+// SessionPlayerIdentifier returns the id associated with the key or NoPlayer.
+func SessionPlayerIdentifier(with *SessionKey) PlayerIdentifier {
+	sessionMutex.RLock()
+	defer sessionMutex.RUnlock()
+
+	p, has := sessionCache[*with]
+	if has == false {
+		return NoPlayer
+	}
+	return p
+}
+
 func addSession(id PlayerIdentifier, k *SessionKey) {
 	activeMutex.RLock()
-	sessionsMutex.Lock()
+	sessionMutex.Lock()
 
-	SessionsCache[*i] = id
+	sessionCache[*k] = id
 
-	sessionsMutex.Unlock()
+	sessionMutex.Unlock()
 	activeMutex.RUnlock()
 }
 
 func removeSession(k *SessionKey) {
 	activeMutex.RLock()
-	sessionsMutex.Lock()
+	sessionMutex.Lock()
 
-	_, has := SessionsCache[k]
+	_, has := sessionCache[*k]
 	if has == false {
 		panic("tried to remove nonexistent session key")
 	}
 
-	delete(SessionsCache, k)
+	delete(sessionCache, *k)
 
-	sessionsMutex.Unlock()
+	sessionMutex.Unlock()
 	activeMutex.RUnlock()
 }

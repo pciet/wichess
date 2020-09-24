@@ -21,12 +21,12 @@ type Instance struct {
 
 // Copy copies the Instance's memory.Game. The returned copy does not use the package memory
 // system, so changes to it will not overwrite the original in RAM or in a file.
-func (an Instance) Copy() Instance { return Instance{an.Game.Copy(), true} }
+func (an Instance) Copy() Instance { return Instance{an.Game.Copy(), true, nil, an.state} }
 
 // Lock and RLock return an Instance with the sync.RWMutex of the memory.Game called. This means
 // the caller must call Unlock or RUnlock on the Instance.
-func Lock(id memory.GameIdentifier) Instance  { return Instance{memory.LockGame(id)} }
-func RLock(id memory.GameIdentifier) Instance { return Instance{memory.RLockGame(id)} }
+func Lock(id memory.GameIdentifier) Instance  { return Instance{Game: memory.LockGame(id)} }
+func RLock(id memory.GameIdentifier) Instance { return Instance{Game: memory.RLockGame(id)} }
 
 // Nil is used to determine if Lock was called with an invalid identifier.
 func (an Instance) Nil() bool { return an.Game == nil }
@@ -44,21 +44,32 @@ func (an Instance) Completed() (bool, rules.State) {
 
 // Acknowledge acknowledges that this player is done reviewing this game. If both players have
 // acknowledged then the game is marked for deletion in the background.
-func (an Instance) Acknowledge() {
+func (an Instance) Acknowledge(by memory.PlayerIdentifier) {
 	if ((by == an.White.PlayerIdentifier) && an.Black.Acknowledge) ||
 		((by == an.Black.PlayerIdentifier) && an.White.Acknowledge) || an.HasComputerPlayer() {
 		an.CanDelete()
-		return nil
+		return
 	}
-	if by == an.White.Name {
+	if by == an.White.PlayerIdentifier {
 		an.White.Acknowledge = true
-	} else if by == gm.Black.Name {
+	} else if by == an.Black.PlayerIdentifier {
 		an.Black.Acknowledge = true
 	}
-	an.Changed()
 }
 
-func (an Instance) SetConceded() {
-	an.Conceded = true
-	an.Changed()
+// IsComputerGame indicates if this is a game against the computer player.
+func (an Instance) IsComputerGame() bool {
+	if (an.White.PlayerIdentifier == memory.ComputerPlayerIdentifier) ||
+		(an.Black.PlayerIdentifier == memory.ComputerPlayerIdentifier) {
+		return true
+	}
+	return false
+}
+
+// RewardsOf returns the left, right, and reward pieces for a player as noted in the game.
+func (an Instance) RewardsOf(p memory.PlayerIdentifier) (piece.Kind, piece.Kind, piece.Kind) {
+	if an.OrientationOf(p) == rules.White {
+		return an.Game.White.Left, an.Game.White.Right, an.Game.White.Reward
+	}
+	return an.Game.Black.Left, an.Game.Black.Right, an.Game.Black.Reward
 }

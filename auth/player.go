@@ -9,7 +9,7 @@ import (
 type PlayerReadableFunc func(http.ResponseWriter, *http.Request, *memory.Player)
 
 // PlayerReadable provides a pointer to player memory that should only be read.
-func PlayerReadable(calls PlayerReadableFunc, pathPrefix string) HandlerFunc {
+func PlayerReadable(calls PlayerReadableFunc) HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request, pid memory.PlayerIdentifier) {
 		p := memory.RLockPlayer(pid)
 		calls(w, r, p)
@@ -17,10 +17,10 @@ func PlayerReadable(calls PlayerReadableFunc, pathPrefix string) HandlerFunc {
 	}
 }
 
-type PlayerWriteableFunc func(http.ResponseWriter, *http.Request, player.Instance)
+type PlayerWriteableFunc func(http.ResponseWriter, *http.Request, *memory.Player)
 
 // PlayerWriteable provides a pointer to player memory that can be written to.
-func PlayerWriteable(calls PlayerWriteableFunc, pathPrefix string) HandlerFunc {
+func PlayerWriteable(calls PlayerWriteableFunc) HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request, pid memory.PlayerIdentifier) {
 		p := memory.LockPlayer(pid)
 		calls(w, r, p)

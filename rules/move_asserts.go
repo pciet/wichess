@@ -1,10 +1,10 @@
 package rules
 
-func (a *Board) assertsWillCapture(target Piece, guard Square) bool {
-	return guard.notEmpty() && guard.flags.asserts &&
-		(guard.Orientation != target.Orientation) &&
-		(target.immaterialAgainst(guard.Square) == false) && (target.flag.stops == false) &&
-		(a.pieceStopped(guard.Address) == false)
+func (a *Board) assertsWillCapture(target Piece, asserts Square) bool {
+	return asserts.notEmpty() && asserts.flags.asserts &&
+		(asserts.Orientation != target.Orientation) &&
+		(target.immaterialAgainst(&asserts.Piece) == false) && (target.flags.stops == false) &&
+		(a.pieceStopped(asserts.Address) == false)
 }
 
 // This function changes the Board.

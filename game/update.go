@@ -13,8 +13,8 @@ type (
 	// changes and captures, notification of a check, draw, or checkmate calculation, or an alert
 	// that the opponent conceded.
 	Update struct {
-		Squares     []rules.AddressedSquare `json:"d,omitempty"`
-		Captures    []CapturedPiece         `json:"c,omitempty"`
+		Squares     []Square `json:"d,omitempty"`
+		Captures    []Piece  `json:"c,omitempty"`
 		UpdateState `json:"s,omitempty"`
 		FromMove    rules.Move `json:"m"` // can't be empty, rules.NoMove for empty
 	}

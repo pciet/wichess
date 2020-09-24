@@ -7,9 +7,11 @@ import (
 	"github.com/gorilla/websocket"
 
 	"github.com/pciet/wichess/memory"
+	"github.com/pciet/wichess/rules"
 )
 
 // TODO: documentation for sync suggests that channels can be a better sync mechanism
+// (a mutex would be a buffered channel of 1)
 // TODO: delete map entry on game done
 
 var (
@@ -44,10 +46,10 @@ func Connect(id memory.GameIdentifier, o rules.Orientation, with *websocket.Conn
 
 	gameConns := connections[id]
 	if gameConns[o] != nil {
-		conn.Close()
+		gameConns[o].Close()
 	}
 	gameConns[o] = with
-	Connections[id] = gameConns
+	connections[id] = gameConns
 
 	// TODO: does this goroutine return when the WebSocket is replaced?
 

@@ -2,6 +2,7 @@ package piece
 
 import (
 	"log"
+	"strconv"
 	"strings"
 )
 
@@ -212,6 +213,20 @@ var paths = func() map[Kind]PathVariations {
 	return m
 }()
 
+func (a Path) String() string {
+	str := ""
+	for i, addr := range a {
+		if i == len(a)-1 {
+			str += addr.String()
+		} else {
+			str += addr.String() + " "
+		}
+	}
+	return str
+}
+
+func (a PathAddress) String() string { return strconv.Itoa(a.File) + "-" + strconv.Itoa(a.Rank) }
+
 func (set PathVariations) String() string {
 	var s strings.Builder
 
@@ -222,11 +237,11 @@ func (set PathVariations) String() string {
 		}
 	}
 
-	s.WriteString("FirstPaths\n")
-	writePaths(set[First])
+	s.WriteString("First\n")
+	writePaths(set[FirstPaths])
 	s.WriteString("Normal\n")
 	writePaths(set[NormalPaths])
-	s.WriteString("Rally\n")
+	s.WriteString("Enabled\n")
 	writePaths(set[RallyPaths])
 	s.WriteString("Capture\n")
 	writePaths(set[CapturePaths])

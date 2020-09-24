@@ -1,10 +1,6 @@
 package memory
 
-import (
-	"io/ioutil"
-	"strings"
-	"sync"
-)
+import "sync"
 
 var (
 	playerIDCache    = make(map[PlayerName]PlayerIdentifier)
@@ -43,7 +39,7 @@ func (id PlayerIdentifier) Name() PlayerName {
 }
 
 // TwoPlayerNames reads the names of two players while only having to acquire the cache mutex once.
-func TwoPlayerNames(a, b PlayerIdentifier) (string, string) {
+func TwoPlayerNames(a, b PlayerIdentifier) (PlayerName, PlayerName) {
 	activeMutex.RLock()
 	playerNameMutex.RLock()
 

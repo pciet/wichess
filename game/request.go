@@ -17,7 +17,7 @@ type opponentRequest struct {
 }
 
 var (
-	opponentRequests     = map[memory.PlayerIdentifier]OpponentRequest{}
+	opponentRequests     = map[memory.PlayerIdentifier]opponentRequest{}
 	opponentRequestsLock = sync.Mutex{}
 )
 
@@ -29,15 +29,15 @@ func RequestOpponent(opponent memory.PlayerName, requester memory.PlayerIdentifi
 	with piece.ArmyRequest) (memory.GameIdentifier, memory.PlayerIdentifier) {
 
 	opponentRequestsLock.Lock()
-	opp, has := opponentRequests[requester]
+	_, has := opponentRequests[requester]
 	if has {
 		opponentRequestsLock.Unlock()
 		return memory.NoGame, memory.NoPlayer
 	}
 
 	// TODO: is a mutex taken twice for these?
-	rname := memory.PlayerNameOfIdentifier(requester)
-	oppID := memory.PlayerIdentifierOfName(opponent)
+	rname := requester.Name()
+	oppID := memory.PlayerNameKnown(opponent)
 
 	if oppID != memory.NoPlayer {
 		oppReq, has := opponentRequests[oppID]
@@ -66,9 +66,9 @@ func RequestOpponent(opponent memory.PlayerName, requester memory.PlayerIdentifi
 	opponentRequestsLock.Unlock()
 
 	if id == memory.NoGame {
-		return id, memory.NoPlayerIdentifier
+		return id, memory.NoPlayer
 	}
-	return id, memory.PlayerIdentifierOfName(opponent)
+	return id, memory.PlayerNameKnown(opponent)
 }
 
 // EndOpponentRequest ends the request started with RequestOpponent.

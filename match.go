@@ -8,7 +8,7 @@ import (
 
 type MatchHTMLTemplateData struct {
 	Name               string
-	RecentOpponents    [RecentOpponentCount]string
+	RecentOpponents    [memory.RecentOpponentCount]string
 	ComputerStreak     int
 	BestComputerStreak int
 }
@@ -17,10 +17,16 @@ func matchGet(w http.ResponseWriter, r *http.Request, p *memory.Player) {
 	if handleInPeopleGame(w, r, p) {
 		return
 	}
-	WriteHTMLTemplate(w, MatchHTMLTemplate, MatchHTMLTemplateData{
-		Name:               p.Name,
-		RecentOpponents:    p.RecentOpponents,
+	d := MatchHTMLTemplateData{
+		Name:               p.PlayerName.String(),
 		ComputerStreak:     p.ComputerStreak,
 		BestComputerStreak: p.BestComputerStreak,
-	})
+	}
+	for i, o := range p.RecentOpponents {
+		if o == memory.NoPlayer {
+			break
+		}
+		d.RecentOpponents[i] = o.Name().String()
+	}
+	writeHTMLTemplate(w, MatchHTMLTemplate, d)
 }

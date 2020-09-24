@@ -37,17 +37,17 @@ func computerGet(w http.ResponseWriter, r *http.Request, p *memory.Player) {
 	t := GameHTMLTemplateData{
 		GameIdentifier: p.ComputerGame,
 		Conceded:       g.Conceded,
-		White: {
-			Name:     whiteName,
-			Captures: g.White.Captures,
+		White: GamePlayerHTMLTemplateData{
+			PlayerName: whiteName,
+			Captures:   g.White.Captures,
 		},
-		Black: {
-			Name:     blackName,
-			Captures: g.Black.Captures,
+		Black: GamePlayerHTMLTemplateData{
+			PlayerName: blackName,
+			Captures:   g.Black.Captures,
 		},
-		Active:   g.Active,
-		Previous: g.PreviousMove,
-		Player:   g.OrientationAgainst(ComputerPlayerIdentifier),
+		Active:       g.Active,
+		PreviousMove: g.PreviousMove,
+		Player:       g.OrientationAgainst(memory.ComputerPlayerIdentifier),
 	}
 
 	g.Unlock()
@@ -55,9 +55,17 @@ func computerGet(w http.ResponseWriter, r *http.Request, p *memory.Player) {
 	writeHTMLTemplate(w, GameHTMLTemplate, t)
 }
 
-func computerPost(w http.ResponseWriter, r *http.Request, p *memory.Player) {
+func computerPost(w http.ResponseWriter, r *http.Request, pid memory.PlayerIdentifier) {
+	p := memory.RLockPlayer(pid)
+	if p == nil {
+		debug(ComputerPath, "POST got nil player for", pid)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	if p.ComputerGame != memory.NoGame {
 		debug(ComputerPath, "POST but computer game already exists for", p.Name)
+		p.RUnlock()
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -65,6 +73,7 @@ func computerPost(w http.ResponseWriter, r *http.Request, p *memory.Player) {
 	army, err := piece.DecodeArmyRequest(r.Body)
 	if err != nil {
 		debug(ComputerPath, "POST failed to decode army request of", p.Name, ":", err)
+		p.RUnlock()
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -79,17 +88,27 @@ func computerPost(w http.ResponseWriter, r *http.Request, p *memory.Player) {
 	} else {
 		whiteArmy = piece.RegularArmyRequest
 		white = memory.ComputerPlayerIdentifier
-		blackArmy = a
+		blackArmy = army
 		black = p.PlayerIdentifier
 	}
+	p.RUnlock()
 
-	p.ComputerGame = game.New(whiteArmy, blackArmy, white, black)
-	if p.ComputerGame == memory.NoGame {
+	// game.New takes a lock on both players so this player's can't be held here
+	gameID := game.New(whiteArmy, blackArmy, white, black)
+	if gameID == memory.NoGame {
 		debug(ComputerPath, "NewGame failed for", p.Name)
 		// likely caused by a bad army request
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	p.Changed()
+	p = memory.LockPlayer(pid)
+	if p == nil {
+		debug(ComputerPath, "POST got nil player for", pid)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	p.ComputerGame = gameID
+	p.Unlock()
 }

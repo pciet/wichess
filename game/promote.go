@@ -7,15 +7,16 @@ import (
 
 // Promote attempts to do the requested promotion for the active player. Nil is returned if the
 // promotion couldn't be done.
-func (an Instance) Promote(with piece.Kind) []rules.AddressedSquare {
-	if an.promotionNeeded() == false {
-		return nil, nil, false
+func (an Instance) Promote(with piece.Kind) []rules.Square {
+	_, pn := an.PromotionNeeded()
+	if pn == false {
+		return nil
 	}
 
-	changes := &(an.Board).DoPromotion(with)
+	changes := an.Board.DoPromotion(with)
 
 	an.PreviousActive = an.Active
-	an.Active = an.OpponentOf(an.Active)
+	an.Active = an.opponentOf(an.Active)
 
-	return changes
+	return []rules.Square{changes}
 }

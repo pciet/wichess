@@ -1,6 +1,7 @@
 package rules
 
 import (
+	"log"
 	"strings"
 
 	"github.com/pciet/wichess/piece"
@@ -12,7 +13,7 @@ type (
 		Addresses []Address
 	}
 
-	pathVariations [piece.PathVariationCount][]Path
+	pathVariations [piece.PathVariationCount][]path
 )
 
 // TODO: is it worth caching the calculation result of applying paths?
@@ -20,11 +21,11 @@ type (
 // appliedPaths changes the piece.Address that's relative to the piece into absolute board
 // addresses. Other pieces aren't considered. If a piece's path leaves the board then the
 // path is truncated at the last square on the board edge.
-func appliedPaths(f piece.Kind, at Address, o Orientation) PathVariations {
-	var out PathVariations
+func appliedPaths(f piece.Kind, at Address, o Orientation) pathVariations {
+	var out pathVariations
 	rv := piece.Paths(f)
 
-	offBoard := func(r piece.Address) (bool, Address) {
+	offBoard := func(r piece.PathAddress) (bool, Address) {
 		x := at.File
 		if o == White {
 			x = x + r.File
@@ -49,7 +50,7 @@ func appliedPaths(f piece.Kind, at Address, o Orientation) PathVariations {
 	}
 
 	for v, relpaths := range rv {
-		paths := make([]Path, 0, len(relpaths))
+		paths := make([]path, 0, len(relpaths))
 		for _, rp := range relpaths {
 			if len(rp) == 0 {
 				log.Panicln("zero length basic path for piece", f)
@@ -60,7 +61,7 @@ func appliedPaths(f piece.Kind, at Address, o Orientation) PathVariations {
 				continue
 			}
 
-			p := Path{Addresses: make([]Address, 0, len(rp))}
+			p := path{Addresses: make([]Address, 0, len(rp))}
 			for _, ra := range rp {
 				off, addr := offBoard(ra)
 				if off {
@@ -77,7 +78,7 @@ func appliedPaths(f piece.Kind, at Address, o Orientation) PathVariations {
 	return out
 }
 
-func (a Path) String() string {
+func (a path) String() string {
 	var s strings.Builder
 	for _, address := range a.Addresses {
 		s.WriteString(address.String())

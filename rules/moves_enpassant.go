@@ -5,7 +5,7 @@ import "github.com/pciet/wichess/piece"
 // if a piece can get to the en passant take square then this will need to be updated
 
 func (a *Board) appendEnPassantMove(moves []Address, at Address, previous Move) []Address {
-	if previous == NoPreviousMove {
+	if previous == NoMove {
 		return moves
 	}
 

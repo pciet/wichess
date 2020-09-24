@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/pciet/wichess/game"
+	"github.com/pciet/wichess/memory"
 	"github.com/pciet/wichess/rules"
 )
 
@@ -12,11 +13,13 @@ type MovesJSON struct {
 	rules.State `json:"s"`
 }
 
-func movesGet(w http.ResponseWriter, r *http.Request, g game.Instance, pid PlayerIdentifier) {
+func movesGet(w http.ResponseWriter, r *http.Request,
+	g game.Instance, pid memory.PlayerIdentifier) {
+
 	// TODO: does the rewrite still have the race that made counting turns necessary?
 	moves, state := g.Moves()
 
-	if (g.ComputerGame() == false) &&
+	if (g.IsComputerGame() == false) &&
 		((state == rules.Check) || (state == rules.Draw) || (state == rules.Checkmate)) {
 
 		var alertState game.UpdateState
@@ -31,9 +34,9 @@ func movesGet(w http.ResponseWriter, r *http.Request, g game.Instance, pid Playe
 
 		oppID := g.OpponentOf(pid)
 
-		go game.Alert(gm.GameIdentifier, g.OrientationOf(oppID), oppID, game.Update{
-			State:    alertState,
-			FromMove: rules.NoMove,
+		go game.Alert(g.GameIdentifier, g.OrientationOf(oppID), oppID, game.Update{
+			UpdateState: alertState,
+			FromMove:    rules.NoMove,
 		})
 	}
 

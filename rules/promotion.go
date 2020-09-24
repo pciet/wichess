@@ -43,6 +43,6 @@ func (a *Board) DoPromotion(with piece.Kind) Square {
 			}
 		}
 	}
-	Panic("didn't find promotion")
-	return AddressedSquare{}
+	panic("didn't find promotion")
+	return Square{}
 }

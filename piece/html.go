@@ -2,7 +2,7 @@ package piece
 
 // DetailsHTML returns an HTML string meant for the individual piece details webpages.
 // Characteristic descriptions are not included.
-func DetailsHTML(of Kind) string { detailsHTML[of] }
+func DetailsHTML(of Kind) string { return detailsHTML[of] }
 
 var detailsHTML = []string{
 	"",

@@ -23,8 +23,8 @@ func acknowledgeGet(w http.ResponseWriter, r *http.Request, g game.Instance, p *
 			p.ResetComputerStreak()
 		}
 	} else {
-		p.SetPeopleGame(memory.NoGame)
+		p.PeopleGame = memory.NoGame
 	}
 
-	g.Acknowledge()
+	g.Acknowledge(p.PlayerIdentifier)
 }

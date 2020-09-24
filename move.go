@@ -1,7 +1,6 @@
 package wichess
 
 import (
-	"bytes"
 	"encoding/json"
 	"net/http"
 
@@ -36,7 +35,7 @@ func movePost(w http.ResponseWriter, r *http.Request,
 	}
 
 	if g.PlayerActive(pid) == false {
-		g.UnlockGame()
+		g.Unlock()
 		debug(MovePath, "player", pid, "not active in game", gid)
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -44,8 +43,8 @@ func movePost(w http.ResponseWriter, r *http.Request,
 
 	previousActive := g.PreviousActive
 
-	var changes []rules.AddressedSquare
-	var captures []CapturedPiece
+	var changes []rules.Square
+	var captures []rules.Piece
 	var promotionNeeded bool
 	if promotion != piece.NoKind {
 		changes = g.Promote(promotion)
@@ -70,17 +69,24 @@ func movePost(w http.ResponseWriter, r *http.Request,
 
 	g.Unlock()
 
-	alertUpdate := game.Update{Squares: changes, Captures: captures, FromMove: move}
+	alertUpdate := game.Update{
+		Squares:  game.SquaresFromRules(changes),
+		Captures: game.PiecesFromRules(captures),
+		FromMove: move,
+	}
 	if promotionNeeded || promotionWasReverse {
-		alertUpdate.State = game.WaitUpdate
+		alertUpdate.UpdateState = game.WaitUpdate
 	}
 	go game.Alert(gid, opponentOrientation, pid, alertUpdate)
 
-	responseUpdate := game.Update{Squares: changes, Captures: takes}
+	responseUpdate := game.Update{
+		Squares:  game.SquaresFromRules(changes),
+		Captures: game.PiecesFromRules(captures),
+	}
 	if promotionNeeded {
-		responseUpdate.State = game.PromotionNeededUpdate
+		responseUpdate.UpdateState = game.PromotionNeededUpdate
 	} else if promotionWasReverse {
-		responseUpdate.State = game.ContinueUpdate
+		responseUpdate.UpdateState = game.ContinueUpdate
 	}
 
 	jsonResponse(w, responseUpdate)
@@ -95,15 +101,15 @@ func handleMovePostParse(w http.ResponseWriter, r *http.Request) (rules.Move, pi
 	}
 
 	var mj MoveJSON
-	err = json.Unmarshal(body, &mj)
+	err := json.Unmarshal(body, &mj)
 	if err != nil {
-		debug(MovePath, "failed to read body JSON for", pid, "in", gid, ":", err)
+		debug(MovePath, "failed to read body JSON:", err)
 		w.WriteHeader(http.StatusBadRequest)
 		return rules.NoMove, piece.NoKind
 	}
 
 	if mj == (MoveJSON{}) {
-		debug(MovePath, "all zero move request from", pid, "in", gid)
+		debug(MovePath, "all zero move request")
 		w.WriteHeader(http.StatusBadRequest)
 		return rules.NoMove, piece.NoKind
 	}
@@ -111,7 +117,7 @@ func handleMovePostParse(w http.ResponseWriter, r *http.Request) (rules.Move, pi
 	var to rules.Address
 	if mj.Promotion != piece.NoKind {
 		if mj.Promotion.IsBasic() == false {
-			debug("promotion request", promotion, "not basic kind")
+			debug("promotion request", mj.Promotion, "not basic kind")
 			w.WriteHeader(http.StatusBadRequest)
 			return rules.NoMove, piece.NoKind
 		}
@@ -123,5 +129,5 @@ func handleMovePostParse(w http.ResponseWriter, r *http.Request) (rules.Move, pi
 	return rules.Move{
 		rules.AddressIndex(mj.From).Address(),
 		to,
-	}, promotion
+	}, mj.Promotion
 }

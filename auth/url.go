@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"net/url"
 	"strconv"
 
 	"github.com/pciet/wichess/memory"

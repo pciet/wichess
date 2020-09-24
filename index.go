@@ -3,6 +3,7 @@ package wichess
 import (
 	"net/http"
 
+	"github.com/pciet/wichess/memory"
 	"github.com/pciet/wichess/piece"
 )
 
@@ -17,7 +18,7 @@ func indexGet(w http.ResponseWriter, r *http.Request, p *memory.Player) {
 		return
 	}
 	writeHTMLTemplate(w, IndexHTMLTemplate, IndexHTMLTemplateData{
-		Name:       p.Name,
+		Name:       p.PlayerName.String(),
 		Left:       p.Left,
 		Right:      p.Right,
 		Collection: p.Collection,

@@ -1,6 +1,8 @@
 package wichess
 
 import (
+	"net/http"
+
 	"github.com/pciet/wichess/auth"
 	"github.com/pciet/wichess/memory"
 )
@@ -41,7 +43,7 @@ func loginAttemptHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	if len(name) > memory.PlayerNameMaxLength {
+	if len(name) > memory.PlayerNameMaxSize {
 		debug("username too long")
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -51,8 +53,8 @@ func loginAttemptHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	id, key := auth.Login(name, pass)
-	if (key == memory.NoSessionKey) || (id == memory.NoPlayerIdentifier) {
+	id, key := auth.Login(memory.PlayerName(name), pass)
+	if (*key == memory.NoSessionKey) || (id == memory.NoPlayer) {
 		debug("bad password for", name)
 		w.WriteHeader(http.StatusBadRequest)
 		return

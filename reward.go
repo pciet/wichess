@@ -1,10 +1,10 @@
 package wichess
 
 import (
-	"bytes"
 	"encoding/json"
 	"net/http"
 
+	"github.com/pciet/wichess/game"
 	"github.com/pciet/wichess/memory"
 	"github.com/pciet/wichess/piece"
 )
@@ -16,10 +16,10 @@ type RewardHTMLTemplateData struct {
 	piece.Collection
 }
 
-func rewardGet(w http.ResponseWriter, r *http.Request, g game.Instance, p player.Instance) {
+func rewardGet(w http.ResponseWriter, r *http.Request, g game.Instance, p *memory.Player) {
 	left, right, reward := g.RewardsOf(p.PlayerIdentifier)
 	writeHTMLTemplate(w, RewardHTMLTemplate, RewardHTMLTemplateData{
-		PlayerName:     p.Name,
+		PlayerName:     p.PlayerName,
 		GameIdentifier: g.GameIdentifier,
 		Left:           left,
 		Right:          right,
@@ -34,7 +34,7 @@ type RewardJSON struct {
 	Reward piece.CollectionSlot `json:"re"`
 }
 
-func rewardPost(w http.ResponseWriter, r *http.Request, g game.Instance, p player.Instance) {
+func rewardPost(w http.ResponseWriter, r *http.Request, g game.Instance, p *memory.Player) {
 	rj := handleRewardPostParse(w, r)
 	if rj == (RewardJSON{}) {
 		return
@@ -42,26 +42,26 @@ func rewardPost(w http.ResponseWriter, r *http.Request, g game.Instance, p playe
 
 	left, right, reward := g.RewardsOf(p.PlayerIdentifier)
 
-	if rj.Left != piece.NotInCollection {
+	if (rj.Left > 0) && (rj.Left <= piece.CollectionSize) {
 		if left == piece.NoKind {
 			debug(RewardPath, "left requested but no piece in game for", p.Name)
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		p.CollectionAdd(rj.Left, left)
+		p.Collection[rj.Left-1] = left
 	}
 
-	if rj.Right != piece.NotInCollection {
+	if (rj.Right > 0) && (rj.Right <= piece.CollectionSize) {
 		if right == piece.NoKind {
 			debug(RewardPath, "right requested but no piece in game for", p.Name)
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		p.CollectionAdd(rj.Right, right)
+		p.Collection[rj.Right-1] = right
 	}
 
-	if rj.Reward != piece.NotInCollection {
-		p.CollectionAdd(rj.Reward, reward)
+	if (rj.Reward > 0) && (rj.Reward <= piece.CollectionSize) {
+		p.Collection[rj.Reward-1] = reward
 	}
 }
 

@@ -1,6 +1,10 @@
 package rules
 
-import "github.com/pciet/wichess/piece"
+import (
+	"log"
+
+	"github.com/pciet/wichess/piece"
+)
 
 type (
 	// Move represents the addressing of a piece move from a square to another.
@@ -79,19 +83,19 @@ func (a *Board) DoMove(m Move) ([]Square, []Square) {
 		if to.Orientation == from.Orientation {
 			if to.flags.extricates {
 				// captures your own piece for the opponent to get king out of check
-				changes, takes = bcopy.takeMove(changes, takes, m)
+				changes, captures = bcopy.captureMove(changes, captures, m)
 			}
 		} else {
 			if to.flags.neutralizes {
-				return bcopy.neutralizesMove(changes, takes, m)
+				return bcopy.neutralizesMove(changes, captures, m)
 			}
-			changes, takes = bcopy.captureMove(changes, takes, m)
+			changes, captures = bcopy.captureMove(changes, captures, m)
 		}
 	} else {
 		if bcopy.isCastleMove(m) {
 			return bcopy.castleMove(changes, m), nil
 		} else if bcopy.isEnPassantMove(m) {
-			changes, takes = bcopy.enPassantMove(changes, takes, m)
+			changes, captures = bcopy.enPassantMove(changes, captures, m)
 		} else {
 			changes = bcopy.noCaptureMove(changes, m)
 		}
@@ -102,12 +106,28 @@ func (a *Board) DoMove(m Move) ([]Square, []Square) {
 			continue
 		}
 		if from.flags.neutralizes {
-			return bcopy.assertsCapturesNeutralizes(changes, takes, m, s.Address)
+			return bcopy.assertsCapturesNeutralizes(changes, captures, m, s.Address)
 		}
-		return bcopy.assertsChain(changes, takes, m, s.Address)
+		return bcopy.assertsChain(changes, captures, m, s.Address)
 	}
 
-	return changes, takes
+	return changes, captures
+}
+
+// Forward determines if the move is toward the opponent.
+func (a Move) Forward(by Orientation) bool {
+	if by == White {
+		if a.From.Rank < a.To.Rank {
+			return true
+		}
+	} else if by == Black {
+		if a.From.Rank > a.To.Rank {
+			return true
+		}
+	} else {
+		log.Panicln("orientation", by, "not white or black")
+	}
+	return false
 }
 
 func (a Move) String() string {
@@ -135,23 +155,8 @@ func (a *Board) captureMove(changes, captures []Square, m Move) ([]Square, []Squ
 			Moved:       true,
 		}})
 	} else {
-		takes = append(captures, Square{m.To, t})
+		captures = append(captures, Square{m.To, t})
 	}
 
 	return append(changes, Square{m.To, s}), captures
-}
-
-func (a Move) forward(by Orientation) bool {
-	if by == White {
-		if a.From.Rank < a.To.Rank {
-			return true
-		}
-	} else if by == Black {
-		if a.From.Rank > a.To.Rank {
-			return true
-		}
-	} else {
-		log.Panicln("orientation", by, "not white or black")
-	}
-	return false
 }

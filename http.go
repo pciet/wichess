@@ -101,7 +101,7 @@ var (
 		Get: auth.PlayerAndGameWriteable(acknowledgeGet, AcknowledgePath),
 	}
 
-	quitHandler = auth.Handler{Get: auth.PlayerIdentified(quitGet)}
+	quitHandler = auth.Handler{Get: quitGet}
 
 	indexHandler = auth.Handler{
 		Get: auth.PlayerReadable(indexGet),
@@ -112,8 +112,8 @@ var (
 	}
 
 	computerHandler = auth.Handler{
-		Get:  auth.PlayerReadable(computerGet, ComputerPath),
-		Post: auth.PlayerWriteable(computerPost, ComputerPath),
+		Get:  auth.PlayerReadable(computerGet),
+		Post: computerPost,
 	}
 
 	matchPeopleHandler = auth.Handler{
@@ -156,8 +156,8 @@ var (
 	}
 
 	rewardHandler = auth.Handler{
-		Get:  auth.GameAndPlayerReadable(rewardGet, RewardPath),
-		Post: auth.GameReadablePlayerWriteable(rewardPost, RewardPath),
+		Get:  auth.PlayerAndGameReadable(rewardGet, RewardPath),
+		Post: auth.PlayerWriteableGameReadable(rewardPost, RewardPath),
 	}
 )
 
@@ -205,7 +205,7 @@ func InitializeHTTP() {
 
 	dt, ok := http.DefaultTransport.(*http.Transport)
 	if ok == false {
-		Panic("http.DefaultTransport.(*http.Transport) failed")
+		panic("http.DefaultTransport.(*http.Transport) failed")
 	}
 	dt.MaxIdleConns = httpMaxIdleConns
 	dt.IdleConnTimeout = httpIdleConnTimeout

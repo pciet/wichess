@@ -10,7 +10,6 @@ package auth
 import (
 	"log"
 	"net/http"
-	"strconv"
 
 	"github.com/pciet/wichess/memory"
 )
@@ -35,8 +34,8 @@ type Handler struct {
 }
 
 func (a Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if ((r.Method == http.MethodGet) && (an.Get == nil)) ||
-		((r.Method == http.MethodPost) && (an.Post == nil)) ||
+	if ((r.Method == http.MethodGet) && (a.Get == nil)) ||
+		((r.Method == http.MethodPost) && (a.Post == nil)) ||
 		((r.Method != http.MethodGet) && (r.Method != http.MethodPost)) {
 
 		w.WriteHeader(http.StatusBadRequest)
@@ -52,7 +51,7 @@ func (a Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	key := memory.SessionKeyFromString(sc.Value)
-	if key == memory.NoSessionKey {
+	if *key == memory.NoSessionKey {
 		ClearBrowserSession(w, r)
 		return
 	}
@@ -65,9 +64,9 @@ func (a Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		an.Get(w, r, pid)
+		a.Get(w, r, pid)
 	case http.MethodPost:
-		an.Post(w, r, pid)
+		a.Post(w, r, pid)
 	default:
 		log.Panicln(r.URL.Path, r.Method, "HTTP method not caught by Handler")
 	}

@@ -13,6 +13,11 @@ import (
 // square doesn't have a piece on it.
 type Board [8 * 8]Piece
 
+func (a *Board) Copy() *Board {
+	b := *a
+	return &b
+}
+
 // NotEmpty and Empty are used when a Piece is representing a square on the board which could not
 // have a chess piece on it.
 func (square *Piece) NotEmpty() bool { return square.Kind != piece.NoKind }
@@ -33,8 +38,8 @@ func (a *Board) String() string {
 	return s.String()
 }
 
-func (a *Board) surroundingSquares(at Address) []AddressedSquare {
-	s := make([]AddressedSquare, 0, 8)
+func (a *Board) surroundingSquares(at Address) []Square {
+	s := make([]Square, 0, 8)
 	for x := -1; x <= 1; x++ {
 		for y := -1; y <= 1; y++ {
 			if (x == 0) && (y == 0) {
@@ -49,7 +54,7 @@ func (a *Board) surroundingSquares(at Address) []AddressedSquare {
 				continue
 			}
 			addr := Address{nx, ny}
-			s = append(s, AddressedSquare{
+			s = append(s, Square{
 				Address: addr,
 				Piece:   a[addr.Index()],
 			})
@@ -77,7 +82,7 @@ func (a *Board) noKing(of Orientation) bool {
 	return true
 }
 
-func (a *Board) applyChanges(c []AddressedSquare) {
+func (a *Board) applyChanges(c []Square) {
 	for _, change := range c {
 		a[change.Address.Index()] = change.Piece
 	}

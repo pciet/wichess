@@ -11,5 +11,5 @@ type PeopleIDJSON struct {
 }
 
 func peopleIDGet(w http.ResponseWriter, r *http.Request, p *memory.Player) {
-	jsonResponse(w, PeopleIDJSON{GameIdentifier: p.PlayerGame})
+	jsonResponse(w, PeopleIDJSON{GameIdentifier: p.PeopleGame})
 }
