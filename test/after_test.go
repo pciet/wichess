@@ -12,13 +12,8 @@ import (
 func TestAfterMove(t *testing.T) {
 	for _, tc := range LoadAllAfterMoveCases() {
 		var board rules.Board
-		for _, piece := range tc.Position {
-			board[piece.Address.Index()] = rules.Square(rules.Piece{
-				Kind:        piece.Kind,
-				Orientation: piece.Orientation,
-				Moved:       piece.Moved,
-				Start:       piece.Start,
-			}.ApplyCharacteristics())
+		for _, p := range tc.Position {
+			board[p.Address.Index()] = rules.NewPiece(p.Kind, p.Orientation, p.Moved, p.Start)
 		}
 
 		changes, _ := board.DoMove(tc.Move)
@@ -31,7 +26,7 @@ func TestAfterMove(t *testing.T) {
 			tc.Changes[i].Moved = true
 		}
 
-		if rules.AddressedSquaresEquivalent(changes, tc.Changes) == false {
+		if rules.SquaresEquivalent(changes, tc.Changes) == false {
 			t.Fatal(tc.Name, ":", "expected changes", tc.Changes, "got", changes)
 		}
 	}

@@ -60,7 +60,7 @@ var RemoveAddressSliceDuplicatesCases = []RemoveAddressSliceDuplicatesCase{
 
 func TestRemoveAddressSliceDuplicates(t *testing.T) {
 	for i, c := range RemoveAddressSliceDuplicatesCases {
-		out := RemoveAddressSliceDuplicates(c.In)
+		out := removeAddressSliceDuplicates(c.In)
 		if len(out) != len(c.Out) {
 			t.Fatal("case", i, "calculated len", len(out), "expected", len(c.Out))
 		}
@@ -81,14 +81,27 @@ func TestRemoveAddressSliceDuplicates(t *testing.T) {
 func TestSquareEven(t *testing.T) {
 	evenSquares := []AddressIndex{1, 3, 5, 12, 14, 17, 23, 24, 33, 42, 46, 55, 58, 62}
 	for _, s := range evenSquares {
-		if s.Address().SquareEven() == false {
+		if s.Address().squareEven() == false {
 			t.Fatal("square address index", s, "incorrectly indicated as odd")
 		}
 	}
 	oddSquares := []AddressIndex{0, 6, 9, 13, 16, 20, 29, 31, 34, 38, 41, 43, 50, 57, 59, 63}
 	for _, s := range oddSquares {
-		if s.Address().SquareEven() {
+		if s.Address().squareEven() {
 			t.Fatal("square address index", s, "incorrectly indicated as even")
+		}
+	}
+}
+
+func TestAddressToIndex(t *testing.T) {
+	addresses := []Address{{0, 0}, {7, 7}, {3, 5}, {6, 7}, {6, 0}, {7, 0}, {0, 7}}
+	indices := []AddressIndex{0, 63, 43, 62, 6, 7, 56}
+	for i, addr := range addresses {
+		if addr.Index() != indices[i] {
+			t.Fatal("address", addr, "doesn't match index", indices[i])
+		}
+		if indices[i].Address() != addr {
+			t.Fatal("index", indices[i], "doesn't match address", addr)
 		}
 	}
 }

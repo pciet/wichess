@@ -148,12 +148,7 @@ func (a *Board) captureMove(changes, captures []Square, m Move) ([]Square, []Squ
 
 	t := a[m.To.Index()]
 	if t.flags.fantasy && (a[t.Start.Index()].Kind == piece.NoKind) {
-		changes = append(changes, Square{t.Start, Piece{
-			Kind:        t.Kind,
-			Orientation: t.Orientation,
-			Start:       t.Start,
-			Moved:       true,
-		}})
+		changes = append(changes, Square{t.Start, NewPiece(t.Kind, t.Orientation, true, t.Start)})
 	} else {
 		captures = append(captures, Square{m.To, t})
 	}

@@ -21,8 +21,24 @@ type Piece struct {
 // NoPiece is the value of a Piece when it doesn't represent a piece.
 var NoPiece = Piece{}
 
+// NewPiece is used whenever initializing a Board with pieces. Unexported fields of the type are
+// set in this function.
+func NewPiece(k piece.Kind, o Orientation, moved bool, start Address) Piece {
+	p := Piece{
+		Kind:        k,
+		Orientation: o,
+		Moved:       moved,
+		Start:       start,
+	}
+	applyCharacteristicFlags(&p)
+	return p
+}
+
 func (a Piece) String() string {
-	str := a.Orientation.String() + " " + a.Kind.String() + " " + a.Start.String() + " start"
+	if a.Kind == piece.NoKind {
+		return "none"
+	}
+	str := a.Orientation.Letter() + " " + a.Kind.String() + " (" + a.Start.String() + ")"
 	if a.Moved {
 		str += " moved"
 	}

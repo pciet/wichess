@@ -18,35 +18,30 @@ func (a *Board) inCheck(active Orientation, captures []Address) bool {
 // removeMovesIntoCheck is called by Moves but not DoMove.
 func (a *Board) removeMovesIntoCheck(moves []MoveSet, active Orientation, previous Move) []MoveSet {
 	out := make([]MoveSet, 0, len(moves))
-
 	for _, moveset := range moves {
 		outset := MoveSet{moveset.From, make([]Address, 0, len(moveset.Moves))}
-		for _, move := range moveset.Moves {
-			// stash original squares then apply move changes
-			changes, _ := a.DoMove(Move{moveset.From, move})
+		for _, moveAddr := range moveset.Moves {
+			move := Move{moveset.From, moveAddr}
+
+			// stash original squares and apply move changes
+			changes, _ := a.DoMove(move)
 			orig := make([]Square, len(changes))
 			for i, change := range changes {
 				addr := change.Address.Index()
 				orig[i] = Square{change.Address, a[addr]}
 				a[addr] = change.Piece
 			}
-			revert := func() {
-				for _, s := range orig {
-					a[s.Address.Index()] = s.Piece
-				}
+
+			if (a.noKing(active) == false) && (a.inCheck(active,
+				movesAddressSlice(a.naiveCaptureMoves(active.Opponent(), move))) == false) {
+
+				outset.Moves = append(outset.Moves, moveAddr)
 			}
 
-			threats := movesAddressSlice(a.naiveCaptureMoves(active.Opponent(), previous))
-
-			if a.noKing(active) || a.inCheck(active, threats) ||
-				a.threatenedNeutralizerAdjacent(nil, threats, a.kingLocation(active)) {
-
-				revert()
-				continue
+			// revert board back to original state
+			for _, s := range orig {
+				a[s.Address.Index()] = s.Piece
 			}
-
-			revert()
-			outset.Moves = append(outset.Moves, move)
 		}
 		if len(outset.Moves) == 0 {
 			continue

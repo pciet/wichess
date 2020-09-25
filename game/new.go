@@ -24,19 +24,11 @@ func New(wa, ba piece.ArmyRequest, white, black memory.PlayerIdentifier) memory.
 		} else {
 			start = rules.AddressIndex(i - 8)
 		}
-		w[i] = rules.Piece{
-			Kind:        k,
-			Orientation: rules.White,
-			Start:       start.Address(),
-		}
+		w[i] = rules.NewPiece(k, rules.White, false, start.Address())
 	}
 	for i, k := range bp {
 		start := rules.AddressIndex(i + 48)
-		b[i] = rules.Piece{
-			Kind:        k,
-			Orientation: rules.Black,
-			Start:       start.Address(),
-		}
+		b[i] = rules.NewPiece(k, rules.Black, false, start.Address())
 	}
 
 	g := memory.Game{

@@ -58,7 +58,7 @@ func (a *Board) Moves(active Orientation, previous Move) ([]MoveSet, State) {
 
 	// TODO: what should previous be for the threats call?
 
-	// check is a threat of capture, which means takes into check count
+	// check is a threat of capture, which means captures into check count
 	threats := movesAddressSlice(bcopy.naiveMoves(active.Opponent(), previous))
 
 	check := bcopy.inCheck(active, threats)

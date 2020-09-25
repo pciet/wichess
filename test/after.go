@@ -10,8 +10,8 @@ import (
 type AfterMoveCaseJSON struct {
 	Name       string `json:"case"`
 	rules.Move `json:"mov"`
-	Position   []Piece                 `json:"pos"`
-	Changes    []rules.AddressedSquare `json:"cha"`
+	Position   []Piece        `json:"pos"`
+	Changes    []rules.Square `json:"cha"`
 }
 
 type AfterMoveCategoryFileJSON struct {

@@ -6,22 +6,20 @@ import (
 	"github.com/pciet/wichess/rules"
 )
 
+// TODO: pieces start address should be included in this test
+
 // TestMoves tests the rules.Game.Moves method that determines which moves are available for
 // the active player in a position. Test cases are defined by test/builder and saved into
 // test/cases as JSON to be loaded by this test.
 func TestMoves(t *testing.T) {
 	for _, tc := range LoadAllMovesCases() {
 		var board rules.Board
-		for _, piece := range tc.Position {
-			board[piece.Address.Index()] = rules.Square(rules.Piece{
-				Kind:        piece.Kind,
-				Orientation: piece.Orientation,
-				Moved:       piece.Moved,
-			}.ApplyCharacteristics())
+		for _, p := range tc.Position {
+			board[p.Address.Index()] = rules.NewPiece(p.Kind,
+				p.Orientation, p.Moved, rules.NoAddress)
 		}
-		g := rules.MakeGame(board, tc.PreviousMove.From.Index(), tc.PreviousMove.To.Index())
 
-		moves, state := g.Moves(tc.Active)
+		moves, state := board.Moves(tc.Active, tc.PreviousMove)
 		if state != tc.State {
 			t.Fatal(tc.Name, ":", "expected state", tc.State, "got", state)
 		}

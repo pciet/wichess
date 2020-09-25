@@ -28,6 +28,15 @@ func (an Orientation) String() string {
 	case Black:
 		return "black"
 	}
-	log.Panicln("unknown orientation", an)
+	log.Panicln("unknown orientation", int(an))
 	return ""
+}
+
+func (an Orientation) Letter() string {
+	if an == White {
+		return "w"
+	} else if an != Black {
+		log.Panicln("unknown orientation", an)
+	}
+	return "b"
 }

@@ -38,10 +38,9 @@ func (a *Board) assertsCapturesNeutralizes(changes, captures []Square, m Move,
 func (a *Board) assertsChain(changes, captures []Square, m Move,
 	asserts Address) ([]Square, []Square) {
 
-	changes = append(changes, Square{asserts, Piece{}})
 	g := a[asserts.Index()]
 	g.Moved = true
-	changes = append(changes, Square{m.To, g})
+	changes = MergeReplaceSquares(changes, []Square{{asserts, Piece{}}, {m.To, g}})
 	captures = append(captures, Square{m.From, a[m.From.Index()]})
 	previousAsserts := Square{asserts, g}
 
