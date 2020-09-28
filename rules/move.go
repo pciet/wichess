@@ -75,7 +75,7 @@ func (a *Board) DoMove(m Move) ([]Square, []Square) {
 
 	from := bcopy[m.From.Index()]
 	if from.Empty() {
-		log.Panicln("no piece for move", m, a)
+		log.Panicln("no piece for move", m, "\n", a)
 	}
 	to := bcopy[m.To.Index()]
 

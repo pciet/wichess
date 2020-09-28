@@ -11,13 +11,14 @@ import (
 const SessionKeySize = 16
 
 // A player's SessionKey is an array of random runes. This key is encoded as a string before being
-// communicated to the player's web browser.
+// communicated to the player's web browser encoded again into base64. Keys do not persist when
+// the host is restarted.
 type SessionKey [SessionKeySize]rune
 
 // NoSessionKey is the zero value of a SessionKey and represents a bad key.
 var NoSessionKey SessionKey
 
-// NewSession randomly generates a key and saves it in memory for the player.
+// NewSession randomly generates a key and saves it into volatile memory for the player.
 func NewSession(of PlayerIdentifier) *SessionKey {
 	key := newSessionKey()
 	addSession(of, key)
@@ -34,8 +35,11 @@ func SessionKeyFromString(a string) *SessionKey {
 		return nil
 	}
 	out := SessionKey{}
-	for i, r := range a {
+	// range over a string returns the byte index, not the rune index, so a separate i is used here
+	i := 0
+	for _, r := range a {
 		out[i] = r
+		i++
 	}
 	return &out
 }

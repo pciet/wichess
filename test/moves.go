@@ -12,7 +12,7 @@ type MovesCaseJSON struct {
 	Active       rules.Orientation `json:"active"`
 	PreviousMove rules.Move        `json:"prev"`
 	State        rules.State       `json:"state"`
-	Position     []Piece           `json:"pos"`
+	Position     []testPiece       `json:"pos"`
 	Moves        []rules.MoveSet   `json:"moves"`
 }
 
@@ -20,8 +20,8 @@ type MovesCategoryFileJSON struct {
 	Cases []MovesCaseJSON `json:"cases"`
 }
 
-func LoadAllMovesCases() []MovesCaseJSON {
-	caseFiles := ParseAllCases(MovesParser, "moves")
+func loadAllMovesCases() []MovesCaseJSON {
+	caseFiles := parseAllCases(movesParser, "moves")
 	out := make([]MovesCaseJSON, 0, 8)
 
 	for _, cf := range caseFiles {
@@ -34,7 +34,7 @@ func LoadAllMovesCases() []MovesCaseJSON {
 	return out
 }
 
-func MovesParser(out *CaseJSON, in []byte) error {
+func movesParser(out *caseJSON, in []byte) error {
 	var value MovesCategoryFileJSON
 	err := json.Unmarshal(in, &value)
 	*out = value

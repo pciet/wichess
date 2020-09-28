@@ -6,12 +6,14 @@ import (
 	"os"
 )
 
-// GameFilePrefix is the first character in a game filename followed by the game identifier.
-const GameFilePrefix = "g"
+// GameFilePrefix is the first characters in a game filename followed by the game identifier.
+const GameFilePrefix = "gf"
 
 func deleteGameFile(id GameIdentifier) {
 	err := os.Remove(filePath(GameFilePrefix + id.String()))
-	if err != nil {
+	if os.IsNotExist(err) {
+		return // if this game wasn't saved between reboots then there might not be a file
+	} else if err != nil {
 		panic(err.Error())
 	}
 }
@@ -57,6 +59,7 @@ func initializeGamesCache(ids []GameIdentifier) {
 		if err != nil {
 			panic(err.Error())
 		}
+		(&g.Board).InitializePieces()
 		gamesCache[id] = &g
 		if id >= nextGameID {
 			nextGameID = id + 1

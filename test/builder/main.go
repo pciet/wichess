@@ -1,4 +1,4 @@
-// test/builder is a program to visually make cases for package test.
+// Builder is a small web app to visually inspect and make test cases for package tests.
 package main
 
 import (

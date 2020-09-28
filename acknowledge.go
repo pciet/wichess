@@ -22,6 +22,7 @@ func acknowledgeGet(w http.ResponseWriter, r *http.Request, g game.Instance, p *
 		} else {
 			p.ResetComputerStreak()
 		}
+		p.ComputerGame = memory.NoGame
 	} else {
 		p.PeopleGame = memory.NoGame
 	}

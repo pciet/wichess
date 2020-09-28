@@ -17,7 +17,12 @@ type (
 	// and the results of moves. Methods change this memory in-place. Games are encoded as JSON
 	// in the backing files.
 	Game struct {
-		sync.RWMutex   `json:"-"`
+		sync.RWMutex `json:"-"`
+
+		// volatile caches of the current turn's result of rules.Board.Moves
+		MovesCache []rules.MoveSet `json:"-"`
+		StateCache rules.State     `json:"-"`
+
 		GameIdentifier `json:"id"`
 		Active         rules.Orientation `json:"active"`
 		PreviousActive rules.Orientation `json:"prevactive"`
@@ -48,6 +53,8 @@ const NoGame = 0
 
 func (a *Game) Copy() *Game {
 	c := Game{
+		MovesCache:     rules.CopyMoveSetSlice(a.MovesCache),
+		StateCache:     a.StateCache,
 		GameIdentifier: a.GameIdentifier,
 		Active:         a.Active,
 		PreviousActive: a.PreviousActive,

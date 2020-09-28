@@ -17,17 +17,17 @@ func (an Instance) Moves() ([]rules.MoveSet, rules.State) {
 		return nil, rules.Draw
 	}
 
-	if an.moves != nil {
-		return an.moves, an.state
+	if an.MovesCache != nil {
+		return an.MovesCache, an.StateCache
 	}
 
-	an.moves, an.state = an.Board.Moves(an.Active, an.PreviousMove)
-	if an.state == rules.Promotion {
-		an.moves = []rules.MoveSet{}
+	an.MovesCache, an.StateCache = an.Board.Moves(an.Active, an.PreviousMove)
+	if an.StateCache == rules.Promotion {
+		an.MovesCache = []rules.MoveSet{}
 		o, _ := an.Board.PromotionNeeded()
 		if o != an.Active {
-			an.state = rules.ReversePromotion
+			an.StateCache = rules.ReversePromotion
 		}
 	}
-	return an.moves, an.state
+	return an.MovesCache, an.StateCache
 }

@@ -13,6 +13,7 @@ import (
 func New(wa, ba piece.ArmyRequest, white, black memory.PlayerIdentifier) memory.GameIdentifier {
 	wp, wpicks, bp, bpicks, err := reserveArmies(wa, ba, white, black)
 	if err != nil {
+		debug("reserveArmies failed for", white, black, ":", err.Error())
 		return memory.NoGame
 	}
 
@@ -59,11 +60,11 @@ func New(wa, ba piece.ArmyRequest, white, black memory.PlayerIdentifier) memory.
 		g.Board[i] = rules.NoPiece
 	}
 	// the black army is a mirror of the white army, not a rotation
-	for i := 48; i < 55; i++ {
+	for i := 48; i < 56; i++ {
 		g.Board[i] = b[i-48]
 	}
-	for i := 55; i < 64; i++ {
-		g.Board[i] = b[i-47]
+	for i := 56; i < 64; i++ {
+		g.Board[i] = b[i-48]
 	}
 
 	return memory.AddGame(&g)

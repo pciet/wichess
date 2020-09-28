@@ -15,14 +15,14 @@ func computerGet(w http.ResponseWriter, r *http.Request, p *memory.Player) {
 	}
 
 	if p.ComputerGame == memory.NoGame {
-		debug(ComputerPath, "no game for", p.Name)
+		debug(ComputerPath, "no game for", p.PlayerName)
 		http.NotFound(w, r)
 		return
 	}
 
 	g := game.Lock(p.ComputerGame)
 	if g.Nil() {
-		log.Panicln(ComputerPath, "no game", p.ComputerGame, "for", p.Name)
+		log.Panicln(ComputerPath, "no game", p.ComputerGame, "for", p.PlayerName)
 	}
 
 	// TODO: is it even possible that the computer player's move hasn't been done?
@@ -45,9 +45,12 @@ func computerGet(w http.ResponseWriter, r *http.Request, p *memory.Player) {
 			PlayerName: blackName,
 			Captures:   g.Black.Captures,
 		},
-		Active:       g.Active,
-		PreviousMove: g.PreviousMove,
-		Player:       g.OrientationAgainst(memory.ComputerPlayerIdentifier),
+		Active: g.Active,
+		PreviousMove: PreviousMoveHTMLTemplateData{
+			From: int(g.PreviousMove.From.Index()),
+			To:   int(g.PreviousMove.To.Index()),
+		},
+		Player: p.PlayerName,
 	}
 
 	g.Unlock()
@@ -63,16 +66,16 @@ func computerPost(w http.ResponseWriter, r *http.Request, pid memory.PlayerIdent
 		return
 	}
 
+	// TODO: note on match webpage that a computer game is in progress
 	if p.ComputerGame != memory.NoGame {
-		debug(ComputerPath, "POST but computer game already exists for", p.Name)
 		p.RUnlock()
-		w.WriteHeader(http.StatusBadRequest)
+		http.Redirect(w, r, ComputerPath, http.StatusSeeOther)
 		return
 	}
 
 	army, err := piece.DecodeArmyRequest(r.Body)
 	if err != nil {
-		debug(ComputerPath, "POST failed to decode army request of", p.Name, ":", err)
+		debug(ComputerPath, "POST failed to decode army request of", p.PlayerName, ":", err)
 		p.RUnlock()
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -91,12 +94,13 @@ func computerPost(w http.ResponseWriter, r *http.Request, pid memory.PlayerIdent
 		blackArmy = army
 		black = p.PlayerIdentifier
 	}
+	pname := p.PlayerName
 	p.RUnlock()
 
 	// game.New takes a lock on both players so this player's can't be held here
 	gameID := game.New(whiteArmy, blackArmy, white, black)
 	if gameID == memory.NoGame {
-		debug(ComputerPath, "NewGame failed for", p.Name)
+		debug(ComputerPath, "NewGame failed for", pname)
 		// likely caused by a bad army request
 		w.WriteHeader(http.StatusBadRequest)
 		return

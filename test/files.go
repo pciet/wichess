@@ -33,21 +33,21 @@ func CategoryFilenames(dir, tag string) []string {
 	return categoryFiles
 }
 
-func LoadAllCases(tag string) [][]byte {
+func LoadCategoryFile(dir, tag, name string) []byte {
+	return loadFile(dir + "/" + tag + "_" + name + ".json")
+}
+
+func loadAllCases(tag string) [][]byte {
 	categoryFiles := CategoryFilenames(CaseDir, tag)
 	out := make([][]byte, 0, 8)
 	for _, f := range categoryFiles {
-		out = append(out, LoadFile(CaseDir+"/"+f))
+		out = append(out, loadFile(CaseDir+"/"+f))
 	}
 
 	return out
 }
 
-func LoadCategoryFile(dir, tag, name string) []byte {
-	return LoadFile(dir + "/" + tag + "_" + name + ".json")
-}
-
-func LoadFile(name string) []byte {
+func loadFile(name string) []byte {
 	c, err := ioutil.ReadFile(name)
 	if err != nil {
 		panic(err.Error())

@@ -50,7 +50,7 @@ func initializeHashCache() int {
 	c := 0
 	for i != len(content) {
 		length := int(content[i])
-		hashCache = append(hashCache, content[i+1:i+length])
+		hashCache = append(hashCache, content[i+1:i+1+length])
 		i += 1 + length
 		c++
 	}

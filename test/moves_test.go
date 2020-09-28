@@ -12,7 +12,7 @@ import (
 // the active player in a position. Test cases are defined by test/builder and saved into
 // test/cases as JSON to be loaded by this test.
 func TestMoves(t *testing.T) {
-	for _, tc := range LoadAllMovesCases() {
+	for _, tc := range loadAllMovesCases() {
 		var board rules.Board
 		for _, p := range tc.Position {
 			board[p.Address.Index()] = rules.NewPiece(p.Kind,
@@ -36,7 +36,7 @@ func TestMoves(t *testing.T) {
 						"moves:", calcMoveset.Moves)
 				}
 				for _, addr := range calcMoveset.Moves {
-					if HasAddress(moveset.Moves, addr) == false {
+					if hasAddress(moveset.Moves, addr) == false {
 						t.Fatal(tc.Name, ":", "calculated to have", addr, "at", moveset.From,
 							":", moveset.Moves)
 					}
@@ -53,7 +53,7 @@ func TestMoves(t *testing.T) {
 	}
 }
 
-func HasAddress(in []rules.Address, has rules.Address) bool {
+func hasAddress(in []rules.Address, has rules.Address) bool {
 	for _, a := range in {
 		if a != has {
 			continue

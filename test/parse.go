@@ -1,15 +1,15 @@
 package test
 
 type (
-	// CaseJSON is asserted to the type for the test after calling ParseAllCases
-	CaseJSON interface{}
+	// caseJSON is asserted to the type for the test after calling ParseAllCases
+	caseJSON interface{}
 
-	CaseJSONParser func(*CaseJSON, []byte) error
+	caseJSONParser func(*caseJSON, []byte) error
 )
 
-func ParseAllCases(parse CaseJSONParser, tag string) []CaseJSON {
-	raws := LoadAllCases(tag)
-	out := make([]CaseJSON, len(raws))
+func parseAllCases(parse caseJSONParser, tag string) []caseJSON {
+	raws := loadAllCases(tag)
+	out := make([]caseJSON, len(raws))
 	for i, r := range raws {
 		err := parse(&(out[i]), r)
 		if err != nil {

@@ -12,7 +12,7 @@ func (a *Board) assertsCapturesNeutralizes(changes, captures []Square, m Move,
 	asserts Address) ([]Square, []Square) {
 
 	// treat this like another move
-	a.applyChanges(changes)
+	a.ApplyChanges(changes)
 
 	assertsNeutralizeChanges := make([]Square, 0, 8)
 	assertsNeutralizeCaptures := make([]Square, 0, 2)
@@ -44,7 +44,7 @@ func (a *Board) assertsChain(changes, captures []Square, m Move,
 	captures = append(captures, Square{m.From, a[m.From.Index()]})
 	previousAsserts := Square{asserts, g}
 
-	a.applyChanges(changes)
+	a.ApplyChanges(changes)
 
 	// if the newly moved asserts is now adjacent to an enemy asserts then more assert moves happen
 	// keep applying asserts moves until none are left
@@ -61,7 +61,7 @@ LOOP:
 			gchanges = append(gchanges, Square{m.To, s.Piece})
 			gchanges = append(gchanges, Square{s.Address, Piece{}})
 			changes = MergeReplaceSquares(changes, gchanges)
-			a.applyChanges(gchanges)
+			a.ApplyChanges(gchanges)
 			continue LOOP
 		}
 		break

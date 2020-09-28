@@ -9,23 +9,22 @@
         <link rel="stylesheet" type="text/css" href="/web/game.css">
         <script type="text/javascript">
             window.GameInformation = {
-                ID: {{.GameHeader.ID}},
-                Conceded: {{.GameHeader.Conceded}},
+                ID: {{.GameIdentifier}},
+                Conceded: {{.Conceded}},
                 White: {
-                    Name: {{.GameHeader.White.Name}},
-                    Captures: {{.GameHeader.White.Captures}}
+                    Name: {{.White.PlayerName}},
+                    Captures: {{.White.Captures}}
                 },
                 Black: {
-                    Name: {{.GameHeader.Black.Name}},
-                    Captures: {{.GameHeader.Black.Captures}}
+                    Name: {{.Black.PlayerName}},
+                    Captures: {{.Black.Captures}}
                 },
-                Active: {{.GameHeader.Active}},
-                Turn: {{.GameHeader.Turn}},
+                Active: {{.Active}},
                 Previous: {
-                    from: {{.GameHeader.From}},
-                    to: {{.GameHeader.To}}
+                    from: {{.PreviousMove.From}},
+                    to: {{.PreviousMove.To}}
                 },
-                Player: {{.Name}}
+                Player: {{.Player}}
             }
         </script>
 

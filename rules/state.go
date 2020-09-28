@@ -14,6 +14,7 @@ const (
 	Conceded // this and the following aren't used by the rules package
 	TimeOver
 	ReversePromotion
+	NoState
 )
 
 func (a State) String() string {

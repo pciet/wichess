@@ -8,8 +8,10 @@
 package auth
 
 import (
+	"encoding/base64"
 	"log"
 	"net/http"
+	"unicode/utf8"
 
 	"github.com/pciet/wichess/memory"
 )
@@ -50,8 +52,14 @@ func (a Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		log.Panicln(r.URL.Path, "failed to read session key cookie", SessionKeyCookie, ":", err)
 	}
 
-	key := memory.SessionKeyFromString(sc.Value)
-	if *key == memory.NoSessionKey {
+	keyStr, err := base64.StdEncoding.DecodeString(sc.Value)
+	if (err != nil) || (utf8.Valid(keyStr) == false) {
+		ClearBrowserSession(w, r)
+		return
+	}
+
+	key := memory.SessionKeyFromString(string(keyStr))
+	if (key == nil) || (*key == memory.NoSessionKey) {
 		ClearBrowserSession(w, r)
 		return
 	}

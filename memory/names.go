@@ -30,7 +30,7 @@ func (id PlayerIdentifier) Name() PlayerName {
 	activeMutex.RLock()
 	playerNameMutex.RLock()
 
-	n := playerNamesCache[id]
+	n := playerNamesCache[id-1]
 
 	playerNameMutex.RUnlock()
 	activeMutex.RUnlock()
@@ -43,7 +43,16 @@ func TwoPlayerNames(a, b PlayerIdentifier) (PlayerName, PlayerName) {
 	activeMutex.RLock()
 	playerNameMutex.RLock()
 
-	na, nb := playerNamesCache[a], playerNamesCache[b]
+	var na, nb PlayerName
+	if a == ComputerPlayerIdentifier {
+		na = ComputerPlayerName
+		nb = playerNamesCache[b-1]
+	} else if b == ComputerPlayerIdentifier {
+		nb = ComputerPlayerName
+		na = playerNamesCache[a-1]
+	} else {
+		na, nb = playerNamesCache[a-1], playerNamesCache[b-1]
+	}
 
 	playerNameMutex.RUnlock()
 	activeMutex.RUnlock()

@@ -10,7 +10,7 @@ import (
 type AfterMoveCaseJSON struct {
 	Name       string `json:"case"`
 	rules.Move `json:"mov"`
-	Position   []Piece        `json:"pos"`
+	Position   []testPiece    `json:"pos"`
 	Changes    []rules.Square `json:"cha"`
 }
 
@@ -18,8 +18,8 @@ type AfterMoveCategoryFileJSON struct {
 	Cases []AfterMoveCaseJSON `json:"cases"`
 }
 
-func LoadAllAfterMoveCases() []AfterMoveCaseJSON {
-	caseFiles := ParseAllCases(AfterMoveParser, "after")
+func loadAllAfterMoveCases() []AfterMoveCaseJSON {
+	caseFiles := parseAllCases(afterMoveParser, "after")
 	out := make([]AfterMoveCaseJSON, 0, 8)
 
 	for _, cf := range caseFiles {
@@ -32,7 +32,7 @@ func LoadAllAfterMoveCases() []AfterMoveCaseJSON {
 	return out
 }
 
-func AfterMoveParser(out *CaseJSON, in []byte) error {
+func afterMoveParser(out *caseJSON, in []byte) error {
 	var value AfterMoveCategoryFileJSON
 	err := json.Unmarshal(in, &value)
 	*out = value

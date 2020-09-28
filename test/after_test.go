@@ -10,7 +10,7 @@ import (
 // TestAfterMove tests the rules.Board.DoMove method by comparing the result of a move to the
 // expected position. Cases are made with test/builder which saves them into test/cases as JSON.
 func TestAfterMove(t *testing.T) {
-	for _, tc := range LoadAllAfterMoveCases() {
+	for _, tc := range loadAllAfterMoveCases() {
 		var board rules.Board
 		for _, p := range tc.Position {
 			board[p.Address.Index()] = rules.NewPiece(p.Kind, p.Orientation, p.Moved, p.Start)

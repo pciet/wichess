@@ -1,6 +1,7 @@
 package wichess
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/pciet/wichess/game"
@@ -17,6 +18,15 @@ func peopleGet(w http.ResponseWriter, r *http.Request,
 	whiteName, blackName :=
 		memory.TwoPlayerNames(g.White.PlayerIdentifier, g.Black.PlayerIdentifier)
 
+	var name memory.PlayerName
+	if g.White.PlayerIdentifier == pid {
+		name = whiteName
+	} else if g.Black.PlayerIdentifier == pid {
+		name = blackName
+	} else {
+		log.Panicln(PeoplePath, "GET by player", pid, "not in game", whiteName, "vs", blackName)
+	}
+
 	t := GameHTMLTemplateData{
 		GameIdentifier: g.GameIdentifier,
 		Conceded:       g.Conceded,
@@ -28,9 +38,12 @@ func peopleGet(w http.ResponseWriter, r *http.Request,
 			PlayerName: blackName,
 			Captures:   g.Black.Captures,
 		},
-		Active:       g.Active,
-		PreviousMove: g.PreviousMove,
-		Player:       g.OrientationOf(pid),
+		Active: g.Active,
+		PreviousMove: PreviousMoveHTMLTemplateData{
+			From: int(g.PreviousMove.From.Index()),
+			To:   int(g.PreviousMove.To.Index()),
+		},
+		Player: name,
 	}
 	writeHTMLTemplate(w, GameHTMLTemplate, t)
 }

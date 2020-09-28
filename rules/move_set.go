@@ -18,6 +18,17 @@ func MoveSetSliceHasMove(slice []MoveSet, m Move) bool {
 	return false
 }
 
+func CopyMoveSetSlice(a []MoveSet) []MoveSet {
+	if a == nil {
+		return nil
+	}
+	out := make([]MoveSet, len(a))
+	for i, s := range a {
+		out[i] = s
+	}
+	return out
+}
+
 // RemoveMoveSet removes the MoveSet with the from address from the slice.
 func RemoveMoveSet(ms []MoveSet, from Address) []MoveSet {
 	index := -1

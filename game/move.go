@@ -20,8 +20,11 @@ func (an Instance) Move(with rules.Move) ([]rules.Square, []rules.Piece, bool) {
 		return nil, nil, false
 	}
 
+	(&an.Game.Board).ApplyChanges(changes)
+
 	// clear moves cache
-	an.moves = nil
+	an.MovesCache = nil
+	an.StateCache = rules.NoState
 
 	an.PreviousMove = with
 
@@ -83,8 +86,7 @@ func (an Instance) moveLegal(m rules.Move) bool {
 		return false
 	}
 
-	// TODO: cache move calculations
-
+	// moves and state are read from the cache in an.Moves if cached
 	moves, state := an.Moves()
 	if (state != rules.Normal) && (state != rules.Check) {
 		return false

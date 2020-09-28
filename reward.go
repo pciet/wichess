@@ -11,8 +11,8 @@ import (
 
 type RewardHTMLTemplateData struct {
 	memory.PlayerName
-	memory.GameIdentifier // needed to acknowledge game review complete
-	Left, Right, Reward   piece.Kind
+	memory.GameIdentifier     // needed to acknowledge game review complete
+	Left, Right, Reward   int // piece.Kind templates string, so use int
 	piece.Collection
 }
 
@@ -21,9 +21,9 @@ func rewardGet(w http.ResponseWriter, r *http.Request, g game.Instance, p *memor
 	writeHTMLTemplate(w, RewardHTMLTemplate, RewardHTMLTemplateData{
 		PlayerName:     p.PlayerName,
 		GameIdentifier: g.GameIdentifier,
-		Left:           left,
-		Right:          right,
-		Reward:         reward,
+		Left:           int(left),
+		Right:          int(right),
+		Reward:         int(reward),
 		Collection:     p.Collection,
 	})
 }

@@ -13,15 +13,13 @@ import (
 type Instance struct {
 	*memory.Game
 	copy bool // if copied then memory for the game id won't be changed
-
-	// calculated moves are cached here and reset when Moves or Promote is called
-	moves []rules.MoveSet
-	state rules.State
 }
 
 // Copy copies the Instance's memory.Game. The returned copy does not use the package memory
 // system, so changes to it will not overwrite the original in RAM or in a file.
-func (an Instance) Copy() Instance { return Instance{an.Game.Copy(), true, nil, an.state} }
+func (an Instance) Copy() Instance {
+	return Instance{an.Game.Copy(), true}
+}
 
 // Lock and RLock return an Instance with the sync.RWMutex of the memory.Game called. This means
 // the caller must call Unlock or RUnlock on the Instance.

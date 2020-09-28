@@ -82,7 +82,6 @@ func Initialize() {
 		// TODO: could a game ack be lost by player gid being written, thus leaving orphan files
 		writePlayerFiles()
 		writePlayerNamesFile()
-		writeSessionFile()
 		writeHashFile()
 
 		os.Exit(0)

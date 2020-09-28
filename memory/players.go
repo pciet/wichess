@@ -11,7 +11,7 @@ var (
 	playersCache = make(map[PlayerIdentifier]*Player)
 	playersMutex sync.RWMutex
 
-	nextPlayerID PlayerIdentifier
+	nextPlayerID = PlayerIdentifier(1)
 )
 
 // LockPlayer and RLockPlayer work similarly to LockGame and RLockGame.

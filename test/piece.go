@@ -5,7 +5,7 @@ import (
 	"github.com/pciet/wichess/rules"
 )
 
-type Piece struct {
+type testPiece struct {
 	Address     rules.Address     `json:"addr"`
 	Kind        piece.Kind        `json:"k"`
 	Orientation rules.Orientation `json:"o"`

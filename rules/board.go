@@ -23,6 +23,21 @@ func (a *Board) Copy() *Board {
 func (square *Piece) NotEmpty() bool { return square.Kind != piece.NoKind }
 func (square *Piece) Empty() bool    { return square.Kind == piece.NoKind }
 
+// ApplyChanges writes the slice of squares to the board.
+func (a *Board) ApplyChanges(c []Square) {
+	for _, change := range c {
+		a[change.Address.Index()] = change.Piece
+	}
+}
+
+// InitializePieces takes a Board made from just the exported Piece information and initializes
+// the unexported struct fields. This is required if the Board will be used with package rules.
+func (a *Board) InitializePieces() {
+	for i := 0; i < len(a); i++ {
+		applyCharacteristicFlags(&(a[i]))
+	}
+}
+
 func (a *Board) String() string {
 	var s strings.Builder
 	for rank := 7; rank >= 0; rank-- {
@@ -80,12 +95,6 @@ func (a *Board) noKing(of Orientation) bool {
 		}
 	}
 	return true
-}
-
-func (a *Board) applyChanges(c []Square) {
-	for _, change := range c {
-		a[change.Address.Index()] = change.Piece
-	}
 }
 
 func (a *Board) pieceCount(of Orientation) int {

@@ -23,6 +23,7 @@ func movePost(w http.ResponseWriter, r *http.Request,
 
 	move, promotion := handleMovePostParse(w, r)
 	if (move == rules.NoMove) && (promotion == piece.NoKind) {
+		debug(MovePath, "no move and no promotion by", pid)
 		return
 	}
 
@@ -77,7 +78,7 @@ func movePost(w http.ResponseWriter, r *http.Request,
 	if promotionNeeded || promotionWasReverse {
 		alertUpdate.UpdateState = game.WaitUpdate
 	}
-	go game.Alert(gid, opponentOrientation, pid, alertUpdate)
+	go game.Alert(gid, opponentOrientation, opponentID, alertUpdate)
 
 	responseUpdate := game.Update{
 		Squares:  game.SquaresFromRules(changes),

@@ -87,3 +87,17 @@ func combineSquares(a, b []Square) []Square {
 	}
 	return a
 }
+
+func multipleSquareInSlice(a []Square) bool {
+	if (a == nil) || (len(a) <= 1) {
+		return false
+	}
+	for i := 0; i < len(a); i++ {
+		for j := i + 1; j < len(a); j++ {
+			if a[i].Address == a[j].Address {
+				return true
+			}
+		}
+	}
+	return false
+}

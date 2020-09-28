@@ -45,6 +45,9 @@ func initializePlayerNameCaches() int {
 
 	c := 0
 	for i, n := range names {
+		if len(n) == 0 {
+			continue
+		}
 		playerIDCache[PlayerName(n)] = PlayerIdentifier(i + 1)
 		playerNamesCache = append(playerNamesCache, PlayerName(n))
 		c++

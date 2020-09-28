@@ -9,7 +9,7 @@ import (
 
 type IndexHTMLTemplateData struct {
 	Name        string
-	Left, Right piece.Kind
+	Left, Right int // piece.Kind is templated as a string, so using int instead
 	piece.Collection
 }
 
@@ -19,8 +19,8 @@ func indexGet(w http.ResponseWriter, r *http.Request, p *memory.Player) {
 	}
 	writeHTMLTemplate(w, IndexHTMLTemplate, IndexHTMLTemplateData{
 		Name:       p.PlayerName.String(),
-		Left:       p.Left,
-		Right:      p.Right,
+		Left:       int(p.Left),
+		Right:      int(p.Right),
 		Collection: p.Collection,
 	})
 }

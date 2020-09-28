@@ -2,6 +2,7 @@ package game
 
 import (
 	"fmt"
+	"log"
 	"math/rand"
 
 	"github.com/pciet/wichess/memory"
@@ -63,18 +64,13 @@ func (an Instance) autoplayMove() (rules.Move, piece.Kind) {
 		count += len(set.Moves)
 	}
 
-	trials := make([]Instance, count)
-	for i := 0; i < count; i++ {
-		trials[i] = an.Copy()
-	}
-
 	var best rules.Move
 	bestRating := -100
 	var i int
 	for _, moveset := range moves {
 		for _, to := range moveset.Moves {
 			move := rules.Move{moveset.From, to}
-			rating := trials[i].autoplayRating(move)
+			rating := an.autoplayRating(move)
 			i++
 			if rating > bestRating {
 				bestRating = rating
@@ -93,11 +89,17 @@ func (an Instance) autoplayMove() (rules.Move, piece.Kind) {
 }
 
 func (an Instance) autoplayRating(m rules.Move) int {
-	active := an.Active
-	_, captures, _ := an.Move(m)
-	opponentMoves, state := an.Moves()
+	icopy := an.Copy()
 
-	rating := 0
+	active := icopy.Active
+	changes, captures, _ := icopy.Move(m)
+	if changes == nil {
+		log.Panicln("move", m, "failed on board\n", icopy.Game.Board.String())
+	}
+
+	opponentMoves, state := icopy.Moves()
+
+	rating := len(captures) - len(opponentMoves)
 
 	switch state {
 	case rules.Checkmate:
@@ -107,9 +109,6 @@ func (an Instance) autoplayRating(m rules.Move) int {
 	case rules.Check:
 		rating++
 	}
-
-	rating += len(captures)
-	rating -= len(opponentMoves)
 
 	if m.Forward(active) {
 		rating++

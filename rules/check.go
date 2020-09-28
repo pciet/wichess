@@ -1,6 +1,10 @@
 package rules
 
-import "github.com/pciet/wichess/piece"
+import (
+	"log"
+
+	"github.com/pciet/wichess/piece"
+)
 
 func (a *Board) inCheck(active Orientation, captures []Address) bool {
 	king := a.kingLocation(active)
@@ -25,6 +29,12 @@ func (a *Board) removeMovesIntoCheck(moves []MoveSet, active Orientation, previo
 
 			// stash original squares and apply move changes
 			changes, _ := a.DoMove(move)
+			if multipleSquareInSlice(changes) {
+				// TODO: consider making this a debug only check
+				// this has been a symptom of multiple obscure mistakes, so added this if here
+				log.Panicln("multiple versions of square returned by Board.DoMove:", move,
+					changes, "\n", a.String())
+			}
 			orig := make([]Square, len(changes))
 			for i, change := range changes {
 				addr := change.Address.Index()

@@ -8,7 +8,7 @@ var (
 	gamesCache = make(map[GameIdentifier]*Game)
 	gamesMutex sync.RWMutex
 
-	nextGameID GameIdentifier
+	nextGameID = GameIdentifier(1)
 )
 
 // AddGame causes this game to be saved in the memory system.

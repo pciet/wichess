@@ -3,7 +3,9 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/pciet/wichess"
 	"github.com/pciet/wichess/memory"
@@ -18,6 +20,7 @@ func main() {
 
 	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
-		panic(err.Error())
+		fmt.Println("http.ListenAndServe:", err.Error())
+		os.Exit(1)
 	}
 }

@@ -16,7 +16,7 @@ func selectedCollectionPieces(id memory.PlayerIdentifier,
 
 	out := make([]piece.Kind, 0, 8)
 	for _, r := range requests {
-		if (r <= 0) || (r >= piece.CollectionSize) {
+		if (r <= 0) || (r > piece.CollectionSize) {
 			continue
 		}
 		out = append(out, p.Collection[r-1])

@@ -13,10 +13,19 @@ func (an Instance) Promote(with piece.Kind) []rules.Square {
 		return nil
 	}
 
-	changes := an.Board.DoPromotion(with)
+	change := an.Board.DoPromotion(with)
+	if change.Piece.Kind == piece.NoKind {
+		return nil
+	}
+
+	changes := []rules.Square{change}
+	(&an.Game.Board).ApplyChanges(changes)
+
+	an.MovesCache = nil
+	an.StateCache = rules.NoState
 
 	an.PreviousActive = an.Active
 	an.Active = an.opponentOf(an.Active)
 
-	return []rules.Square{changes}
+	return changes
 }

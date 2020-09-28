@@ -1,15 +1,19 @@
 package auth
 
-import "net/http"
+import (
+	"encoding/base64"
+	"net/http"
+)
 
 // SessionKeyCookie is the name of the cookie used to store the unique session key.
 const SessionKeyCookie = "k"
 
-// CreateBrowserSession sets the HttpOnly SessionKeyCookie.
+// CreateBrowserSession sets the HttpOnly SessionKeyCookie. The key string is encoded to base64
+// so that only ASCII compatible characters are sent over HTTP.
 func CreateBrowserSession(w http.ResponseWriter, sessionKey string) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     SessionKeyCookie,
-		Value:    sessionKey,
+		Value:    base64.StdEncoding.EncodeToString([]byte(sessionKey)),
 		Path:     "/",
 		HttpOnly: true,
 	})

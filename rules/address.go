@@ -85,3 +85,12 @@ func (an Address) squareEven() bool {
 	panic("bad return")
 	return true
 }
+
+func addressSliceHas(slice []Address, has Address) bool {
+	for _, a := range slice {
+		if a == has {
+			return true
+		}
+	}
+	return false
+}
