@@ -1,6 +1,6 @@
 # Installation On FreeBSD
 
-Wisconsin Chess can be installed from source onto the FreeBSD operating system. Here's the sequence that worked for me with a 2016 amd64 desktop computer.
+Wisconsin Chess can be installed from source onto the FreeBSD operating system. Here's the sequence that worked for me with a 2016 amd64 DIY desktop computer I assembled from parts ordered at [newegg.com](https://newegg.com).
 
 ## 1. Install FreeBSD
 
@@ -12,15 +12,13 @@ The FreeBSD installation instructions suggest writing the USB drive with the dd 
 
 [balenaEtcher](https://www.balena.io/etcher/) was mentioned in Ubuntu USB drive imaging instructions I found. Etcher worked for me with the .img, so try that if you're using macOS.
 
-(A guess is that the MBR format in the image isn't compatible with my target desktop computer, so perhaps converting the image to GPT would be a step to add for the dd approach.)
-
 With the bootable USB drive I then installed FreeBSD onto the target computer, by selecting the USB drive from the boot menu gotten to with a press of F12 right away at power on (look for "boot menu" when the computer first turns on for the right key to press). Follow the installer instructions.
 
 An Internet connection will be required for the next steps, so be sure networking is configured. I use the root account to install software needed for Wisconsin Chess, then a user account is used to run Wisconsin Chess.
 
 ## 2. Install Go
 
-I installed the latest version of Go which is 1.14.3 while I'm typing this guide. HTTPS is used to get it which requires installation of security certificates first.
+I installed the latest version of Go (1.14.3 while I'm typing this guide). HTTPS is used to get it which requires installation of security certificates first.
 
 Do the following as the root user.
 
@@ -62,7 +60,7 @@ Go should now be installed. This can be verified by logging in as a non-root use
 which go
 ```
 
-The official installation instructions are at [golang.org](https://golang.org/doc/install) which also shows how to test the installation in more detail.
+The official Go installation instructions are at [golang.org](https://golang.org/doc/install) which also shows how to test the installation in more detail.
 
 ## 3. Install Other Application Dependencies
 
@@ -74,10 +72,6 @@ pkg install git
 
 ```
 pkg install bash
-```
-
-```
-pkg install postgresql11-server
 ```
 
 ```
@@ -98,16 +92,10 @@ Get the Wisconsin Chess source code.
 
 ```
 go get github.com/pciet/wichess
-```
-
-Prepare the PostgreSQL database.
-
-```
 cd ~/go/src/github.com/pciet/wichess
-./CreateDB.sh
 ```
 
-Render the piece images. This can take tens of minutes or longer.
+Render the piece images. This can take tens of minutes or hours and take hundreds of megabytes of disk space.
 
 ```
 cd img
@@ -118,7 +106,7 @@ Build the host ```wichess``` program.
 
 ```
 cd ..
-go build
+./Build.sh
 ```
 
 If everything went right then Wisconsin Chess should be ready to play!
@@ -136,7 +124,7 @@ There should be a number like ```192.168.0.50``` that you'll use on other device
 Start the Wisconsin Chess host.
 
 ```
-./RunLocal.sh
+./wichess
 ```
 
 Assuming the example IP address above is yours, then in a web browser on a device in the same network go to the following address in the address bar.

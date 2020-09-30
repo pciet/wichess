@@ -61,7 +61,8 @@ As root copy all of the needed files to the mounted card. This will take awhile 
 
 ```
 su
-cp -R COPYRIGHT html licenses postgres_tables.sql wichess web /media/sd/
+cp -R COPYRIGHT html licenses wichess web /media/sd/
+mkdir /media/sd/mem
 ```
 
 A few specific configuration files must also be copied.

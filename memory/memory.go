@@ -1,6 +1,6 @@
 // Package memory implements a memory heirarchy for saving Wisconsin Chess information that
 // persists after the host is powered off. This information includes player names and hashed
-// passwords, web browser session keys, piece collections, active games, and more.
+// passwords, piece collections, active games, and more.
 //
 // Memory is fastest from volatile process memory caches (private vars in this package) and backed
 // by files in the mem folder. Player requests never depend on file writes. All files are written

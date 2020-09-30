@@ -1,10 +1,23 @@
 # SOURCE CODE WALKTHROUGH
 
-Wisconsin Chess is developed in the macOS operating system on a MacBook Pro ([apple.com/macbook-pro](https://www.apple.com/macbook-pro/)). The source code organization is optimized for use with the macOS Terminal and the MacVim editor ([macvim-dev.github.io](https://macvim-dev.github.io/macvim/)) without plugins or syntax highlighting. Symbol names are intended to be easily connected by the developer to filenames navigated to with the macOS Finder. Sometimes the grep Terminal command line tool is helpful for finding instances of a symbol.
+Wisconsin Chess is developed in the macOS operating system on a MacBook Pro ([apple.com/macbook-pro](https://www.apple.com/macbook-pro/)). The source code organization is optimized for use with the macOS Terminal and the MacVim editor ([macvim-dev.github.io](https://macvim-dev.github.io/macvim/)) without plugins or syntax highlighting. Symbol names are intended to be easily connected by the developer to filenames navigated to with the macOS Finder. 
+
+Sometimes the grep Terminal command line tool is helpful for finding instances of a symbol. I use this alias for grep in ~/.bash_profile:
+
+```
+alias ge='grep -I -i -r -n'
+```
+
+That way finding symbols is easy:
+
+```
+cd ~/go/src/github.com/pciet/wichess
+ge MyFuncName *
+```
 
 Developing on macOS requires downloading Xcode from the App Store and installing the developer command line tools by opening it once and accepting the license.
 
-Testing is done with the Ubuntu Server ([ubuntu.com](https://ubuntu.com/download/server)) and FreeBSD ([freebsd.org](https://www.freebsd.org/)) operating systems. These have a similar terminal and filesystem language to macOS which makes interaction with the source code almost the same.
+Testing is done with the Debian GNU/Linux ([debian.org](https://debian.org)) and FreeBSD ([freebsd.org](https://www.freebsd.org/)) operating system. These have a similar terminal and filesystem language to macOS which makes interaction with the source code almost the same.
 
 Wisconsin Chess uses the Git version control system ([git-scm.com](https://git-scm.com)) to keep details of changes made to the source code. The Wisconsin Chess folder is called a repository, and Git can be used to understand or get the history of every file in it. Whenever I complete some work, usually 100 to 1000 lines of code, I commit it to the repository with an explanation of the intention of the changes. You can view a timeline of these changes with the ```git log``` command when in the Wisconsin Chess folder.
 
@@ -14,7 +27,7 @@ The use of Git I find significantly improves ability to fix mistakes later when 
 
 A variety of languages are used for Wisconsin Chess.
 
-The host program that serves players in the local network is in Go ([golang.org](https://golang.org)) which uses a dialect of SQL to interact with PostgreSQL ([postgresql.org](https://postgresql.org)) to save persistent information. Test programs are also in Go.
+The host program that serves players in the local network is in Go ([golang.org](https://golang.org)). Test programs are also in Go.
 
 Players get a website from the host through the network. This program is downloaded by their web browser as a set of HTML and CSS ([developer.mozilla.org](https://developer.mozilla.org/en-US/docs/Web/HTML)) files that describe the look of the webpages along with JavaScript ([developer.mozilla.org](https://developer.mozilla.org/en-US/docs/Web/JavaScript)) files that size the webpage for the player's browser dimensions and responds to the player's interactions by causing the browser to communicate more with the host.
 
@@ -26,25 +39,9 @@ JSON ([json.org](https://www.json.org/json-en.html)) is used to describe the dat
 
 ## Repository Organization
 
-The top level of the repository folder is the Go source files used to build the host program wichess with ```go build```.
+The top level of the repository folder has the Build.sh script to build the ```wichess``` host program and make the mem folder where persistent host information is saved in files. The COPYRIGHT file has the copyright notice for all of my original code in the repository, and README.md gives an overview description of the repository.
 
-Bash scripts are also here. InstallLocalMacOS.sh automatically sets up the repository folder to host Wisconsin Chess on MacOS. CreateDB.sh creates the database folder for persistent information to be written to while Wisconsin Chess runs using RunLocal.sh. DB.sh is a simple command to connect to the database for manual interaction with saved information.
-
-Some repository information is here, including the COPYRIGHT file and README.md with an overview description.
-
-postgres_tables.sql is used in creation of the database folder to describe to PostgreSQL how saved information is organized. This file is an important reference for understanding the database and for making new SQL interactions in wichess.
-
-### wichess Source Code
-
-The .go files at this top folder level are all part of ```package main```, and main.go is where the host program starts. In main.go only database and HTTP interactions are setup, because that's all the host does.
-
-A metaphorical table of contents for the HTTP paths is http.go, and the implementation of these are in files that start with http_.
-
-The database is organized as a table of games and a table of players. The HTTP interactions often cause database interations which are in files that start with players_ or game_ depending on which table is being accessed.
-
-If a function is complex or logically separate of the database or HTTP then often it will be in another file with a name that is intended to clearly describe the content.
-
-Some folders contain wichess-related code: piece has ```package piece``` which describes the pieces for these programs and as sentences for players, rules has ```package rules``` which calculates possible moves and results of moves with the minimum information needed, test has ```package test``` which is used to create test cases to quickly recreate board positions that broke something and to verify new changes don't break old in-game features, and html has HTML templates that are filled out then sent to players when requested.
+The other files are all .go package wichess source code files. The best way to understand the host program is to read the godoc ([pkg.go.dev](https://pkg.go.dev/golang.org/x/tools/cmd/godoc)) presentation of the inline documentation.
 
 ### Test
 
@@ -84,7 +81,7 @@ The cyl.pov file is a reference for the maximum dimensions of pieces to fit on t
 
 ### Other Folders
 
-The database folder is created to hold the PostgreSQL data when CreateDB.sh is called during installation.
+The mem folder is used when the wichess host is running to save any persistent information, such as player password hashes and active games.
 
 The docs folder has this document and any other articles describing the Wisconsin Chess implementation.
 
