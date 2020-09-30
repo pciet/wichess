@@ -16,6 +16,10 @@ type Piece struct {
 
 	// These flags aren't always an exact match with a package piece Characteristic.
 	flags characteristics
+
+	// These flags depend on other pieces on the board and are only used during move
+	// and moves calculations.
+	is conveyedCharacteristics
 }
 
 // NoPiece is the value of a Piece when it doesn't represent a piece.
@@ -58,6 +62,10 @@ type characteristics struct {
 	quick, // paths can continue over other pieces, like for the regular knight
 	noOverCapture, // only applies with quick, can move but can't capture by moving over pieces
 	reveals, tense, fantasy, keep, protective, extricates, normalizes, orders bool
+}
+
+type conveyedCharacteristics struct {
+	normalized, ordered, stopped, protected, enabled, immaterialized bool
 }
 
 func applyCharacteristicFlags(to *Piece) {
@@ -112,23 +120,7 @@ func applyCharacteristicFlags(to *Piece) {
 	applyChars(charB)
 }
 
-func normalize(s *characteristics) {
-	s.neutralizes = false
-	s.asserts = false
-	s.immaterial = false
-	s.stops = false
-	s.enables = false
-	s.reveals = false
-	s.tense = false
-	s.fantasy = false
-	s.keep = false
-	s.protective = false
-	s.extricates = false
-	s.orders = false
-
-	// the Normalize, MustEnd, and Quick bools are left true
-}
-
 func (a *Piece) immaterialAgainst(t *Piece) bool {
-	return a.flags.immaterial && (t.Kind.Basic() == piece.Pawn)
+	return ((a.flags.immaterial && (a.is.normalized == false)) || a.is.immaterialized) &&
+		(t.Kind.Basic() == piece.Pawn)
 }

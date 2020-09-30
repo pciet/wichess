@@ -41,34 +41,7 @@ func (a *Board) DoMove(m Move) ([]Square, []Square) {
 	// copy the Board as a workspace to do temporary changes caused by characteristics
 	bcopy := a.Copy()
 
-	// apply characteristic changes caused by other pieces
-
-	// remove characteristics due to normalizes
-	for i, s := range bcopy {
-		// TODO: this loop is duplicated in Game.Moves
-		if (s.Kind == piece.NoKind) || (s.flags.normalizes == false) {
-			continue
-		}
-		for _, ss := range bcopy.surroundingSquares(AddressIndex(i).Address()) {
-			if ss.Kind == piece.NoKind {
-				continue
-			}
-			normalize(&(bcopy[ss.Address.Index()].flags))
-		}
-	}
-
-	// apply orders
-	for i, s := range bcopy {
-		if (s.Kind == piece.NoKind) || (s.flags.orders == false) {
-			continue
-		}
-		for _, ss := range bcopy.surroundingSquares(AddressIndex(i).Address()) {
-			if ss.Kind == piece.NoKind {
-				continue
-			}
-			bcopy[ss.Address.Index()].flags.neutralizes = true
-		}
-	}
+	bcopy.applyConveyedCharacteristics()
 
 	changes := make([]Square, 0, 4)
 	captures := make([]Square, 0, 1)
@@ -81,12 +54,12 @@ func (a *Board) DoMove(m Move) ([]Square, []Square) {
 
 	if to.NotEmpty() {
 		if to.Orientation == from.Orientation {
-			if to.flags.extricates {
+			if to.flags.extricates && (to.is.normalized == false) {
 				// captures your own piece for the opponent to get king out of check
 				changes, captures = bcopy.captureMove(changes, captures, m)
 			}
 		} else {
-			if to.flags.neutralizes {
+			if (to.flags.neutralizes && (to.is.normalized == false)) || to.is.ordered {
 				return bcopy.neutralizesMove(changes, captures, m)
 			}
 			changes, captures = bcopy.captureMove(changes, captures, m)
@@ -101,11 +74,16 @@ func (a *Board) DoMove(m Move) ([]Square, []Square) {
 		}
 	}
 
+	// now do responses to the move
+	bcopy.ApplyChanges(changes)
+	// redo conveyed characteristics in case a piece has moved into or out of range
+	bcopy.applyConveyedCharacteristics()
+
 	for _, s := range bcopy.surroundingSquares(m.To) {
 		if bcopy.assertsWillCapture(from, s) == false {
 			continue
 		}
-		if from.flags.neutralizes {
+		if (from.flags.neutralizes && (from.is.normalized == false)) || from.is.ordered {
 			return bcopy.assertsCapturesNeutralizes(changes, captures, m, s.Address)
 		}
 		return bcopy.assertsChain(changes, captures, m, s.Address)
@@ -147,7 +125,9 @@ func (a *Board) captureMove(changes, captures []Square, m Move) ([]Square, []Squ
 	changes = append(changes, Square{m.From, Piece{}})
 
 	t := a[m.To.Index()]
-	if t.flags.fantasy && (a[t.Start.Index()].Kind == piece.NoKind) {
+	if (t.flags.fantasy && (t.is.normalized == false)) &&
+		(a[t.Start.Index()].Kind == piece.NoKind) {
+
 		changes = append(changes, Square{t.Start, NewPiece(t.Kind, t.Orientation, true, t.Start)})
 	} else {
 		captures = append(captures, Square{m.To, t})

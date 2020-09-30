@@ -31,6 +31,7 @@ func (a *Board) appendEnPassantMove(moves []Address, at Address, previous Move) 
 			left = Address{at.File - 1, at.Rank + 1}
 			right = Address{at.File + 1, at.Rank + 1}
 		} else {
+			// TODO: need to be applied for other special pawns?
 			// Evident is a special case because it captures backwards
 			if at.Rank != 6 {
 				return moves

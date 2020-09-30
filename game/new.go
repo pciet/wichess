@@ -33,6 +33,7 @@ func New(wa, ba piece.ArmyRequest, white, black memory.PlayerIdentifier) memory.
 	}
 
 	g := memory.Game{
+		StateCache:     rules.NoState,
 		Active:         rules.White,
 		PreviousActive: rules.Black,
 		White: memory.GamePlayer{

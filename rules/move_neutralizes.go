@@ -33,7 +33,9 @@ func (a *Board) neutralizesMove(changes, captures []Square, m Move) ([]Square, [
 			if surrounding.Kind == piece.NoKind {
 				continue
 			}
-			if surrounding.flags.neutralizes {
+			if (surrounding.flags.neutralizes && (surrounding.is.normalized == false)) ||
+				surrounding.is.ordered {
+
 				recursiveNeutralize(surrounding.Address)
 			}
 			if addressSliceHas(toCapture, surrounding.Address) == false {

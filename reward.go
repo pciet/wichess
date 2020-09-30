@@ -49,6 +49,7 @@ func rewardPost(w http.ResponseWriter, r *http.Request, g game.Instance, p *memo
 			return
 		}
 		p.Collection[rj.Left-1] = left
+		p.Left = p.Left.DifferentSpecialKind()
 	}
 
 	if (rj.Right > 0) && (rj.Right <= piece.CollectionSize) {
@@ -58,6 +59,7 @@ func rewardPost(w http.ResponseWriter, r *http.Request, g game.Instance, p *memo
 			return
 		}
 		p.Collection[rj.Right-1] = right
+		p.Right = p.Right.DifferentSpecialKind()
 	}
 
 	if (rj.Reward > 0) && (rj.Reward <= piece.CollectionSize) {

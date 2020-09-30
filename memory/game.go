@@ -45,16 +45,18 @@ type (
 	}
 
 	// Captures is a list of pieces a player has captured in ascending time order.
-	Captures [15]piece.Kind
+	Captures [16]piece.Kind
 )
 
 // NoGame is the value of a GameIdentifier var when it's not representing a game.
 const NoGame = 0
 
+// Copy copies the Game memory; changes don't affect the original. The moves caches are cleared
+// which may help avoid subtle mistakes caused by making changes after copying that don't go
+// through the methods that manage the cache.
 func (a *Game) Copy() *Game {
 	c := Game{
-		MovesCache:     rules.CopyMoveSetSlice(a.MovesCache),
-		StateCache:     a.StateCache,
+		StateCache:     rules.NoState,
 		GameIdentifier: a.GameIdentifier,
 		Active:         a.Active,
 		PreviousActive: a.PreviousActive,
@@ -95,6 +97,8 @@ func (the *Captures) FirstAvailableIndex() int {
 			return i
 		}
 	}
-	panic("more than 15 captures recorded")
-	return 15
+	// when just the king left the opponent's list will be full but this may still be called, so
+	// the last index should always be NoKind
+	panic("more than 16 captures recorded")
+	return 16
 }

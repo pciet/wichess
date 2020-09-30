@@ -72,11 +72,12 @@ func (a *Board) threatenedNeutralizerAdjacent(inspected, threats []Address, at A
 		insp = append(inspected, at)
 	}
 
-	// TODO: loop over threats instead?
 LOOP:
 	for _, as := range a.surroundingSquares(at) {
 		s := a[as.Address.Index()]
-		if (s.Kind == piece.NoKind) || (s.flags.neutralizes == false) {
+		if (s.Kind == piece.NoKind) ||
+			(((s.flags.neutralizes == false) || s.is.normalized) && (s.is.ordered == false)) {
+
 			continue
 		}
 		for _, addr := range threats {
@@ -91,7 +92,7 @@ LOOP:
 			}
 		}
 
-		// even if a neutralizer isn't threatened it counts if adjacent ones to that are
+		// even if a neutralizer isn't threatened it counts if adjacent ones to it are
 		if a.threatenedNeutralizerAdjacent(insp, threats, as.Address) {
 			return true
 		}

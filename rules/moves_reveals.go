@@ -4,7 +4,7 @@ import "github.com/pciet/wichess/piece"
 
 func (a *Board) appendRevealMoves(moves []Address, at Address) []Address {
 	for _, s := range a.surroundingSquares(at) {
-		if (s.Kind == piece.NoKind) || (s.flags.reveals == false) ||
+		if (s.Kind == piece.NoKind) || (s.flags.reveals == false) || s.is.normalized ||
 			(s.Orientation != a[at.Index()].Orientation) {
 
 			continue

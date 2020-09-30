@@ -24,7 +24,7 @@ func (a *Board) naiveMovesAt(the Address, previous Move) []Address {
 	s := a[the.Index()]
 
 	// TODO: NoKind check done twice from Game.NaiveMoves
-	if (s.Kind == piece.NoKind) || a.pieceStopped(the) {
+	if (s.Kind == piece.NoKind) || s.is.stopped {
 		return []Address{}
 	}
 
@@ -38,7 +38,7 @@ func (a *Board) naiveMovesAt(the Address, previous Move) []Address {
 		moves = a.appendNaiveMoves(moves, pathvariations[piece.NormalPaths], the)
 	}
 
-	if a.pieceEnabled(the) {
+	if s.is.enabled {
 		moves = a.appendNaiveMoves(moves, pathvariations[piece.RallyPaths], the)
 	}
 
@@ -73,7 +73,7 @@ func (a *Board) naiveCaptureMoves(active Orientation, previous Move) []MoveSet {
 func (a *Board) naiveCaptureMovesAt(the Address, previous Move) []Address {
 	s := a[the.Index()]
 
-	if (s.Kind == piece.NoKind) || a.pieceStopped(the) {
+	if (s.Kind == piece.NoKind) || s.is.stopped {
 		return []Address{}
 	}
 
@@ -103,6 +103,7 @@ func (a *Board) appendNaiveMoves(moves []Address, paths []path, from Address) []
 				moves = append(moves, move)
 				continue
 			}
+			// normalized doesn't apply to quick
 			if s.flags.quick {
 				continue
 			}
@@ -122,26 +123,16 @@ func (a *Board) appendNaiveCaptureMoves(moves []Address, paths []path, from Addr
 			p := a[move.Index()]
 			if (p.Kind == piece.NoKind) ||
 				(s.flags.quick && s.flags.mustEnd && (len(path.Addresses) != i+1)) {
+
 				continue
 			}
-			if (s.Orientation != p.Orientation) &&
-				((s.Kind.Basic() != piece.Pawn) || (p.flags.immaterial == false)) &&
-				((p.flags.tense == false) || (s.Kind == piece.King) || (s.Kind == piece.Queen)) &&
-				((s.flags.mustEnd == false) || (len(path.Addresses) == i+1)) {
+			if (s.Orientation != p.Orientation) && ((&p).immaterialAgainst(&s) == false) &&
+				((p.flags.tense == false) || p.is.normalized ||
+					(s.Kind == piece.King) || (s.Kind == piece.Queen)) &&
+				((s.flags.mustEnd == false) || (len(path.Addresses) == i+1)) &&
+				(p.is.protected == false) {
 
-				protected := false
-				if p.flags.protective {
-					for _, ps := range a.surroundingSquares(move) {
-						if (ps.Kind != piece.NoKind) && ps.flags.protective {
-							protected = true
-							break
-						}
-					}
-				}
-
-				if protected == false {
-					moves = append(moves, move)
-				}
+				moves = append(moves, move)
 			}
 			if s.flags.quick && (s.flags.noOverCapture == false) {
 				continue

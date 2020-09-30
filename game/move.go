@@ -46,7 +46,8 @@ func (an Instance) Move(with rules.Move) ([]rules.Square, []rules.Piece, bool) {
 	bCaptIndex := an.Black.Captures.FirstAvailableIndex()
 	for _, capt := range captures {
 		if capt.Kind == piece.NoKind {
-			panic("capture list with piece.NoKind")
+			log.Panicln("rules.Board.DoMove at", with, "returned empty square capture. Captures\n",
+				captures, "\nchanges:\n", changes, "\nboard with changes applied:\n", an.Game.Board)
 		}
 		if capt.Orientation == rules.White {
 			an.White.Captures[wCaptIndex] = capt.Kind
