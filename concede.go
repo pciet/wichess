@@ -12,7 +12,7 @@ func concedeGet(w http.ResponseWriter, r *http.Request, g game.Instance, p *memo
 	done, _ := g.Completed()
 	if done {
 		// TODO: conceded race, this error shouldn't necessarily stop the web interface
-		debug(ConcedePath, "called by", p.Name, "after complete")
+		debug(ConcedePath, "called by", p.PlayerName, "after complete")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}

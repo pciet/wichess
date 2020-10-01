@@ -41,6 +41,7 @@ func initializePlayersCaches(ids []PlayerIdentifier) {
 	if c != len(ids) {
 		log.Panicln(HashFile, "entry count", c, "not equal to number of player files", len(ids))
 	}
+	nextPlayerID = PlayerIdentifier(c + 1)
 
 	c = initializePlayerNameCaches()
 	if c != len(ids) {

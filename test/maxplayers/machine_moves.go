@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/pciet/wichess"
+	"github.com/pciet/wichess/memory"
 	"github.com/pciet/wichess/rules"
 	"github.com/pciet/wichess/test/client"
 )
 
 func MovesState(stop chan Signal, done chan<- error,
 	promote chan<- Signal, move chan<- []rules.MoveSet, moves <-chan Signal,
-	record chan<- time.Duration, with client.Instance, id wichess.GameIdentifier) {
+	record chan<- time.Duration, with client.Instance, id memory.GameIdentifier) {
 
 	for {
 		select {

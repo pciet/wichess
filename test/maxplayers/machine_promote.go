@@ -1,13 +1,13 @@
 package main
 
 import (
-	"github.com/pciet/wichess"
+	"github.com/pciet/wichess/memory"
 	"github.com/pciet/wichess/piece"
 	"github.com/pciet/wichess/test/client"
 )
 
 func PromoteState(stop chan Signal, done chan<- error,
-	listen chan<- Signal, promote <-chan Signal, with client.Instance, id wichess.GameIdentifier) {
+	listen chan<- Signal, promote <-chan Signal, with client.Instance, id memory.GameIdentifier) {
 
 	for {
 		select {

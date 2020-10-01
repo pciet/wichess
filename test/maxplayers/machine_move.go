@@ -5,14 +5,15 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/pciet/wichess"
+	"github.com/pciet/wichess/game"
+	"github.com/pciet/wichess/memory"
 	"github.com/pciet/wichess/rules"
 	"github.com/pciet/wichess/test/client"
 )
 
 func MoveState(stop chan Signal, done chan<- error,
 	listen chan<- Signal, promote chan<- Signal, move <-chan []rules.MoveSet,
-	record chan<- time.Duration, with client.Instance, id wichess.GameIdentifier) {
+	record chan<- time.Duration, with client.Instance, id memory.GameIdentifier) {
 
 	for {
 		select {
@@ -35,9 +36,9 @@ func MoveState(stop chan Signal, done chan<- error,
 			DebugPrintln("MOVED", id, with.Name, m)
 
 			switch state {
-			case wichess.PromotionNeededUpdate:
+			case game.PromotionNeededUpdate:
 				promote <- Signal{}
-			case "", wichess.ContinueUpdate:
+			case "", game.ContinueUpdate:
 				listen <- Signal{}
 			default:
 				done <- fmt.Errorf("unknown move game state %v", state)

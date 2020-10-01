@@ -4,10 +4,11 @@ import (
 	"encoding/json"
 
 	"github.com/pciet/wichess"
+	"github.com/pciet/wichess/memory"
 	"github.com/pciet/wichess/rules"
 )
 
-func (an Instance) ActivePlayer(id wichess.GameIdentifier) (bool, error) {
+func (an Instance) ActivePlayer(id memory.GameIdentifier) (bool, error) {
 	respBody, err := an.JSONResponseGet(wichess.PlayersPath + id.String())
 	if err != nil {
 		return false, err
@@ -19,13 +20,13 @@ func (an Instance) ActivePlayer(id wichess.GameIdentifier) (bool, error) {
 	}
 
 	if j.Active == rules.White {
-		if an.Name == j.White {
+		if memory.PlayerName(an.Name) == j.White {
 			return true, nil
 		}
 		return false, nil
 	}
 
-	if an.Name == j.Black {
+	if memory.PlayerName(an.Name) == j.Black {
 		return true, nil
 	}
 	return false, nil

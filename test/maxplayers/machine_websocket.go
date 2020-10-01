@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/pciet/wichess"
+	"github.com/pciet/wichess/game"
 	"github.com/pciet/wichess/test/client"
 )
 
@@ -28,17 +28,16 @@ func WebSocketState(stop chan Signal, done chan<- error,
 			DebugPrintln("WEBSOCKET READ DONE", with.Name)
 
 			switch s {
-			case wichess.WaitUpdate:
+			case game.WaitUpdate:
 				DebugPrintln("  WAIT", with.Name)
 				goto LISTEN
-			case wichess.CheckCalculatedUpdate:
+			case game.CheckCalculatedUpdate:
 				DebugPrintln("  CHECK", with.Name)
 				goto LISTEN
-			case wichess.DrawCalculatedUpdate, wichess.CheckmateCalculatedUpdate,
-				wichess.ConcededUpdate:
+			case game.DrawCalculatedUpdate, game.CheckmateCalculatedUpdate, game.ConcededUpdate:
 				DebugPrintln("  DONE", with.Name)
 				done <- nil
-			case "", wichess.ContinueUpdate:
+			case "", game.ContinueUpdate:
 				DebugPrintln("  CONTINUE", with.Name)
 				moves <- Signal{}
 			default:

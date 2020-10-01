@@ -5,13 +5,15 @@ import (
 	"encoding/json"
 
 	"github.com/pciet/wichess"
+	"github.com/pciet/wichess/memory"
+	"github.com/pciet/wichess/piece"
 )
 
-func Match(a, b Instance, aArmy, bArmy wichess.ArmyRequest) (wichess.GameIdentifier, error) {
+func Match(a, b Instance, aArmy, bArmy piece.ArmyRequest) (memory.GameIdentifier, error) {
 	done := make(chan error)
-	var gameID wichess.GameIdentifier
+	var gameID memory.GameIdentifier
 
-	match := func(an Instance, army wichess.ArmyRequest, opponent string, writeID bool) {
+	match := func(an Instance, army piece.ArmyRequest, opponent string, writeID bool) {
 		b, err := json.Marshal(army)
 		if err != nil {
 			done <- err

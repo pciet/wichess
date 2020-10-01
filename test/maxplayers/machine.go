@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/pciet/wichess"
+	"github.com/pciet/wichess/memory"
 	"github.com/pciet/wichess/rules"
 	"github.com/pciet/wichess/test/client"
 )
@@ -19,7 +19,7 @@ type Signal struct{}
 // StartPlayGameMachine starts a state machine made of communicating goroutines that represent
 // states of communication with the host, including getting moves, making moves, doing a
 // promotion, and waiting for an alert on the WebSocket.
-func StartPlayGameMachine(done chan error, id wichess.GameIdentifier,
+func StartPlayGameMachine(done chan error, id memory.GameIdentifier,
 	with client.Instance, records MeasurementChans) {
 
 	DebugPrintln("DIAL", with.Name)
@@ -66,7 +66,7 @@ func StartPlayGameMachine(done chan error, id wichess.GameIdentifier,
 // done channel. All other states are closed when this state closes the close channel. This state
 // also signals the caller of StartPlayGameMachine that the machine has stopped on gameDone.
 func DoneState(gameDone chan<- error, stop chan Signal, done <-chan error,
-	with client.Instance, id wichess.GameIdentifier) {
+	with client.Instance, id memory.GameIdentifier) {
 
 	err := <-done
 

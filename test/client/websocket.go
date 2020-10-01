@@ -7,9 +7,11 @@ import (
 	"net/http"
 
 	"github.com/pciet/wichess"
+	"github.com/pciet/wichess/game"
+	"github.com/pciet/wichess/memory"
 )
 
-func (an *Instance) DialWebSocket(id wichess.GameIdentifier) error {
+func (an *Instance) DialWebSocket(id memory.GameIdentifier) error {
 	var resp *http.Response
 	var err error
 	an.Conn, resp, err = an.Dialer.Dial(an.WebSocketHost()+wichess.AlertPath+id.String(), nil)
@@ -33,9 +35,9 @@ func (an *Instance) DialWebSocket(id wichess.GameIdentifier) error {
 
 // WebSocketReadState returns the wichess.Update State string which is "" for a normal state.
 func (an Instance) WebSocketReadState() (string, error) {
-	var u wichess.Update
+	var u game.Update
 	err := an.Conn.ReadJSON(&u)
-	return u.State, err
+	return string(u.UpdateState), err
 }
 
 func (an *Instance) CloseWebSocket() error {

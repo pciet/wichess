@@ -4,9 +4,10 @@ import (
 	"encoding/json"
 
 	"github.com/pciet/wichess"
+	"github.com/pciet/wichess/memory"
 )
 
-func (an Instance) PeopleGame() (wichess.GameIdentifier, error) {
+func (an Instance) PeopleGame() (memory.GameIdentifier, error) {
 	respBody, err := an.JSONResponseGet(wichess.PeopleIDPath)
 	if err != nil {
 		return 0, err

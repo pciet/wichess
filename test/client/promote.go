@@ -5,11 +5,12 @@ import (
 	"encoding/json"
 
 	"github.com/pciet/wichess"
+	"github.com/pciet/wichess/memory"
 	"github.com/pciet/wichess/piece"
 )
 
-func (an Instance) Promote(id wichess.GameIdentifier, k piece.Kind) error {
-	b, err := json.Marshal(wichess.MoveJSON{Promotion: int(k)})
+func (an Instance) Promote(id memory.GameIdentifier, k piece.Kind) error {
+	b, err := json.Marshal(wichess.MoveJSON{Promotion: k})
 	if err != nil {
 		return err
 	}

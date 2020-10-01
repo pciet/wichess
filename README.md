@@ -28,7 +28,7 @@ The knight piece was copied from a set of chess piece design files. Credit, copy
 
 
 
-## Status
+## STATUS
 
 Wisconsin Chess is a work in progress. It was inspired by one of the ideas I researched after quitting my tech job to persue solo entrepreneurship in spring 2014. Coding began partway through 2017 and a first version was completed by the start of 2018 (see the v0.1 git tag), but the project was shelved then.
 

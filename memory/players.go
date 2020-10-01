@@ -80,7 +80,14 @@ func NewPlayer(name PlayerName, passwordHash []byte) PlayerIdentifier {
 	playersCache[id] = &p
 	hashCache = append(hashCache, passwordHash)
 	playerIDCache[name] = id
+
 	if len(playerNamesCache) < int(id) {
+		// not quite append because the index has to be specifically the id
+		if cap(playerNamesCache) < int(id) {
+			newCache := make([]PlayerName, len(playerNamesCache), len(playerNamesCache)*2)
+			copy(newCache, playerNamesCache)
+			playerNamesCache = newCache
+		}
 		playerNamesCache = playerNamesCache[:id]
 	}
 	playerNamesCache[id-1] = name
