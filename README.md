@@ -2,15 +2,17 @@
 
 Welcome to the source code for Wisconsin Chess!
 
-Chess can be described as a fun tactical board game played by two people against each other. It can enable both competition and perhaps evoke metaphors of war, debate, or many kinds of stories, and it's a good brain exercise and peaceful way to socialize. Chess was played and incrementally designed by generations of people through centuries and is often seen in art, and many people will play chess today around the world.
+Chess can be described as a fun tactical board game played by two people against each other. It enables both competition and perhaps evokes metaphors of war, debate, or many kinds of stories, and it's a good brain exercise and peaceful way to socialize. Chess was played and incrementally designed by generations of people through centuries and is often seen in art, and many people will play chess today around the world.
 
-This source code is used to build the software of my computer game variation of chess, Wisconsin Chess. It adds to the traditional modern pieces and rules while keeping the abstract theme and important predictability of the original game; pieces start on the same squares, and castling, en passant, promotion, check, checkmate, and draws are included. If you want to learn chess or improve your skill then this game will help you do that.
+This source code is used to build the software of my computer game variation of chess, Wisconsin Chess. It adds to the traditional modern rules while keeping the abstract theme and important predictability of the original game; pieces start on the same squares, and castling, en passant, promotion, check, checkmate, and draws are included. If you want to learn chess or improve your skill then this game will help you do that.
 
 What's added is the trading card game idea. Players each have a collection of pieces with new characteristics that can optionally replace the regular chess pieces, so emergent scenarios from a choice of many strategies keep gameplay fresh and exciting no matter how long you've played.
 
+Wisconsin Chess is played in a web browser; currently the latest versions of Chrome, Firefox, and Safari are supported. I've put in effort for it to work well both on mobile smartphones and tablets along with desktop computers.
+
 Technical installation instructions that use this source code repository are described in docs/install.md. An overview of the source code is in docs/source.md.
 
-## PROJECT STATUS
+## Project Status
 
 Wisconsin Chess is a work in progress. It was inspired by one of the ideas I researched after quitting my tech job to persue solo entrepreneurship in spring 2014. Coding began partway through 2017 and a first version was completed during the start of 2018 (see the v0.1 git tag), but the project was shelved then.
 
@@ -20,7 +22,7 @@ Shortly I will have to shelve the project again because of lack of funds. If you
 
 If you play Wisconsin Chess and find a mistake or think something should be better then any report is appreciated. Please [open an issue](https://github.com/pciet/wichess/issues) on GitHub for your feedback, and thanks.
 
-## COPYRIGHT, LICENSES, CREDITS
+## Copyright, Licenses, Credits
 
 This source code is the work from just me, but its foundation is the free and open software projects of many other people, and I started with knowledge gained from university studies and industry experience. Like people have done for me, I hope the quality of this source code could make it a resource to help you or others make their ideas.
 

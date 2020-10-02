@@ -31,11 +31,11 @@ The host program that serves players in the local network is in Go ([golang.org]
 
 Players get a website from the host through the network. This program is downloaded by their web browser as a set of HTML and CSS ([developer.mozilla.org](https://developer.mozilla.org/en-US/docs/Web/HTML)) files that describe the look of the webpages along with JavaScript ([developer.mozilla.org](https://developer.mozilla.org/en-US/docs/Web/JavaScript)) files that size the webpage for the player's browser dimensions and responds to the player's interactions by causing the browser to communicate more with the host.
 
-The website also downloads chess piece images from the host. The geometry and look of these pieces and the framing of the picture are described in the POV-Ray ([povray.org](https://povray.org)) language. A program to split a chess board image into images of the individual squares is in Go.
+The website also downloads chess piece images from the host. The geometry and look of these pieces and the framing of the picture are described in the POV-Ray ([povray.org](http://povray.org)) language. A program to split a chess board image into images of the individual squares is in Go.
 
 Build, configuration, and installation is done with Bash ([gnu.org](https://www.gnu.org/software/bash/)) sh scripts.
 
-JSON ([json.org](https://www.json.org/json-en.html)) is used to describe the database configuration, it's used for test cases in the test folder, and whenever more than a string or two is needed interaction between the host and web browsers is done in JSON.
+JSON ([json.org](https://www.json.org/json-en.html)) is used for test cases in the test folder, it's the encoding for saved player and game files, and whenever more than a string or two is needed interaction between the host and web browsers is done in JSON.
 
 ## Repository Organization
 

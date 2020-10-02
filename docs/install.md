@@ -22,7 +22,7 @@ Installing Wisconsin Chess is a two step process. The ```wichess``` program is b
 
 Install the Xcode app from the App Store, and open it once to accept the license and install the Xcode command line tools.
 
-Install the Go programming languages tools as described at [golang.org](golang.org).
+Install the Go programming languages tools as described at [golang.org](https://golang.org).
 
 Using Terminal (Applications/Utilities/Terminal.app) clone this repository in the folder you'd like to be the workspace for ```wichess```. We'll be generating picture files into subfolders here and saving persistent runtime files, so the home folder probably makes the most sense for this. The default Go folder layout might be what you want to do.
 
