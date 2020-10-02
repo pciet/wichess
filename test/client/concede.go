@@ -11,7 +11,7 @@ func (an Instance) ConcedeIfPeopleGame() error {
 	if err != nil {
 		return err
 	}
-	if id == 0 {
+	if id == memory.NoGame {
 		return nil
 	}
 	return an.ConcedeGame(id)

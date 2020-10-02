@@ -44,7 +44,9 @@ func (an Instance) Completed() (bool, rules.State) {
 // acknowledged then the game is marked for deletion in the background.
 func (an Instance) Acknowledge(by memory.PlayerIdentifier) {
 	if ((by == an.White.PlayerIdentifier) && an.Black.Acknowledge) ||
-		((by == an.Black.PlayerIdentifier) && an.White.Acknowledge) || an.HasComputerPlayer() {
+		((by == an.Black.PlayerIdentifier) && an.White.Acknowledge) ||
+		an.HasComputerPlayer() || an.Conceded {
+
 		an.CanDelete()
 		return
 	}
@@ -70,4 +72,12 @@ func (an Instance) RewardsOf(p memory.PlayerIdentifier) (piece.Kind, piece.Kind,
 		return an.Game.White.Left, an.Game.White.Right, an.Game.White.Reward
 	}
 	return an.Game.Black.Left, an.Game.Black.Right, an.Game.Black.Reward
+}
+
+func (an Instance) String() string {
+	str := an.Game.String()
+	if an.copy {
+		str += "\n" + "wichess/game copy"
+	}
+	return str
 }

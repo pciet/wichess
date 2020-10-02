@@ -1,6 +1,7 @@
 package memory
 
 import (
+	"fmt"
 	"strconv"
 	"sync"
 
@@ -87,9 +88,6 @@ func (a *Game) CanDelete() {
 	}()
 }
 
-func (a GameIdentifier) Int() int       { return int(a) }
-func (a GameIdentifier) String() string { return strconv.Itoa(a.Int()) }
-
 // FirstAvailableIndex returns the first array index that's piece.NoKind.
 func (the *Captures) FirstAvailableIndex() int {
 	for i := 0; i < len(the); i++ {
@@ -101,4 +99,34 @@ func (the *Captures) FirstAvailableIndex() int {
 	// the last index should always be NoKind
 	panic("more than 16 captures recorded")
 	return 16
+}
+
+func (a GameIdentifier) Int() int       { return int(a) }
+func (a GameIdentifier) String() string { return strconv.Itoa(a.Int()) }
+
+func (a GamePlayer) String() string {
+	str := "player id " + a.PlayerIdentifier.String() + "\n"
+	str += "acknowledge: " + fmt.Sprint(a.Acknowledge) + "\n"
+	str += "captures: " + fmt.Sprint(a.Captures) + "\n"
+	str += "left: " + a.Left.String() + "\n"
+	str += "right: " + a.Right.String() + "\n"
+	str += "reward: " + a.Reward.String()
+	return str
+}
+
+func (a *Game) String() string {
+	str := "memory.Game id: " + a.GameIdentifier.String() + "\n"
+	str += "moves cache: " + fmt.Sprint(a.MovesCache) + "\n"
+	str += "state cache: " + fmt.Sprint(a.StateCache) + "\n"
+	str += "active: " + a.Active.String() + "\n"
+	str += "previous active: " + a.PreviousActive.String() + "\n"
+	str += "previous move: " + a.PreviousMove.String() + "\n"
+	str += "draw turns: " + fmt.Sprint(a.DrawTurns) + "\n"
+	str += "conceded: " + fmt.Sprint(a.Conceded) + "\n"
+	str += "white:\n"
+	str += a.White.String() + "\n"
+	str += "black:\n"
+	str += a.Black.String() + "\n"
+	str += a.Board.String()
+	return str
 }
