@@ -37,7 +37,8 @@ func movePost(w http.ResponseWriter, r *http.Request,
 
 	if g.PlayerActive(pid) == false {
 		g.Unlock()
-		debug(MovePath, "player", pid, "not active in game", gid, "\n", g.String())
+		debug(MovePath, "player", pid, "not active in game", gid,
+			"\n", move, promotion, "\n", g.String())
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}

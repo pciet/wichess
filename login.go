@@ -59,6 +59,6 @@ func loginAttemptHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	auth.CreateBrowserSession(w, key.String())
+	auth.CreateBrowserSession(w, key)
 	http.Redirect(w, r, IndexPath, http.StatusSeeOther)
 }

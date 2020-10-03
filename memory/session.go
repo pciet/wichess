@@ -2,18 +2,15 @@ package memory
 
 import (
 	"crypto/rand"
-	"math/big"
-	"unicode"
-	"unicode/utf8"
+	"encoding/base64"
 )
 
-// SessionKeySize is the number of random runes in a session key.
+// SessionKeySize is the number of random bytes in a session key.
 const SessionKeySize = 16
 
-// A player's SessionKey is an array of random runes. This key is encoded as a string before being
-// communicated to the player's web browser encoded again into base64. Keys do not persist when
-// the host is restarted.
-type SessionKey [SessionKeySize]rune
+// A player's SessionKey is an array of random bytes. This key is encoded to base64 before being
+// communicated to the player's web browser. Keys do not persist when the host is restarted.
+type SessionKey [SessionKeySize]byte
 
 // NoSessionKey is the zero value of a SessionKey and represents a bad key.
 var NoSessionKey SessionKey
@@ -28,34 +25,28 @@ func NewSession(of PlayerIdentifier) *SessionKey {
 // EndSession removes the supplied key from memory.
 func EndSession(with *SessionKey) { removeSession(with) }
 
-// SessionKeyFromString decodes the input string into a SessionKey. If the input string isn't a
-// valid key then nil is returned.
-func SessionKeyFromString(a string) *SessionKey {
-	if utf8.RuneCountInString(a) != SessionKeySize {
+// SessionKeyFromBase64 decodes the input base64 string into a SessionKey. Nil is returned if the
+// input isn't valid.
+func SessionKeyFromBase64(a string) *SessionKey {
+	k, err := base64.StdEncoding.DecodeString(a)
+	if (err != nil) || (len(k) != SessionKeySize) {
+		// TODO: debug print this error
 		return nil
 	}
-	out := SessionKey{}
-	// range over a string returns the byte index, not the rune index, so a separate i is used here
-	i := 0
-	for _, r := range a {
-		out[i] = r
-		i++
-	}
-	return &out
+	var key SessionKey
+	copy(key[:], k)
+	return &key
 }
 
-func (a *SessionKey) String() string { return string(a[:]) }
-
-var maxSessionRune = big.NewInt(unicode.MaxRune)
+func (a *SessionKey) Base64String() string { return base64.StdEncoding.EncodeToString(a[:]) }
 
 func newSessionKey() *SessionKey {
-	var key SessionKey
-	for i := 0; i < SessionKeySize; i++ {
-		bigIntP, err := rand.Int(rand.Reader, maxSessionRune)
-		if err != nil {
-			panic(err.Error())
-		}
-		key[i] = rune(bigIntP.Int64())
+	b := make([]byte, SessionKeySize)
+	_, err := rand.Read(b)
+	if err != nil {
+		panic(err.Error())
 	}
+	var key SessionKey
+	copy(key[:], b)
 	return &key
 }

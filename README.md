@@ -8,7 +8,7 @@ This source code is used to build the software of my computer game variation of 
 
 What's added is the trading card game idea. Players each have a collection of pieces with new characteristics that can optionally replace the regular chess pieces, so emergent scenarios from a choice of many strategies keep gameplay fresh and exciting no matter how long you've played.
 
-Wisconsin Chess is played in a web browser; currently the latest versions of Chrome, Firefox, and Safari are supported. I've put in effort for it to work well both on mobile smartphones and tablets along with desktop computers.
+Wisconsin Chess is hosted in your local network using a computer, then people play by connecting to it with a web browser through the network. The latest versions of Chrome, Firefox, and Safari are supported, and no browser plugins are necessary. This local network website is designed to work well both on mobile smartphones and tablets alongside desktop computers, and any number of concurrent players can be playing up to the limits of the host computer's capabilities.
 
 Technical installation instructions that use this source code repository are described in docs/install.md. An overview of the source code is in docs/source.md.
 
