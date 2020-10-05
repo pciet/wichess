@@ -32,7 +32,6 @@ func (an Instance) Nil() bool { return an.Game == nil }
 // Completed determines if the game instance is done (a checkmate, draw, or concession). The
 // specific state of the game is also returned.
 func (an Instance) Completed() (bool, rules.State) {
-	// TODO: cache moves and state in game memory so moves called only once
 	_, state := an.Moves()
 	if (state == rules.Normal) || (state == rules.Promotion) || (state == rules.Check) {
 		return false, state

@@ -23,7 +23,6 @@ func quitGet(w http.ResponseWriter, r *http.Request, pid memory.PlayerIdentifier
 	key := memory.SessionKeyFromBase64(sc.Value)
 	if key == nil {
 		debug("bad session key cookie value for quit")
-		auth.ClearBrowserSession(w, r)
 		return
 	}
 

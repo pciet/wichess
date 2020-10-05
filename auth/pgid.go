@@ -1,7 +1,10 @@
 package auth
 
 import (
+	"log"
 	"net/http"
+	"os"
+	"runtime/debug"
 
 	"github.com/pciet/wichess/game"
 	"github.com/pciet/wichess/memory"
@@ -34,6 +37,16 @@ func GameAndPlayerIdentified(
 			return
 		}
 		g.RUnlock()
+
+		defer func() {
+			pv := recover()
+			if pv == nil {
+				return
+			}
+			log.Println(pv, "\nPlayer", pid, "\nGame", gid)
+			debug.PrintStack()
+			os.Exit(1)
+		}()
 
 		calls(w, r, gid, pid)
 	}

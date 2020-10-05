@@ -62,11 +62,17 @@ func movePost(w http.ResponseWriter, r *http.Request,
 	}
 
 	opponentID := g.OpponentOf(pid)
+	playerOrientation := g.OrientationOf(pid)
 	opponentOrientation := g.OrientationOf(opponentID)
 
 	var promotionWasReverse bool
-	if (promotion != piece.NoKind) && (previousActive != g.OrientationOf(pid)) {
+	if (promotion != piece.NoKind) && (previousActive != playerOrientation) {
 		promotionWasReverse = true
+	}
+
+	var neededPromotionNotReverse bool
+	if promotionNeeded && (g.PromotingOrientation() == playerOrientation) {
+		neededPromotionNotReverse = true
 	}
 
 	g.Unlock()
@@ -76,7 +82,7 @@ func movePost(w http.ResponseWriter, r *http.Request,
 		Captures: game.PiecesFromRules(captures),
 		FromMove: move,
 	}
-	if promotionNeeded || promotionWasReverse {
+	if neededPromotionNotReverse || promotionWasReverse {
 		alertUpdate.UpdateState = game.WaitUpdate
 	}
 	go game.Alert(gid, opponentOrientation, opponentID, alertUpdate)
@@ -85,7 +91,7 @@ func movePost(w http.ResponseWriter, r *http.Request,
 		Squares:  game.SquaresFromRules(changes),
 		Captures: game.PiecesFromRules(captures),
 	}
-	if promotionNeeded {
+	if neededPromotionNotReverse {
 		responseUpdate.UpdateState = game.PromotionNeededUpdate
 	} else if promotionWasReverse {
 		responseUpdate.UpdateState = game.ContinueUpdate

@@ -1,6 +1,8 @@
 package game
 
 import (
+	"log"
+
 	"github.com/pciet/wichess/piece"
 	"github.com/pciet/wichess/rules"
 )
@@ -28,4 +30,12 @@ func (an Instance) Promote(with piece.Kind) []rules.Square {
 	an.Active = an.opponentOf(an.Active)
 
 	return changes
+}
+
+func (an Instance) PromotingOrientation() rules.Orientation {
+	o, needed := an.Game.Board.PromotionNeeded()
+	if needed == false {
+		log.Panicln("promotion not needed\n", an)
+	}
+	return o
 }

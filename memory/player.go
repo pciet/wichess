@@ -1,6 +1,7 @@
 package memory
 
 import (
+	"fmt"
 	"strconv"
 	"sync"
 
@@ -45,3 +46,15 @@ type (
 
 func (a PlayerIdentifier) String() string { return strconv.Itoa(int(a)) }
 func (a PlayerName) String() string       { return string(a) }
+
+func (a Player) String() string {
+	str := fmt.Sprintf("%v\n%v\n", a.PlayerIdentifier, a.PlayerName)
+	str += fmt.Sprintf("people game %v\n", a.PeopleGame)
+	str += fmt.Sprintf("computer game %v\n", a.ComputerGame)
+	str += fmt.Sprintf("computer streak %v, best computer streak %v\n",
+		a.ComputerStreak, a.BestComputerStreak)
+	str += fmt.Sprintf("recent opponents %v\n", a.RecentOpponents)
+	str += fmt.Sprintf("left %v\nright %v\n", a.Left, a.Right)
+	str += fmt.Sprintf("collection %v", a.Collection)
+	return str
+}

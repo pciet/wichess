@@ -1,7 +1,10 @@
 package auth
 
 import (
+	"log"
 	"net/http"
+	"os"
+	"runtime/debug"
 
 	"github.com/pciet/wichess/game"
 	"github.com/pciet/wichess/memory"
@@ -35,6 +38,17 @@ func PlayerAndGameWriteable(
 		}
 
 		p := memory.LockPlayer(pid)
+
+		defer func() {
+			pv := recover()
+			if pv == nil {
+				return
+			}
+			log.Println(pv, "\nPlayer\n", p, "\nGame\n", g)
+			debug.PrintStack()
+			os.Exit(1)
+		}()
+
 		calls(w, r, g, p)
 		p.Unlock()
 	}
