@@ -19,6 +19,13 @@ func (an Instance) Move(with rules.Move) ([]rules.Square, []rules.Piece, bool) {
 	if changes == nil {
 		return nil, nil, false
 	}
+	for _, capt := range captures {
+		if capt.Piece.Kind != piece.King {
+			continue
+		}
+		log.Panicln("captured king in move", with, "\nchanges", changes, "\ncaptures", captures,
+			"\n", an.String())
+	}
 
 	(&an.Game.Board).ApplyChanges(changes)
 

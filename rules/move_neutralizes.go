@@ -10,6 +10,15 @@ func (a *Board) neutralizesMove(changes, captures []Square, m Move) ([]Square, [
 	a[m.From.Index()] = Piece{}
 	changes = append(changes, Square{m.From, Piece{}})
 
+	for _, capture := range a.neutralizeCaptureAddresses(m.To) {
+		changes = append(changes, Square{capture, Piece{}})
+		captures = append(captures, Square{capture, a[capture.Index()]})
+	}
+
+	return changes, captures
+}
+
+func (a *Board) neutralizeCaptureAddresses(startingAt Address) []Address {
 	var recursiveNeutralize func(Address)
 
 	toCapture := make([]Address, 0, 4)
@@ -44,12 +53,7 @@ func (a *Board) neutralizesMove(changes, captures []Square, m Move) ([]Square, [
 		}
 	}
 
-	recursiveNeutralize(m.To)
+	recursiveNeutralize(startingAt)
 
-	for _, capture := range toCapture {
-		changes = append(changes, Square{capture, Piece{}})
-		captures = append(captures, Square{capture, a[capture.Index()]})
-	}
-
-	return changes, captures
+	return toCapture
 }
