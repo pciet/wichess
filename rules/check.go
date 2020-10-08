@@ -39,6 +39,7 @@ func (a *Board) removeMovesIntoCheck(moves []MoveSet, active Orientation, previo
 				orig[i] = Square{change.Address, a[addr]}
 				a[addr] = change.Piece
 			}
+			a.applyConveyedCharacteristics()
 
 			if (a.noKing(active) == false) && (a.inCheck(active,
 				movesAddressSlice(a.naiveCaptureMoves(active.Opponent(), move))) == false) {
@@ -50,6 +51,7 @@ func (a *Board) removeMovesIntoCheck(moves []MoveSet, active Orientation, previo
 			for _, s := range orig {
 				a[s.Address.Index()] = s.Piece
 			}
+			a.applyConveyedCharacteristics()
 		}
 		if len(outset.Moves) == 0 {
 			continue

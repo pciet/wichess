@@ -81,9 +81,21 @@ func DoneState(gameDone chan<- error, stop chan Signal, done <-chan error,
 	DebugPrintln("CLOSED WEBSOCKET", with.Name)
 
 	if err == nil {
-		DebugPrintln("ACK", with.Name)
-		with.Acknowledge(id)
-		DebugPrintln("ACKED", with.Name)
+		DebugPrintln("REWARD", with.Name)
+		err = with.AcceptAllRewardsRandomly(id)
+		if err != nil {
+			DebugPrintln("REWARD error", err, with.Name)
+		} else {
+			DebugPrintln("REWARD DONE", with.Name)
+
+			DebugPrintln("ACK", with.Name)
+			err = with.Acknowledge(id)
+			if err != nil {
+				DebugPrintln("ACK error", err, with.Name)
+			} else {
+				DebugPrintln("ACKED", with.Name)
+			}
+		}
 	}
 
 	gameDone <- err

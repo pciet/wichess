@@ -30,6 +30,9 @@ type (
 		PlayerIdentifier `json:"id"`
 		PlayerName       `json:"name"`
 
+		// The session key is encoded in base64.
+		EncodedSessionKey string `json:"-"`
+
 		PeopleGame   GameIdentifier `json:"people"`
 		ComputerGame GameIdentifier `json:"computer"`
 
@@ -49,6 +52,7 @@ func (a PlayerName) String() string       { return string(a) }
 
 func (a Player) String() string {
 	str := fmt.Sprintf("%v\n%v\n", a.PlayerIdentifier, a.PlayerName)
+	str += fmt.Sprintf("session key %v\n", a.EncodedSessionKey)
 	str += fmt.Sprintf("people game %v\n", a.PeopleGame)
 	str += fmt.Sprintf("computer game %v\n", a.ComputerGame)
 	str += fmt.Sprintf("computer streak %v, best computer streak %v\n",

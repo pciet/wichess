@@ -33,13 +33,14 @@ func removeSession(k *SessionKey) {
 	activeMutex.RLock()
 	sessionMutex.Lock()
 
+	defer func() {
+		sessionMutex.Unlock()
+		activeMutex.RUnlock()
+	}()
+
 	_, has := sessionCache[*k]
 	if has == false {
-		panic("tried to remove nonexistent session key")
+		return
 	}
-
 	delete(sessionCache, *k)
-
-	sessionMutex.Unlock()
-	activeMutex.RUnlock()
 }

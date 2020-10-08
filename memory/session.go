@@ -15,11 +15,22 @@ type SessionKey [SessionKeySize]byte
 // NoSessionKey is the zero value of a SessionKey and represents a bad key.
 var NoSessionKey SessionKey
 
-// NewSession randomly generates a key and saves it into volatile memory for the player.
-func NewSession(of PlayerIdentifier) *SessionKey {
+// NewSession randomly generates a key and saves it into volatile memory for the player. The key
+// is encoded to base64 and returned.
+func NewSession(of PlayerIdentifier) string {
+	p := LockPlayer(of)
+	if p == nil {
+		return ""
+	}
+	if p.EncodedSessionKey != "" {
+		EndSession(SessionKeyFromBase64(p.EncodedSessionKey))
+	}
 	key := newSessionKey()
 	addSession(of, key)
-	return key
+	encKey := key.Base64String()
+	p.EncodedSessionKey = encKey
+	p.Unlock()
+	return encKey
 }
 
 // EndSession removes the supplied key from memory.

@@ -54,7 +54,7 @@ func loginAttemptHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	id, key := auth.Login(memory.PlayerName(name), pass)
-	if (*key == memory.NoSessionKey) || (id == memory.NoPlayer) {
+	if (key == "") || (id == memory.NoPlayer) {
 		debug("bad password for", name)
 		w.WriteHeader(http.StatusBadRequest)
 		return
