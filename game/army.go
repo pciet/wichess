@@ -112,11 +112,26 @@ func makeArmyReservation(id memory.PlayerIdentifier,
 			out[i] = piece.RegularArmy[i]
 			continue
 		case piece.LeftPick:
+			if leftKind.Basic() != piece.RegularArmy[i] {
+				return piece.Army{}, piece.NoKind, piece.NoKind,
+					fmt.Errorf("requested army slot %v not correct basic kind for left pick %v",
+						i, leftKind)
+			}
 			out[i] = leftKind
 			continue
 		case piece.RightPick:
+			if rightKind.Basic() != piece.RegularArmy[i] {
+				return piece.Army{}, piece.NoKind, piece.NoKind,
+					fmt.Errorf("requested army slot %v not correct basic kind for right pick %v",
+						i, rightKind)
+			}
 			out[i] = rightKind
 			continue
+		}
+		if collectionPieces[collectionPiecesIndex].Basic() != piece.RegularArmy[i] {
+			return piece.Army{}, piece.NoKind, piece.NoKind,
+				fmt.Errorf("requested army slot %v not correct basic kind for collection piece %v",
+					i, collectionPieces[collectionPiecesIndex])
 		}
 		out[i] = collectionPieces[collectionPiecesIndex]
 		collectionPiecesIndex++

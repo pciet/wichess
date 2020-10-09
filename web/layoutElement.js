@@ -229,5 +229,9 @@ function writeInlineCSSDimensions(parent, parentDimensions, dimensions) {
             ((dimensions.widths[i] / 100) * parentDimensions.width) + 'px'
         parent.children[i].style.height = 
             ((dimensions.heights[i] / 100) * parentDimensions.height) + 'px'
+
+        // added to fix rows of inline-block squares sometimes wrapping unexpectedly in Firefox
+        // https://github.com/pciet/wichess/issues/22
+        parent.children[i].style.whiteSpace = 'nowrap'
     }
 }

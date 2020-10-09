@@ -76,8 +76,8 @@ func (a *Board) DoMove(m Move) ([]Square, []Square) {
 
 	// now do responses to the move
 	bcopy.ApplyChanges(changes)
-	// redo conveyed characteristics in case a piece has moved into or out of range
-	bcopy.applyConveyedCharacteristics()
+
+	// conveyed characteristics apply through the entire turn, so don't reapply them here
 
 	for _, s := range bcopy.surroundingSquares(m.To) {
 		if bcopy.assertsWillCapture(from, s) == false {

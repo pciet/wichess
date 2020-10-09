@@ -51,7 +51,7 @@ func RandomizeCollectionOrder(of piece.Collection) ([]piece.Kind, []piece.Collec
 	outSlots := make([]piece.CollectionSlot, len(of))
 	for i, s := range indices {
 		outKinds[i] = of[s]
-		outSlots[i] = piece.CollectionSlot(s)
+		outSlots[i] = piece.CollectionSlot(s + 1)
 	}
 
 	return outKinds, outSlots
