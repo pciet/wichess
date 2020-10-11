@@ -1,10 +1,6 @@
 body {
-    background: linear-gradient(rgb(11,25,18), rgb(21,25,28));
+    background: linear-gradient(rgb(11,25,18), rgb(21,25,88));
     background-attachment: fixed;
-}
-
-.hidden {
-    visibility: hidden;
 }
 
 .noselect {
@@ -21,7 +17,7 @@ body {
 }
 
 .main {
-    background: linear-gradient(rgb(21,25,18), rgb(41,35,18));
+    background: linear-gradient(rgb(21,15,38), rgb(91,35,18));
     border: thin solid rgb(255,20,10);
     border-radius: 9px;
     margin: 10px;
@@ -33,10 +29,14 @@ body {
 
 .recentopp, #comp, #oppsubmit, input, #cancel {
     display: block;
-    margin: 1.5rem;
-    padding: 1.5rem;
+    margin: 1rem;
+    padding: 1rem;
     font-size: 1.5rem;
     font: inherit;
+}
+
+input {
+    margin: 1rem auto;
 }
 
 .recentopp {
@@ -52,18 +52,23 @@ body {
     border: thick outset rgb(255,125,128);
     border-radius: 7px;
     color: rgb(255,240,245);
-    background-color: rgb(80,80,200);
+    background-color: rgb(80,120,150);
     box-shadow: 0px -4px 10px rgb(255,125,128);
     text-align: center;
 }
 
 p {
     text-align: center;
-    color: rgb(20,50,190);
-    background-color: rgb(30,5,25);
-    font-size: 2.5rem;
-    margin: 1.5rem;
+    color: rgb(100,180,255);
+    background-color: rgb(40,55,45);
+    border-radius: 10px;
+    font-size: 1.2rem;
+    margin: 1rem;
     padding: 20px;
+}
+
+#inputsection {
+    flex: 1 200px;
 }
 
 .description {
@@ -74,8 +79,9 @@ p {
 }
 
 #pagetitle {
+    font-size: 1.5rem;
     margin-bottom: 0;
-    text-shadow: 0px 2px 0 white;
+    text-shadow: 0px 1px 1px white;
 }
 
 #pagedesc {
@@ -84,20 +90,38 @@ p {
 
 #matchdesc {
     width: 20%;
+    text-align: left;
+    flex: 1 200px;
 }
 
 #player, #matchingname {
     text-shadow: none;
-    color: rgb(255,230,240);
+    color: rgb(255,240,250);
     font-weight: bold;    
 }
 
 #beststreaktitle, #streaktitle {
-    font-size: 1.3rem;
+    font-size: 1rem;
     background-color: rgb(40,20,10);
     color: rgb(50,75,200);
 }
 
 #beststreak, #streak {
     color: rgb(105,130,255);
+}
+
+.hidden {
+    color: rgb(20,15,18);
+    border: thick outset rgb(20,60,30);
+    border-radius: 7px;
+    background-color: rgb(20,30,30);
+    box-shadow: 0px -4px 10px black;
+    text-align: center;
+}
+
+#matchingtext {
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 0.5rem;
 }

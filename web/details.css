@@ -1,29 +1,26 @@
 body {
     background: linear-gradient(rgb(1,31,50),rgb(52,20,1));
     background-attachment: fixed;
-    margin: 5%;
+    margin: 1%;
 }
 
 #flex {
     display: flex;
-}
-
-#pieceimg {
-    flex: 1;
+    flex-wrap: wrap;
+    align-items: center;
 }
 
 #look {
-    max-width: 100%;
-    height: auto;
-    border: thick outset rgb(20,20,120);
-    border-radius: 5%;
-    margin: 5%;
+    flex: 1 200px;
+    width: 300px;
+    border: thick outset rgb(255,50,110);
+    border-radius: 10px;
+    margin: 10px;
 }
 
 #text {
-    flex: 2;
-    margin-left: 5%;
-    margin-right: 5%;
+    margin: 10px;
+    flex: 1 400px;
 }
 
 h1, h2, p {

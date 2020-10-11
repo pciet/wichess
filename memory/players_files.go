@@ -10,29 +10,46 @@ import (
 // PlayersFilePrefix is the first characters in a player filename followed by the player identifier.
 const PlayersFilePrefix = "pf"
 
+// WritePlayerFile creates or replaces the file that backs the identified player's process memory.
+func WritePlayerFile(id PlayerIdentifier) {
+	p := RLockPlayer(id)
+	if p == nil {
+		return
+	}
+	p.writePlayerFile()
+	p.RUnlock()
+}
+
+func (a *Player) writePlayerFile() {
+	if a == nil {
+		return
+	}
+	b, err := json.Marshal(a)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	f, err := os.OpenFile(filePath(PlayersFilePrefix+a.PlayerIdentifier.String()),
+		os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	_, err = f.Write(b)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	err = f.Close()
+	if err != nil {
+		panic(err.Error())
+	}
+}
+
 func writePlayerFiles() {
-	for id, p := range playersCache {
-		b, err := json.Marshal(p)
-		if err != nil {
-			panic(err.Error())
-		}
-
-		f, err := os.OpenFile(filePath(PlayersFilePrefix+id.String()),
-			os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
-
-		if err != nil {
-			panic(err.Error())
-		}
-
-		_, err = f.Write(b)
-		if err != nil {
-			panic(err.Error())
-		}
-
-		err = f.Close()
-		if err != nil {
-			panic(err.Error())
-		}
+	for _, p := range playersCache {
+		p.writePlayerFile()
 	}
 }
 

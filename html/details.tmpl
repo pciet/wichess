@@ -12,25 +12,23 @@
 <body>
 
 <div id="flex">
+    <img id="look" src="/web/img/look_{{.CodeName}}.png" alt="View of the {{.Name}} piece">
 
-<div id="pieceimg">
-<img id="look" src="/web/img/look_{{.CodeName}}.png" alt="View of the {{.Name}} piece">
-</div>
+    <div id="text">
 
-<div id="text">
+        {{.Description}}
 
-{{.Description}}
+        {{if .CharacteristicA}}
+        <h2>{{.CharacteristicA}}</h2>
+        <p>{{.CharacteristicADescription}}</p>
+        {{end}}
 
-{{if .CharacteristicA}}
-<h2>{{.CharacteristicA}}</h2>
-<p>{{.CharacteristicADescription}}</p>
-{{end}}
+        {{if .CharacteristicB}}
+        <h2>{{.CharacteristicB}}</h2>
+        <p>{{.CharacteristicBDescription}}</p>
+        {{end}}
 
-{{if .CharacteristicB}}
-<h2>{{.CharacteristicB}}</h2>
-<p>{{.CharacteristicBDescription}}</p>
-{{end}}
-
+    </div>
 </div>
 
 </body>

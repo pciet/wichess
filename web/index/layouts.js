@@ -30,7 +30,7 @@ export const landscape = top + `
     </div>
     <div class="inline">
         ` + ct('armytitle', '', false, true, 'Army') + `
-        <div id="army">` + army() + `</div>
+        <div class="armydiv" id="army">` + army() + `</div>
         ` + ct('collectiontitle', '', false, true, 'Collection') + `
         <div id="collection">` + collection() + `</div>
     </div>
@@ -39,7 +39,7 @@ export const landscape = top + `
 
 export const square = top + `
 <div>
-    <div>
+    <div id="squarearmydiv">
         ` + ct('squarearmytitle', '', false, true, 'Army') + `
         <div id="army">` + army() + `</div>
     </div>

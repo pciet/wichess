@@ -42,6 +42,8 @@ func rewardPost(w http.ResponseWriter, r *http.Request, g game.Instance, p *memo
 
 	left, right, reward := g.RewardsOf(p.PlayerIdentifier)
 
+	write := false
+
 	if (rj.Left > 0) && (rj.Left <= piece.CollectionSize) {
 		if left == piece.NoKind {
 			debug(RewardPath, "left requested but no piece in game for", p.Name)
@@ -50,6 +52,7 @@ func rewardPost(w http.ResponseWriter, r *http.Request, g game.Instance, p *memo
 		}
 		p.Collection[rj.Left-1] = left
 		p.Left = p.Left.DifferentSpecialKind()
+		write = true
 	}
 
 	if (rj.Right > 0) && (rj.Right <= piece.CollectionSize) {
@@ -60,10 +63,16 @@ func rewardPost(w http.ResponseWriter, r *http.Request, g game.Instance, p *memo
 		}
 		p.Collection[rj.Right-1] = right
 		p.Right = p.Right.DifferentSpecialKind()
+		write = true
 	}
 
 	if (rj.Reward > 0) && (rj.Reward <= piece.CollectionSize) {
 		p.Collection[rj.Reward-1] = reward
+		write = true
+	}
+
+	if write {
+		go memory.WritePlayerFile(p.PlayerIdentifier)
 	}
 }
 

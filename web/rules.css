@@ -24,3 +24,10 @@ div {
     font-style: italic;
     color: rgb(110,200,180);
 }
+
+@media (max-width: 800px) {
+    div {
+        margin-left: 5px;
+        margin-right: 5px;
+    }
+}

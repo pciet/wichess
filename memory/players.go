@@ -98,5 +98,21 @@ func NewPlayer(name PlayerName, passwordHash []byte) PlayerIdentifier {
 	newPlayerMutex.Unlock()
 	activeMutex.RUnlock()
 
+	// write backing files here to reduce impact of a bad shutdown
+	go func() {
+		// TODO: if concurrent NewPlayer the player and hash file should be one write
+		activeMutex.RLock()
+		playerNameMutex.RLock()
+		hashMutex.RLock()
+
+		writePlayerNamesFile()
+		writeHashFile()
+		WritePlayerFile(id)
+
+		hashMutex.RUnlock()
+		playerNameMutex.RUnlock()
+		activeMutex.RUnlock()
+	}()
+
 	return id
 }

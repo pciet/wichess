@@ -6,7 +6,7 @@ import { collectionImage, pickImage } from '../collection.js'
 
 export function portrait() { 
     return `
-<div>
+<div id="portraitbuttons">
     ` + ct('ack', '', true, true, '&#x2713;') + ct('details', '', true, true, 'Piece') + `
 </div>
 <div id="collection">` + collection() + `</div>
@@ -21,7 +21,7 @@ export function landscape() {
         ` + ct('ack', '', false, true, '&#x2713;') + `
         <div></div>
     </div>
-    <div id="collection" class="inline">` + collection() + `</div>
+    <div id="collection" class="inline landscapecollection">` + collection() + `</div>
     <div class="inline">
         <div></div>
         ` + ct('details', '', false, true, 'Piece') + `

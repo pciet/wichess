@@ -28,8 +28,8 @@ img {
 #ack {
     color: rgb(255,230,160);
     background-color: rgb(100,100,190);
-    border: thick outset rgb(70,50,255);
-    border-radius: 8px;
+    border: 1px outset rgb(70,50,255);
+    border-radius: 2px;
     text-align: center;
     font-size: 1.5rem;
 }
@@ -37,8 +37,8 @@ img {
 #details {
     color: rgb(230,255,150);
     background-color: rgb(150,100,50);
-    border: thick outset rgb(255,170,50);
-    border-radius: 8px;
+    border: 1px outset rgb(255,170,50);
+    border-radius: 2px;
     text-align: center;
     font-size: 1.5rem;
 }
@@ -52,21 +52,28 @@ img {
 
 .rewardcell {
     margin: auto;
-    border: thick outset rgb(200,140,50);
-    border-radius: 8px;
+    border: 1px outset rgb(200,140,50);
+    border-radius: 2px;
 }
 
 .rewardmargin {
-    padding: 40px;
+    padding: 4px;
+}
+
+#portraitbuttons {
+    height: 10%;
 }
 
 /* TODO: one CSS file for collection */
 
 #collection {
-    padding: 30px;
+    padding: 10px;
     text-align: center;
-    width: 75%;
     margin: 0 auto;
+}
+
+.landscapecollection {
+    width: 75%;
 }
 
 .collectionbox {
@@ -82,17 +89,17 @@ img {
 }
 
 .selected {
-    border: thick outset rgb(255,200,150);
+    border: 1px outset rgb(255,200,150);
     box-shadow: 0px -14px 10px rgb(255,25,198);
 }
 
 .picked {
     /* TODO: pattern overlay */
-    border: thick outset rgb(50,255,200);
+    border: 1px outset rgb(50,255,200);
     box-shadow: -1px 0 10px rgb(200,200,195);
     opacity: 0.2;
 }
 
 .replaced {
-    border: thick outset rgb(160,180,55);
+    border: 2px outset rgb(160,180,55);
 }
