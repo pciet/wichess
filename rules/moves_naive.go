@@ -130,7 +130,7 @@ func (a *Board) appendNaiveCaptureMoves(moves []Address, paths []path, from Addr
 				((p.flags.tense == false) || p.is.normalized ||
 					(s.Kind == piece.King) || (s.Kind == piece.Queen)) &&
 				((s.flags.mustEnd == false) || (len(path.Addresses) == i+1)) &&
-				(p.is.protected == false) {
+				((p.is.protected == false) || p.is.normalized) {
 
 				moves = append(moves, move)
 			}

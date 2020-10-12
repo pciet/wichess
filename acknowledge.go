@@ -11,7 +11,7 @@ import (
 func acknowledgeGet(w http.ResponseWriter, r *http.Request, g game.Instance, p *memory.Player) {
 	done, state := g.Completed()
 	if done == false {
-		debug(AcknowledgePath, "called by", p.Name, "on incomplete game", g.GameIdentifier)
+		debug(AcknowledgePath, "called by", p.PlayerName, "on incomplete game", g.GameIdentifier)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}

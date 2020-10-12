@@ -50,11 +50,10 @@ func (a *Board) applyConveyedCharacteristics() {
 
 		if s.flags.protective && (s.is.protected == false) {
 			for _, ss := range a.surroundingSquares(addr) {
-				if (ss.Kind == piece.NoKind) || (ss.Orientation != s.Orientation) ||
-					(ss.flags.protective == false) {
-
+				if (ss.Kind == piece.NoKind) || (ss.flags.protective == false) {
 					continue
 				}
+				a[AddressIndex(i)].is.protected = true
 				a[ss.Address.Index()].is.protected = true
 			}
 		}

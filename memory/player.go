@@ -39,7 +39,7 @@ type (
 		ComputerStreak     int `json:"compstreak"`
 		BestComputerStreak int `json:"bestcompstreak"`
 
-		RecentOpponents [RecentOpponentCount]PlayerIdentifier `json"recent"`
+		RecentOpponents [RecentOpponentCount]PlayerIdentifier `json:"recent"`
 
 		Left             piece.Kind `json:"left"`
 		Right            piece.Kind `json:"right"`

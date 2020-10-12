@@ -63,7 +63,7 @@ func (an Instance) Move(with rules.Move) ([]rules.Square, []rules.Piece, bool) {
 			an.Black.Captures[bCaptIndex] = capt.Kind
 			bCaptIndex++
 		} else {
-			log.Panicln("unknown orientation %v", capt.Kind)
+			log.Panicln("unknown orientation", capt.Kind)
 		}
 	}
 

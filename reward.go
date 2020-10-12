@@ -46,7 +46,7 @@ func rewardPost(w http.ResponseWriter, r *http.Request, g game.Instance, p *memo
 
 	if (rj.Left > 0) && (rj.Left <= piece.CollectionSize) {
 		if left == piece.NoKind {
-			debug(RewardPath, "left requested but no piece in game for", p.Name)
+			debug(RewardPath, "left requested but no piece in game for", p.PlayerName)
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
@@ -57,7 +57,7 @@ func rewardPost(w http.ResponseWriter, r *http.Request, g game.Instance, p *memo
 
 	if (rj.Right > 0) && (rj.Right <= piece.CollectionSize) {
 		if right == piece.NoKind {
-			debug(RewardPath, "right requested but no piece in game for", p.Name)
+			debug(RewardPath, "right requested but no piece in game for", p.PlayerName)
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
