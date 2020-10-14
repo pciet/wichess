@@ -109,7 +109,7 @@ cd ..
 ./Build.sh
 ```
 
-If everything went right then Wisconsin Chess should be ready to play!
+If everything went right then the Wisconsin Chess host is ready.
 
 ## 5. Connect To This Host
 
@@ -134,3 +134,5 @@ Assuming the example IP address above is yours, then in a web browser on a devic
 ```
 
 A login page should appear, then you create a new Wisconsin Chess player by typing in a fresh name and password.
+
+When starting ```wichess``` a different IP port can be picked with the ```-port``` option. Call ```./wichess -h``` to print usage information.

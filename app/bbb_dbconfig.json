@@ -1,8 +1,0 @@
-{
-    "database": "wichess",
-    "user": "wichess",
-    "password": "wichess",
-    "host": "localhost",
-    "port": "5432",
-    "sslMode": "disable"
-}

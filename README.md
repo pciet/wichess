@@ -6,7 +6,7 @@ Chess can be described as a fun tactical board game played by two people against
 
 This source code is used to build the software of my computer game variation of chess, Wisconsin Chess. It adds to the traditional modern rules while keeping the abstract theme and important predictability of the original game; pieces start on the same squares, and castling, en passant, promotion, check, checkmate, and draws are included. If you want to learn chess or improve your skill then this game will help you do that.
 
-What's added is the trading card game idea. Players each have a collection of pieces with new characteristics that can optionally replace the regular chess pieces, so emergent scenarios from a choice of many strategies keep gameplay fresh and exciting no matter how long you've played.
+What's added is the trading card game idea (but without trading for now). Players each have a collection of pieces with new characteristics that can optionally replace the regular chess pieces, so emergent scenarios from a choice of many strategies keep gameplay fresh and exciting no matter how long you've played.
 
 Wisconsin Chess is hosted in your local network using a computer, then people play by connecting to it with a web browser through the network. The latest versions of Chrome, Firefox, and Safari are supported, and no browser plugins are necessary. This local network website is designed to work well both on mobile smartphones and tablets alongside desktop computers, and any number of concurrent players can be playing up to the limits of the host computer's capabilities.
 
@@ -14,7 +14,7 @@ Technical installation instructions that use this source code repository are des
 
 ## Project Status
 
-Wisconsin Chess is a work in progress. It was inspired by one of the ideas I researched after quitting my tech job to persue solo entrepreneurship in spring 2014. Coding began partway through 2017 and a first version was completed during the start of 2018 (see the v0.1 git tag), but the project was shelved then.
+Wisconsin Chess is a work in progress. It was inspired by one of the ideas I researched after quitting my tech job to pursue solo entrepreneurship in spring 2014. Coding began partway through 2017 and a first version was completed during the start of 2018 (see the v0.1 git tag), but the project was shelved then.
 
 During 2020 I've had the opportunity to work on it again. Version 0.2 is a massive improvement and is currently in an alpha state as I continue to make it more fun, unbreakable, and valuable.
 

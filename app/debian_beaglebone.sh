@@ -30,56 +30,20 @@
 #####################
 
 export LANG=C.UTF-8
-
-apt-get update
-
 adduser --system --group --no-create-home --disabled-login wichess
-
-
-##### Install and configure PostgreSQL to save to the card and allow access by the wichess user.
-
-apt-get -y install postgresql
-
-pg_ctlcluster 11 main stop
-pg_dropcluster 11 main
-
-mkdir /media/sd/pgsql
-chown postgres /media/sd/pgsql
-
-pg_createcluster -d /media/sd/pgsql/data -l /media/sd/pgsql/pgsql.log --start 11 wichess -- \
-    --auth-local peer --auth-host md5 -U postgres
-
-su -c "createdb wichess" postgres
-su -c "psql -d wichess -f /media/sd/postgres_tables.sql" postgres
-
-echo "enter the password 'wichess' at the following prompt:"
-su -c "createuser -P wichess" postgres
-
-su -c "psql -c 'GRANT CONNECT ON DATABASE wichess TO wichess;'" postgres
-
-su -c "psql -d wichess \
-    -c 'GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE players, games TO wichess;'" postgres
-
-su -c "psql -d wichess \
-    -c 'GRANT USAGE, SELECT ON SEQUENCE games_id_seq, players_id_seq TO wichess;'" postgres
-
-systemctl start postgresql@11-wichess
-
 
 ##### Configure Wisconsin Chess to run as a background systemd service using the wichess user.
 
-chown -R wichess:wichess /media/sd/dbconfig.json /media/sd/html /media/sd/web /media/sd/wichess
-
+chown -R wichess:wichess /media/sd/mem /media/sd/html /media/sd/web /media/sd/wichess
 cp /media/sd/wichess.service /etc/systemd/system/wichess.service
-
 systemctl daemon-reload
-systemctl start wichess.service
-
+systemctl enable wichess.service
 
 ##### Remove unnecessary Debian packages and folders.
 
 # TODO: gcc-8-base would be ideal to remove, but purge gets to many essential packages
 
+apt-get update
 apt-get -y purge bb-bbai-firmware bb-wl18xx-firmware bluez bsdmainutils btrfs-progs \
     cloud-guest-utils crda dirmngr firmware-atheros firmware-brcm80211 firmware-iwlwifi \
     firmware-libertas firmware-misc-nonfree firmware-realtek firmware-zd1211 gdbm-l10n \
@@ -88,9 +52,8 @@ apt-get -y purge bb-bbai-firmware bb-wl18xx-firmware bluez bsdmainutils btrfs-pr
     wireless-regdb wireless-tools wpasupplicant ca-certificates sudo
 
 rm -r /lib/firmware/brcm /lib/firmware/rtlwifi /etc/X11 /etc/sudoers.d
-
 apt autoremove
-
+apt-get upgrade
 
 ## TODO: a complete no-debug app testing configuration would also remove these packages:
 ## openssh-client
@@ -101,10 +64,13 @@ apt autoremove
 ## TODO: add firewall rules to only allow HTTP and WebSocket traffic to wichess
 ## https://wiki.debian.org/DebianFirewall
 ## use nftables for this
+## redirect port 80 to wichess port
 
 ## TODO: remove the debian user and any other unnecessary users
 
 ## TODO: write logs to SD card
 
 ## TODO: enable AppArmor for wichess
+# https://wiki.debian.org/AppArmor/HowToUse
 
+# shutdown -r now

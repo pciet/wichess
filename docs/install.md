@@ -14,7 +14,7 @@ I use my FreeBSD system to cross-compile for the BeagleBone, see docs/bbb_sd.md 
 
 Wisconsin Chess operates by delivering a web browser user interface to players. The computer that delivers the interface, the host, also manages communication between players and does the calculations of requested chess board moves. The program on the host is called ```wichess``` and is made of all of the Go programming language files in the repository. ```wichess``` saves information that persists across host reboots to a folder called mem.
 
-This software architecture should limit cheating because there's no obvious way to modify the web browser or webpage to cheat and you can limit access to the host computer. Players also don't need to install yet another app; all that's needed is a modern web browser like Chrome, Firefox, or Safari, and the IP address of the host.
+This software architecture should limit cheating because there's no obvious way to modify the web browser or webpage to cheat and you can limit access to the host computer. Players also don't need to install yet another app; all that's needed is a recent version of one of the supported web browsers (Chrome, Firefox, or Safari), and the IP address of the host.
 
 ## macOS Installation
 

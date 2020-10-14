@@ -35,40 +35,42 @@ mount -t ext2fs /dev/da0 /media/sd
 
 ## Build wichess for arm/linux
 
-The wichess program must be cross-compiled for the BeagleBone Black which has Debian instead of FreeBSD. Do this as the user you used for docs/freebsd.md.
+The wichess program must be cross-compiled for the BeagleBone Black which has Debian instead of FreeBSD.
+
+Do this as the regular user you used for docs/freebsd.md.
 
 ```
+exit
 cd ~/go/src/github.com/pciet/wichess
 ```
 
 If using the tcsh shell:
 
 ```
-env GOARCH=arm GOARM=7 GOOS=linux go build
+env GOARCH=arm GOARM=7 GOOS=linux go build -o wichess github.com/pciet/wichess/cmd
 ```
 
 If using Bash:
 
 ```
-GOARCH=arm GOARM=7 GOOS=linux go build
+GOARCH=arm GOARM=7 GOOS=linux go build -o wichess github.com/pciet/wichess/cmd
 ```
 
-If later you are reusing this FreeBSD computer to host Wisconsin Chess then be sure to rebuild wichess with just ```go build```.
+If later you are reusing this FreeBSD computer to host Wisconsin Chess then be sure to rebuild wichess with just ```./Build.sh```.
 
 ## Copy Wisconsin Chess Files and Unmount
 
-As root copy all of the needed files to the mounted card. This will take awhile because of the size of the web/img folder.
+As root copy all of the needed files to the mounted card. This will take awhile because of the size of the web/img folder. The mem folder must also be created.
 
 ```
 su
-cp -R COPYRIGHT html licenses wichess web /media/sd/
 mkdir /media/sd/mem
+cp -R COPYRIGHT html licenses wichess web /media/sd/
 ```
 
-A few specific configuration files must also be copied.
+The systemd service file will be used to start ```wichess``` automatically when the network is available during boot.
 
 ```
-cp app/bbb_dbconfig.json /media/sd/dbconfig.json
 cp app/bbb_wichess.service.txt /media/sd/wichess.service
 ```
 

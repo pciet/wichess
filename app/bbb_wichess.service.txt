@@ -1,6 +1,6 @@
 [Unit]
 Description=Wisconsin Chess host web and app server
-After=postgresql@11-wichess.service
+After=network.target
 
 [Service]
 Type=simple
