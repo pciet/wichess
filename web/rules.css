@@ -11,6 +11,10 @@ a:visited {
     color: green;
 }
 
+a:link {
+    color: rgb(200,200,255);
+}
+
 p {
     font-size: 12pt;
 }

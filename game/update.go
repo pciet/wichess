@@ -2,8 +2,6 @@ package game
 
 import "github.com/pciet/wichess/rules"
 
-// TODO: define CapturedPiece at the right place
-
 type (
 	// The UpdateState of an Update is the game state or signals about promotion as described in
 	// docs/promotion.md.

@@ -1,10 +1,7 @@
 package auth
 
 import (
-	"log"
 	"net/http"
-	"os"
-	"runtime/debug"
 
 	"github.com/pciet/wichess/memory"
 )
@@ -16,17 +13,10 @@ func PlayerReadable(calls PlayerReadableFunc) HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request, pid memory.PlayerIdentifier) {
 		p := memory.RLockPlayer(pid)
 
-		defer func() {
-			pv := recover()
-			if pv == nil {
-				return
-			}
-			log.Println(pv, "\nPlayer", pid, "\n", p)
-			debug.PrintStack()
-			os.Exit(1)
-		}()
+		defer authRecover("\nPlayer", pid, "\n", p)
 
 		calls(w, r, p)
+
 		p.RUnlock()
 	}
 }
@@ -38,17 +28,10 @@ func PlayerWriteable(calls PlayerWriteableFunc) HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request, pid memory.PlayerIdentifier) {
 		p := memory.LockPlayer(pid)
 
-		defer func() {
-			pv := recover()
-			if pv == nil {
-				return
-			}
-			log.Println(pv, "\nPlayer", pid, "\n", p)
-			debug.PrintStack()
-			os.Exit(1)
-		}()
+		defer authRecover("\nPlayer", pid, "\n", p)
 
 		calls(w, r, p)
+
 		p.Unlock()
 	}
 }

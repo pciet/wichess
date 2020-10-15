@@ -2,11 +2,11 @@
 
 In chess promotion is when a pawn reaches the last rank on the other side of the board. When that happens the player chooses to replace it with a knight, bishop, rook, or queen.
 
-The promotion game state/condition is a special case. Unlike check, which in Wisconsin Chess is just an indication to the player without any gameplay changes, promotion affects the turn structure by requiring a second action after moving. Additionally, for the guard pawn, reverse promotion is possible where a promotion choice is needed without a move being made by the player.
+The promotion game state/condition is a special case. Unlike check, which in Wisconsin Chess is just an indication to the player without any gameplay changes, promotion affects the turn structure by requiring a second action after moving. Additionally, for the asserts characteristic, reverse promotion is possible where a promotion choice is needed without a move being made by the player.
 
 This document specifies the variety of communication ordering between the webpage and host for promotion.
 
-An arrow ```->``` toward the host (the wichess program) indicates an HTTP request, and the arrow away from the host toward a player (game.js in a web browser or the opponent) is the HTTP response. A lone arrow away from the host is a WebSocket message which is asynchronous, unlike HTTP which requires a request for a response from the host.
+An arrow ```->``` toward the host running the wichess process indicates an HTTP request, and the arrow away from the host toward a player (game.js in a web browser or the opponent) is the HTTP response. A lone arrow away from the host is a WebSocket message which is asynchronous, unlike HTTP which requires a request for a response from the host.
 
 ## Normal Communication Sequence
 
@@ -29,7 +29,7 @@ game.js        host       opponent
 
 The alert is caused by an opponent move and has the resulting changes to the board. A request of all moves is followed, then a move is chosen by the player and sent to /move.
 
-The /move response might be before or after the opponent alert, but the following opponent call to /moves is guaranteed to read the game updated in the database by the /move call.
+The /move response might be before or after the opponent alert, but the following opponent call to /moves is guaranteed to read the game updated in host memory by the /move call.
 
 ## Promotion and Reverse Promotion
 

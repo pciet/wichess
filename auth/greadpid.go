@@ -1,10 +1,7 @@
 package auth
 
 import (
-	"log"
 	"net/http"
-	"os"
-	"runtime/debug"
 
 	"github.com/pciet/wichess/game"
 	"github.com/pciet/wichess/memory"
@@ -36,15 +33,7 @@ func GameReadablePlayerIdentified(
 			return
 		}
 
-		defer func() {
-			pv := recover()
-			if pv == nil {
-				return
-			}
-			log.Println(pv, "\nPlayer", pid, "\nGame\n", g)
-			debug.PrintStack()
-			os.Exit(1)
-		}()
+		defer authRecover("\nPlayer", pid, "\nGame\n", g)
 
 		calls(w, r, g, pid)
 	}

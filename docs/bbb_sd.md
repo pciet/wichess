@@ -37,10 +37,9 @@ mount -t ext2fs /dev/da0 /media/sd
 
 The wichess program must be cross-compiled for the BeagleBone Black which has Debian instead of FreeBSD.
 
-Do this as the regular user you used for docs/freebsd.md.
+If you used ```su``` to switch to the root user then return back to your regular user with ```exit```. Do the following as your regular user you used for docs/freebsd.md.
 
 ```
-exit
 cd ~/go/src/github.com/pciet/wichess
 ```
 
