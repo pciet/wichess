@@ -37,6 +37,7 @@ body {
 
 input {
     margin: 1rem auto;
+    width: 150px;
 }
 
 .recentopp {
