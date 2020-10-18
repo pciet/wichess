@@ -11,8 +11,10 @@ func (a *Board) isEnPassantMove(m Move) bool {
 		return false
 	}
 	s := a[m.From.Index()]
-	if ((s.Orientation == Black) && (m.From.Rank != 3)) ||
-		((s.Orientation == White) && (m.From.Rank != 4)) || (s.Kind.Basic() != piece.Pawn) {
+	if ((s.Orientation == Black) && (m.From.Rank != 3)) || (s.Kind == piece.Derange) ||
+		((s.Orientation == White) && (m.From.Rank != 4)) || (s.Kind.Basic() != piece.Pawn) ||
+		(s.Kind == piece.Evident) {
+
 		return false
 	}
 	to := a[m.To.Index()]
