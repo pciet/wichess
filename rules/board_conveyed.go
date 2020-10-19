@@ -15,20 +15,41 @@ func (a *Board) applyConveyedCharacteristics() {
 		a[i].is = conveyedCharacteristics{}
 	}
 
+	// apply normalizes first so that pieces don't convey if normalized
 	for i, s := range a {
-		if s.Kind == piece.NoKind {
+		if (s.Kind == piece.NoKind) || (s.flags.normalizes == false) || s.is.normalized {
 			continue
 		}
 		addr := AddressIndex(i).Address()
 
-		if s.flags.normalizes {
-			for _, ss := range a.surroundingSquares(addr) {
-				if ss.Kind == piece.NoKind {
-					continue
-				}
-				a[ss.Address.Index()].is.normalized = true
+		normd := false
+		// adjacent normalizers affect each other but negate their effects on other pieces
+		for _, ss := range a.surroundingSquares(addr) {
+			if (ss.Kind == piece.NoKind) || (ss.flags.normalizes == false) {
+				continue
 			}
+			normd = true
+			a[ss.Address.Index()].is.normalized = true
 		}
+
+		if normd {
+			a[AddressIndex(i)].is.normalized = true
+			continue
+		}
+
+		for _, ss := range a.surroundingSquares(addr) {
+			if ss.Kind == piece.NoKind {
+				continue
+			}
+			a[ss.Address.Index()].is.normalized = true
+		}
+	}
+
+	for i, s := range a {
+		if (s.Kind == piece.NoKind) || s.is.normalized {
+			continue
+		}
+		addr := AddressIndex(i).Address()
 
 		if s.flags.orders {
 			for _, ss := range a.surroundingSquares(addr) {
@@ -41,7 +62,9 @@ func (a *Board) applyConveyedCharacteristics() {
 
 		if s.flags.stops {
 			for _, ss := range a.surroundingSquares(addr) {
-				if (ss.Kind == piece.NoKind) || (ss.Orientation == s.Orientation) {
+				if (ss.Kind == piece.NoKind) || (ss.Orientation == s.Orientation) ||
+					(ss.Kind == piece.King) || (ss.Kind == piece.Queen) {
+
 					continue
 				}
 				a[ss.Address.Index()].is.stopped = true
