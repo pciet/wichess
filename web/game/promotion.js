@@ -31,7 +31,7 @@ function promClick(kind, reverse) {
         if (ok === null) {
             ok = layoutSelector('#squareprom', '')
             if (ok === null) {
-                layoutSelector('#portraitcontrols', controlsLayout())
+                layoutSelector('#portraitcontrols', controlsLayout(false, true))
             }
         }
         promoting = false

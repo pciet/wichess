@@ -259,7 +259,7 @@ export function portrait() {
         ` + ct('status') + `
     </div>
     <div class="inline" id="portraitnavigation">` + navigationLayout(true) + `</div>
-    <div class="inline" id="portraitcontrols">` + controlsLayout() + `</div>
+    <div class="inline" id="portraitcontrols">` + controlsLayout(false, true) + `</div>
 </div>
 ` + squareBoard()
 }

@@ -4,8 +4,7 @@ import * as layouts from './game/layouts.js'
 import { initializeHandedness, handedness } from './game/layouts_handedness.js'
 import { initializeWhitespace } from './game/layouts_whitespace.js'
 import { initializeOrientation } from './game/layouts_orientation.js'
-import { optionControlsShown,
-    showOptions, hideOptions, controlsLayout } from './game/layouts_controls.js'
+import { optionControlsShown, showOptions, hideOptions } from './game/layouts_controls.js'
 
 import { writeBoardDimension } from './game/board_dimensions.js'
 import { updateBoard } from './game/board_update.js'

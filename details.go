@@ -18,10 +18,10 @@ type DetailsHTMLTemplateData struct {
 	Description template.HTML
 
 	CharacteristicA            string // optional, name of the first characteristic
-	CharacteristicADescription string
+	CharacteristicADescription template.HTML
 
 	CharacteristicB            string // optional
-	CharacteristicBDescription string
+	CharacteristicBDescription template.HTML
 }
 
 func detailsTemplateData(pieceCodeName string, k piece.Kind) DetailsHTMLTemplateData {
@@ -38,14 +38,14 @@ func detailsTemplateData(pieceCodeName string, k piece.Kind) DetailsHTMLTemplate
 	}
 
 	t.CharacteristicA = piece.CharacteristicName(charA)
-	t.CharacteristicADescription = piece.CharacteristicDescription(charA)
+	t.CharacteristicADescription = template.HTML(piece.CharacteristicDescription(charA))
 
 	if charB == piece.NoCharacteristic {
 		return t
 	}
 
 	t.CharacteristicB = piece.CharacteristicName(charB)
-	t.CharacteristicBDescription = piece.CharacteristicDescription(charB)
+	t.CharacteristicBDescription = template.HTML(piece.CharacteristicDescription(charB))
 
 	return t
 }

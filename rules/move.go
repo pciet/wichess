@@ -79,7 +79,7 @@ func (a *Board) DoMove(m Move) ([]Square, []Square) {
 
 	// conveyed characteristics apply through the entire turn, so don't reapply them here
 
-	for _, s := range bcopy.surroundingSquares(m.To) {
+	for _, s := range bcopy.assertSurroundingSquares(m.To) {
 		if bcopy.assertsWillCapture(from, s) == false {
 			continue
 		}

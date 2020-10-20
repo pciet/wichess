@@ -51,7 +51,7 @@ func (a *Board) assertsChain(changes, captures []Square, m Move,
 	// keep applying asserts moves until none are left
 LOOP:
 	for {
-		for _, s := range a.surroundingSquares(m.To) {
+		for _, s := range a.assertSurroundingSquares(m.To) {
 			if a.assertsWillCapture(a[m.To.Index()], s) == false {
 				continue
 			}

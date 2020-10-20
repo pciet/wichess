@@ -78,6 +78,28 @@ func (a *Board) surroundingSquares(at Address) []Square {
 	return s
 }
 
+var assertOrdering = []piece.PathAddress{{-1, 0}, {-1, -1}, {0, -1},
+	{1, -1}, {1, 0}, {1, 1}, {0, 1}, {-1, 1}}
+
+// assertSurroundingSquares is the same as surroundingSquares except the squares are ordered as
+// described for the asserts characteristic.
+func (a *Board) assertSurroundingSquares(at Address) []Square {
+	out := make([]Square, 0, 8)
+	for _, addr := range assertOrdering {
+		f := addr.File + at.File
+		if (f < 0) || (f > 7) {
+			continue
+		}
+		r := addr.Rank + at.Rank
+		if (r < 0) || (r > 7) {
+			continue
+		}
+		outAddr := Address{f, r}
+		out = append(out, Square{outAddr, a[outAddr.Index()]})
+	}
+	return out
+}
+
 func (a *Board) kingLocation(of Orientation) Address {
 	for i, s := range a {
 		if (s.Kind == piece.King) && (s.Orientation == of) {

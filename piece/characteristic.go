@@ -64,20 +64,22 @@ var characteristicList = []characteristics{
 
 var characteristicDescriptions = []string{
 	"",
-	`When captured all adjacent pieces and the capturing piece are also captured.`,
-	`Automatically moves to capture any opponent piece that's moved adjacent. You then do your normal move.`,
-	`Your adjacent pieces (except the king and queens) get added moves that can't be used to capture.`,
-	`Your adjacent pieces get an added move across this one.`,
-	`Adjacent opponent pieces (except queens and the king) can't move.`,
-	`Pawn pieces can't capture this.`,
-	`Can only be captured by queens or the king.`,
-	`When captured if its starting square is empty then it returns there instead.`,
-	`Your adjacent pieces are immaterial (pawn pieces can't capture them).`,
-	`Can't be captured if adjacent to another piece with protective even if it's your opponent's.`,
-	`When your king is in check it may move onto this piece from anywhere. When that move happens this piece is captured by your opponent.`,
-	`Adjacent pieces aren't affected by their characteristics. If two normalizing pieces are adjacent then only they are normalized`,
-	`Adjacent pieces neutralize (when captured all adjacent pieces and the capturing piece are
- also captured).`,
+	`<p>When captured all adjacent pieces and the capturing piece are also captured.</p>`,
+	`<p>Automatically moves to capture any opponent piece that's moved to an adjacent square. You then do your normal move.</p>
+<p>If multiple pieces would assert then the first moves that's counter-clockwise starting at the middle left from the white player's perspective.</p>`,
+	`<p>Your adjacent pieces (except the <a href="/details?p=king">king</a> and <a href="/details?p=queen">queens</a>) get added moves that can't be used to capture.</p>`,
+	`<p>Your adjacent pieces get an added move across this one.</p>`,
+	`<p>Adjacent opponent pieces (except <a href="/details?p=queen">queens</a> and the <a href="/details?p=king">king</a>) can't move.</p>`,
+	`<p>Can't be captured by <a href="/details?p=pawn">pawn</a> pieces.</p>`,
+	`<p>Can only be captured by <a href="/details?p=queen">queens</a> or the <a href="/details?p=king">king</a>.</p>`,
+	`<p>When captured this piece instead returns to its starting square if empty.</p>`,
+	`<p>Your adjacent pieces are immaterial (<a href="/details?p=pawn">pawn</a> pieces can't capture them).</p>`,
+	`<p>Can't be captured if adjacent to another piece with protective, even if that other piece is your opponent's.</p>`,
+	`<p>When your <a href="/details?p=king">king</a> is in check it may move onto this piece from anywhere. When that move happens this piece is captured by your opponent.</p>`,
+	`<p>Adjacent pieces aren't affected by their characteristics.</p>
+<p>If two normalizing pieces are adjacent then only they are normalized.</p>`,
+	`<p>Adjacent pieces neutralize (when captured all adjacent pieces and the capturing piece are
+ also captured).</p>`,
 }
 
 var characteristicNames = []string{
