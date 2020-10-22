@@ -38,8 +38,12 @@ func (a *Board) neutralizeCaptureAddresses(startingAt Address) []Address {
 		}
 		neutralizing = append(neutralizing, at)
 
+		p := a[at.Index()]
 		for _, surrounding := range a.surroundingSquares(at) {
-			if surrounding.Kind == piece.NoKind {
+			if (surrounding.Kind == piece.NoKind) ||
+				surrounding.immaterialAgainst(&p) || surrounding.tenseAgainst(&p) ||
+				surrounding.is.protected {
+
 				continue
 			}
 			if (surrounding.flags.neutralizes && (surrounding.is.normalized == false)) ||

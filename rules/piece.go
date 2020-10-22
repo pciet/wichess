@@ -124,3 +124,8 @@ func (a *Piece) immaterialAgainst(t *Piece) bool {
 	return ((a.flags.immaterial && (a.is.normalized == false)) || a.is.immaterialized) &&
 		(t.Kind.Basic() == piece.Pawn)
 }
+
+func (a *Piece) tenseAgainst(t *Piece) bool {
+	return a.flags.tense && (a.is.normalized == false) &&
+		(t.Kind != piece.King) && (t.Kind != piece.Queen)
+}

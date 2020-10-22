@@ -77,7 +77,8 @@ var characteristicDescriptions = []string{
 	`<p>Can't be captured if adjacent to another piece with protective, even if that other piece is your opponent's.</p>`,
 	`<p>When your <a href="/details?p=king">king</a> is in check it may move onto this piece from anywhere. When that move happens this piece is captured by your opponent.</p>`,
 	`<p>Adjacent pieces aren't affected by their characteristics.</p>
-<p>If two normalizing pieces are adjacent then only they are normalized.</p>`,
+<p>If two normalizing pieces are adjacent then only they are normalized.</p>
+<p>Characteristics conveyed to a piece by other pieces aren't affected by normalizes.</p>`,
 	`<p>Adjacent pieces neutralize (when captured all adjacent pieces and the capturing piece are
  also captured).</p>`,
 }
