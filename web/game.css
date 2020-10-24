@@ -255,7 +255,8 @@ a:link, a:visited {
 .chesssquare {
     border: thin solid rgb(200,185,145);
     position: relative;
-    transition: 0.05s opacity;
+    transition: 0.15s opacity;
+    will-change: opacity;
 }
 
 .hover {

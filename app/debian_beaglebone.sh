@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# For now this script is untested and should only be used as a guide (do the commands manually).
+
+#####################
+
 # Do these on the BeagleBone Black before executing this script:
 
 # Change the debian and root users' passwords with passwd.
@@ -32,6 +36,12 @@
 export LANG=C.UTF-8
 adduser --system --group --no-create-home --disabled-login wichess
 
+##### Save Wisconsin Chess files to on-board memory for a backup.
+
+mkdir /home/debian/backup
+cd /media/sd
+cp -R COPYRIGHT html licenses web wichess wichess.service /home/debian/backup/
+
 ##### Configure Wisconsin Chess to run as a background systemd service using the wichess user.
 
 chown -R wichess:wichess /media/sd/mem /media/sd/html /media/sd/web /media/sd/wichess
@@ -61,7 +71,7 @@ apt-get upgrade
 ## openssh-sftp-server
 ## openssl
 
-## TODO: add firewall rules to only allow HTTP and WebSocket traffic to wichess
+## TODO: add firewall rules to only allow HTTP and WebSocket traffic to/from wichess
 ## https://wiki.debian.org/DebianFirewall
 ## use nftables for this
 ## redirect port 80 to wichess port
