@@ -19,7 +19,7 @@ func concedeGet(w http.ResponseWriter, r *http.Request, g game.Instance, p *memo
 	if g.HasComputerPlayer() {
 		g.CanDelete()
 		p.ComputerGame = 0
-		p.BestComputerStreak = 0
+		p.ResetComputerStreak()
 	} else {
 		// TODO: when opponent acknowledges is the game deleted?
 		g.Conceded = true

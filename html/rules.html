@@ -18,7 +18,7 @@
 <h2>Chess Variation</h2>
 
 <p>
-Wisconsin Chess is a chess variation. If you know chess then most of this game will be familiar.
+Wisconsin Chess is a chess variation. If you know chess then much of this game will be familiar.
 If you don't know chess then you will learn it by playing Wisconsin Chess.
 </p>
 
@@ -55,7 +55,7 @@ piece. Each piece has a known set of moves it's allowed to do.
 
 <p>
 When a move is onto an opponent's piece then the move is called a capture. Capturing a piece takes
-it off the board into the posession of the capturing player. Captured pieces no longer affect
+it off the board into the possession of the capturing player. Captured pieces no longer affect
 the game.
 </p>
 
@@ -76,6 +76,13 @@ is called a checkmate when it happens.
 If a king could be captured the next turn then the king is said to be in check. Any of your moves
 that cause your king to become in check are illegal. If your king is in check then the move you
 make must cause the king to leave check.
+</p>
+
+<p>
+The idea of moving into check has some nuance. Check is a threat of capture, which is different
+than a move to capture. Opponent moves that would normally be illegal because it would move their
+king into check are still considered threats when determining if your king is being moved 
+into check.
 </p>
 
 <blockquote>
@@ -128,7 +135,8 @@ regular chess pieces.
 
 <p>
 Wisconsin Chess adds special pieces that replace the regular chess pieces. Each special piece is
-based on a regular piece and can only be placed onto a square that matches the basic kind it is.
+based on a regular piece and can only be placed onto an army square that matches the basic kind it
+is.
 </p>
 
 <p>
@@ -143,13 +151,41 @@ the piece into your collection.
 </p>
 
 <p>
-When configuring the army before the game you are presented with two "random pick" pieces. These
-two slots are two random special pieces. Until you use them in your army they stay the same. When
-used in your army then the slot is replaced with a new piece. Like the reward piece, when you
-complete a game you have the option of placing used random pick slot pieces into your collection.
+When customizing your army before a match you are presented with two "random pick" pieces. These
+two slots are two random special pieces that stay the same until used in your army then added to
+your collection when the game is completed. If a random pick is added to the collection then it's
+randomly replaced with another special piece.
+</p>
+
+<p>
+Each piece in Wisconsin Chess has zero, one, or two characteristics that cause added effects. These
+are named on the details webpage for each piece.
+</p>
+
+<p>
+Some pieces, like the <a href="/details?p=simple">simple</a>, convey temporary changes to the 
+characteristics of other pieces. These changes apply throughout the move, even if an affected piece
+is moved away from the piece affecting it. This matters in situations such as if a
+<a href="/details?p=knight">knight</a> is adjacent to a <a href="/details?p=simple">simple</a>
+then is moved away into range of a <a href="/details?p=constructive">constructive</a> which asserts
+and causes the neutralize effect without being in range of the ordering piece.
+</p>
+
+<p>
+The interactions of piece characteristics can cause surprising results. I think the best way to
+enjoy Wisconsin Chess is to play many games and only read characteristic and piece details for a
+quick overview or as a response to specific situations you were surprised by. To keep the game
+similar to chess these characteristics are deterministic (a move always has the same result) which
+means their specification can be more complicated than is needed usually.
+</p>
+
+<p>
+Thanks for playing Wisconsin Chess, and have fun!
 </p>
 
 </div>
+
+<div id="bottomspacer"></div>
 
 </body>
 

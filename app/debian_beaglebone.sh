@@ -42,6 +42,23 @@ mkdir /home/debian/backup
 cd /media/sd
 cp -R COPYRIGHT html licenses web wichess wichess.service /home/debian/backup/
 
+# if needed later use sftp to replace backup files without redoing the microSD card:
+#
+#     echo 'put ./wichess' | sftp debian@192.168.0.10:/home/debian
+#
+# then as root on the BeagleBone:
+#
+#     cd /home/debian
+#     chown root:root wichess
+#     mv wichess ./backup/wichess
+#
+# then to restore a single file:
+#
+#     systemctl stop wichess.service
+#     cp ./backup/wichess /media/sd/wichess
+#     chown wichess:wichess /media/sd/wichess
+#     systemctl start wichess.service
+
 ##### Configure Wisconsin Chess to run as a background systemd service using the wichess user.
 
 chown -R wichess:wichess /media/sd/mem /media/sd/html /media/sd/web /media/sd/wichess

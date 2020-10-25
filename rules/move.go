@@ -52,6 +52,7 @@ func (a *Board) DoMove(m Move) ([]Square, []Square) {
 	}
 	to := bcopy[m.To.Index()]
 
+	var noCapture bool
 	if to.NotEmpty() {
 		if to.Orientation == from.Orientation {
 			if to.flags.extricates && (to.is.normalized == false) {
@@ -72,6 +73,7 @@ func (a *Board) DoMove(m Move) ([]Square, []Square) {
 		} else {
 			changes = bcopy.noCaptureMove(changes, m)
 		}
+		noCapture = true
 	}
 
 	// now do responses to the move
@@ -84,7 +86,12 @@ func (a *Board) DoMove(m Move) ([]Square, []Square) {
 			continue
 		}
 		if (from.flags.neutralizes && (from.is.normalized == false)) || from.is.ordered {
-			return bcopy.assertsCapturesNeutralizes(changes, captures, m, s.Address)
+			changes, captures = bcopy.assertsCapturesNeutralizes(changes, captures, m, s.Address)
+			if noCapture {
+				// if the move was to an empty square then the result is no change there
+				changes = removeSquare(changes, m.To)
+			}
+			return changes, captures
 		}
 		return bcopy.assertsChain(changes, captures, m, s.Address)
 	}

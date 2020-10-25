@@ -101,3 +101,24 @@ func multipleSquareInSlice(a []Square) bool {
 	}
 	return false
 }
+
+func removeSquare(from []Square, an Address) []Square {
+	index := -1
+	for i, s := range from {
+		if s.Address != an {
+			continue
+		}
+		index = i
+		break
+	}
+	if index == -1 {
+		return from
+	}
+	if len(from) == 1 {
+		return []Square{}
+	}
+	if index != (len(from) - 1) {
+		from[index] = from[len(from)-1]
+	}
+	return from[:len(from)-1]
+}

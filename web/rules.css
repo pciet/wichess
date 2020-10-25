@@ -35,3 +35,7 @@ div {
         margin-right: 5px;
     }
 }
+
+#bottomspacer {
+    height: 200px;
+}
