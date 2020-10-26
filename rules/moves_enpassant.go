@@ -5,7 +5,8 @@ import "github.com/pciet/wichess/piece"
 // if a piece can get to the en passant take square then this will need to be updated
 
 func (a *Board) appendEnPassantMove(moves []Address, at Address, previous Move) []Address {
-	if previous == NoMove {
+	if (previous == NoMove) || (previous.From.File != previous.To.File) {
+		// if the file isn't the same then an incorrect en passant capture can be done on form moves
 		return moves
 	}
 
@@ -31,8 +32,8 @@ func (a *Board) appendEnPassantMove(moves []Address, at Address, previous Move) 
 			left = Address{at.File - 1, at.Rank + 1}
 			right = Address{at.File + 1, at.Rank + 1}
 		} else {
-			// TODO: need to be applied for other special pawns?
-			// Evident is a special case because it captures backwards
+			// Evident is a special case because it captures backwards, otherwise all pawns capture
+			// regularly or capture the square behind so can't do the en passant capture
 			if at.Rank != 6 {
 				return moves
 			}

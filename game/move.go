@@ -56,10 +56,10 @@ func (an Instance) Move(with rules.Move) ([]rules.Square, []rules.Piece, bool) {
 			log.Panicln("rules.Board.DoMove at", with, "returned empty square capture. Captures\n",
 				captures, "\nchanges:\n", changes, "\nboard with changes applied:\n", an.Game.Board)
 		}
-		if capt.Orientation == rules.White {
+		if capt.Orientation == rules.Black {
 			an.White.Captures[wCaptIndex] = capt.Kind
 			wCaptIndex++
-		} else if capt.Orientation == rules.Black {
+		} else if capt.Orientation == rules.White {
 			an.Black.Captures[bCaptIndex] = capt.Kind
 			bCaptIndex++
 		} else {
