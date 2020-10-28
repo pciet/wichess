@@ -64,7 +64,8 @@ var characteristicList = []characteristics{
 
 var characteristicDescriptions = []string{
 	"",
-	`<p>When captured all adjacent pieces and the capturing piece are also captured.</p>`,
+	`<p>When captured all adjacent pieces and the capturing piece are also captured.</p>
+<p>If one of these captured pieces neutralizes then its surrounding pieces are also captured.</p>`,
 	`<p>Automatically moves to capture any opponent piece that's moved to an adjacent square. You then do your normal move.</p>
 <p>If multiple pieces would assert then the first moves that's counter-clockwise starting at the middle left from the white player's perspective.</p>`,
 	`<p>Your adjacent pieces (except the <a href="/details?p=king">king</a> and <a href="/details?p=queen">queens</a>) get added moves that can't be used to capture.</p>`,

@@ -80,9 +80,6 @@ if (GameInformation.Conceded === true) {
     Condition = State.CONCEDED
 }
 
-// Turns are numbered to guarantee synchronization with the host.
-export let Turn = GameInformation.Turn
-
 // Available moves are held so that, along with Board, the information can be rewritten into 
 // the webpage if the interface needs to be recalculated during a window resize.
 export let Moves = []
@@ -99,7 +96,7 @@ export function replacePreviousMove(from, to) {
 // Host requests are started here so the webpage can do some work while the requests are being 
 // processed. The promised values are looked at in window.onload later.
 const boardPromise = fetchBoardPromise(GameInformation.ID)
-const movesPromise = fetchMovesPromise(GameInformation.ID, Turn)
+const movesPromise = fetchMovesPromise(GameInformation.ID)
 const websocketPromise = webSocketPromise(GameInformation.ID)
 
 fetchNextMoveSound()

@@ -8,7 +8,9 @@ import { replaceAndWriteBoardMoves } from './board_moves.js'
 import { showPromotion } from './promotion.js'
 
 export function fetchedMoves(moves) {
-    if (moves.state !== Condition) {
+    if ((moves.state !== Condition) && 
+        ((moves.state !== State.PROMOTION) || (PlayerOrientation === ActiveOrientation))) {
+
         replaceAndWriteGameCondition(moves.state)
     }
 

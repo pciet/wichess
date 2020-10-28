@@ -15,8 +15,8 @@ export function fetchMoves() {
     fetchMovesPromise(GameInformation.ID).then(m => { fetchedMoves(m) })
 }
 
-export function fetchMovesPromise(gameID, turnNumber) {
-    return fetch('/moves/'+gameID+'?turn='+turnNumber).then(r => r.json()).then(r => {
+export function fetchMovesPromise(gameID) {
+    return fetch('/moves/'+gameID).then(r => r.json()).then(r => {
         if (r.m === undefined) {
             return new MovesResponse(undefined, r.s)
         }

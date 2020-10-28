@@ -34,7 +34,7 @@ p {
 }
 
 #name {
-    font-size: 2rem;
+    font-size: 1.7rem;
     color: rgb(220,220,200);
     text-align: center;
 }
@@ -75,8 +75,8 @@ p {
 
 #title {
     font-size: 1.5rem;
-    color: rgb(250,110,120);
-    text-shadow: 1px 1px 0 rgb(5,5,50);
+    color: rgb(255,40,70);
+    text-shadow: 0 0 30px rgb(200,200,255);
     font-weight: bold;
     text-align: center;
 }
@@ -130,7 +130,8 @@ img {
 }
 
 .armycell {
-    border: 1px solid transparent;
+    border: 3px solid rgb(80,10,100);
+    border-radius: 5px;
     position: absolute;
 }
 
@@ -249,9 +250,9 @@ img {
 }
 
 .replaced {
-    border: 3px outset rgb(250,50,195);
-    border-radius: 2px;
-    box-shadow: 0px -4px 10px rgb(255,125,128);
+    border: 4px outset rgb(125,160,255);
+    border-radius: 5px;
+    box-shadow: 0px -4px 15px rgb(255,125,128);
 }
 
 .darkened {

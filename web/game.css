@@ -79,13 +79,21 @@ a:link, a:visited {
 }
 
 #blacknametext, #whitenametext {
-    font-size: 1.7rem;
+    font-size: 1.5rem;
     text-align: center;
     color: rgb(205,180,160);
 }
 
 #activeindicators {
-    width: 10%;
+    width: 7%;
+}
+
+#indicatorspacer {
+    width: 7%;
+}
+
+#indicatorsidespacer {
+    width: 3%;
 }
 
 .activeindicator {
@@ -95,7 +103,7 @@ a:link, a:visited {
 }
 
 #status {
-    font-size: 1.6rem;
+    font-size: 1.4rem;
     text-shadow: 1px 1px 0 rgb(5,5,50);
     text-align: center;
     font-weight: bold;
@@ -104,7 +112,7 @@ a:link, a:visited {
 }
 
 .statusindicating {
-    font-size: 2.3rem;
+    font-size: 1.8rem;
     color: rgb(250,255,245);
     font-weight: bold;
 }
@@ -118,13 +126,13 @@ a:link, a:visited {
 }
 
 #mutetext, #whitespacetext, #swapinterfacetext, #swapplayerstext, #showoptions {
-    font-size: 2rem;
+    font-size: 1.7rem;
     text-align: center;
     color: rgb(180,180,200);
 }
 
 #showmovestext, #showprevtext, #piececardtext {
-    font-size: 2rem;
+    font-size: 1.7rem;
     text-align: center;
     color: rgb(180,170,175);
 }

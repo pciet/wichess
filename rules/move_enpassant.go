@@ -39,13 +39,17 @@ func (a *Board) isEnPassantMove(m Move) bool {
 	return true
 }
 
-func (a *Board) enPassantMove(changes, takes []Square, m Move) ([]Square, []Square) {
+func (a *Board) enPassantMove(changes, captures []Square, m Move) ([]Square, []Square) {
 	s := a[m.From.Index()]
 	s.Moved = true // TODO: not sure why this is necessary
 	taking := enPassantCaptureAddress(s.Orientation, m.To)
+	target := a[taking.Index()]
+	if (target.flags.neutralizes && (target.is.normalized == false)) || target.is.ordered {
+		return a.neutralizesMove(changes, captures, Move{m.From, taking})
+	}
 	changes = append(changes, Square{taking, Piece{}})
 	changes = append(changes, Square{m.From, Piece{}})
-	return append(changes, Square{m.To, s}), append(takes, Square{taking, a[taking.Index()]})
+	return append(changes, Square{m.To, s}), append(captures, Square{taking, a[taking.Index()]})
 }
 
 func enPassantCaptureAddress(taker Orientation, to Address) Address {

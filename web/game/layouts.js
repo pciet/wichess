@@ -30,13 +30,15 @@ export function players() {
     }
 
     return `
+<div class="inline" id="indicatorsidespacer"></div>
 <div class="inline" id="activeindicators">
     ` + ct(top + 'active', 'activeindicator', false, true, activePlayerChar) +
         `<div></div>` +
         ct(bottom + 'active', 'activeindicator', false, true, activePlayerChar) + `
 </div>
-<div class="inline">` + names + `
-</div>`
+<div class="inline">` + names + `</div>
+<div class="inline" id="indicatorspacer"></div>
+<div class="inline" id="indicatorsidespacer"></div>`
 }
 
 export function topTakes() {
