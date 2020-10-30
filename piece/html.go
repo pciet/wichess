@@ -7,15 +7,21 @@ func DetailsHTML(of Kind) string { return detailsHTML[of] }
 var detailsHTML = []string{
 	"",
 	`<h1>KING</h1>
-<p>Capturing your opponent's king is the goal of the game. Kings start in the back row five squares
- from the player's left.</p>
-<p>The king can move to and capture any adjacent square.</p>
-<p>When the king and a friendly <a href="/details?p=rook">rook</a> both haven't been moved yet,
- the squares between them are empty and unthreatened, and the king isn't in check, then the king
- can do the castle move.</p>
-<p>A king is in check when threatened by capture from an opponent's piece. Any moves by any piece
- that cause your king to be in check are not allowed, and you have won when the opponent has no
- moves that takes their king out of check.</p>`,
+<p>Each player has one king. Capturing your opponent's king wins the game, and the king can move
+to and capture any adjacent square.</p>
+<p>A king is in check when threatened with a possible capturing move by an opponent's piece. Any 
+of your moves that cause your king to become in check are not allowed (Wisconsin Chess 
+automatically removes these moves from your choices), and you have won when your opponent has no 
+moves that take their king out of check.</p>
+<p>The kings start on the same file (column) for each player, which is the fourth from the left of 
+the black player or the fifth from the left of the white player. The starting squares for the 
+<a href="/details?p=queen">queen</a> and king are mirrored for each player, and other pieces can
+be called "queenside" or "kingside" to refer to which side of the army they're on.</p>
+<p>When your king and <a href="/details?p=rook">rook</a> both haven't been moved yet, the squares 
+between them are empty and unthreatened by your opponent's pieces, and your king isn't in check, 
+then the king can do the castle move. Depending on the side, the king moves multiple squares and
+jumps over the also moved <a href="/details?p=rook">rook</a>; this is difficult to describe in text,
+but it will look like an extra side move when available in Wisconsin Chess.</p>`,
 
 	`<h1>QUEEN</h1>
 <p>The queen starts at the square to the left of the <a href="/details?p=king">king</a>, four
