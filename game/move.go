@@ -15,16 +15,21 @@ func (an Instance) Move(with rules.Move) ([]rules.Square, []rules.Piece, bool) {
 		return nil, nil, false
 	}
 
-	changes, captures := an.Game.Board.DoMove(with)
+	changes, captures := an.Game.Board.DoMove(with, an.PreviousMove)
 	if changes == nil {
 		return nil, nil, false
 	}
 	for _, capt := range captures {
-		if capt.Piece.Kind != piece.King {
+		var msg string
+		if capt.Piece.Kind == piece.NoKind {
+			msg = "empty square captured"
+		} else if capt.Piece.Kind == piece.King {
+			msg = "captured king"
+		} else {
 			continue
 		}
-		log.Panicln("captured king in move", with, "\nchanges", changes, "\ncaptures", captures,
-			"\n", an.String())
+		log.Panicln(msg, "in move", with,
+			"\nchanges", changes, "\ncaptures", captures, "\n", an.String())
 	}
 
 	(&an.Game.Board).ApplyChanges(changes)
@@ -52,10 +57,6 @@ func (an Instance) Move(with rules.Move) ([]rules.Square, []rules.Piece, bool) {
 	wCaptIndex := an.White.Captures.FirstAvailableIndex()
 	bCaptIndex := an.Black.Captures.FirstAvailableIndex()
 	for _, capt := range captures {
-		if capt.Kind == piece.NoKind {
-			log.Panicln("rules.Board.DoMove at", with, "returned empty square capture. Captures\n",
-				captures, "\nchanges:\n", changes, "\nboard with changes applied:\n", an.Game.Board)
-		}
 		if capt.Orientation == rules.Black {
 			an.White.Captures[wCaptIndex] = capt.Kind
 			wCaptIndex++

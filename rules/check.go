@@ -26,7 +26,7 @@ func (a *Board) removeMovesIntoCheck(moves []MoveSet, active Orientation, previo
 			move := Move{moveset.From, moveAddr}
 
 			// stash original squares and apply move changes
-			changes, _ := a.DoMove(move)
+			changes, _ := a.DoMove(move, previous)
 			if multipleSquareInSlice(changes) {
 				// TODO: consider making this a debug only check
 				// this has been a symptom of multiple obscure mistakes, so added this if here

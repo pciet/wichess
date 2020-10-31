@@ -6,7 +6,7 @@ import (
 	"github.com/pciet/wichess/piece"
 )
 
-func (a *Board) isEnPassantMove(m Move) bool {
+func (a *Board) isEnPassantMove(m, previous Move) bool {
 	if m.From.File == m.To.File {
 		return false
 	}
@@ -32,7 +32,11 @@ func (a *Board) isEnPassantMove(m Move) bool {
 	if to.Empty() == false {
 		return false
 	}
-	taking := a[enPassantCaptureAddress(s.Orientation, m.To).Index()]
+	takingAddr := enPassantCaptureAddress(s.Orientation, m.To)
+	if takingAddr != previous.To {
+		return false
+	}
+	taking := a[takingAddr.Index()]
 	if taking.Empty() || (taking.Orientation == s.Orientation) || (taking.Basic() != piece.Pawn) {
 		return false
 	}

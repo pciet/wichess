@@ -43,6 +43,16 @@ export const caseMaker = `
         <div class="optionrow">
             <button id="move" type="button">Select Move</button>
         </div>
+        <h2>Previous Move</h2>
+        <div class="optionrow">
+            <span class="inline">From:</span>
+            <span class="inline" id="prevfrom">-</span>
+            <span class="inline">To:</span>
+            <span class="inline" id="prevto">-</span>
+        </div>
+        <div class="optionrow">
+            <button id="prevmove" type="button">Select Previous Move</button>
+        </div>
     </div>
 </div>
 

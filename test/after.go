@@ -10,6 +10,7 @@ import (
 type AfterMoveCaseJSON struct {
 	Name       string `json:"case"`
 	rules.Move `json:"mov"`
+	Previous   rules.Move     `json:"prev"`
 	Position   []testPiece    `json:"pos"`
 	Changes    []rules.Square `json:"cha"`
 }

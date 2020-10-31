@@ -16,7 +16,7 @@ func TestAfterMove(t *testing.T) {
 			board[p.Address.Index()] = rules.NewPiece(p.Kind, p.Orientation, p.Moved, p.Start)
 		}
 
-		changes, _ := board.DoMove(tc.Move)
+		changes, _ := board.DoMove(tc.Move, tc.Previous)
 
 		// assuming any changes are now moved pieces
 		for i := 0; i < len(tc.Changes); i++ {

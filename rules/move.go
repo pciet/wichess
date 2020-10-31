@@ -37,7 +37,7 @@ var NoMove = Move{NoAddress, NoAddress}
 // DoMove does the requested move without affecting the Board. No move legality is determined and
 // many illegal moves are possible with this method. The changed squares and original values of
 // squares that had captures happen to them are returned.
-func (a *Board) DoMove(m Move) ([]Square, []Square) {
+func (a *Board) DoMove(m, previous Move) ([]Square, []Square) {
 	// copy the Board as a workspace to do temporary changes caused by characteristics
 	bcopy := a.Copy()
 
@@ -68,7 +68,7 @@ func (a *Board) DoMove(m Move) ([]Square, []Square) {
 	} else {
 		if bcopy.isCastleMove(m) {
 			return bcopy.castleMove(changes, m), nil
-		} else if bcopy.isEnPassantMove(m) {
+		} else if bcopy.isEnPassantMove(m, previous) {
 			changes, captures = bcopy.enPassantMove(changes, captures, m)
 		} else {
 			changes = bcopy.noCaptureMove(changes, m)

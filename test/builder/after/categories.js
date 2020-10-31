@@ -49,10 +49,17 @@ export function categoryCase(name) {
         return cas
     }
     return {
-        active: 0,
         case: name,
-        moves: [],
-        pos: [],
+        mov: {
+            f: {
+                f: 0,
+                r: 0
+            },
+            t: {
+                f: 0,
+                r: 0
+            }
+        },
         prev: {
             f: {
                 f: 0,
@@ -63,6 +70,7 @@ export function categoryCase(name) {
                 r: 0
             }
         },
-        state: 0
+        pos: [],
+        cha: []
     }
 }

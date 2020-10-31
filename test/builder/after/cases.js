@@ -36,6 +36,7 @@ function loadCase(name) {
     addPieceOptions()
     initBoard()
     addMoveHandler()
+    addPreviousMoveHandler()
     addStartHandler()
     addDeleteChangeHandler()
     addSaveHandler()
@@ -44,6 +45,7 @@ function loadCase(name) {
     addBoardPieces(c.pos)
     addChangeBoardPieces(c.cha)
     setMove(c.mov)
+    setPreviousMove(c.prev)
 }
 
 let move = {
@@ -85,6 +87,50 @@ function addMoveHandler() {
                         move.t.f = addr.file
                         move.t.r = addr.rank
                         setMoveAddress('#to', move.t)
+                        to.classList.remove('pickmove')
+                        setBoardAddPieceHandlers()
+                    }
+                }
+            }
+        }
+    }
+}
+
+let previousMove = {
+    f: {},
+    t: {}
+}
+
+function setPreviousMove(m) {
+    if (m === undefined) {
+        return
+    }
+    previousMove = m
+    setMoveAddress('#prevfrom', m.f)
+    setMoveAddress('#prevto', m.t)
+}
+
+// TODO: refactor nesting and duplicated handlers for previous move and move
+function addPreviousMoveHandler() {
+    document.querySelector('#prevmove').onclick = () => {
+        const from = document.querySelector('#prevfrom')
+        from.classList.add('pickmove')
+        for (let i = 0; i < 64; i++) {
+            document.querySelector('#s'+i).onclick = () => {
+                const addr = boardIndexToAddress(i)
+                previousMove.f.f = addr.file
+                previousMove.f.r = addr.rank
+                setMoveAddress('#prevfrom', move.f)
+                from.classList.remove('pickmove')
+
+                const to = document.querySelector('#prevto')
+                to.classList.add('pickmove')
+                for (let i = 0; i < 64; i++) {
+                    document.querySelector('#s'+i).onclick = () => {
+                        const addr = boardIndexToAddress(i)
+                        previousMove.t.f = addr.file
+                        previousMove.t.r = addr.rank
+                        setMoveAddress('#prevto', move.t)
                         to.classList.remove('pickmove')
                         setBoardAddPieceHandlers()
                     }
@@ -154,6 +200,7 @@ function addSaveHandler() {
         const o = {
             case: testcase,
             mov: move,
+            prev: previousMove,
             pos: pos,
             cha: cha
         }
