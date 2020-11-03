@@ -2,7 +2,7 @@ package rules
 
 import "log"
 
-func (a *Board) inCheck(active Orientation, captures []Address) bool {
+func (a *Board) inCheck(active Orientation, captures []Address, previous Move) bool {
 	king := a.kingLocation(active)
 	for _, capture := range captures {
 		if capture == king {
@@ -10,7 +10,7 @@ func (a *Board) inCheck(active Orientation, captures []Address) bool {
 		}
 	}
 	if a.threatenedNeutralizerAdjacent(nil, captures, king) ||
-		a.neutralizesAssertedChainAdjacent(king) {
+		a.neutralizesAssertedChainAdjacent(king, previous) {
 
 		return true
 	}
@@ -41,8 +41,9 @@ func (a *Board) removeMovesIntoCheck(moves []MoveSet, active Orientation, previo
 			}
 			a.applyConveyedCharacteristics()
 
-			if (a.noKing(active) == false) && (a.inCheck(active,
-				movesAddressSlice(a.naiveCaptureMoves(active.Opponent(), move))) == false) {
+			if (a.noKing(active) == false) &&
+				(a.inCheck(active, movesAddressSlice(a.naiveCaptureMoves(active.Opponent(), move)),
+					move) == false) {
 
 				outset.Moves = append(outset.Moves, moveAddr)
 			}

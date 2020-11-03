@@ -25,7 +25,7 @@ func (a *Board) Moves(active Orientation, previous Move) ([]MoveSet, State) {
 	// check is a threat of capture, which means captures into check count
 	threats := movesAddressSlice(bcopy.naiveMoves(active.Opponent(), previous))
 
-	check := bcopy.inCheck(active, threats)
+	check := bcopy.inCheck(active, threats, previous)
 
 	if check == false {
 		moves = bcopy.appendCastleMoves(moves, active, threats)

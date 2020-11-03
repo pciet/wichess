@@ -9,6 +9,7 @@ import "github.com/pciet/wichess/piece"
 //   king v king+bishop
 //   king v king+knight
 //   king+bishop v king+bishop of the same bishop color
+//   above with pieces on the last rank that only move toward the opponent (line, brilliant)
 func (a *Board) insufficientMaterialDraw() bool {
 	w := make([]Square, 0, 2)
 	b := make([]Square, 0, 2)
@@ -19,6 +20,12 @@ func (a *Board) insufficientMaterialDraw() bool {
 		switch p.Kind.Basic() {
 		case piece.Queen, piece.Rook, piece.Pawn:
 			return false
+		}
+		if ((p.Kind == piece.Line) || (p.Kind == piece.Brilliant)) &&
+			(((p.Orientation == White) && (i >= (63 - 7))) ||
+				((p.Orientation == Black) && (i < 8))) {
+
+			continue
 		}
 		switch p.Orientation {
 		case White:

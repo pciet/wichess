@@ -4,7 +4,7 @@ import "github.com/pciet/wichess/piece"
 
 // neutralizesAssertedChainAdjacent looks for situations where a neutralizing piece could move into
 // range of an asserting piece and cause a neutralizing chain that captures the address.
-func (a *Board) neutralizesAssertedChainAdjacent(to Address) bool {
+func (a *Board) neutralizesAssertedChainAdjacent(to Address, previous Move) bool {
 	p := a[to.Index()]
 	if p.Kind == piece.NoKind {
 		return false
@@ -20,7 +20,7 @@ func (a *Board) neutralizesAssertedChainAdjacent(to Address) bool {
 		}
 		addr := AddressIndex(i).Address()
 		opponentNeutralizesMoves = append(opponentNeutralizesMoves,
-			MoveSet{addr, a.naiveMovesAt(addr, NoMove)})
+			MoveSet{addr, a.naiveMovesAt(addr, previous)})
 	}
 
 	for _, set := range opponentNeutralizesMoves {
