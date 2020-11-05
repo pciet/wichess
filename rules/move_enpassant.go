@@ -51,6 +51,9 @@ func (a *Board) enPassantMove(changes, captures []Square, m Move) ([]Square, []S
 	if (target.flags.neutralizes && (target.is.normalized == false)) || target.is.ordered {
 		return a.neutralizesMove(changes, captures, Move{m.From, taking})
 	}
+	if a.fantasyReturns(target) {
+		changes = fantasyReturnChange(changes, target)
+	}
 	changes = append(changes, Square{taking, Piece{}})
 	changes = append(changes, Square{m.From, Piece{}})
 	return append(changes, Square{m.To, s}), append(captures, Square{taking, a[taking.Index()]})

@@ -1,10 +1,6 @@
 package rules
 
-import (
-	"log"
-
-	"github.com/pciet/wichess/piece"
-)
+import "log"
 
 type (
 	// Move represents the addressing of a piece move from a square to another.
@@ -130,15 +126,11 @@ func (a *Board) captureMove(changes, captures []Square, m Move) ([]Square, []Squ
 	s := a[m.From.Index()]
 	s.Moved = true
 	changes = append(changes, Square{m.From, Piece{}})
-
 	t := a[m.To.Index()]
-	if (t.flags.fantasy && (t.is.normalized == false)) &&
-		(a[t.Start.Index()].Kind == piece.NoKind) {
-
-		changes = append(changes, Square{t.Start, NewPiece(t.Kind, t.Orientation, true, t.Start)})
+	if a.fantasyReturns(t) {
+		changes = fantasyReturnChange(changes, t)
 	} else {
 		captures = append(captures, Square{m.To, t})
 	}
-
 	return append(changes, Square{m.To, s}), captures
 }
