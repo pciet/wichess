@@ -18,9 +18,9 @@ Wisconsin Chess is a work in progress. It was inspired by one of the ideas I res
 
 During 2020 I've had the opportunity to work on it again. Version 0.2 is a massive improvement and is currently in an alpha state as I continue to make it more fun, unbreakable, and valuable.
 
-Shortly I will have to shelve the project again because of lack of funds. If you or someone you know is interested in a funding partnership for this project I'd be happy to discuss such business details, or if you would like to freely contribute a small amount of money then buying my music at [matthewjuran.bandcamp.com](https://matthewjuran.bandcamp.com) is the best way to do that.
+If you or someone you know is interested in a funding partnership for this project I'd be happy to discuss business details, or if you would like to freely contribute a small amount of money then buying my music at [matthewjuran.bandcamp.com](https://matthewjuran.bandcamp.com) is the best way to do that.
 
-If you play Wisconsin Chess and find a mistake or think something should be better then any report is appreciated. Please [open an issue](https://github.com/pciet/wichess/issues) on GitHub for your feedback, and thanks.
+For now new features aren't being added while I collect feedback about v0.2. If you play Wisconsin Chess and find a mistake or think something should be better then any report is appreciated. Please [open a discussion](https://github.com/pciet/wichess/discussions) on GitHub for your feedback.
 
 ## Copyright, Licenses, Credits
 
