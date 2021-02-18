@@ -8,17 +8,17 @@ This source code is for a multiplayer computer game variation of chess, Wisconsi
 
 If you want to learn chess or improve your skill then this game will help you do that.
 
-![Gameplay example](screenshots/Screen Shot 2021-02-18 at 11.43.07 AM.png)
+<img alt="Gameplay example screenshot" src="screenshots/Screen Shot 2021-02-18 at 11.43.07 AM.png"></img>
 
 What's added is the trading card game idea (but without trading for now). Players each have a collection of pieces with new characteristics that can optionally replace the regular chess pieces, so emergent scenarios from a choice of many strategies keep gameplay fresh and exciting no matter how long you've played.
 
-![Collection example](screenshots/Screen Shot 2021-02-18 at 11.41.04 AM.png)
+<img alt="Collection example screenshot" src="screenshots/Screen Shot 2021-02-18 at 11.41.04 AM.png"></img>
 
 The new pieces are all based on the original chess pieces and may have zero, one, or two characteristics that affect their interactions with other pieces. Possible moves are sometimes varied to balance the power of pieces.
 
-![New piece example 2](screenshots/Screen Shot 2021-02-18 at 2.11.05 PM.png)
+<img alt="New pieces example screenshot" src="screenshots/Screen Shot 2021-02-18 at 2.11.05 PM.png"></img>
 
-![New piece example](screenshots/Screen Shot 2021-02-18 at 2.02.38 PM.png)
+<img alt="New pieces example screenshot 2" src="screenshots/Screen Shot 2021-02-18 at 2.02.38 PM.png"></img>
 
 Because of the possible complexity of new piece interactions the computer determines which moves can be made each turn, then the player simply picks one. It is not possible to cheat or make an illegal move without direct access to the host.
 
@@ -28,7 +28,7 @@ This local network website is designed to work well both on mobile smartphones a
 
 Wisconsin Chess is intended to be best played multiplayer around a table, during a LAN party, in an office, or in a computer lab, where the players interact in person. With some creativity a tournament should be straightforward to implement by using this software to play matches.
 
-![Multiplayer example](screenshots/Screen Shot 2021-02-18 at 11.45.06 AM.png)
+<img alt="Multiplayer example screenshot" src="screenshots/Screen Shot 2021-02-18 at 11.45.06 AM.png"></img>
 
 Technical installation instructions that use this source code repository are described in docs/install.md. An overview of the source code is in docs/source.md.
 
